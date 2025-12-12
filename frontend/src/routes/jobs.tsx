@@ -35,7 +35,7 @@ function JobsPage() {
     const { removeJob, clearCompleted } = useJobsStore();
 
     const activeJobsCount = jobs.filter(
-        (j) => j.status === 'pending' || j.status === 'processing'
+        (j) => j.status === 'pending' || j.status === 'downloading' || j.status === 'processing' || j.status === 'analyzing'
     ).length;
 
     const completedJobsCount = jobs.filter(
@@ -46,12 +46,20 @@ function JobsPage() {
         switch (status) {
             case 'pending':
                 return <Clock className="w-5 h-5 text-slate-400" />;
+            case 'downloading':
+                return <Loader2 className="w-5 h-5 text-blue-400 animate-spin" />;
             case 'processing':
                 return <Loader2 className="w-5 h-5 text-cyan-400 animate-spin" />;
+            case 'analyzing':
+                return <Loader2 className="w-5 h-5 text-purple-400 animate-spin" />;
             case 'complete':
                 return <CheckCircle2 className="w-5 h-5 text-emerald-400" />;
             case 'error':
                 return <XCircle className="w-5 h-5 text-red-400" />;
+            case 'cancelled':
+                return <XCircle className="w-5 h-5 text-slate-500" />;
+            default:
+                return <Clock className="w-5 h-5 text-slate-400" />;
         }
     };
 
@@ -59,12 +67,20 @@ function JobsPage() {
         switch (status) {
             case 'pending':
                 return 'text-slate-400';
+            case 'downloading':
+                return 'text-blue-400';
             case 'processing':
                 return 'text-cyan-400';
+            case 'analyzing':
+                return 'text-purple-400';
             case 'complete':
                 return 'text-emerald-400';
             case 'error':
                 return 'text-red-400';
+            case 'cancelled':
+                return 'text-slate-500';
+            default:
+                return 'text-slate-400';
         }
     };
 
@@ -160,7 +176,7 @@ function JobsPage() {
                             </div>
 
                             {/* Progress Bar */}
-                            {(job.status === 'processing' || job.status === 'pending') && (
+                            {(job.status === 'pending' || job.status === 'downloading' || job.status === 'processing' || job.status === 'analyzing') && (
                                 <div className="mb-3">
                                     <div className="flex justify-between text-sm mb-1">
                                         <span className="text-slate-400">{job.current_step || 'Starting...'}</span>

@@ -36,6 +36,7 @@ dependencies = [
     "scikit-learn>=1.4.0",       # Genre classification
     # System dependencies
     "setuptools>=80.9.0",
+    "google-generativeai>=0.3.0",
 ]
 
 [project.optional-dependencies]
@@ -50,3 +51,10 @@ dev = [
 # - Essentia requires C++ compilation and complex build
 # - Omnizart requires librosa<0.9 (we use >=0.10)
 # These can be installed separately if needed
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["app*"]

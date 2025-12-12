@@ -50,6 +50,7 @@ class Settings(BaseSettings):
         env_file=".env",
         env_file_encoding="utf-8",
         case_sensitive=False,
+        extra="ignore",  # Allow extra env variables
     )
     
     def ensure_directories(self) -> None:

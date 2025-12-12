@@ -28,7 +28,7 @@ function UploadPage() {
     const [url, setUrl] = useState('')
     const [file, setFile] = useState<File | null>(null)
     const [options, setOptions] = useState<TranscriptionOptions>({
-        isolate_piano: true,
+        isolate_piano: false,  // Default off - very slow without GPU
         detect_chords: true,
         detect_tempo: true,
         detect_key: true,
@@ -249,7 +249,7 @@ function UploadPage() {
                 <h3 className="font-medium text-white mb-4">Transcription Options</h3>
                 <div className="grid grid-cols-2 gap-4">
                     {[
-                        { key: 'isolate_piano', label: 'Isolate Piano', desc: 'Extract piano from mix' },
+                        { key: 'isolate_piano', label: 'Isolate Piano', desc: '⚠️ Slow without GPU - extract piano from mix' },
                         { key: 'detect_chords', label: 'Detect Chords', desc: 'Analyze chord progressions' },
                         { key: 'detect_tempo', label: 'Detect Tempo', desc: 'Find BPM automatically' },
                         { key: 'detect_key', label: 'Detect Key', desc: 'Identify key signature' },

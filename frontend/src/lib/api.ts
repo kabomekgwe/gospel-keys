@@ -42,7 +42,7 @@ export interface TranscriptionOptions {
 
 export interface TranscriptionJob {
     job_id: string;
-    status: 'pending' | 'processing' | 'complete' | 'error';
+    status: 'pending' | 'downloading' | 'processing' | 'analyzing' | 'complete' | 'error' | 'cancelled';
     progress: number;
     current_step?: string;
     error_message?: string;

@@ -25,11 +25,19 @@ interface JobsState {
 }
 
 // Polling intervals by status
-const POLL_INTERVALS = {
+const POLL_INTERVALS: Record<string, number> = {
     pending: 3000,
+    downloading: 2000,
     processing: 1500,
+    analyzing: 1500,
     complete: 0,
     error: 0,
+    cancelled: 0,
+};
+
+// Helper to check if status should trigger polling
+const isActiveStatus = (status: string): boolean => {
+    return status === 'pending' || status === 'downloading' || status === 'processing' || status === 'analyzing';
 };
 
 export const useJobsStore = create<JobsState>()(
@@ -49,8 +57,8 @@ export const useJobsStore = create<JobsState>()(
                     jobs: [storedJob, ...state.jobs],
                 }));
 
-                // Start polling if not complete/error
-                if (job.status === 'pending' || job.status === 'processing') {
+                // Start polling if job is active
+                if (isActiveStatus(job.status)) {
                     get().startPolling(job.job_id);
                 }
             },
@@ -143,7 +151,7 @@ export const useJobsStore = create<JobsState>()(
             onRehydrateStorage: () => (state) => {
                 if (state) {
                     state.jobs.forEach((job) => {
-                        if (job.status === 'pending' || job.status === 'processing') {
+                        if (isActiveStatus(job.status)) {
                             state.startPolling(job.job_id);
                         }
                     });

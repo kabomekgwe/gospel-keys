@@ -38,11 +38,21 @@ async def isolate_piano(audio_path: Path, output_dir: Path) -> Path:
         # Demucs creates: htdemucs/{track_name}/{bass,drums,other,vocals}.wav
         # Piano is typically in the 'other' stem
         def _separate():
+            # Check for MPS (Apple Silicon) or CUDA availability
+            import torch
+            if torch.backends.mps.is_available():
+                device = "mps"
+            elif torch.cuda.is_available():
+                device = "cuda"
+            else:
+                device = "cpu"
+            
             cmd = [
                 "demucs",
                 "--two-stems=other",  # Only separate 'other' stem (piano/instruments)
                 "-o", str(output_dir),
                 "-n", "htdemucs",  # Use htdemucs model (best quality)
+                "-d", device,  # Use detected device (mps/cuda/cpu)
                 str(audio_path)
             ]
             
