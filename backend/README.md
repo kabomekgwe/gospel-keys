@@ -9,40 +9,88 @@ A FastAPI-based service for piano transcription from YouTube URLs or uploaded au
 - **Piano Isolation**: Use Demucs source separation to isolate piano from mixes
 - **MIDI Output**: Generate MIDI files from audio transcription using Spotify's basic-pitch
 - **Chord Detection**: Detect gospel chords using chromagram analysis
-- **Job Management**: Track transcription progress with async job system
+- 🎹 Piano transcription from YouTube URLs or uploaded files
+- 🎵 MIDI generation with note detection
+- 🎼 Chord detection and analysis  
+- 📚 Song library with SQLite database
+- ⏱️ Practice mode with time-stretching
+- ✂️ Snippet extraction for practice sections
+- 📝 Annotation system for theory notes
+- 📤 Export to MusicXML and quantized MIDI
+- 🐳 Docker support for easy deployment
 
 ## Quick Start
 
-### Prerequisites
-
-Install system dependencies:
+### Option 1: Docker (Recommended)
 
 ```bash
-# macOS
-brew install ffmpeg
+# Clone repository
+git clone <repo-url>
+cd youtube-transcript/backend
 
-# The Python packages (demucs, basic-pitch) will be installed via uv
+# Copy environment file
+cp .env.example .env
+
+# Start with Docker Compose
+docker-compose up -d
+
+# View logs
+docker-compose logs -f api
+
+# API available at http://localhost:8000
+# Docs at http://localhost:8000/docs
 ```
 
-### Installation
+### Option 2: Local Development
+
+**Requirements:**
+- Python 3.10 or 3.11 (NOT 3.12 due to tensorflow dependency)
+- ffmpeg installed (`brew install ffmpeg` on macOS)
+- uv package manager
 
 ```bash
 # Install dependencies
-uv sync
+~/.local/bin/uv sync
 
-# Copy environment template (optional)
-cp .env.example .env
+# Run development server
+~/.local/bin/uv run uvicorn app.main:app --reload
+
+# API available at http://localhost:8000
 ```
 
-### Start the Development Server
+## Docker Commands
 
 ```bash
-uv run fastapi dev app/main.py
+# Development (with hot-reload)
+docker-compose up
+
+# Production (with monitoring)
+docker-compose -f docker-compose.prod.yml up -d
+
+# Build image
+docker build -t gospel-keys-api .
+
+# View logs
+docker-compose logs -f
+
+# Stop all services
+docker-compose down
+
+# Clean up volumes
+docker-compose down -v
 ```
 
-Visit:
-- API: http://localhost:8000
-- Interactive Docs: http://localhost:8000/docs
+## Monitoring (Production)
+
+When using `docker-compose.prod.yml`:
+- **Prometheus**: http://localhost:9090
+- **Grafana**: http://localhost:3001 (admin/admin)
+
+## API Documentation
+
+Interactive API documentation available at:
+- **Swagger UI**: http://localhost:8000/docs
+- **ReDoc**: http://localhost:8000/redoc
 - Health Check: http://localhost:8000/health
 
 ## API Endpoints

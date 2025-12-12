@@ -1,0 +1,42 @@
+# Docker Compose for Gospel Keys local development
+version: '3.8'
+
+services:
+  # Main FastAPI application
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gospel-keys-api
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mount code for hot-reload in development
+      - ./app:/app/app
+      # Persist uploads and outputs
+      - ./uploads:/app/uploads
+      - ./outputs:/app/outputs
+      # Persist database
+      - ./gospel_keys.db:/app/gospel_keys.db
+    environment:
+      - CORS_ORIGINS=http://localhost:3000,http://localhost:5173
+      - LOG_LEVEL=DEBUG
+    env_file:
+      - .env
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8000/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - gospel-keys-network
+
+networks:
+  gospel-keys-network:
+    driver: bridge
+
+volumes:
+  uploads:
+  outputs:

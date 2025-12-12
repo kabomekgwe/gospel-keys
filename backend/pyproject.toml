@@ -20,12 +20,18 @@ dependencies = [
     "demucs>=4.0.0",
     # Pipeline - MIDI transcription
     "basic-pitch>=0.4.0",
-    "pretty-midi>=0.2.10",
+    "pretty-midi>=0.2.11",
     # Pipeline - Audio analysis
     "librosa>=0.10.0",
     "numpy>=1.24.0,<2.0.0",
     "scipy>=1.11.0",
     "soundfile>=0.12.0",
+    # Phase 2 - Database & advanced features
+    "sqlalchemy[asyncio]>=2.0.0",
+    "aiosqlite>=0.20.0",
+    "alembic>=1.13.0",
+    "music21>=9.1.0",
+    # System dependencies
     "setuptools>=80.9.0",
 ]
 

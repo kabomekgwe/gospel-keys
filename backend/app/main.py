@@ -8,12 +8,13 @@ from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 
 from app.core.config import settings
-from app.api.routes import health, transcribe, jobs
+from app.api.routes import health, transcribe, jobs, library, practice, snippets, export
 from app.services.transcription import TranscriptionService
 
 
 # Global service instance
 transcription_service: TranscriptionService = None
+
 
 
 @asynccontextmanager
@@ -24,6 +25,11 @@ async def lifespan(app: FastAPI):
     
     # Ensure directories exist
     settings.ensure_directories()
+    
+    # Initialize database
+    from app.database.session import init_db
+    await init_db()
+    print("✓ Database initialized")
     
     # Initialize transcription service
     transcription_service = TranscriptionService()
@@ -39,6 +45,8 @@ async def lifespan(app: FastAPI):
     yield
     
     # Shutdown
+    from app.database.session import close_db
+    await close_db()
     print(f"✗ Shutting down {settings.app_name}")
 
 
@@ -63,6 +71,10 @@ app.add_middleware(
 app.include_router(health.router)
 app.include_router(transcribe.router, prefix=settings.api_v1_prefix)
 app.include_router(jobs.router, prefix=settings.api_v1_prefix)
+app.include_router(library.router, prefix=settings.api_v1_prefix)
+app.include_router(practice.router, prefix=settings.api_v1_prefix)
+app.include_router(snippets.router, prefix=settings.api_v1_prefix)
+app.include_router(export.router, prefix=settings.api_v1_prefix)
 
 
 # File serving endpoint

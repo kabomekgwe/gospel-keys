@@ -208,8 +208,72 @@ class TranscriptionService:
             job.result = result
             job.completed_at = datetime.now()
             
+            # Save to database
+            await self._save_to_database(job_id, result, source_title)
+            
         except Exception as e:
             await self._handle_error(job_id, str(e))
+    
+    async def _save_to_database(
+        self,
+        job_id: str,
+        result: TranscriptionResult,
+        source_title: Optional[str] = None
+    ):
+        """Save transcription result to SQLite database"""
+        try:
+            from app.database.session import async_session_maker
+            from app.database.models import Song, SongNote, SongChord
+            
+            async with async_session_maker() as db:
+                # Create song record
+                song = Song(
+                    id=job_id,
+                    title=source_title or "Untitled",
+                    duration=result.duration,
+                    tempo=result.tempo,
+                    key_signature=result.key,
+                    midi_file_path=str(settings.output_dir / job_id / "transcription.mid"),
+                    created_at=datetime.now(),
+                    last_accessed_at=datetime.now(),
+                )
+                
+                # Get job to add source info
+                job = self.jobs.get(job_id)
+                if job:
+                    song.source_url = job.source_url
+                    song.source_file = job.source_file
+                
+                db.add(song)
+                
+                # Add notes
+                for note_data in result.notes:
+                    note = SongNote(
+                        song_id=job_id,
+                        pitch=note_data.pitch,
+                        start_time=note_data.start_time,
+                        end_time=note_data.end_time,
+                        velocity=note_data.velocity,
+                    )
+                    db.add(note)
+                
+                # Add chords
+                for chord_data in result.chords:
+                    chord = SongChord(
+                        song_id=job_id,
+                        time=chord_data.time,
+                        duration=chord_data.duration,
+                        chord=chord_data.chord,
+                        confidence=chord_data.confidence,
+                        root=chord_data.root,
+                        quality=chord_data.quality,
+                    )
+                    db.add(chord)
+                
+                await db.commit()
+        except Exception as e:
+            # Log error but don't fail the job
+            print(f"Warning: Failed to save to database: {e}")
     
     async def _handle_error(self, job_id: str, error_message: str):
         """Handle pipeline errors"""

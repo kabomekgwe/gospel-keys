@@ -1,0 +1,71 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+ENV/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-*
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.mypy_cache/
+.ruff_cache/
+
+# Documentation
+*.md
+docs/
+*.txt
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+Jenkinsfile
+
+# OS
+.DS_Store
+Thumbs.db
+*.log
+
+# Data files (handled via volumes)
+uploads/
+outputs/
+*.db
+*.db-shm
+*.db-wal
+
+# Large binary files
+*.wav
+*.mp3
+*.mid
+*.mp4
+*.avi
+
+# Environment
+.env
+.env.*
+
+# Docker
+Dockerfile
+docker-compose*.yml
+.dockerignore
