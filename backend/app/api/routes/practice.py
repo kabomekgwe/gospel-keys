@@ -144,3 +144,95 @@ async def list_practice_sessions(
         )
         for session in sessions
     ]
+
+
+# -------------------------------------------------------------------------
+# SRS / Adaptive Practice Endpoints
+# -------------------------------------------------------------------------
+
+class ReviewRequest(BaseModel):
+    """Review rating submission"""
+    quality: int = Field(..., ge=0, le=5, description="0=Blackout, 5=Perfect")
+
+
+@router.post("/snippets/{snippet_id}/review", status_code=200)
+async def review_snippet(
+    snippet_id: str,
+    request: ReviewRequest,
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Submit a practice review for a snippet.
+    Updates the scheduling based on SM-2 algorithm.
+    """
+    from app.database.models import Snippet
+    from app.services.srs_service import SRSService
+    
+    snippet = await db.get(Snippet, snippet_id)
+    if not snippet:
+        raise HTTPException(status_code=404, detail="Snippet not found")
+        
+    # Calculate new schedule
+    updates = SRSService.get_review_schedule(request.quality, snippet)
+    
+    # Apply updates
+    for key, value in updates.items():
+        setattr(snippet, key, value)
+        
+    # Also log a practice session implicitly
+    session = PracticeSession(
+        song_id=snippet.song_id,
+        snippet_id=snippet.id,
+        duration_seconds=0, # Unknown duration for quick review
+        notes=f"SRS Review: Quality {request.quality}",
+        created_at=datetime.now()
+    )
+    db.add(session)
+    
+    await db.commit()
+    await db.refresh(snippet)
+    
+    return {
+        "message": "Review recorded",
+        "next_review_at": snippet.next_review_at,
+        "interval_days": snippet.interval_days
+    }
+
+
+@router.get("/snippets/due")
+async def get_due_snippets(
+    limit: int = 10,
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Get snippets due for review today.
+    """
+    from sqlalchemy import select
+    from app.database.models import Snippet
+    
+    now = datetime.now()
+    
+    query = (
+        select(Snippet)
+        .where(Snippet.next_review_at <= now)
+        .order_by(Snippet.next_review_at.asc())  # Most overdue first
+        .limit(limit)
+    )
+    
+    result = await db.execute(query)
+    snippets = result.scalars().all()
+    
+    # If not enough due items, fill with "new" items (never reviewed)
+    if len(snippets) < limit:
+        remaining = limit - len(snippets)
+        new_query = (
+            select(Snippet)
+            .where(Snippet.next_review_at == None)
+            .order_by(Snippet.created_at.desc()) # Newest first
+            .limit(remaining)
+        )
+        new_result = await db.execute(new_query)
+        new_snippets = new_result.scalars().all()
+        snippets.extend(new_snippets)
+        
+    return snippets

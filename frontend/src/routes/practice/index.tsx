@@ -16,10 +16,11 @@ import {
     ChevronRight,
     Flame,
     Calendar,
+    Clock,
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { usePracticeStore } from '../../lib/practiceStore';
-import { libraryApi } from '../../lib/api';
+import { libraryApi, practiceApi } from '../../lib/api';
 import { StreakCounter, PracticeGoals, PracticeStats, SessionHistoryChart } from '../../components/practice';
 
 export const Route = createFileRoute('/practice/')({
@@ -57,6 +58,11 @@ function PracticeDashboard() {
 
             {/* Main Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Daily Mix - Full Width */}
+                <div className="lg:col-span-3">
+                    <DailyMixSection />
+                </div>
+
                 {/* Left Column - Streak and Goals */}
                 <div className="space-y-6">
                     <motion.div
@@ -224,5 +230,67 @@ function PracticeDashboard() {
                 </motion.div>
             )}
         </div>
+    );
+}
+
+function DailyMixSection() {
+    const { data: dueSnippets } = useQuery({
+        queryKey: ['practice', 'due'],
+        queryFn: () => practiceApi.getDueSnippets(),
+    });
+
+    if (!dueSnippets || dueSnippets.length === 0) return null;
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="card p-6 bg-gradient-to-r from-violet-500/20 to-fuchsia-500/20 border-violet-500/30 mb-6"
+        >
+            <div className="flex items-center justify-between mb-4">
+                <div>
+                    <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                        <Flame className="w-5 h-5 text-amber-400" />
+                        Daily Practice Mix
+                    </h2>
+                    <p className="text-slate-400 text-sm">
+                        {dueSnippets.length} items due for review today
+                    </p>
+                </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {dueSnippets.map((snippet) => (
+                    <Link
+                        key={snippet.id}
+                        to="/library/$songId"
+                        params={{ songId: snippet.song_id }}
+                        search={{ tab: 'practice', snippetId: snippet.id }}
+                        className="group p-4 bg-slate-800/50 hover:bg-slate-700 rounded-lg border border-slate-700 hover:border-violet-500/50 transition-all"
+                    >
+                        <div className="flex justify-between items-start mb-2">
+                            <h4 className="font-semibold text-white group-hover:text-violet-400 transition-colors">
+                                {snippet.label}
+                            </h4>
+                            {snippet.difficulty && (
+                                <span className="text-xs px-2 py-1 bg-slate-700 rounded text-slate-300">
+                                    {snippet.difficulty}
+                                </span>
+                            )}
+                        </div>
+                        <div className="flex items-center gap-4 text-xs text-slate-400">
+                            <span className="flex items-center gap-1">
+                                <Clock className="w-3 h-3" />
+                                {Math.round(snippet.end_time - snippet.start_time)}s
+                            </span>
+                            <span className="flex items-center gap-1">
+                                <Dumbbell className="w-3 h-3" />
+                                {snippet.repetition_count || 0} reps
+                            </span>
+                        </div>
+                    </Link>
+                ))}
+            </div>
+        </motion.div>
     );
 }

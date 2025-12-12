@@ -268,7 +268,38 @@ export const practiceApi = {
         const response = await fetch(`${API_BASE_URL}/api/v1/practice/sessions?${params}`);
         return handleResponse<PracticeSession[]>(response);
     },
+
+    // SRS Endpoints
+    reviewSnippet: async (snippetId: string, quality: number): Promise<void> => {
+        const response = await fetch(`${API_BASE_URL}/api/v1/practice/snippets/${snippetId}/review`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ quality }),
+        });
+        return handleResponse<void>(response);
+    },
+
+    getDueSnippets: async (limit = 10): Promise<Snippet[]> => {
+        const response = await fetch(`${API_BASE_URL}/api/v1/practice/snippets/due?limit=${limit}`);
+        return handleResponse<Snippet[]>(response);
+    },
 };
+
+export interface Snippet {
+    id: string;
+    song_id: string;
+    label: string;
+    start_time: number;
+    end_time: number;
+    difficulty?: string;
+    practice_count: number;
+
+    // SRS Fields
+    next_review_at?: string;
+    interval_days: number;
+    ease_factor: number;
+    repetition_count: number;
+}
 
 // ============================================================================
 // Export API

@@ -30,11 +30,17 @@ import { type SongDetail, libraryApi, notesApi } from '../../lib/api';
 import { PianoRoll } from '../../components/PianoRoll';
 import { Piano, MiniPiano } from '../../components/Piano';
 import { PlaybackControls } from '../../components/PlaybackControls';
-import { useMidiPlayer, type MidiNote } from '../../hooks/useMidiPlayer';
+import { useNewMidiPlayer, type MidiNote } from '../../hooks/useNewMidiPlayer';
 import { SheetMusicRenderer } from '../../components/sheet-music';
+import { AnalysisTab } from '../../components/AnalysisTab';
+import { PracticeTab } from '../../components/PracticeTab';
 
 export const Route = createFileRoute('/library/$songId')({
     component: SongDetailPage,
+    validateSearch: (search: Record<string, unknown>): { tab?: TabId; snippetId?: string } => ({
+        tab: (search.tab as TabId) || 'overview',
+        snippetId: (search.snippetId as string) || undefined,
+    }),
 });
 
 // Generate demo notes for testing (replace with real API data)
@@ -98,7 +104,13 @@ const tabs: { id: TabId; label: string; icon: typeof Music }[] = [
 
 function SongDetailPage() {
     const { songId } = useParams({ from: '/library/$songId' });
-    const [activeTab, setActiveTab] = useState<TabId>('overview');
+    const searchParams = Route.useSearch();
+    const navigate = Route.useNavigate();
+
+    // Sync tab with search params
+    const activeTab = searchParams.tab || 'overview';
+    const setActiveTab = (tab: TabId) => navigate({ search: { ...searchParams, tab } });
+
     const [isFavorite, setIsFavorite] = useState(false);
 
     // Fetch song data from real API
@@ -126,12 +138,12 @@ function SongDetailPage() {
             startTime: note.startTime,
             duration: note.duration,
             velocity: note.velocity,
-            hand: note.hand,
+            hand: note.hand || 'right',
         }));
     }, [notesData, song]);
 
     // MIDI player
-    const [playerState, playerControls] = useMidiPlayer(
+    const [playerState, playerControls] = useNewMidiPlayer(
         songNotes,
         song?.duration || 0
     );
@@ -343,49 +355,16 @@ function SongDetailPage() {
                 )}
 
                 {activeTab === 'analysis' && (
-                    <div className="p-6">
-                        <div className="max-w-4xl mx-auto">
-                            <div className="card p-8 text-center">
-                                <BarChart2 className="w-12 h-12 text-violet-400 mx-auto mb-4" />
-                                <h3 className="text-xl font-semibold text-white mb-2">
-                                    Analysis Dashboard
-                                </h3>
-                                <p className="text-slate-400 mb-6">
-                                    View detailed chord progressions, harmonic analysis, and pattern detection.
-                                </p>
-                                <Link
-                                    to={`/library/${songId}/analyze`}
-                                    className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-violet-500 to-violet-600 text-white rounded-xl hover:from-violet-400 hover:to-violet-500 transition-all"
-                                >
-                                    Open Analysis
-                                    <BarChart2 className="w-4 h-4" />
-                                </Link>
-                            </div>
-                        </div>
-                    </div>
+                    <AnalysisTab notes={songNotes} />
                 )}
 
                 {activeTab === 'practice' && (
-                    <div className="p-6">
-                        <div className="max-w-4xl mx-auto">
-                            <div className="card p-8 text-center">
-                                <Dumbbell className="w-12 h-12 text-cyan-400 mx-auto mb-4" />
-                                <h3 className="text-xl font-semibold text-white mb-2">
-                                    Practice Mode
-                                </h3>
-                                <p className="text-slate-400 mb-6">
-                                    Slow down tempo, loop sections, and track your progress.
-                                </p>
-                                <Link
-                                    to={`/library/${songId}/practice`}
-                                    className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-cyan-600 text-white rounded-xl hover:from-cyan-400 hover:to-cyan-500 transition-all"
-                                >
-                                    Start Practice
-                                    <Dumbbell className="w-4 h-4" />
-                                </Link>
-                            </div>
-                        </div>
-                    </div>
+                    <PracticeTab
+                        playerControls={playerControls}
+                        playerState={playerState}
+                        notes={songNotes}
+                        snippetId={searchParams.snippetId}
+                    />
                 )}
             </div>
 

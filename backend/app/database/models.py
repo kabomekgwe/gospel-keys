@@ -223,6 +223,14 @@ class Snippet(Base):
     difficulty: Mapped[Optional[str]] = mapped_column(String)
     notes: Mapped[Optional[str]] = mapped_column(Text)
     practice_count: Mapped[int] = mapped_column(Integer, default=0)
+    
+    # SRS / Adaptive Practice Fields
+    next_review_at: Mapped[Optional[datetime]] = mapped_column(DateTime)
+    last_reviewed_at: Mapped[Optional[datetime]] = mapped_column(DateTime)
+    interval_days: Mapped[float] = mapped_column(Float, default=1.0)
+    ease_factor: Mapped[float] = mapped_column(Float, default=2.5)
+    repetition_count: Mapped[int] = mapped_column(Integer, default=0)
+    
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
     
     # Relationship
