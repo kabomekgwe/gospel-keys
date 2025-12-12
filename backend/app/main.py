@@ -1,0 +1,105 @@
+"""Main FastAPI application"""
+
+from contextlib import asynccontextmanager
+from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
+from pathlib import Path
+
+from app.core.config import settings
+from app.api.routes import health, transcribe, jobs
+from app.services.transcription import TranscriptionService
+
+
+# Global service instance
+transcription_service: TranscriptionService = None
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Application lifespan events"""
+    # Startup
+    global transcription_service
+    
+    # Ensure directories exist
+    settings.ensure_directories()
+    
+    # Initialize transcription service
+    transcription_service = TranscriptionService()
+    
+    # Inject service into route modules
+    transcribe.transcription_service = transcription_service
+    jobs.transcription_service = transcription_service
+    
+    print(f"✓ Started {settings.app_name} v{settings.version}")
+    print(f"✓ Upload directory: {settings.upload_dir}")
+    print(f"✓ Output directory: {settings.output_dir}")
+    
+    yield
+    
+    # Shutdown
+    print(f"✗ Shutting down {settings.app_name}")
+
+
+# Create FastAPI app
+app = FastAPI(
+    title=settings.app_name,
+    description=settings.description,
+    version=settings.version,
+    lifespan=lifespan,
+)
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.cors_origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Include routers
+app.include_router(health.router)
+app.include_router(transcribe.router, prefix=settings.api_v1_prefix)
+app.include_router(jobs.router, prefix=settings.api_v1_prefix)
+
+
+# File serving endpoint
+@app.get("/files/{job_id}/{filename}")
+async def serve_file(job_id: str, filename: str):
+    """Serve output files (MIDI, audio, etc.)"""
+    file_path = settings.output_dir / job_id / filename
+    
+    if not file_path.exists():
+        return JSONResponse(
+            status_code=404,
+            content={"detail": "File not found"}
+        )
+    
+    return FileResponse(file_path)
+
+
+# Global exception handler
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    """Handle uncaught exceptions"""
+    return JSONResponse(
+        status_code=500,
+        content={
+            "detail": "Internal server error",
+            "error": str(exc)
+        }
+    )
+
+
+# Root endpoint
+@app.get("/")
+async def root():
+    """API root"""
+    return {
+        "service": settings.app_name,
+        "version": settings.version,
+        "docs": "/docs",
+        "health": "/health",
+    }
