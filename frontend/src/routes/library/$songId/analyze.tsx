@@ -1,0 +1,408 @@
+/**
+ * Song Analysis Dashboard
+ * 
+ * Comprehensive music analysis view with:
+ * - Chord progressions and harmonic function
+ * - Tension curve visualization
+ * - Pattern detection results
+ * - Genre classification
+ * - Key/tempo analysis
+ */
+import { createFileRoute, Link, useParams } from '@tanstack/react-router';
+import { useQuery } from '@tanstack/react-query';
+import { motion } from 'framer-motion';
+import { useState, useMemo } from 'react';
+import {
+    ArrowLeft,
+    Music,
+    BarChart2,
+    Zap,
+    Layers,
+    Target,
+    TrendingUp,
+    Fingerprint,
+} from 'lucide-react';
+import { analysisApi, libraryApi } from '../../../lib/api';
+import { ChordChart, type ChordData } from '../../../components/ChordChart';
+import { TensionCurve, type TensionPoint } from '../../../components/TensionCurve';
+import { ProgressionPatterns, type ProgressionPattern } from '../../../components/ProgressionPatterns';
+
+export const Route = createFileRoute('/library/$songId/analyze')({
+    component: AnalyzePage,
+});
+
+// Generate demo data for testing
+function generateDemoChords(duration: number): ChordData[] {
+    const chords: ChordData[] = [];
+    const progressions = [
+        { root: 'C', quality: 'maj', roman: 'I', fn: 'tonic' as const },
+        { root: 'G', quality: 'maj', roman: 'V', fn: 'dominant' as const },
+        { root: 'A', quality: 'm', roman: 'vi', fn: 'tonic' as const },
+        { root: 'F', quality: 'maj', roman: 'IV', fn: 'subdominant' as const },
+    ];
+
+    let time = 0;
+    let id = 0;
+    const chordDuration = 2;
+
+    while (time < duration) {
+        const prog = progressions[id % progressions.length];
+        chords.push({
+            id: `chord-${id}`,
+            root: prog.root,
+            quality: prog.quality,
+            romanNumeral: prog.roman,
+            function: prog.fn,
+            startTime: time,
+            endTime: time + chordDuration,
+        });
+        time += chordDuration;
+        id++;
+    }
+
+    return chords;
+}
+
+function generateDemoTension(duration: number): TensionPoint[] {
+    const points: TensionPoint[] = [];
+    const resolution = 0.5; // Every 0.5 seconds
+
+    for (let t = 0; t < duration; t += resolution) {
+        // Create an arch-shaped tension curve
+        const normalized = t / duration;
+        const baseArc = Math.sin(normalized * Math.PI);
+        const wave = Math.sin(normalized * Math.PI * 8) * 0.15;
+        let tension = baseArc * 0.7 + 0.2 + wave;
+        tension = Math.max(0, Math.min(1, tension));
+
+        const point: TensionPoint = { time: t, tension };
+
+        // Add events at key points
+        if (Math.abs(normalized - 0.5) < 0.02) {
+            point.event = 'climax';
+            point.eventLabel = 'Musical climax';
+        } else if (normalized > 0.9 && normalized < 0.95) {
+            point.event = 'cadence';
+            point.eventLabel = 'Final cadence';
+        }
+
+        points.push(point);
+    }
+
+    return points;
+}
+
+function generateDemoPatterns(): ProgressionPattern[] {
+    return [
+        {
+            id: 'pattern-1',
+            name: 'I–V–vi–IV (Axis Progression)',
+            pattern: ['I', 'V', 'vi', 'IV'],
+            chords: ['C', 'G', 'Am', 'F'],
+            genre: 'Pop',
+            confidence: 0.95,
+            startTime: 0,
+            endTime: 32,
+            description: 'The most common chord progression in pop music.',
+            famousExamples: ['Let It Be', 'No Woman No Cry', 'With or Without You'],
+        },
+        {
+            id: 'pattern-2',
+            name: 'Repeated Axis',
+            pattern: ['I', 'V', 'vi', 'IV'],
+            chords: ['C', 'G', 'Am', 'F'],
+            genre: 'Pop',
+            confidence: 0.92,
+            startTime: 32,
+            endTime: 64,
+            description: 'Same progression repeated with slight variation.',
+        },
+    ];
+}
+
+function AnalyzePage() {
+    const { songId } = useParams({ from: '/library/$songId/analyze' });
+    const [currentTime, setCurrentTime] = useState(0);
+    const [selectedChordId, setSelectedChordId] = useState<string>();
+
+    // Fetch song data from real API
+    const { data: song, isLoading: songLoading } = useQuery({
+        queryKey: ['song', songId],
+        queryFn: () => libraryApi.getSong(songId),
+    });
+
+    // Fetch genre analysis from real API
+    const { data: genreData } = useQuery({
+        queryKey: ['analysis', 'genre', songId],
+        queryFn: async () => {
+            try {
+                return await analysisApi.getGenre(songId);
+            } catch {
+                // Fallback to demo data if API not available
+                return {
+                    primary_genre: 'Unknown',
+                    subgenres: [],
+                    confidence: 0,
+                    characteristics: {},
+                };
+            }
+        },
+        enabled: !!song,
+    });
+
+    // Fetch chord analysis
+    const { data: chordData } = useQuery({
+        queryKey: ['analysis', 'chords', songId],
+        queryFn: async () => {
+            try {
+                return await analysisApi.getChords(songId);
+            } catch {
+                // Fallback to demo if API not available
+                return song ? generateDemoChords(song.duration) : [];
+            }
+        },
+        enabled: !!song,
+    });
+
+    // Fetch patterns
+    const { data: patternData } = useQuery({
+        queryKey: ['analysis', 'patterns', songId],
+        queryFn: async () => {
+            try {
+                return await analysisApi.getPatterns(songId);
+            } catch {
+                return generateDemoPatterns();
+            }
+        },
+        enabled: !!song,
+    });
+
+    // Use real data or fallback to demo
+    const chords = useMemo<ChordData[]>(() => {
+        if (chordData && chordData.length > 0) {
+            return chordData.map((c: any, i: number) => ({
+                id: `chord-${i}`,
+                root: c.root || c.chord?.split(/[mM7]/)[0] || 'C',
+                quality: c.quality || 'maj',
+                romanNumeral: c.roman_numeral,
+                function: c.function,
+                startTime: c.start_time || c.startTime || i * 2,
+                endTime: c.end_time || c.endTime || (i + 1) * 2,
+            }));
+        }
+        return song ? generateDemoChords(song.duration) : [];
+    }, [chordData, song]);
+
+    const tensionData = useMemo(() =>
+        song ? generateDemoTension(song.duration) : [],
+        [song]
+    );
+
+    const patterns = useMemo<ProgressionPattern[]>(() => {
+        if (patternData && patternData.length > 0) {
+            return patternData.map((p: any, i: number) => ({
+                id: `pattern-${i}`,
+                name: p.name || p.pattern_name || 'Unknown Pattern',
+                pattern: p.pattern || p.roman_numerals || [],
+                chords: p.chords || [],
+                genre: p.genre || 'Unknown',
+                confidence: p.confidence || 0.5,
+                startTime: p.start_time || 0,
+                endTime: p.end_time || 30,
+                description: p.description,
+                famousExamples: p.famous_examples || p.examples,
+            }));
+        }
+        return generateDemoPatterns();
+    }, [patternData]);
+
+    if (songLoading) {
+        return (
+            <div className="flex-1 flex items-center justify-center bg-slate-900">
+                <div className="text-center">
+                    <div className="w-12 h-12 border-4 border-violet-500/30 border-t-violet-500 rounded-full animate-spin mx-auto mb-4" />
+                    <p className="text-slate-400">Loading analysis...</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (!song) {
+        return (
+            <div className="flex-1 flex items-center justify-center bg-slate-900">
+                <div className="text-center">
+                    <p className="text-red-400 mb-4">Song not found</p>
+                    <Link to="/library" className="text-cyan-400 hover:underline">
+                        Back to Library
+                    </Link>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="flex-1 overflow-y-auto bg-slate-900">
+            {/* Header */}
+            <header className="sticky top-0 z-10 bg-slate-900/80 backdrop-blur-lg border-b border-slate-700/50">
+                <div className="p-6">
+                    <div className="flex items-center gap-4 mb-4">
+                        <Link
+                            to={`/library/${songId}`}
+                            className="p-2 rounded-lg bg-slate-800/50 text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                        >
+                            <ArrowLeft className="w-5 h-5" />
+                        </Link>
+
+                        <div>
+                            <h1 className="text-2xl font-bold text-white flex items-center gap-3">
+                                <BarChart2 className="w-6 h-6 text-violet-400" />
+                                Analysis Dashboard
+                            </h1>
+                            <p className="text-slate-400">{song.title}</p>
+                        </div>
+                    </div>
+
+                    {/* Stats bar */}
+                    <div className="flex flex-wrap items-center gap-4">
+                        <div className="flex items-center gap-2 px-4 py-2 bg-slate-800/50 rounded-lg">
+                            <Music className="w-4 h-4 text-cyan-400" />
+                            <span className="text-sm text-slate-300">Key: {song.key_signature}</span>
+                        </div>
+
+                        <div className="flex items-center gap-2 px-4 py-2 bg-slate-800/50 rounded-lg">
+                            <Zap className="w-4 h-4 text-amber-400" />
+                            <span className="text-sm text-slate-300">Tempo: {song.tempo} BPM</span>
+                        </div>
+
+                        <div className="flex items-center gap-2 px-4 py-2 bg-slate-800/50 rounded-lg">
+                            <Layers className="w-4 h-4 text-violet-400" />
+                            <span className="text-sm text-slate-300">{chords.length} chord changes</span>
+                        </div>
+
+                        {genreData && (
+                            <div className="flex items-center gap-2 px-4 py-2 bg-violet-500/20 text-violet-300 rounded-lg">
+                                <Fingerprint className="w-4 h-4" />
+                                <span className="text-sm">
+                                    {genreData.primary_genre}
+                                    <span className="text-violet-400 ml-1">
+                                        ({Math.round(genreData.confidence * 100)}%)
+                                    </span>
+                                </span>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </header>
+
+            {/* Content */}
+            <div className="p-6 space-y-8">
+                {/* Genre Analysis */}
+                {genreData && (
+                    <motion.section
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                    >
+                        <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                            <Fingerprint className="w-5 h-5 text-violet-400" />
+                            Genre Classification
+                        </h2>
+
+                        <div className="card p-6">
+                            <div className="flex items-center justify-between mb-4">
+                                <div>
+                                    <span className="text-2xl font-bold text-white">{genreData.primary_genre}</span>
+                                    <div className="flex items-center gap-2 mt-2">
+                                        {genreData.subgenres.map((sub, i) => (
+                                            <span key={i} className="px-2 py-1 bg-slate-700 rounded text-xs text-slate-300">
+                                                {sub}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div className="text-right">
+                                    <div className="text-3xl font-bold text-violet-400">
+                                        {Math.round(genreData.confidence * 100)}%
+                                    </div>
+                                    <div className="text-xs text-slate-400">Confidence</div>
+                                </div>
+                            </div>
+
+                            {/* Characteristics */}
+                            <div className="grid grid-cols-3 gap-4 mt-4 pt-4 border-t border-slate-700/50">
+                                {Object.entries(genreData.characteristics).map(([key, value]) => (
+                                    <div key={key} className="text-center">
+                                        <div className="text-sm text-white capitalize">{value as string}</div>
+                                        <div className="text-xs text-slate-400 capitalize">{key.replace('_', ' ')}</div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </motion.section>
+                )}
+
+                {/* Chord Progression */}
+                <motion.section
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 }}
+                >
+                    <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        <Layers className="w-5 h-5 text-cyan-400" />
+                        Chord Progression
+                    </h2>
+
+                    <div className="card p-6">
+                        <ChordChart
+                            chords={chords}
+                            duration={song.duration}
+                            currentTime={currentTime}
+                            keySignature={song.key_signature}
+                            selectedChordId={selectedChordId}
+                            onChordClick={(chord) => setSelectedChordId(chord.id)}
+                        />
+                    </div>
+                </motion.section>
+
+                {/* Tension Curve */}
+                <motion.section
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                >
+                    <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        <TrendingUp className="w-5 h-5 text-amber-400" />
+                        Harmonic Tension
+                    </h2>
+
+                    <div className="card p-6">
+                        <TensionCurve
+                            data={tensionData}
+                            duration={song.duration}
+                            currentTime={currentTime}
+                            arcType="arch"
+                            onSeek={setCurrentTime}
+                        />
+                    </div>
+                </motion.section>
+
+                {/* Progression Patterns */}
+                <motion.section
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                >
+                    <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        <Target className="w-5 h-5 text-emerald-400" />
+                        Progression Patterns
+                    </h2>
+
+                    <ProgressionPatterns
+                        patterns={patterns}
+                        currentTime={currentTime}
+                    />
+                </motion.section>
+            </div>
+        </div>
+    );
+}

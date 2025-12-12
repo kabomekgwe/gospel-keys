@@ -1,0 +1,497 @@
+/**
+ * Song Detail Page
+ * 
+ * Displays song information with tabbed interface:
+ * - Overview: Song metadata, stats
+ * - Piano Roll: Visual MIDI display with playback
+ * - Analysis: Chord/pattern analysis (linked to next phase)
+ * - Practice: Practice mode (linked to practice phase)
+ */
+import { createFileRoute, Link, useParams } from '@tanstack/react-router';
+import { useQuery } from '@tanstack/react-query';
+import { motion } from 'framer-motion';
+import { useState, useMemo } from 'react';
+import {
+    ArrowLeft,
+    Clock,
+    Music,
+    Timer,
+    Key,
+    Heart,
+    Star,
+    Download,
+    Share2,
+    BarChart2,
+    Dumbbell,
+    Layers,
+    FileMusic,
+} from 'lucide-react';
+import { type SongDetail, libraryApi, notesApi } from '../../lib/api';
+import { PianoRoll } from '../../components/PianoRoll';
+import { Piano, MiniPiano } from '../../components/Piano';
+import { PlaybackControls } from '../../components/PlaybackControls';
+import { useMidiPlayer, type MidiNote } from '../../hooks/useMidiPlayer';
+import { SheetMusicRenderer } from '../../components/sheet-music';
+
+export const Route = createFileRoute('/library/$songId')({
+    component: SongDetailPage,
+});
+
+// Generate demo notes for testing (replace with real API data)
+function generateDemoNotes(duration: number): MidiNote[] {
+    const notes: MidiNote[] = [];
+    const scale = [60, 62, 64, 65, 67, 69, 71, 72]; // C major scale
+
+    let time = 0;
+    let noteId = 0;
+
+    while (time < duration) {
+        // Random chord or single note
+        if (Math.random() > 0.3) {
+            // Chord (3-4 notes)
+            const chordRoot = scale[Math.floor(Math.random() * 4)];
+            const chordNotes = [
+                chordRoot,
+                chordRoot + 4, // Major third
+                chordRoot + 7, // Perfect fifth
+            ];
+            if (Math.random() > 0.5) chordNotes.push(chordRoot + 12); // Octave
+
+            chordNotes.forEach((pitch) => {
+                notes.push({
+                    id: `note-${noteId++}`,
+                    pitch: pitch - 12, // Bass register
+                    startTime: time,
+                    duration: 0.8 + Math.random() * 0.4,
+                    velocity: 60 + Math.floor(Math.random() * 40),
+                    hand: 'left',
+                } as MidiNote & { hand: 'left' | 'right' });
+            });
+        }
+
+        // Melody note
+        const melodyPitch = scale[Math.floor(Math.random() * scale.length)];
+        notes.push({
+            id: `note-${noteId++}`,
+            pitch: melodyPitch + 12,
+            startTime: time + 0.1,
+            duration: 0.3 + Math.random() * 0.3,
+            velocity: 70 + Math.floor(Math.random() * 30),
+            hand: 'right',
+        } as MidiNote & { hand: 'left' | 'right' });
+
+        time += 0.5 + Math.random() * 0.5;
+    }
+
+    return notes;
+}
+
+type TabId = 'overview' | 'piano-roll' | 'sheet-music' | 'analysis' | 'practice';
+
+const tabs: { id: TabId; label: string; icon: typeof Music }[] = [
+    { id: 'overview', label: 'Overview', icon: Layers },
+    { id: 'piano-roll', label: 'Piano Roll', icon: Music },
+    { id: 'sheet-music', label: 'Sheet Music', icon: FileMusic },
+    { id: 'analysis', label: 'Analysis', icon: BarChart2 },
+    { id: 'practice', label: 'Practice', icon: Dumbbell },
+];
+
+function SongDetailPage() {
+    const { songId } = useParams({ from: '/library/$songId' });
+    const [activeTab, setActiveTab] = useState<TabId>('overview');
+    const [isFavorite, setIsFavorite] = useState(false);
+
+    // Fetch song data from real API
+    const { data: song, isLoading, error } = useQuery({
+        queryKey: ['song', songId],
+        queryFn: () => libraryApi.getSong(songId),
+    });
+
+    // Fetch notes for piano roll
+    const { data: notesData } = useQuery({
+        queryKey: ['song', songId, 'notes'],
+        queryFn: () => notesApi.getNotes(songId),
+        enabled: !!song,
+    });
+
+    // Convert API notes to MidiNote format
+    const songNotes = useMemo<MidiNote[]>(() => {
+        if (!notesData || notesData.length === 0) {
+            // Fallback to demo notes if no data
+            return song ? generateDemoNotes(song.duration) : [];
+        }
+        return notesData.map((note) => ({
+            id: note.id,
+            pitch: note.pitch,
+            startTime: note.startTime,
+            duration: note.duration,
+            velocity: note.velocity,
+            hand: note.hand,
+        }));
+    }, [notesData, song]);
+
+    // MIDI player
+    const [playerState, playerControls] = useMidiPlayer(
+        songNotes,
+        song?.duration || 0
+    );
+
+    if (isLoading) {
+        return (
+            <div className="flex-1 flex items-center justify-center bg-slate-900">
+                <div className="text-center">
+                    <div className="w-12 h-12 border-4 border-cyan-500/30 border-t-cyan-500 rounded-full animate-spin mx-auto mb-4" />
+                    <p className="text-slate-400">Loading song...</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (error || !song) {
+        return (
+            <div className="flex-1 flex items-center justify-center bg-slate-900">
+                <div className="text-center">
+                    <p className="text-red-400 mb-4">Failed to load song</p>
+                    <Link
+                        to="/library"
+                        className="text-cyan-400 hover:text-cyan-300 underline"
+                    >
+                        Back to Library
+                    </Link>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="flex-1 flex flex-col bg-slate-900 overflow-hidden">
+            {/* Header */}
+            <header className="flex-shrink-0 p-6 bg-gradient-to-b from-slate-800/80 to-transparent">
+                <div className="flex items-start gap-4">
+                    {/* Back button */}
+                    <Link
+                        to="/library"
+                        className="p-2 rounded-lg bg-slate-800/50 text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                    >
+                        <ArrowLeft className="w-5 h-5" />
+                    </Link>
+
+                    {/* Song info */}
+                    <div className="flex-1">
+                        <h1 className="text-2xl font-bold text-white mb-1">{song.title}</h1>
+                        {song.artist && (
+                            <p className="text-slate-400 mb-3">{song.artist}</p>
+                        )}
+
+                        {/* Metadata badges */}
+                        <div className="flex flex-wrap items-center gap-3">
+                            <span className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800/50 rounded-full text-sm text-slate-300">
+                                <Clock className="w-4 h-4 text-cyan-400" />
+                                {Math.floor(song.duration / 60)}:{(song.duration % 60).toString().padStart(2, '0')}
+                            </span>
+
+                            {song.tempo && (
+                                <span className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800/50 rounded-full text-sm text-slate-300">
+                                    <Timer className="w-4 h-4 text-violet-400" />
+                                    {song.tempo} BPM
+                                </span>
+                            )}
+
+                            {song.key_signature && (
+                                <span className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800/50 rounded-full text-sm text-slate-300">
+                                    <Key className="w-4 h-4 text-amber-400" />
+                                    {song.key_signature}
+                                </span>
+                            )}
+
+                            {song.difficulty && (
+                                <span className="flex items-center gap-1.5 px-3 py-1.5 bg-cyan-500/20 rounded-full text-sm text-cyan-300">
+                                    <Star className="w-4 h-4" />
+                                    {song.difficulty}
+                                </span>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex items-center gap-2">
+                        <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => setIsFavorite(!isFavorite)}
+                            className={`p-3 rounded-xl transition-colors ${isFavorite
+                                ? 'bg-red-500/20 text-red-400'
+                                : 'bg-slate-800/50 text-slate-400 hover:text-white'
+                                }`}
+                        >
+                            <Heart className={`w-5 h-5 ${isFavorite ? 'fill-current' : ''}`} />
+                        </motion.button>
+
+                        <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="p-3 rounded-xl bg-slate-800/50 text-slate-400 hover:text-white transition-colors"
+                        >
+                            <Share2 className="w-5 h-5" />
+                        </motion.button>
+
+                        <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="p-3 rounded-xl bg-slate-800/50 text-slate-400 hover:text-white transition-colors"
+                        >
+                            <Download className="w-5 h-5" />
+                        </motion.button>
+                    </div>
+                </div>
+
+                {/* Tabs */}
+                <nav className="flex items-center gap-1 mt-6 p-1 bg-slate-800/50 rounded-xl w-fit">
+                    {tabs.map((tab) => (
+                        <motion.button
+                            key={tab.id}
+                            onClick={() => setActiveTab(tab.id)}
+                            className={`
+                flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors
+                ${activeTab === tab.id
+                                    ? 'bg-cyan-500 text-white'
+                                    : 'text-slate-400 hover:text-white hover:bg-slate-700/50'
+                                }
+              `}
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                        >
+                            <tab.icon className="w-4 h-4" />
+                            {tab.label}
+                        </motion.button>
+                    ))}
+                </nav>
+            </header>
+
+            {/* Tab content */}
+            <div className="flex-1 overflow-hidden">
+                {activeTab === 'overview' && (
+                    <OverviewTab song={song} />
+                )}
+
+                {activeTab === 'piano-roll' && (
+                    <div className="h-full flex flex-col">
+                        <div className="flex-1 p-4 overflow-hidden">
+                            <PianoRoll
+                                notes={songNotes.map((n: MidiNote) => ({
+                                    id: n.id,
+                                    pitch: n.pitch,
+                                    startTime: n.startTime,
+                                    duration: n.duration,
+                                    velocity: n.velocity,
+                                    hand: n.hand,
+                                }))}
+                                duration={song.duration}
+                                currentTime={playerState.currentTime}
+                                isPlaying={playerState.isPlaying}
+                                highlightedNotes={playerState.activeNotes.map(p =>
+                                    songNotes.find((n: MidiNote) => n.pitch === p &&
+                                        n.startTime <= playerState.currentTime &&
+                                        n.startTime + n.duration > playerState.currentTime
+                                    )?.id || ''
+                                ).filter(Boolean)}
+                                onSeek={playerControls.seek}
+                            />
+                        </div>
+
+                        {/* Piano keyboard */}
+                        <div className="flex-shrink-0 p-4 bg-slate-800/50 border-t border-slate-700/50 overflow-x-auto">
+                            <div className="flex justify-center">
+                                <Piano
+                                    minPitch={48}
+                                    maxPitch={84}
+                                    activeNotes={playerState.activeNotes}
+                                    onNotePlay={(pitch) => playerControls.playNote(pitch, 80, 0.5)}
+                                    keySize={32}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {activeTab === 'sheet-music' && (
+                    <div className="h-full p-6 overflow-auto">
+                        <div className="max-w-5xl mx-auto space-y-6">
+                            <SheetMusicRenderer
+                                notes={songNotes}
+                                currentTime={playerState.currentTime}
+                                height={220}
+                                showControls
+                            />
+
+                            {/* Playback controls for sheet music view */}
+                            <div className="card p-4">
+                                <PlaybackControls
+                                    isPlaying={playerState.isPlaying}
+                                    currentTime={playerState.currentTime}
+                                    duration={song.duration}
+                                    tempo={playerState.tempo}
+                                    onPlay={playerControls.play}
+                                    onPause={playerControls.pause}
+                                    onStop={playerControls.stop}
+                                    onSeek={playerControls.seek}
+                                    onTempoChange={playerControls.setTempo}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {activeTab === 'analysis' && (
+                    <div className="p-6">
+                        <div className="max-w-4xl mx-auto">
+                            <div className="card p-8 text-center">
+                                <BarChart2 className="w-12 h-12 text-violet-400 mx-auto mb-4" />
+                                <h3 className="text-xl font-semibold text-white mb-2">
+                                    Analysis Dashboard
+                                </h3>
+                                <p className="text-slate-400 mb-6">
+                                    View detailed chord progressions, harmonic analysis, and pattern detection.
+                                </p>
+                                <Link
+                                    to={`/library/${songId}/analyze`}
+                                    className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-violet-500 to-violet-600 text-white rounded-xl hover:from-violet-400 hover:to-violet-500 transition-all"
+                                >
+                                    Open Analysis
+                                    <BarChart2 className="w-4 h-4" />
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {activeTab === 'practice' && (
+                    <div className="p-6">
+                        <div className="max-w-4xl mx-auto">
+                            <div className="card p-8 text-center">
+                                <Dumbbell className="w-12 h-12 text-cyan-400 mx-auto mb-4" />
+                                <h3 className="text-xl font-semibold text-white mb-2">
+                                    Practice Mode
+                                </h3>
+                                <p className="text-slate-400 mb-6">
+                                    Slow down tempo, loop sections, and track your progress.
+                                </p>
+                                <Link
+                                    to={`/library/${songId}/practice`}
+                                    className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-cyan-600 text-white rounded-xl hover:from-cyan-400 hover:to-cyan-500 transition-all"
+                                >
+                                    Start Practice
+                                    <Dumbbell className="w-4 h-4" />
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
+
+            {/* Playback controls (show for piano-roll tab) */}
+            {activeTab === 'piano-roll' && (
+                <PlaybackControls
+                    isPlaying={playerState.isPlaying}
+                    currentTime={playerState.currentTime}
+                    duration={playerState.duration}
+                    tempo={playerState.tempo}
+                    onPlay={playerControls.play}
+                    onPause={playerControls.pause}
+                    onStop={playerControls.stop}
+                    onSeek={playerControls.seek}
+                    onTempoChange={playerControls.setTempo}
+                />
+            )}
+        </div>
+    );
+}
+
+// Overview tab content
+function OverviewTab({ song }: { song: SongDetail }) {
+    return (
+        <div className="p-6 overflow-y-auto">
+            <div className="max-w-4xl mx-auto grid gap-6 md:grid-cols-2">
+                {/* Stats card */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="card p-6"
+                >
+                    <h3 className="text-lg font-semibold text-white mb-4">Statistics</h3>
+                    <div className="space-y-4">
+                        <div className="flex justify-between items-center">
+                            <span className="text-slate-400">Total Notes</span>
+                            <span className="text-xl font-bold text-cyan-400">{song.note_count || '—'}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                            <span className="text-slate-400">Chord Changes</span>
+                            <span className="text-xl font-bold text-violet-400">{song.chord_count || '—'}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                            <span className="text-slate-400">Time Signature</span>
+                            <span className="text-lg font-mono text-white">{song.time_signature || '4/4'}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                            <span className="text-slate-400">Duration</span>
+                            <span className="text-lg font-mono text-white">
+                                {Math.floor(song.duration / 60)}:{(song.duration % 60).toString().padStart(2, '0')}
+                            </span>
+                        </div>
+                    </div>
+                </motion.div>
+
+                {/* Quick preview card */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 }}
+                    className="card p-6"
+                >
+                    <h3 className="text-lg font-semibold text-white mb-4">Preview</h3>
+                    <p className="text-slate-400 text-sm mb-4">
+                        Click on the piano keys to play notes
+                    </p>
+                    <div className="flex justify-center">
+                        <MiniPiano minPitch={60} maxPitch={72} />
+                    </div>
+                </motion.div>
+
+                {/* Source info */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                    className="card p-6 md:col-span-2"
+                >
+                    <h3 className="text-lg font-semibold text-white mb-4">Source</h3>
+                    <div className="space-y-3">
+                        {song.source_url && (
+                            <div className="flex items-center gap-3">
+                                <span className="text-slate-400 text-sm">URL:</span>
+                                <a
+                                    href={song.source_url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-cyan-400 hover:text-cyan-300 underline text-sm truncate max-w-md"
+                                >
+                                    {song.source_url}
+                                </a>
+                            </div>
+                        )}
+                        <div className="flex items-center gap-3">
+                            <span className="text-slate-400 text-sm">Imported:</span>
+                            <span className="text-white text-sm">
+                                {new Date(song.created_at).toLocaleDateString('en-US', {
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric',
+                                })}
+                            </span>
+                        </div>
+                    </div>
+                </motion.div>
+            </div>
+        </div>
+    );
+}
