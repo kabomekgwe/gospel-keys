@@ -105,18 +105,21 @@ async def detect_chords(
         
         for i in range(1, len(chord_sequence)):
             if chord_sequence[i] != current_chord:
+
                 # End current chord, start new one
                 avg_confidence = np.mean(current_confidences)
                 root, quality = parse_chord_name(current_chord)
                 
-                chord_events.append(ChordEvent(
-                    time=float(current_start),
-                    duration=float(times[i] - current_start),
-                    chord=current_chord,
-                    confidence=float(avg_confidence),
-                    root=root,
-                    quality=quality,
-                ))
+                duration = float(times[i] - current_start)
+                if duration > 0.001:  # Filter out near-zero durations
+                    chord_events.append(ChordEvent(
+                        time=float(current_start),
+                        duration=duration,
+                        chord=current_chord,
+                        confidence=float(avg_confidence),
+                        root=root,
+                        quality=quality,
+                    ))
                 
                 current_chord = chord_sequence[i]
                 current_start = times[i]
@@ -127,14 +130,16 @@ async def detect_chords(
         # Add final chord
         avg_confidence = np.mean(current_confidences)
         root, quality = parse_chord_name(current_chord)
-        chord_events.append(ChordEvent(
-            time=float(current_start),
-            duration=float(times[-1] - current_start),
-            chord=current_chord,
-            confidence=float(avg_confidence),
-            root=root,
-            quality=quality,
-        ))
+        duration = float(times[-1] - current_start)
+        if duration > 0.001:
+            chord_events.append(ChordEvent(
+                time=float(current_start),
+                duration=duration,
+                chord=current_chord,
+                confidence=float(avg_confidence),
+                root=root,
+                quality=quality,
+            ))
         
         return chord_events
         

@@ -148,6 +148,7 @@ function PracticeDashboard() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.3 }}
+                        className="h-80"
                     >
                         <SessionHistoryChart defaultView="bar" defaultRange="week" />
                     </motion.div>

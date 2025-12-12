@@ -192,6 +192,7 @@ class TranscriptionService:
             midi_url = f"/files/{job_id}/transcription.mid"
             
             result = TranscriptionResult(
+                song_id=job_id,
                 notes=notes,
                 chords=chords,
                 tempo=estimated_tempo if job.options.detect_tempo else None,

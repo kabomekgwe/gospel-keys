@@ -1,4 +1,5 @@
-import { Dumbbell, Repeat, Play, Pause, CheckCircle } from 'lucide-react';
+
+import { Dumbbell, Repeat, Play, Pause, CheckCircle, Hand, Timer } from 'lucide-react';
 import { useState } from 'react';
 import { type MidiNote } from '../hooks/useNewMidiPlayer';
 import { motion } from 'framer-motion';
@@ -13,24 +14,30 @@ interface PracticeTabProps {
         pause: () => void;
         setTempo: (tempo: number) => void;
         seek: (time: number) => void;
+        toggleHandMute: (hand: 'left' | 'right') => void;
+        toggleMetronome: () => void;
     };
     playerState: {
         isPlaying: boolean;
         tempo: number;
         currentTime: number;
+        mutedHands: { left: boolean; right: boolean };
+        metronomeEnabled: boolean;
     };
 }
 
-const ControlButton = ({ onClick, children, active = false, variant = 'default' }: { onClick: () => void, children: React.ReactNode, active?: boolean, variant?: 'default' | 'success' }) => (
+const ControlButton = ({ onClick, children, active = false, variant = 'default', disabled = false }: { onClick: () => void, children: React.ReactNode, active?: boolean, variant?: 'default' | 'success', disabled?: boolean }) => (
     <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
+        whileHover={!disabled ? { scale: 1.05 } : {}}
+        whileTap={!disabled ? { scale: 0.95 } : {}}
         onClick={onClick}
-        className={`px-4 py-2 flex items-center gap-2 rounded-lg transition-colors 
+        disabled={disabled}
+        className={`px-4 py-2 flex items-center gap-2 rounded-lg transition-colors border border-transparent
+            ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
             ${variant === 'success'
                 ? 'bg-emerald-500 hover:bg-emerald-600 text-white'
                 : active
-                    ? 'bg-cyan-500 text-white'
+                    ? 'bg-cyan-500 text-white border-cyan-400'
                     : 'bg-slate-700 hover:bg-slate-600 text-slate-300'
             }`}
     >
@@ -56,7 +63,7 @@ export function PracticeTab({ playerControls, playerState, snippetId }: Practice
         }
     };
 
-    // This effect would ideally be in the player hook
+    // This effect would ideally be in the player hook, but checking here for UI sync
     if (isLooping && loop && playerState.currentTime >= loop.end) {
         playerControls.seek(loop.start);
     }
@@ -91,8 +98,8 @@ export function PracticeTab({ playerControls, playerState, snippetId }: Practice
                 </header>
 
                 <div className="card p-6">
-                    <h3 className="text-lg font-semibold text-white mb-4">Controls</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <h3 className="text-lg font-semibold text-white mb-4">Practice Tools</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
                         {/* Tempo Control */}
                         <div className="space-y-3">
@@ -110,25 +117,48 @@ export function PracticeTab({ playerControls, playerState, snippetId }: Practice
                             </div>
                         </div>
 
-                        {/* Loop Control */}
+                        {/* Hands Separate */}
                         <div className="space-y-3">
-                            <label className="text-slate-300 font-medium">Looping</label>
-                            <div className='flex items-center gap-4'>
-                                <ControlButton onClick={handleSetLoop} active={isLooping}>
-                                    <Repeat className="w-4 h-4" />
-                                    {isLooping ? 'Disable Loop' : 'Loop Last 5s'}
+                            <label className="text-slate-300 font-medium">Hands</label>
+                            <div className="flex items-center gap-2">
+                                <ControlButton
+                                    onClick={() => playerControls.toggleHandMute('left')}
+                                    active={!playerState.mutedHands.left}
+                                >
+                                    <Hand className="w-4 h-4 scale-x-[-1]" />
+                                    Left
                                 </ControlButton>
-                                {loop && (
-                                    <span className="text-sm text-slate-400 font-mono">
-                                        {loop.start.toFixed(1)}s - {loop.end.toFixed(1)}s
-                                    </span>
-                                )}
+                                <ControlButton
+                                    onClick={() => playerControls.toggleHandMute('right')}
+                                    active={!playerState.mutedHands.right}
+                                >
+                                    <Hand className="w-4 h-4" />
+                                    Right
+                                </ControlButton>
                             </div>
                         </div>
 
-                        {/* Playback & Finish */}
-                        <div className="space-y-3 md:col-span-2">
-                            <label className="text-slate-300 font-medium">Actions</label>
+                        {/* Metronome & Loop */}
+                        <div className="space-y-3">
+                            <label className="text-slate-300 font-medium">Tools</label>
+                            <div className="flex items-center gap-2 flex-wrap">
+                                <ControlButton
+                                    onClick={playerControls.toggleMetronome}
+                                    active={playerState.metronomeEnabled}
+                                >
+                                    <Timer className="w-4 h-4" />
+                                    Metronome
+                                </ControlButton>
+
+                                <ControlButton onClick={handleSetLoop} active={isLooping}>
+                                    <Repeat className="w-4 h-4" />
+                                    {isLooping ? 'Loop' : 'Loop 5s'}
+                                </ControlButton>
+                            </div>
+                        </div>
+
+                        {/* Playback Actions */}
+                        <div className="space-y-3 md:col-span-2 lg:col-span-3 pt-4 border-t border-slate-700">
                             <div className="flex items-center gap-4">
                                 <ControlButton onClick={playerControls.play} active={playerState.isPlaying}>
                                     <Play className="w-4 h-4" />
@@ -160,8 +190,8 @@ export function PracticeTab({ playerControls, playerState, snippetId }: Practice
                 >
                     <Dumbbell className="w-12 h-12 text-cyan-400 mx-auto mb-4" />
                     <h3 className="text-xl font-semibold text-white mb-2">Practice makes perfect!</h3>
-                    <p className="text-slate-400">
-                        Use the tools above to master difficult sections.
+                    <p className="text-slate-400 max-w-md mx-auto">
+                        Isolate hands, slow down the tempo, and use the metronome to master difficult sections.
                     </p>
                 </motion.div>
             </div>

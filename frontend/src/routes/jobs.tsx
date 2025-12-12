@@ -95,6 +95,24 @@ function JobsPage() {
         return date.toLocaleDateString();
     };
 
+    const handleExport = (job: StoredJob) => {
+        if (job.result?.midi_url) {
+            // For now, assume relative or absolute URL.
+            // If relative, prepend API_BASE or similar if needed, but usually backend returns full or proper relative path.
+            // Actually, if it's running in docker, localhost:8009 might be different from browser localhost:3000 proxy.
+            // But let's try direct window.open first.
+            const url = job.result.midi_url.startsWith('http')
+                ? job.result.midi_url
+                : `http://localhost:8009${job.result.midi_url}`; // Fallback to hardcoded dev port if relative, or use a config. 
+            // Better: construct full URL based on current callback logic? 
+            // Let's just try window.open(url, '_blank').
+            window.open(url, '_blank');
+        } else {
+            console.warn('No MIDI URL found for job:', job);
+            alert("No MIDI file available for export.");
+        }
+    };
+
     return (
         <div className="min-h-screen p-8">
             <motion.div
@@ -212,13 +230,16 @@ function JobsPage() {
                                     <div className="flex gap-2">
                                         <Link
                                             to="/library/$songId"
-                                            params={{ songId: job.result.song_id }}
+                                            params={{ songId: job.result.song_id || job.job_id }}
                                             className="flex items-center gap-2 px-4 py-2 bg-cyan-500/20 text-cyan-400 rounded-lg hover:bg-cyan-500/30 transition-colors"
                                         >
                                             <Music2 className="w-4 h-4" />
                                             View Song
                                         </Link>
-                                        <button className="flex items-center gap-2 px-4 py-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors">
+                                        <button
+                                            onClick={() => handleExport(job)}
+                                            className="flex items-center gap-2 px-4 py-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
+                                        >
                                             <ExternalLink className="w-4 h-4" />
                                             Export
                                         </button>

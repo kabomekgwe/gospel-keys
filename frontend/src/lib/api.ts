@@ -58,7 +58,7 @@ export interface TranscriptionResult {
     time_signature: string;
     note_count: number;
     chord_count: number;
-    midi_file: string;
+    midi_url?: string;
 }
 
 export const transcriptionApi = {

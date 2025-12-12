@@ -68,6 +68,7 @@ class TranscriptionOptions(BaseModel):
 
 class TranscriptionResult(BaseModel):
     """Complete transcription result"""
+    song_id: str = Field(..., description="ID of the created song (same as job ID)")
     notes: list[NoteEvent] = Field(..., description="Detected MIDI notes")
     chords: list[ChordEvent] = Field(default_factory=list, description="Detected chords")
     patterns: list[GospelPattern] = Field(default_factory=list, description="Gospel patterns (Phase 2)")
