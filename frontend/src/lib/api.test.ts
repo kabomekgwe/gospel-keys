@@ -30,7 +30,7 @@ describe('API Module', () => {
 
             expect(result).toEqual(mockSongs);
             expect(mockFetch).toHaveBeenCalledWith(
-                expect.stringContaining('http://localhost:8000/api/v1/library/songs')
+                expect.stringContaining('http://localhost:8009/api/v1/library/songs')
             );
         });
 
@@ -61,7 +61,7 @@ describe('API Module', () => {
 
             expect(result).toEqual(mockSong);
             expect(mockFetch).toHaveBeenCalledWith(
-                expect.stringContaining('http://localhost:8000/api/v1/library/songs/test-id')
+                expect.stringContaining('http://localhost:8009/api/v1/library/songs/test-id')
             );
         });
 
@@ -74,7 +74,7 @@ describe('API Module', () => {
             await libraryApi.deleteSong('test-id');
 
             expect(mockFetch).toHaveBeenCalledWith(
-                'http://localhost:8000/api/v1/library/songs/test-id',
+                'http://localhost:8009/api/v1/library/songs/test-id',
                 expect.objectContaining({
                     method: 'DELETE',
                 })
@@ -94,7 +94,7 @@ describe('API Module', () => {
 
             expect(result).toEqual(mockJob);
             expect(mockFetch).toHaveBeenCalledWith(
-                expect.stringContaining('http://localhost:8000/api/v1/transcribe/job-1')
+                expect.stringContaining('http://localhost:8009/api/v1/transcribe/job-1')
             );
         });
     });
@@ -111,7 +111,7 @@ describe('API Module', () => {
 
             expect(result).toEqual(mockNotes);
             expect(mockFetch).toHaveBeenCalledWith(
-                expect.stringContaining('http://localhost:8000/api/v1/library/songs/song-1/notes')
+                expect.stringContaining('http://localhost:8009/api/v1/library/songs/song-1/notes')
             );
         });
     });
@@ -128,7 +128,7 @@ describe('API Module', () => {
 
             expect(result).toEqual(mockChords);
             expect(mockFetch).toHaveBeenCalledWith(
-                expect.stringContaining('http://localhost:8000/api/v1/analyze/song-1/chords')
+                expect.stringContaining('http://localhost:8009/api/v1/analyze/song-1/chords')
             );
         });
 
@@ -143,7 +143,7 @@ describe('API Module', () => {
 
             expect(result).toEqual(mockPatterns);
             expect(mockFetch).toHaveBeenCalledWith(
-                expect.stringContaining('http://localhost:8000/api/v1/analyze/song-1/patterns')
+                expect.stringContaining('http://localhost:8009/api/v1/analyze/song-1/patterns')
             );
         });
     });

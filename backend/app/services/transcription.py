@@ -280,7 +280,7 @@ class TranscriptionService:
         if job_id in self.jobs:
             job = self.jobs[job_id]
             job.status = JobStatus.FAILED
-            job.error = error_message
+            job.error_message = error_message
             job.current_step = "Failed"
             job.completed_at = datetime.now()
     

@@ -23,7 +23,7 @@ function SettingsPage() {
         autoPlay: true,
         defaultTempo: 1.0,
         showChords: true,
-        apiUrl: 'http://localhost:8000',
+        apiUrl: 'http://localhost:8009',
     })
 
     const handleSave = () => {

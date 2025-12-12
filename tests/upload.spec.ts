@@ -23,6 +23,7 @@ test.describe('Upload Flow', () => {
         // Fill URL
         const input = page.getByPlaceholder('https://www.youtube.com/watch?v=...');
         await input.fill('https://www.youtube.com/watch?v=dQw4w9WgXcQ');
+        console.log('Input value:', await input.inputValue());
 
         // Submit
         const submitBtn = page.getByRole('button', { name: /Start Transcription/i });
@@ -43,7 +44,7 @@ test.describe('Upload Flow', () => {
         // Validation message should appear
         // This depends on how validation is implemented (HTML5 or custom)
         // For now, assuming button is disabled or error shown
-        const submitBtn = page.getByRole('button', { name: 'Transcribe' });
+        const submitBtn = page.getByRole('button', { name: /Start Transcription/i });
         // If button is disabled:
         // await expect(submitBtn).toBeDisabled();
 

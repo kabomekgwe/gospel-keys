@@ -1,9 +1,3 @@
-/**
- * Jobs Store
- * 
- * Zustand store for tracking transcription jobs with persistence
- * and real-time polling
- */
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { transcriptionApi, type TranscriptionJob } from './api';
@@ -158,15 +152,3 @@ export const useJobsStore = create<JobsState>()(
         }
     )
 );
-
-// Hook for getting a specific job
-export function useJob(jobId: string): StoredJob | undefined {
-    return useJobsStore((state) =>
-        state.jobs.find((job) => job.job_id === jobId)
-    );
-}
-
-// Hook for getting active/recent jobs
-export function useActiveJobs(limit = 10): StoredJob[] {
-    return useJobsStore((state) => state.jobs.slice(0, limit));
-}

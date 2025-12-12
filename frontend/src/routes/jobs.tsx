@@ -15,7 +15,8 @@ import {
     Trash2,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useJobsStore, useActiveJobs, type StoredJob } from '../lib/jobsStore';
+import { useJobsStore, type StoredJob } from '../lib/jobsStore';
+import { useMemo } from 'react';
 
 export const Route = createFileRoute('/jobs')({
     validateSearch: (search: Record<string, unknown>) => ({
@@ -26,7 +27,11 @@ export const Route = createFileRoute('/jobs')({
 
 function JobsPage() {
     const { highlight } = useSearch({ from: '/jobs' });
-    const jobs = useActiveJobs(20);
+    const allJobs = useJobsStore((state) => state.jobs);
+    const jobs = useMemo(
+        () => allJobs.slice(0, 20).filter((job) => job && job.job_id),
+        [allJobs]
+    );
     const { removeJob, clearCompleted } = useJobsStore();
 
     const activeJobsCount = jobs.filter(

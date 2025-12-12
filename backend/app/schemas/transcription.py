@@ -10,12 +10,12 @@ from pydantic import BaseModel, Field, field_validator
 
 class JobStatus(str, Enum):
     """Transcription job status"""
-    QUEUED = "queued"
+    QUEUED = "pending"
     DOWNLOADING = "downloading"
     PROCESSING = "processing"
     ANALYZING = "analyzing"
     COMPLETE = "complete"
-    FAILED = "failed"
+    FAILED = "error"
     CANCELLED = "cancelled"
 
 
@@ -82,7 +82,7 @@ class TranscriptionResult(BaseModel):
 
 class TranscriptionJob(BaseModel):
     """Transcription job tracking"""
-    id: str = Field(..., description="Unique job ID")
+    id: str = Field(..., serialization_alias="job_id", description="Unique job ID")
     status: JobStatus = Field(..., description="Current job status")
     progress: int = Field(0, ge=0, le=100, description="Progress percentage")
     current_step: Optional[str] = Field(None, description="Current processing step")
@@ -90,7 +90,7 @@ class TranscriptionJob(BaseModel):
     source_file: Optional[str] = Field(None, description="Uploaded filename (if file-based)")
     options: TranscriptionOptions = Field(..., description="Processing options")
     result: Optional[TranscriptionResult] = Field(None, description="Result when complete")
-    error: Optional[str] = Field(None, description="Error message if failed")
+    error_message: Optional[str] = Field(None, description="Error message if failed")
     created_at: datetime = Field(default_factory=datetime.now, description="Job creation time")
     started_at: Optional[datetime] = Field(None, description="Processing start time")
     completed_at: Optional[datetime] = Field(None, description="Processing completion time")
