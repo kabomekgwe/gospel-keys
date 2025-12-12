@@ -334,6 +334,9 @@ function SongDetailPage() {
                                 currentTime={playerState.currentTime}
                                 height={220}
                                 showControls
+                                tempo={song.tempo}
+                                keySignature={song.key_signature ?? 'C'}
+                                timeSignature={song.time_signature ?? '4/4'}
                             />
 
                             {/* Playback controls for sheet music view */}

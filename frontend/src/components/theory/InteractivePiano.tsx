@@ -125,7 +125,7 @@ export function InteractivePiano({
             {/* Black keys on top */}
             {(() => {
                 let whiteIdx = 0;
-                return keys.map((key, i) => {
+                return keys.map((key) => {
                     if (!key.isBlack) {
                         whiteIdx++;
                         return null;

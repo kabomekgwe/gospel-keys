@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import { ChordDictionary, ScaleExplorer, CircleOfFifths } from '../../components/theory';
 import { AIGenerator } from '../../components/theory/AIGenerator';
-import { useSynth } from '../../hooks/useSynth';
+import { usePiano } from '../../hooks/usePiano';
 
 export const Route = createFileRoute('/theory/')({
     component: TheoryHub,
@@ -44,8 +44,8 @@ function TheoryHub() {
     const [activeTab, setActiveTab] = useState<TabId>('ai');
     const [selectedKey, setSelectedKey] = useState('C');
 
-    // Audio synth for playing chords and scales
-    const { playChord, playScale } = useSynth({ oscillatorType: 'triangle' });
+    // Real piano audio for playing chords and scales
+    const { playChord, playScale } = usePiano();
 
     const handleKeySelect = (key: string, isMinor: boolean) => {
         setSelectedKey(key);
@@ -56,11 +56,11 @@ function TheoryHub() {
     };
 
     const handlePlayChord = (midiNotes: number[]) => {
-        playChord(midiNotes, 1.5, 0.4);
+        playChord(midiNotes, 2.0, 0.5);
     };
 
     const handlePlayScale = (midiNotes: number[]) => {
-        playScale(midiNotes, 0.35, 0.05, 0.5);
+        playScale(midiNotes, 0.4, 0.05, 0.6);
     };
 
     return (

@@ -206,10 +206,16 @@ export function AIGenerator({ onPlayChord }: AIGeneratorProps) {
     const [exerciseResult, setExerciseResult] = useState<ExerciseResponse | null>(null);
     const [substitutionResult, setSubstitutionResult] = useState<SubstitutionResponse | null>(null);
 
+    const [error, setError] = useState<string | null>(null);
+
     // Mutations
     const progressionMutation = useMutation({
         mutationFn: aiApi.generateProgression,
-        onSuccess: setProgressionResult,
+        onSuccess: (data) => {
+            setProgressionResult(data);
+            setError(null);
+        },
+        onError: (err) => setError(err.message),
     });
 
     const reharmonizationMutation = useMutation({
@@ -222,12 +228,18 @@ export function AIGenerator({ onPlayChord }: AIGeneratorProps) {
                 analysis: data.explanation,
                 tips: data.techniques_used,
             });
+            setError(null);
         },
+        onError: (err) => setError(err.message),
     });
 
     const voicingMutation = useMutation({
         mutationFn: aiApi.generateVoicing,
-        onSuccess: setVoicingResult,
+        onSuccess: (data) => {
+            setVoicingResult(data);
+            setError(null);
+        },
+        onError: (err) => setError(err.message),
     });
 
     const voiceLeadingMutation = useMutation({
@@ -238,17 +250,27 @@ export function AIGenerator({ onPlayChord }: AIGeneratorProps) {
                 voicings: [data.chord1, data.chord2],
                 tips: [data.movement, ...(data.tips || [])],
             });
+            setError(null);
         },
+        onError: (err) => setError(err.message),
     });
 
     const exerciseMutation = useMutation({
         mutationFn: aiApi.generateExercise,
-        onSuccess: setExerciseResult,
+        onSuccess: (data) => {
+            setExerciseResult(data);
+            setError(null);
+        },
+        onError: (err) => setError(err.message),
     });
 
     const substitutionMutation = useMutation({
         mutationFn: aiApi.getSubstitutions,
-        onSuccess: setSubstitutionResult,
+        onSuccess: (data) => {
+            setSubstitutionResult(data);
+            setError(null);
+        },
+        onError: (err) => setError(err.message),
     });
 
     const isLoading = progressionMutation.isPending || reharmonizationMutation.isPending ||
@@ -360,8 +382,8 @@ export function AIGenerator({ onPlayChord }: AIGeneratorProps) {
                                                 key={gen.id}
                                                 onClick={() => setActiveGenerator(gen.id)}
                                                 className={`w-full text-left p-2 rounded-md transition-colors ${activeGenerator === gen.id
-                                                        ? `${colorClasses[category.color]} border`
-                                                        : 'text-slate-300 hover:bg-slate-700/50'
+                                                    ? `${colorClasses[category.color]} border`
+                                                    : 'text-slate-300 hover:bg-slate-700/50'
                                                     }`}
                                             >
                                                 <div className="font-medium text-sm">{gen.name}</div>
@@ -593,6 +615,12 @@ export function AIGenerator({ onPlayChord }: AIGeneratorProps) {
                             </div>
                         )}
                     </div>
+
+                    {error && (
+                        <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
+                            {error}
+                        </div>
+                    )}
 
                     <button
                         onClick={handleGenerate}

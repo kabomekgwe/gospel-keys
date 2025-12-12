@@ -14,6 +14,9 @@ interface SheetMusicRendererProps {
     currentTime?: number;
     height?: number;
     showControls?: boolean;
+    tempo?: number;
+    keySignature?: string;
+    timeSignature?: string;
 }
 
 export function SheetMusicRenderer({
@@ -21,6 +24,9 @@ export function SheetMusicRenderer({
     currentTime = 0,
     height = 200,
     showControls = true,
+    tempo = 120,
+    keySignature = 'C',
+    timeSignature = '4/4',
 }: SheetMusicRendererProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const [zoom, setZoom] = useState(1);
@@ -40,9 +46,10 @@ export function SheetMusicRenderer({
     }, []);
 
     // Get notes visible at current time (show a window of notes)
+    // Expanded window for sheet music view
     const visibleNotes = notes.filter(note =>
-        note.startTime >= currentTime - 2 &&
-        note.startTime <= currentTime + 8
+        note.startTime >= currentTime - 1 &&
+        note.startTime <= currentTime + 6
     );
 
     const { render } = useVexFlow(
@@ -53,7 +60,9 @@ export function SheetMusicRenderer({
             height: height * zoom,
             showClef: true,
             showTimeSignature: true,
-            notesPerMeasure: 4,
+            tempo,
+            keySignature,
+            timeSignature,
         }
     );
 

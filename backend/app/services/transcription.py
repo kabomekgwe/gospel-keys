@@ -181,12 +181,18 @@ class TranscriptionService:
                 job.progress = 80
                 
                 chords = await detect_chords(piano_audio_path)
-                job.progress = 90
+                job.progress = 85
+
+            # Step 6: Advanced Music Theory Analysis (music21)
+            job.current_step = "Analyzing music theory..."
+            job.progress = 90
             
-            # Step 6: Estimate key
-            estimated_key = None
-            if job.options.detect_key:
-                estimated_key = estimate_key(notes)
+            from app.services.music_theory import music_theory_service
+            analysis_result = music_theory_service.analyze_score(midi_path)
+            
+            # Use analyzed key if available, otherwise fall back to estimation
+            # Using the analyzed key is much more accurate than simple estimation
+            estimated_key = analysis_result.get("key") or estimate_key(notes)
             
             # Create result
             midi_url = f"/files/{job_id}/transcription.mid"
@@ -200,6 +206,8 @@ class TranscriptionService:
                 duration=duration,
                 midi_url=midi_url,
                 source_title=source_title,
+                # We could extend TranscriptionResult to include time_signature, etc.
+                # For now, we'll store it in the database via the song record
             )
             
             # Mark job as complete
@@ -210,7 +218,7 @@ class TranscriptionService:
             job.completed_at = datetime.now()
             
             # Save to database
-            await self._save_to_database(job_id, result, source_title)
+            await self._save_to_database(job_id, result, source_title, analysis_result)
             
         except Exception as e:
             await self._handle_error(job_id, str(e))
@@ -219,7 +227,8 @@ class TranscriptionService:
         self,
         job_id: str,
         result: TranscriptionResult,
-        source_title: Optional[str] = None
+        source_title: Optional[str] = None,
+        analysis_result: Optional[dict] = None
     ):
         """Save transcription result to SQLite database"""
         try:
@@ -234,6 +243,7 @@ class TranscriptionService:
                     duration=result.duration,
                     tempo=result.tempo,
                     key_signature=result.key,
+                    time_signature=analysis_result.get("time_signature", "4/4") if analysis_result else "4/4",
                     midi_file_path=str(settings.output_dir / job_id / "transcription.mid"),
                     created_at=datetime.now(),
                     last_accessed_at=datetime.now(),
