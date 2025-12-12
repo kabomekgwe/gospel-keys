@@ -5,6 +5,7 @@
  * - Chord dictionary
  * - Scale explorer
  * - Circle of fifths
+ * - AI Generator
  */
 import { createFileRoute } from '@tanstack/react-router';
 import { motion } from 'framer-motion';
@@ -14,15 +15,17 @@ import {
     Layers,
     Music,
     Circle,
+    Sparkles,
 } from 'lucide-react';
 import { ChordDictionary, ScaleExplorer, CircleOfFifths } from '../../components/theory';
+import { AIGenerator } from '../../components/theory/AIGenerator';
 import { useSynth } from '../../hooks/useSynth';
 
 export const Route = createFileRoute('/theory/')({
     component: TheoryHub,
 });
 
-type TabId = 'chords' | 'scales' | 'circle';
+type TabId = 'ai' | 'chords' | 'scales' | 'circle';
 
 interface Tab {
     id: TabId;
@@ -31,13 +34,14 @@ interface Tab {
 }
 
 const TABS: Tab[] = [
+    { id: 'ai', label: 'AI Generator', icon: <Sparkles className="w-5 h-5" /> },
     { id: 'chords', label: 'Chord Dictionary', icon: <Layers className="w-5 h-5" /> },
     { id: 'scales', label: 'Scale Explorer', icon: <Music className="w-5 h-5" /> },
     { id: 'circle', label: 'Circle of Fifths', icon: <Circle className="w-5 h-5" /> },
 ];
 
 function TheoryHub() {
-    const [activeTab, setActiveTab] = useState<TabId>('chords');
+    const [activeTab, setActiveTab] = useState<TabId>('ai');
     const [selectedKey, setSelectedKey] = useState('C');
 
     // Audio synth for playing chords and scales
@@ -72,7 +76,7 @@ function TheoryHub() {
                     Music Theory Reference
                 </h1>
                 <p className="text-slate-400">
-                    Explore chords, scales, and harmonic relationships
+                    Explore chords, scales, and harmonic relationships powered by AI
                 </p>
             </motion.div>
 
@@ -80,14 +84,16 @@ function TheoryHub() {
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="flex gap-2 mb-8 border-b border-slate-700 pb-4"
+                className="flex gap-2 mb-8 border-b border-slate-700 pb-4 overflow-x-auto"
             >
                 {TABS.map((tab) => (
                     <button
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id)}
-                        className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all ${activeTab === tab.id
-                            ? 'bg-violet-500/20 text-violet-400 border border-violet-500/30'
+                        className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all whitespace-nowrap ${activeTab === tab.id
+                            ? tab.id === 'ai'
+                                ? 'bg-gradient-to-r from-violet-500/20 to-cyan-500/20 text-violet-400 border border-violet-500/30'
+                                : 'bg-violet-500/20 text-violet-400 border border-violet-500/30'
                             : 'text-slate-400 hover:text-white hover:bg-slate-800'
                             }`}
                     >
@@ -104,6 +110,10 @@ function TheoryHub() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.2 }}
             >
+                {activeTab === 'ai' && (
+                    <AIGenerator onPlayChord={handlePlayChord} />
+                )}
+
                 {activeTab === 'chords' && (
                     <ChordDictionary onPlayChord={handlePlayChord} />
                 )}

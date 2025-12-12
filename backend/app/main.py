@@ -8,7 +8,7 @@ from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 
 from app.core.config import settings
-from app.api.routes import health, transcribe, jobs, library, practice, snippets, export, analysis
+from app.api.routes import health, transcribe, jobs, library, practice, snippets, export, analysis, ai
 from app.services.transcription import TranscriptionService
 
 
@@ -76,6 +76,7 @@ app.include_router(practice.router, prefix=settings.api_v1_prefix)
 app.include_router(snippets.router, prefix=settings.api_v1_prefix)
 app.include_router(export.router, prefix=settings.api_v1_prefix)
 app.include_router(analysis.router, prefix=settings.api_v1_prefix)
+app.include_router(ai.router, prefix=settings.api_v1_prefix)
 
 
 # File serving endpoint

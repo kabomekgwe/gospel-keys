@@ -46,6 +46,9 @@ class Settings(BaseSettings):
     # Job settings
     job_cleanup_age_hours: int = 24  # Clean up old jobs after 24 hours
     
+    # AI Config
+    google_api_key: Optional[str] = None
+    
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",

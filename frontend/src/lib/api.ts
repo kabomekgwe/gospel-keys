@@ -370,3 +370,196 @@ export const healthApi = {
     },
 };
 
+
+// ============================================================================
+// AI Generator API
+// ============================================================================
+
+// Enums
+export type ProgressionStyle = 'jazz' | 'gospel' | 'pop' | 'classical' | 'neo_soul' | 'rnb' | 'blues';
+export type Mood = 'happy' | 'sad' | 'tense' | 'peaceful' | 'energetic' | 'mysterious' | 'romantic';
+export type VoicingStyle = 'open' | 'closed' | 'drop2' | 'drop3' | 'rootless' | 'spread' | 'gospel';
+export type ExerciseType = 'scales' | 'arpeggios' | 'progressions' | 'voice_leading' | 'rhythm';
+export type Difficulty = 'beginner' | 'intermediate' | 'advanced';
+export type GeneratorCategory = 'progressions' | 'voicings' | 'exercises' | 'analysis';
+
+// Request types
+export interface ProgressionRequest {
+    key: string;
+    mode: string;
+    style: ProgressionStyle;
+    mood?: Mood;
+    length: number;
+    include_extensions: boolean;
+}
+
+export interface ReharmonizationRequest {
+    original_progression: string[];
+    key: string;
+    style: ProgressionStyle;
+}
+
+export interface VoicingRequest {
+    chord: string;
+    style: VoicingStyle;
+    hand: 'left' | 'right' | 'both';
+    include_fingering: boolean;
+}
+
+export interface VoiceLeadingRequest {
+    chord1: string;
+    chord2: string;
+    style?: ProgressionStyle;
+}
+
+export interface ExerciseRequest {
+    type: ExerciseType;
+    key: string;
+    difficulty: Difficulty;
+    focus?: string;
+}
+
+export interface SubstitutionRequest {
+    chord: string;
+    context?: string[];
+    style: ProgressionStyle;
+}
+
+// Response types
+export interface ChordInfo {
+    symbol: string;
+    notes: string[];
+    midi_notes: number[];
+    function?: string;
+    comment?: string;
+}
+
+export interface VoicingInfo {
+    name: string;
+    notes: string[];
+    midi_notes: number[];
+    fingering?: number[];
+    hand: string;
+}
+
+export interface ExerciseStep {
+    instruction: string;
+    notes?: string[];
+    midi_notes?: number[];
+    duration?: string;
+}
+
+export interface ProgressionResponse {
+    progression: ChordInfo[];
+    key: string;
+    style: string;
+    analysis?: string;
+    tips?: string[];
+}
+
+export interface ReharmonizationResponse {
+    original: string[];
+    reharmonized: ChordInfo[];
+    explanation: string;
+    techniques_used: string[];
+}
+
+export interface VoicingResponse {
+    chord: string;
+    voicings: VoicingInfo[];
+    tips?: string[];
+}
+
+export interface VoiceLeadingResponse {
+    chord1: VoicingInfo;
+    chord2: VoicingInfo;
+    common_tones: string[];
+    movement: string;
+    tips?: string[];
+}
+
+export interface ExerciseResponse {
+    title: string;
+    description: string;
+    steps: ExerciseStep[];
+    variations?: string[];
+    difficulty: string;
+}
+
+export interface SubstitutionResponse {
+    original: string;
+    substitutions: ChordInfo[];
+    explanations: Record<string, string>;
+}
+
+export interface GeneratorInfo {
+    id: string;
+    name: string;
+    description: string;
+    category: GeneratorCategory;
+}
+
+export interface GeneratorsListResponse {
+    generators: Record<string, GeneratorInfo[]>;
+}
+
+export const aiApi = {
+    getGenerators: async (): Promise<GeneratorsListResponse> => {
+        const response = await fetch(`${API_BASE_URL}/api/v1/ai/generators`);
+        return handleResponse<GeneratorsListResponse>(response);
+    },
+
+    generateProgression: async (request: ProgressionRequest): Promise<ProgressionResponse> => {
+        const response = await fetch(`${API_BASE_URL}/api/v1/ai/progression`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(request),
+        });
+        return handleResponse<ProgressionResponse>(response);
+    },
+
+    generateReharmonization: async (request: ReharmonizationRequest): Promise<ReharmonizationResponse> => {
+        const response = await fetch(`${API_BASE_URL}/api/v1/ai/reharmonization`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(request),
+        });
+        return handleResponse<ReharmonizationResponse>(response);
+    },
+
+    generateVoicing: async (request: VoicingRequest): Promise<VoicingResponse> => {
+        const response = await fetch(`${API_BASE_URL}/api/v1/ai/voicing`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(request),
+        });
+        return handleResponse<VoicingResponse>(response);
+    },
+
+    optimizeVoiceLeading: async (request: VoiceLeadingRequest): Promise<VoiceLeadingResponse> => {
+        const response = await fetch(`${API_BASE_URL}/api/v1/ai/voice-leading`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(request),
+        });
+        return handleResponse<VoiceLeadingResponse>(response);
+    },
+
+    generateExercise: async (request: ExerciseRequest): Promise<ExerciseResponse> => {
+        const response = await fetch(`${API_BASE_URL}/api/v1/ai/exercise`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(request),
+        });
+        return handleResponse<ExerciseResponse>(response);
+    },
+
+    getSubstitutions: async (request: SubstitutionRequest): Promise<SubstitutionResponse> => {
+        const response = await fetch(`${API_BASE_URL}/api/v1/ai/substitution`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(request),
+        });
+        return handleResponse<SubstitutionResponse>(response);
+    },
+};
