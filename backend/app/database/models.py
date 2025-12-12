@@ -3,6 +3,7 @@
 Defines all database tables using SQLAlchemy 2.0 declarative style with async support.
 """
 
+import uuid
 from datetime import datetime
 from typing import List, Optional
 
@@ -36,29 +37,20 @@ class Song(Base):
     last_accessed_at: Mapped[Optional[datetime]] = mapped_column(DateTime)
     favorite: Mapped[bool] = mapped_column(Boolean, default=False)
     
-    # Relationships
-    notes: Mapped[List["SongNote"]] = relationship(
+    # Analysis Relationships
+    song_tags: Mapped[List["SongTag"]] = relationship(back_populates="song", cascade="all, delete-orphan", lazy="selectin")
+    notes: Mapped[List["SongNote"]] = relationship(back_populates="song", cascade="all, delete-orphan", lazy="selectin")
+    chords: Mapped[List["SongChord"]] = relationship(back_populates="song", cascade="all, delete-orphan", lazy="selectin")
+    practice_sessions: Mapped[List["PracticeSession"]] = relationship(back_populates="song", cascade="all, delete-orphan", lazy="selectin")
+    annotations: Mapped[List["Annotation"]] = relationship(back_populates="song", cascade="all, delete-orphan", lazy="selectin")
+    snippets: Mapped[List["Snippet"]] = relationship(back_populates="song", cascade="all, delete-orphan", lazy="selectin")
+    
+    # New Phase 4 Analysis Relationships
+    genre_analysis: Mapped["GenreAnalysis"] = relationship(back_populates="song", uselist=False, cascade="all, delete-orphan", lazy="selectin")
+    patterns: Mapped[List["DetectedPattern"]] = relationship(back_populates="song", cascade="all, delete-orphan", lazy="selectin")
+    melody: Mapped["MelodyLine"] = relationship(
         back_populates="song",
-        cascade="all, delete-orphan",
-        lazy="selectin"
-    )
-    chords: Mapped[List["SongChord"]] = relationship(
-        back_populates="song",
-        cascade="all, delete-orphan",
-        lazy="selectin"
-    )
-    annotations: Mapped[List["Annotation"]] = relationship(
-        back_populates="song",
-        cascade="all, delete-orphan",
-        lazy="selectin"
-    )
-    snippets: Mapped[List["Snippet"]] = relationship(
-        back_populates="song",
-        cascade="all, delete-orphan",
-        lazy="selectin"
-    )
-    tags: Mapped[List["SongTag"]] = relationship(
-        back_populates="song",
+        uselist=False,
         cascade="all, delete-orphan",
         lazy="selectin"
     )
@@ -95,6 +87,7 @@ class SongChord(Base):
     
     # Relationship
     song: Mapped["Song"] = relationship(back_populates="chords")
+    voicing_analysis: Mapped["ChordVoicing"] = relationship(back_populates="song_chord", uselist=False, cascade="all, delete-orphan")
 
 
 class Tag(Base):
@@ -116,8 +109,91 @@ class SongTag(Base):
     tag_id: Mapped[int] = mapped_column(ForeignKey("tags.id", ondelete="CASCADE"), primary_key=True)
     
     # Relationships
-    song: Mapped["Song"] = relationship(back_populates="tags")
+    song: Mapped["Song"] = relationship(back_populates="song_tags")
     tag: Mapped["Tag"] = relationship(back_populates="songs")
+
+
+class GenreAnalysis(Base):
+    """
+    Stores genre classification results
+    """
+    __tablename__ = "genre_analysis"
+    
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    song_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("songs.id", ondelete="CASCADE"), index=True)
+    
+    primary_genre: Mapped[str] = mapped_column(String)  # jazz, gospel, blues, classical, contemporary
+    confidence: Mapped[float] = mapped_column(Float)
+    sub_genres: Mapped[Optional[str]] = mapped_column(String)  # JSON list stored as string
+    harmonic_complexity: Mapped[Optional[float]] = mapped_column(Float)
+    tempo: Mapped[Optional[float]] = mapped_column(Float)
+    
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    
+    # Relationships
+    song: Mapped["Song"] = relationship(back_populates="genre_analysis")
+
+
+class DetectedPattern(Base):
+    """
+    Stores recognized musical patterns (ii-V-I, turnarounds, etc.)
+    """
+    __tablename__ = "detected_patterns"
+    
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    song_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("songs.id", ondelete="CASCADE"), index=True)
+    
+    pattern_type: Mapped[str] = mapped_column(String)  # ii-V-I, turnaround, tritone_sub, blue_note_run
+    start_time: Mapped[float] = mapped_column(Float)
+    duration: Mapped[float] = mapped_column(Float)
+    confidence: Mapped[float] = mapped_column(Float)
+    key_context: Mapped[Optional[str]] = mapped_column(String)
+    metadata_json: Mapped[Optional[str]] = mapped_column(String)  # JSON string for extra details
+    
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    
+    # Relationships
+    song: Mapped["Song"] = relationship(back_populates="patterns")
+
+
+class MelodyLine(Base):
+    """
+    Stores extracted melody notes
+    """
+    __tablename__ = "melody_lines"
+    
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    song_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("songs.id", ondelete="CASCADE"), index=True)
+    
+    start_time: Mapped[float] = mapped_column(Float)
+    end_time: Mapped[float] = mapped_column(Float)
+    notes_json: Mapped[str] = mapped_column(String)  # JSON list of dicts: {time, pitch, confidence}
+    contour_type: Mapped[Optional[str]] = mapped_column(String)  # ascending, descending, arch
+    average_confidence: Mapped[float] = mapped_column(Float)
+    
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    
+    # Relationships
+    song: Mapped["Song"] = relationship(back_populates="melody")
+
+
+class ChordVoicing(Base):
+    """
+    Stores detailed analysis of specific chord voicings
+    """
+    __tablename__ = "chord_voicings"
+    
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    song_chord_id: Mapped[int] = mapped_column(ForeignKey("song_chords.id", ondelete="CASCADE"), index=True)
+    
+    voicing_type: Mapped[str] = mapped_column(String)  # rootless, quartal, upper_structure, spread
+    notes_json: Mapped[str] = mapped_column(String)  # JSON list of notes
+    inversion: Mapped[int] = mapped_column(Integer, default=0)
+    width_semitones: Mapped[int] = mapped_column(Integer) # Total span in semitones
+    complexity_score: Mapped[float] = mapped_column(Float)
+    
+    # Relationships
+    song_chord: Mapped["SongChord"] = relationship(back_populates="voicing_analysis")
 
 
 class Annotation(Base):
@@ -170,4 +246,5 @@ class PracticeSession(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
     
     # Relationships
+    song: Mapped[Optional["Song"]] = relationship(back_populates="practice_sessions")
     snippet: Mapped[Optional["Snippet"]] = relationship(back_populates="practice_sessions")

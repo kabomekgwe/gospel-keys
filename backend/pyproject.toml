@@ -1,6 +1,6 @@
 [project]
-name = "gospel-keys-backend"
-version = "1.0.0"
+name = "piano-keys-backend"
+version = "2.0.0"
 requires-python = ">=3.10,<3.12"
 dependencies = [
     # Core FastAPI
@@ -26,11 +26,14 @@ dependencies = [
     "numpy>=1.24.0,<2.0.0",
     "scipy>=1.11.0",
     "soundfile>=0.12.0",
-    # Phase 2 - Database & advanced features
+    # Phase 2 - Database & export
     "sqlalchemy[asyncio]>=2.0.0",
     "aiosqlite>=0.20.0",
     "alembic>=1.13.0",
     "music21>=9.1.0",
+    # Phase 4 - Multi-genre advanced analysis (Python-only)
+    "crepe>=0.0.13",             # Neural pitch tracking
+    "scikit-learn>=1.4.0",       # Genre classification
     # System dependencies
     "setuptools>=80.9.0",
 ]
@@ -42,3 +45,8 @@ dev = [
     "httpx>=0.27.0",
     "ruff>=0.8.0",
 ]
+
+# Note: Essentia and Omnizart excluded due to dependency conflicts
+# - Essentia requires C++ compilation and complex build
+# - Omnizart requires librosa<0.9 (we use >=0.10)
+# These can be installed separately if needed

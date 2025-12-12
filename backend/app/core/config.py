@@ -7,12 +7,12 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    """Application settings loaded from environment variables"""
+    """Application configuration settings"""
     
-    # App info
-    app_name: str = "Gospel Keys API"
-    version: str = "1.0.0"
-    description: str = "Piano transcription service for gospel music"
+    # ApplicationInfo
+    app_name: str = "Piano Keys API"
+    version: str = "2.0.0"
+    description: str = "Multi-genre piano transcription and analysis API"
     
     # API settings
     api_v1_prefix: str = "/api/v1"

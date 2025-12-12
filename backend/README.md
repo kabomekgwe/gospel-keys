@@ -1,23 +1,22 @@
-# Gospel Keys Backend API
+# Piano Keys Backend API
 
-A FastAPI-based service for piano transcription from YouTube URLs or uploaded audio files.
+Multi-genre piano transcription and analysis API supporting Gospel, Jazz, Blues, Classical, and Contemporary music.
 
 ## Features
 
-- **YouTube Transcription**: Download and transcribe piano from YouTube videos
-- **File Upload**: Upload audio/video files for transcription
-- **Piano Isolation**: Use Demucs source separation to isolate piano from mixes
-- **MIDI Output**: Generate MIDI files from audio transcription using Spotify's basic-pitch
-- **Chord Detection**: Detect gospel chords using chromagram analysis
-- 🎹 Piano transcription from YouTube URLs or uploaded files
-- 🎵 MIDI generation with note detection
-- 🎼 Chord detection and analysis  
-- 📚 Song library with SQLite database
-- ⏱️ Practice mode with time-stretching
-- ✂️ Snippet extraction for practice sections
-- 📝 Annotation system for theory notes
-- 📤 Export to MusicXML and quantized MIDI
-- 🐳 Docker support for easy deployment
+- 🎹 **Multi-Genre Support**: Gospel, Jazz, Blues, Classical, Contemporary
+- 🎵 **Piano Transcription**: YouTube URLs or uploaded audio files
+- 🎼 **Advanced Analysis**: Genre detection, pattern recognition, pitch tracking
+- 📊 **Jazz Features**: ii-V-I detection, turnarounds, tritone substitutions
+- 🎸 **Blues Features**: Blue note detection, 12-bar form analysis
+- 🎻 **MIDI Generation**: High-quality MIDI with note detection
+- 🎤 **Chord Analysis**: Extended jazz voicings, rootless chords
+- 📚 **Song Library**: SQLite database with search and tagging
+- ⏱️ **Practice Mode**: Time-stretching (0.5x-2.0x speed)
+- ✂️ **Snippets**: Extract and save practice sections
+- 📝 **Annotations**: Add theory notes at specific timestamps
+- 📤 **Export**: MusicXML and quantized MIDI
+- 🐳 **Docker**: Containerized for easy deployment
 
 ## Quick Start
 
