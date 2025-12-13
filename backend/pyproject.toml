@@ -42,6 +42,19 @@ dependencies = [
     "passlib[bcrypt]>=1.7.4",
     "email-validator>=2.1.0",
     "structlog>=24.0.0",
+    # Modern Music Libraries
+    "musicpy>=1.8.0",
+    "essentia>=2.1b6.dev1110",
+    # "audiocraft>=1.2.0", # Incompatible with Python 3.13 (requires torch==2.1.0)
+    "miditok>=3.0.0",
+    "verovio>=4.0.0",
+    # PyTorch for GPU acceleration (Apple Silicon MPS support)
+    "torch>=2.0.0",
+    "torchaudio>=2.0.0",
+    # Stable Audio (Python 3.13 compatible alternative to AudioCraft)
+    "diffusers>=0.31.0",
+    "transformers>=4.40.0",
+    "accelerate>=0.30.0",
 ]
 
 [project.optional-dependencies]
