@@ -17,11 +17,30 @@ class Base(AsyncAttrs, DeclarativeBase):
     pass
 
 
+class User(Base):
+    """User account entity"""
+    __tablename__ = "users"
+    
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    email: Mapped[str] = mapped_column(String, unique=True, index=True, nullable=False)
+    hashed_password: Mapped[str] = mapped_column(String, nullable=False)
+    full_name: Mapped[Optional[str]] = mapped_column(String)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    is_superuser: Mapped[bool] = mapped_column(Boolean, default=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    
+    # Relationships
+    songs: Mapped[List["Song"]] = relationship(back_populates="user", cascade="all, delete-orphan")
+    practice_sessions: Mapped[List["PracticeSession"]] = relationship(back_populates="user", cascade="all, delete-orphan")
+
+
+
 class Song(Base):
     """Main song/transcription entity"""
     __tablename__ = "songs"
     
     id: Mapped[str] = mapped_column(String, primary_key=True)
+    user_id: Mapped[Optional[int]] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
     title: Mapped[str] = mapped_column(String, nullable=False)
     artist: Mapped[Optional[str]] = mapped_column(String)
     source_url: Mapped[Optional[str]] = mapped_column(String)
@@ -54,6 +73,9 @@ class Song(Base):
         cascade="all, delete-orphan",
         lazy="selectin"
     )
+
+    # User Relationship
+    user: Mapped[Optional["User"]] = relationship(back_populates="songs")
 
 
 class SongNote(Base):
@@ -247,6 +269,7 @@ class PracticeSession(Base):
     
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     song_id: Mapped[Optional[str]] = mapped_column(ForeignKey("songs.id", ondelete="SET NULL"))
+    user_id: Mapped[Optional[int]] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
     snippet_id: Mapped[Optional[str]] = mapped_column(ForeignKey("snippets.id", ondelete="SET NULL"))
     duration_seconds: Mapped[int] = mapped_column(Integer, nullable=False)
     tempo_multiplier: Mapped[float] = mapped_column(Float, default=1.0)
@@ -255,4 +278,5 @@ class PracticeSession(Base):
     
     # Relationships
     song: Mapped[Optional["Song"]] = relationship(back_populates="practice_sessions")
+    user: Mapped[Optional["User"]] = relationship(back_populates="practice_sessions")
     snippet: Mapped[Optional["Snippet"]] = relationship(back_populates="practice_sessions")

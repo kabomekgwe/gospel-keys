@@ -8,7 +8,7 @@ from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 
 from app.core.config import settings
-from app.api.routes import health, transcribe, jobs, library, practice, snippets, export, analysis, ai
+from app.api.routes import health, auth, transcribe, jobs, library, practice, snippets, export, analysis, ai
 from app.services.transcription import TranscriptionService
 
 
@@ -69,6 +69,7 @@ app.add_middleware(
 
 # Include routers
 app.include_router(health.router)
+app.include_router(auth.router, prefix=f"{settings.api_v1_prefix}/auth", tags=["auth"])
 app.include_router(transcribe.router, prefix=settings.api_v1_prefix)
 app.include_router(jobs.router, prefix=settings.api_v1_prefix)
 app.include_router(library.router, prefix=settings.api_v1_prefix)
