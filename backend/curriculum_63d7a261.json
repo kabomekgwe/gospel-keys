@@ -1,0 +1,127 @@
+{
+  "id": "63d7a261-3699-4fd9-803d-1247aec3adb0",
+  "title": "Contemporary Gospel Piano Mastery",
+  "description": "A comprehensive 12-week journey from gospel fundamentals to advanced contemporary worship techniques",
+  "duration_weeks": 12,
+  "status": "active",
+  "modules": [
+    {
+      "title": "Gospel Piano Fundamentals",
+      "theme": "gospel_fundamentals",
+      "weeks": "1-4",
+      "outcomes": [
+        "Play essential gospel chord progressions in all keys",
+        "Understand gospel voicing principles",
+        "Develop proper hand positioning and technique"
+      ],
+      "lessons": [
+        {
+          "title": "Essential Gospel Chords & Voicings",
+          "week": 1,
+          "duration_minutes": 45,
+          "theory": {
+            "summary": "Gospel music relies heavily on seventh chords and their extensions",
+            "key_points": [
+              "Major 7th chords create a warm, rich sound",
+              "Dominant 7th chords provide tension and resolution",
+              "Minor 7th chords add depth and emotion"
+            ]
+          },
+          "exercises": [
+            {
+              "title": "Classic ii-V-I in C Major",
+              "type": "progression",
+              "difficulty": "beginner",
+              "duration_minutes": 10,
+              "bpm": 60,
+              "content": {
+                "chords": [
+                  "Dm7",
+                  "G7",
+                  "Cmaj7"
+                ],
+                "key": "C",
+                "roman_numerals": [
+                  "ii7",
+                  "V7",
+                  "Imaj7"
+                ],
+                "voicing_style": "gospel",
+                "hand": "both"
+              }
+            },
+            {
+              "title": "Gospel Turnaround Progression",
+              "type": "progression",
+              "difficulty": "beginner",
+              "duration_minutes": 12,
+              "bpm": 70,
+              "content": {
+                "chords": [
+                  "Cmaj7",
+                  "Am7",
+                  "Dm7",
+                  "G7"
+                ],
+                "key": "C",
+                "roman_numerals": [
+                  "I",
+                  "vi",
+                  "ii",
+                  "V"
+                ],
+                "voicing_style": "gospel",
+                "hand": "both"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Contemporary Worship Techniques",
+      "theme": "contemporary_worship",
+      "weeks": "5-8",
+      "outcomes": [
+        "Play contemporary worship songs with confidence",
+        "Use extended chords and voicings",
+        "Develop dynamic expression and phrasing"
+      ],
+      "lessons": [
+        {
+          "title": "9th, 11th, and 13th Chords in Worship",
+          "week": 5,
+          "duration_minutes": 50,
+          "theory": {
+            "summary": "Extended chords add richness and modern flavor to worship music",
+            "key_points": [
+              "9th chords add subtle color",
+              "11th chords create tension",
+              "13th chords provide full harmonic spectrum"
+            ]
+          },
+          "exercises": [
+            {
+              "title": "Contemporary Worship Progression",
+              "type": "progression",
+              "difficulty": "intermediate",
+              "duration_minutes": 15,
+              "bpm": 75,
+              "content": {
+                "chords": [
+                  "Cmaj9",
+                  "Gsus4",
+                  "Am7",
+                  "Fmaj9"
+                ],
+                "key": "C",
+                "voicing_style": "contemporary",
+                "hand": "both"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
