@@ -8,7 +8,7 @@ from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 
 from app.core.config import settings
-from app.api.routes import health, auth, transcribe, jobs, library, practice, snippets, export, analysis, ai, curriculum
+from app.api.routes import health, auth, transcribe, jobs, library, practice, snippets, export, analysis, ai, curriculum, audio
 from app.services.transcription import TranscriptionService
 
 
@@ -39,8 +39,8 @@ async def lifespan(app: FastAPI):
     jobs.transcription_service = transcription_service
     
     print(f"✓ Started {settings.app_name} v{settings.version}")
-    print(f"✓ Upload directory: {settings.upload_dir}")
-    print(f"✓ Output directory: {settings.output_dir}")
+    print(f"✓ Upload directory: {settings.UPLOAD_DIR}")
+    print(f"✓ Output directory: {settings.OUTPUTS_DIR}")
     
     yield
     
@@ -79,13 +79,14 @@ app.include_router(export.router, prefix=settings.api_v1_prefix)
 app.include_router(analysis.router, prefix=settings.api_v1_prefix)
 app.include_router(ai.router, prefix=settings.api_v1_prefix)
 app.include_router(curriculum.router, prefix=settings.api_v1_prefix)
+app.include_router(audio.router, prefix=settings.api_v1_prefix)
 
 
 # File serving endpoint
 @app.get("/files/{job_id}/{filename}")
 async def serve_file(job_id: str, filename: str):
     """Serve output files (MIDI, audio, etc.)"""
-    file_path = settings.output_dir / job_id / filename
+    file_path = settings.OUTPUTS_DIR / job_id / filename
     
     if not file_path.exists():
         return JSONResponse(

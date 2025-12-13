@@ -205,3 +205,34 @@ class GeneratorsListResponse(BaseModel):
     generators: dict[str, list[GeneratorInfo]] = Field(
         ..., description="Generators grouped by category"
     )
+
+
+# === Model Usage Stats ===
+
+class ModelUsageStats(BaseModel):
+    """Statistics for a specific model"""
+    model: str = Field(..., description="Model name (flash, pro, ultra)")
+    total_requests: int = Field(..., description="Total number of requests")
+    successful_requests: int = Field(..., description="Number of successful requests")
+    failed_requests: int = Field(..., description="Number of failed requests")
+    total_input_tokens: int = Field(..., description="Total input tokens used")
+    total_output_tokens: int = Field(..., description="Total output tokens used")
+    total_cost_usd: float = Field(..., description="Total cost in USD")
+    avg_latency_ms: float = Field(..., description="Average latency in milliseconds")
+
+
+class TaskTypeStats(BaseModel):
+    """Statistics for a specific task type"""
+    task_type: str = Field(..., description="Task type")
+    total_requests: int = Field(..., description="Total number of requests")
+    total_cost_usd: float = Field(..., description="Total cost in USD")
+
+
+class UsageStatsResponse(BaseModel):
+    """Overall usage statistics"""
+    period_days: int = Field(..., description="Number of days in the period")
+    total_requests: int = Field(..., description="Total requests across all models")
+    total_cost_usd: float = Field(..., description="Total cost in USD")
+    models: list[ModelUsageStats] = Field(..., description="Stats per model")
+    task_types: list[TaskTypeStats] = Field(..., description="Stats per task type")
+    date_range: dict[str, str] = Field(..., description="Start and end dates")

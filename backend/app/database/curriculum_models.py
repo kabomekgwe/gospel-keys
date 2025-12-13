@@ -73,7 +73,11 @@ class Curriculum(Base):
     # AI generation metadata
     ai_model_used: Mapped[Optional[str]] = mapped_column(String(50))
     generation_prompt_hash: Mapped[Optional[str]] = mapped_column(String(64))
-    
+
+    # Adaptive curriculum (Phase 2)
+    adaptation_history_json: Mapped[str] = mapped_column(Text, default='[]')  # Log of adaptations
+    last_adapted_at: Mapped[Optional[datetime]] = mapped_column(DateTime)
+
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
@@ -136,14 +140,18 @@ class CurriculumLesson(Base):
     # Content structure (JSON)
     theory_content_json: Mapped[str] = mapped_column(Text, default="{}")
     concepts_json: Mapped[str] = mapped_column(Text, default="[]")
-    
+
+    # Tutorial content (Phase 2)
+    tutorial_content_json: Mapped[str] = mapped_column(Text, default='{}')
+    tutorial_generated_at: Mapped[Optional[datetime]] = mapped_column(DateTime)
+
     # Time estimates
     estimated_duration_minutes: Mapped[int] = mapped_column(Integer, default=60)
-    
+
     # Completion tracking
     is_completed: Mapped[bool] = mapped_column(Boolean, default=False)
     completed_at: Mapped[Optional[datetime]] = mapped_column(DateTime)
-    
+
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     
     # Relationships
@@ -193,9 +201,15 @@ class CurriculumExercise(Base):
     interval_days: Mapped[float] = mapped_column(Float, default=1.0)
     ease_factor: Mapped[float] = mapped_column(Float, default=2.5)
     repetition_count: Mapped[int] = mapped_column(Integer, default=0)
-    
+
+    # Audio generation fields (Phase 1)
+    midi_file_path: Mapped[Optional[str]] = mapped_column(String)
+    audio_files_json: Mapped[str] = mapped_column(Text, default='{}')  # {"fluidsynth": "path", "stable_audio": "path"}
+    audio_generation_status: Mapped[str] = mapped_column(String(20), default='pending')  # pending, generating, complete, failed
+    audio_generated_at: Mapped[Optional[datetime]] = mapped_column(DateTime)
+
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
-    
+
     # Relationships
     lesson: Mapped["CurriculumLesson"] = relationship(back_populates="exercises")
 

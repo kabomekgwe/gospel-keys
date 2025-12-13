@@ -26,9 +26,9 @@ class Settings(BaseSettings):
     ]
     
     # File storage
-    base_dir: Path = Path(__file__).parent.parent.parent
-    upload_dir: Path = base_dir / "uploads"
-    output_dir: Path = base_dir / "outputs"
+    BASE_DIR: Path = Path(__file__).parent.parent.parent
+    UPLOAD_DIR: Path = BASE_DIR / "uploads"
+    OUTPUTS_DIR: Path = BASE_DIR / "outputs"
     
     # File limits
     max_upload_size_mb: int = 100
@@ -48,7 +48,15 @@ class Settings(BaseSettings):
     
     # AI Config
     google_api_key: Optional[str] = None
-    
+
+    # Celery & Redis Config
+    celery_broker_url: str = "redis://localhost:6379/0"
+    celery_result_backend: str = "redis://localhost:6379/0"
+    redis_url: str = "redis://localhost:6379/1"  # Separate DB for caching
+
+    # Background job settings
+    audio_generation_timeout: int = 300  # 5 minutes per exercise
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
@@ -58,8 +66,8 @@ class Settings(BaseSettings):
     
     def ensure_directories(self) -> None:
         """Create upload and output directories if they don't exist"""
-        self.upload_dir.mkdir(parents=True, exist_ok=True)
-        self.output_dir.mkdir(parents=True, exist_ok=True)
+        self.UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+        self.OUTPUTS_DIR.mkdir(parents=True, exist_ok=True)
 
 
 # Global settings instance

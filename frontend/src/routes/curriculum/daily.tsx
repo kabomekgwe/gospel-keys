@@ -1,7 +1,9 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { curriculumApi, type DailyPracticeItem, type CurriculumExercise } from '../../lib/api';
+import { curriculumApi, api, type DailyPracticeItem, type CurriculumExercise } from '../../lib/api';
 import { useState } from 'react';
+import { ExerciseAudioPlayer } from '../../components/curriculum/ExerciseAudioPlayer';
+import { TrendingUp, BookOpen, Lightbulb, X } from 'lucide-react';
 
 export const Route = createFileRoute('/curriculum/daily')({
     component: DailyPracticePage,
@@ -13,10 +15,18 @@ function DailyPracticePage() {
     const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
     const [showCompletionDialog, setShowCompletionDialog] = useState(false);
     const [selectedExercise, setSelectedExercise] = useState<CurriculumExercise | null>(null);
+    const [showPerformanceInsights, setShowPerformanceInsights] = useState(true);
 
     const { data: practiceQueue, isLoading, error } = useQuery({
         queryKey: ['curriculum', 'daily'],
         queryFn: curriculumApi.getDailyPractice,
+    });
+
+    // Load performance analysis for insights banner
+    const { data: performanceAnalysis } = useQuery({
+        queryKey: ['performance', 'analysis', 7],
+        queryFn: () => api.getPerformanceAnalysis(7),
+        enabled: !!practiceQueue,
     });
 
     const completeExerciseMutation = useMutation({
@@ -94,6 +104,86 @@ function DailyPracticePage() {
                         <p className="text-gray-400 text-sm">Week {practiceQueue.current_week}</p>
                     </div>
                 </div>
+
+                {/* Performance Insights Banner */}
+                {showPerformanceInsights && performanceAnalysis && (
+                    <div className="bg-gradient-to-r from-purple-900/50 to-blue-900/50 border border-purple-500/30 rounded-xl p-6 mb-6">
+                        <div className="flex justify-between items-start mb-4">
+                            <div className="flex items-center gap-3">
+                                <TrendingUp className="w-6 h-6 text-purple-400" />
+                                <h3 className="text-xl font-semibold text-white">Your Progress</h3>
+                            </div>
+                            <button
+                                onClick={() => setShowPerformanceInsights(false)}
+                                className="text-gray-400 hover:text-white transition"
+                            >
+                                <X className="w-5 h-5" />
+                            </button>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                            <div className="bg-gray-900/50 rounded-lg p-4">
+                                <p className="text-gray-400 text-sm mb-1">Completion Rate</p>
+                                <p className="text-3xl font-bold text-white">
+                                    {Math.round(performanceAnalysis.completion_rate * 100)}%
+                                </p>
+                                <div className="w-full bg-gray-700 rounded-full h-2 mt-2">
+                                    <div
+                                        className={`h-2 rounded-full ${
+                                            performanceAnalysis.completion_rate >= 0.8
+                                                ? 'bg-green-500'
+                                                : performanceAnalysis.completion_rate >= 0.6
+                                                ? 'bg-yellow-500'
+                                                : 'bg-orange-500'
+                                        }`}
+                                        style={{ width: `${performanceAnalysis.completion_rate * 100}%` }}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="bg-gray-900/50 rounded-lg p-4">
+                                <p className="text-gray-400 text-sm mb-1">Avg Quality Score</p>
+                                <p className="text-3xl font-bold text-white">
+                                    {performanceAnalysis.avg_quality_score.toFixed(1)}
+                                </p>
+                                <p className="text-sm text-gray-400 mt-1">out of 5.0</p>
+                            </div>
+
+                            <div className="bg-gray-900/50 rounded-lg p-4">
+                                <p className="text-gray-400 text-sm mb-1">Mastered</p>
+                                <p className="text-3xl font-bold text-white">
+                                    {performanceAnalysis.mastered_exercises.length}
+                                </p>
+                                <p className="text-sm text-gray-400 mt-1">exercises</p>
+                            </div>
+                        </div>
+
+                        {/* Adaptive Recommendations */}
+                        {performanceAnalysis.recommended_actions.length > 0 && (
+                            <div className="bg-blue-900/30 border border-blue-500/30 rounded-lg p-4">
+                                <div className="flex items-start gap-3">
+                                    <Lightbulb className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
+                                    <div className="flex-1">
+                                        <p className="text-white font-medium mb-2">
+                                            Curriculum Adapted Based on Your Performance
+                                        </p>
+                                        <p className="text-gray-300 text-sm">
+                                            Your practice load and difficulty have been adjusted to optimize your learning.
+                                            View details on the{' '}
+                                            <button
+                                                onClick={() => navigate({ to: '/curriculum/performance' })}
+                                                className="text-blue-400 hover:text-blue-300 underline"
+                                            >
+                                                Performance Dashboard
+                                            </button>
+                                            .
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                )}
 
                 {/* Stats Bar */}
                 <div className="grid grid-cols-4 gap-4 mb-8">
@@ -210,22 +300,38 @@ function PriorityBadge({ priority }: { priority: number }) {
 
 function ExerciseCard({ item, onComplete }: { item: DailyPracticeItem; onComplete: () => void }) {
     const { exercise } = item;
+    const navigate = useNavigate();
+    const [showTutorial, setShowTutorial] = useState(false);
 
     return (
-        <div className="bg-gray-800/50 rounded-xl border border-gray-700 p-6">
-            {/* Header */}
-            <div className="flex justify-between items-start mb-4">
-                <div>
-                    <span className="text-purple-400 text-sm">{item.module_title} → {item.lesson_title}</span>
-                    <h2 className="text-2xl font-bold text-white mt-1">{exercise.title}</h2>
+        <div className="space-y-4">
+            <div className="bg-gray-800/50 rounded-xl border border-gray-700 p-6">
+                {/* Header */}
+                <div className="flex justify-between items-start mb-4">
+                    <div>
+                        <span className="text-purple-400 text-sm">{item.module_title} → {item.lesson_title}</span>
+                        <h2 className="text-2xl font-bold text-white mt-1">{exercise.title}</h2>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span className={`px-3 py-1 rounded-full text-sm ${exercise.difficulty === 'beginner' ? 'bg-green-900/50 text-green-400' :
+                                exercise.difficulty === 'intermediate' ? 'bg-yellow-900/50 text-yellow-400' :
+                                    'bg-red-900/50 text-red-400'
+                            }`}>
+                            {exercise.difficulty}
+                        </span>
+                    </div>
                 </div>
-                <span className={`px-3 py-1 rounded-full text-sm ${exercise.difficulty === 'beginner' ? 'bg-green-900/50 text-green-400' :
-                        exercise.difficulty === 'intermediate' ? 'bg-yellow-900/50 text-yellow-400' :
-                            'bg-red-900/50 text-red-400'
-                    }`}>
-                    {exercise.difficulty}
-                </span>
-            </div>
+
+                {/* View Tutorial Button */}
+                {item.lesson_id && (
+                    <button
+                        onClick={() => window.open(`/curriculum/tutorial/${item.lesson_id}`, '_blank')}
+                        className="w-full mb-4 flex items-center justify-center gap-2 px-4 py-3 bg-blue-900/50 border border-blue-500/30 text-blue-300 rounded-lg hover:bg-blue-900/70 transition"
+                    >
+                        <BookOpen className="w-5 h-5" />
+                        View Lesson Tutorial
+                    </button>
+                )}
 
             {/* Description */}
             {exercise.description && (
@@ -245,13 +351,20 @@ function ExerciseCard({ item, onComplete }: { item: DailyPracticeItem; onComplet
                 <span>📊 Practiced {exercise.practice_count} times</span>
             </div>
 
-            {/* Action Button */}
-            <button
-                onClick={onComplete}
-                className="w-full py-4 bg-purple-600 text-white font-semibold rounded-lg hover:bg-purple-500 transition"
-            >
-                Mark as Completed
-            </button>
+                {/* Action Button */}
+                <button
+                    onClick={onComplete}
+                    className="w-full py-4 bg-purple-600 text-white font-semibold rounded-lg hover:bg-purple-500 transition"
+                >
+                    Mark as Completed
+                </button>
+            </div>
+
+            {/* Audio Player */}
+            <ExerciseAudioPlayer
+                exerciseId={exercise.id}
+                exerciseTitle={exercise.title}
+            />
         </div>
     );
 }

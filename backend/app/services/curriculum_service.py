@@ -193,8 +193,48 @@ class CurriculumService:
         
         await self.db.commit()
         await self.db.refresh(curriculum)
-        
+
+        # Queue audio generation for all exercises (Phase 1)
+        await self._queue_curriculum_audio_generation(curriculum.id)
+
         return curriculum
+
+    async def _queue_curriculum_audio_generation(self, curriculum_id: str):
+        """Queue background audio generation for all exercises in a curriculum
+
+        Args:
+            curriculum_id: Curriculum ID
+        """
+        try:
+            from app.tasks.audio_generation import generate_exercise_audio_task
+
+            # Get all exercises in the curriculum
+            result = await self.db.execute(
+                select(CurriculumExercise)
+                .join(CurriculumLesson)
+                .join(CurriculumModule)
+                .join(Curriculum)
+                .where(Curriculum.id == curriculum_id)
+            )
+            exercises = result.scalars().all()
+
+            logger.info(f"Queueing audio generation for {len(exercises)} exercises in curriculum {curriculum_id}")
+
+            # Queue a task for each exercise with staggered countdown
+            for idx, exercise in enumerate(exercises):
+                # Stagger tasks every 10 seconds to avoid overwhelming the system
+                countdown_seconds = idx * 10
+
+                generate_exercise_audio_task.apply_async(
+                    args=[exercise.id, "both"],  # Generate both FluidSynth and Stable Audio
+                    countdown=countdown_seconds
+                )
+
+            logger.info(f"Successfully queued {len(exercises)} audio generation tasks")
+
+        except Exception as e:
+            logger.error(f"Failed to queue audio generation for curriculum {curriculum_id}: {e}")
+            # Don't raise - audio generation is non-critical, curriculum should still be created
     
     # =========================================================================
     # Curriculum Retrieval Methods
@@ -442,3 +482,159 @@ class CurriculumService:
         await self.db.refresh(assessment)
         
         return assessment
+
+    # =========================================================================
+    # Assessment Milestone Triggers (Phase 3)
+    # =========================================================================
+
+    async def check_and_trigger_milestone_assessments(
+        self,
+        curriculum_id: str
+    ) -> List[str]:
+        """Check if milestone assessments should be triggered
+
+        Args:
+            curriculum_id: Curriculum ID
+
+        Returns:
+            List of triggered assessment IDs
+        """
+        from app.services.assessment_service import AssessmentService
+        from app.database.curriculum_models import Assessment
+
+        try:
+            # Get curriculum
+            result = await self.db.execute(
+                select(Curriculum).where(Curriculum.id == curriculum_id)
+            )
+            curriculum = result.scalar_one_or_none()
+
+            if not curriculum:
+                return []
+
+            current_week = curriculum.current_week
+            triggered_assessments = []
+
+            # Check for existing assessments this week
+            result = await self.db.execute(
+                select(Assessment).where(
+                    and_(
+                        Assessment.curriculum_id == curriculum_id,
+                        Assessment.assessment_type == 'milestone'
+                    )
+                )
+            )
+            existing_assessments = result.scalars().all()
+            existing_weeks = set()
+
+            for assessment in existing_assessments:
+                # Parse assessment content to get week
+                try:
+                    content = json.loads(assessment.ai_feedback_json)
+                    if 'week' in content:
+                        existing_weeks.add(content['week'])
+                except:
+                    pass
+
+            # Week 4 milestone
+            if current_week >= 4 and 4 not in existing_weeks:
+                assessment_service = AssessmentService(self.db)
+                assessment = await assessment_service.generate_milestone_assessment(
+                    curriculum=curriculum,
+                    week=4
+                )
+                triggered_assessments.append(assessment.id)
+                logger.info(f"Triggered week 4 milestone assessment for curriculum {curriculum_id}")
+
+            # Week 8 milestone
+            if current_week >= 8 and 8 not in existing_weeks:
+                assessment_service = AssessmentService(self.db)
+                assessment = await assessment_service.generate_milestone_assessment(
+                    curriculum=curriculum,
+                    week=8
+                )
+                triggered_assessments.append(assessment.id)
+                logger.info(f"Triggered week 8 milestone assessment for curriculum {curriculum_id}")
+
+            # Final assessment (curriculum complete)
+            if curriculum.status == 'completed' and 'final' not in [a.assessment_type for a in existing_assessments]:
+                assessment_service = AssessmentService(self.db)
+                assessment = await assessment_service.generate_milestone_assessment(
+                    curriculum=curriculum,
+                    week=curriculum.duration_weeks
+                )
+                assessment.assessment_type = 'final'
+                await self.db.commit()
+                triggered_assessments.append(assessment.id)
+                logger.info(f"Triggered final assessment for curriculum {curriculum_id}")
+
+            return triggered_assessments
+
+        except Exception as e:
+            logger.error(f"Failed to check milestone triggers for curriculum {curriculum_id}: {e}")
+            return []
+
+    async def complete_assessment_feedback_loop(
+        self,
+        assessment_id: str,
+        evaluation: Dict
+    ):
+        """Complete the feedback loop after assessment evaluation
+
+        Workflow:
+        1. Get assessment and user
+        2. Update skill profile with new scores
+        3. Trigger curriculum adaptation
+        4. Log changes
+
+        Args:
+            assessment_id: Assessment ID
+            evaluation: Evaluation results from assessment_service.evaluate_assessment
+        """
+        from app.services.assessment_service import AssessmentService
+        from app.services.adaptive_curriculum_service import AdaptiveCurriculumService
+
+        try:
+            # Get assessment
+            result = await self.db.execute(
+                select(Assessment).where(Assessment.id == assessment_id)
+            )
+            assessment = result.scalar_one_or_none()
+
+            if not assessment:
+                raise ValueError(f"Assessment not found: {assessment_id}")
+
+            # Update skill profile
+            assessment_service = AssessmentService(self.db)
+            updated_profile = await assessment_service.update_skill_profile_from_assessment(
+                user_id=assessment.user_id,
+                scores=evaluation["scores"]
+            )
+
+            logger.info(f"Updated skill profile for user {assessment.user_id} from assessment {assessment_id}")
+
+            # If assessment is linked to a curriculum, trigger adaptation
+            if assessment.curriculum_id:
+                adaptive_service = AdaptiveCurriculumService(self.db)
+
+                # Analyze performance
+                analysis = await adaptive_service.analyze_user_performance(
+                    user_id=assessment.user_id,
+                    lookback_days=14  # Longer lookback after assessment
+                )
+
+                # Apply adaptations
+                if analysis.recommended_actions:
+                    await adaptive_service.apply_adaptations(
+                        curriculum_id=assessment.curriculum_id,
+                        analysis=analysis
+                    )
+
+                    logger.info(
+                        f"Applied {len(analysis.recommended_actions)} adaptations "
+                        f"to curriculum {assessment.curriculum_id} after assessment"
+                    )
+
+        except Exception as e:
+            logger.error(f"Failed to complete feedback loop for assessment {assessment_id}: {e}")
+            raise e

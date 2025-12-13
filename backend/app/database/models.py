@@ -5,9 +5,10 @@ Defines all database tables using SQLAlchemy 2.0 declarative style with async su
 
 import uuid
 from datetime import datetime
+from decimal import Decimal
 from typing import List, Optional
 
-from sqlalchemy import String, Float, Integer, Boolean, Text, DateTime, ForeignKey, Enum as SQLEnum
+from sqlalchemy import String, Float, Integer, Boolean, Text, DateTime, ForeignKey, Enum as SQLEnum, Numeric
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy.ext.asyncio import AsyncAttrs
 
@@ -284,3 +285,19 @@ class PracticeSession(Base):
     song: Mapped[Optional["Song"]] = relationship(back_populates="practice_sessions")
     user: Mapped[Optional["User"]] = relationship(back_populates="practice_sessions")
     snippet: Mapped[Optional["Snippet"]] = relationship(back_populates="practice_sessions")
+
+
+class ModelUsageLog(Base):
+    """Log of AI model API usage for cost tracking and analytics"""
+    __tablename__ = "model_usage_logs"
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    model: Mapped[str] = mapped_column(String, nullable=False, index=True)  # flash, pro, ultra
+    task_type: Mapped[str] = mapped_column(String, nullable=False, index=True)  # curriculum_planning, etc.
+    input_tokens: Mapped[int] = mapped_column(Integer, nullable=False)
+    output_tokens: Mapped[int] = mapped_column(Integer, nullable=False)
+    cost_usd: Mapped[Decimal] = mapped_column(Numeric(10, 6), nullable=False)  # Up to $9999.999999
+    latency_ms: Mapped[int] = mapped_column(Integer, nullable=False)
+    success: Mapped[bool] = mapped_column(Boolean, default=True)
+    error_message: Mapped[Optional[str]] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, index=True)

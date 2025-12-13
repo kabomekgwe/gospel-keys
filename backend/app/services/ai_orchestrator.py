@@ -20,6 +20,7 @@ genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
 class TaskType(Enum):
     """Types of AI tasks for routing"""
     CURRICULUM_PLANNING = "curriculum_planning"
+    TUTORIAL_GENERATION = "tutorial_generation"
     CREATIVE_GENERATION = "creative_generation"
     THEORY_ANALYSIS = "theory_analysis"
     STYLE_ANALYSIS = "style_analysis"
@@ -29,11 +30,25 @@ class TaskType(Enum):
     VOICING_GENERATION = "voicing_generation"
 
 
+class GeminiModel(Enum):
+    """Gemini model variants for different complexity levels"""
+    FLASH = "gemini-2.0-flash"  # Fast, cheap - complexity 1-4
+    PRO = "gemini-2.0-pro"      # Balanced - complexity 5-7
+    ULTRA = "gemini-ultra"      # Best quality - complexity 8-10
+
+
 class ModelType(Enum):
     """Available AI models"""
     GEMINI = "gemini"
     CLAUDE = "claude"  # For future integration
     LOCAL = "local"  # Rule-based fallback
+
+
+class BudgetMode(Enum):
+    """Budget optimization modes"""
+    COST = "cost"          # Prioritize lowest cost
+    BALANCED = "balanced"  # Balance cost and quality
+    QUALITY = "quality"    # Prioritize best quality
 
 
 # Simple in-memory cache (in production, use Redis)
@@ -65,17 +80,18 @@ def _cache_set(key: str, value: Any, ttl_hours: int = 24) -> None:
 class AIOrchestrator:
     """
     Orchestrates AI tasks across multiple models.
-    
+
     Routes tasks to the most appropriate model based on:
     - Task type (curriculum planning → Claude, creative → Gemini)
     - Complexity score (simple → local/cheap, complex → best model)
     - Cost optimization (caching, batching)
     - Fallback chain (if primary fails, try secondary)
     """
-    
+
     # Model routing configuration
     ROUTING_MAP = {
         TaskType.CURRICULUM_PLANNING: ModelType.GEMINI,  # Use Gemini until Claude is integrated
+        TaskType.TUTORIAL_GENERATION: ModelType.GEMINI,
         TaskType.CREATIVE_GENERATION: ModelType.GEMINI,
         TaskType.THEORY_ANALYSIS: ModelType.GEMINI,
         TaskType.STYLE_ANALYSIS: ModelType.GEMINI,
@@ -84,70 +100,173 @@ class AIOrchestrator:
         TaskType.PROGRESSION_GENERATION: ModelType.GEMINI,
         TaskType.VOICING_GENERATION: ModelType.GEMINI,
     }
-    
-    # Complexity thresholds
-    COMPLEXITY_LOCAL = 3  # 1-3: Use local/rule-based
-    COMPLEXITY_STANDARD = 7  # 4-7: Use standard model
-    # 8-10: Use best model + validation
-    
-    def __init__(self):
-        self.gemini_model = genai.GenerativeModel('gemini-2.0-flash')
+
+    # Task complexity scores (1-10 scale)
+    TASK_COMPLEXITY = {
+        TaskType.CURRICULUM_PLANNING: 8,
+        TaskType.TUTORIAL_GENERATION: 7,
+        TaskType.EXERCISE_GENERATION: 4,
+        TaskType.PROGRESSION_GENERATION: 4,
+        TaskType.VOICING_GENERATION: 5,
+        TaskType.THEORY_ANALYSIS: 5,
+        TaskType.CREATIVE_GENERATION: 6,
+        TaskType.STYLE_ANALYSIS: 4,
+        TaskType.CONTENT_VALIDATION: 3,
+    }
+
+    # Complexity thresholds for model selection
+    COMPLEXITY_LOCAL = 3      # 1-3: Use local/rule-based
+    COMPLEXITY_FLASH = 4      # 4: Use Flash
+    COMPLEXITY_PRO = 7        # 5-7: Use Pro
+    # 8-10: Use Ultra
+
+    def __init__(self, budget_mode: BudgetMode = BudgetMode.BALANCED):
+        self.budget_mode = budget_mode
+        self.gemini_models = {
+            GeminiModel.FLASH: genai.GenerativeModel('gemini-2.0-flash'),
+            GeminiModel.PRO: genai.GenerativeModel('gemini-2.0-pro'),
+            # GeminiModel.ULTRA: genai.GenerativeModel('gemini-ultra'),  # Not released yet
+        }
         # Claude client would be initialized here when API key is available
         # self.claude_client = Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
     
-    def route_task(self, task_type: TaskType, complexity: int = 5) -> ModelType:
+    def route_task(self, task_type: TaskType, complexity: int = None) -> ModelType:
         """
-        Determine which model to use based on task type and complexity.
-        
+        Determine which model type to use based on task type and complexity.
+
         Args:
             task_type: Type of AI task
-            complexity: 1-10 rating of task complexity
-            
+            complexity: 1-10 rating of task complexity (auto-detected if None)
+
         Returns:
             ModelType to use
         """
+        # Auto-detect complexity if not provided
+        if complexity is None:
+            complexity = self.TASK_COMPLEXITY.get(task_type, 5)
+
         if complexity <= self.COMPLEXITY_LOCAL:
             return ModelType.LOCAL
-        
+
         return self.ROUTING_MAP.get(task_type, ModelType.GEMINI)
+
+    def select_gemini_model(self, complexity: int) -> GeminiModel:
+        """
+        Select the appropriate Gemini model based on complexity and budget mode.
+
+        Args:
+            complexity: 1-10 rating of task complexity
+
+        Returns:
+            GeminiModel to use
+        """
+        # Budget mode adjustments
+        if self.budget_mode == BudgetMode.COST:
+            # Always use Flash for cost optimization
+            return GeminiModel.FLASH
+        elif self.budget_mode == BudgetMode.QUALITY:
+            # Use Pro for medium+, Ultra for high complexity
+            if complexity >= 8:
+                return GeminiModel.ULTRA if GeminiModel.ULTRA in self.gemini_models else GeminiModel.PRO
+            elif complexity >= 5:
+                return GeminiModel.PRO
+            else:
+                return GeminiModel.FLASH
+        else:  # BALANCED
+            # Standard complexity-based routing
+            if complexity >= 8:
+                return GeminiModel.PRO  # Would be ULTRA when available
+            elif complexity >= self.COMPLEXITY_FLASH:
+                return GeminiModel.PRO if complexity >= self.COMPLEXITY_PRO else GeminiModel.FLASH
+            else:
+                return GeminiModel.FLASH
     
+    async def generate_with_fallback(
+        self,
+        prompt: str,
+        task_type: TaskType,
+        generation_config: Dict[str, Any] = None,
+        cache_ttl_hours: int = 24
+    ) -> Dict[str, Any]:
+        """
+        Generate AI content with automatic fallback chain.
+
+        Fallback order: Pro/Ultra → Flash → Template
+
+        Args:
+            prompt: The generation prompt
+            task_type: Type of task for routing
+            generation_config: Optional Gemini config
+            cache_ttl_hours: Cache TTL in hours
+
+        Returns:
+            Generated content as dict
+        """
+        # Check cache
+        cache_key = _get_cache_key(task_type.value, prompt)
+        cached = _cache_get(cache_key)
+        if cached:
+            return cached
+
+        # Default generation config
+        if generation_config is None:
+            generation_config = {
+                "temperature": 0.7,
+                "max_output_tokens": 4096,
+                "response_mime_type": "application/json",
+            }
+
+        # Get complexity and select model
+        complexity = self.TASK_COMPLEXITY.get(task_type, 5)
+        selected_model = self.select_gemini_model(complexity)
+
+        # Try primary model
+        try:
+            model = self.gemini_models[selected_model]
+            response = await model.generate_content_async(prompt, generation_config=generation_config)
+            result = json.loads(response.text)
+            _cache_set(cache_key, result, ttl_hours=cache_ttl_hours)
+            return result
+        except Exception as primary_error:
+            # Fallback to Flash if we were using Pro/Ultra
+            if selected_model != GeminiModel.FLASH:
+                try:
+                    flash_model = self.gemini_models[GeminiModel.FLASH]
+                    response = await flash_model.generate_content_async(prompt, generation_config=generation_config)
+                    result = json.loads(response.text)
+                    _cache_set(cache_key, result, ttl_hours=cache_ttl_hours)
+                    return result
+                except Exception:
+                    pass  # Fall through to template generation
+
+            # All AI models failed - return error
+            raise Exception(f"All AI models failed for {task_type.value}: {str(primary_error)}")
+
     async def generate_curriculum_plan(
-        self, 
+        self,
         skill_profile: Dict[str, Any],
         duration_weeks: int = 12
     ) -> Dict[str, Any]:
         """
         Generate a complete curriculum plan based on user's skill profile.
-        
-        Uses AI to create a personalized learning path.
+
+        Uses AI to create a personalized learning path with fallback.
         """
-        # Check cache
-        cache_key = _get_cache_key("curriculum", json.dumps(skill_profile, sort_keys=True))
-        cached = _cache_get(cache_key)
-        if cached:
-            return cached
-        
         prompt = self._build_curriculum_prompt(skill_profile, duration_weeks)
-        
+
         try:
-            response = await self.gemini_model.generate_content_async(
-                prompt,
+            return await self.generate_with_fallback(
+                prompt=prompt,
+                task_type=TaskType.CURRICULUM_PLANNING,
                 generation_config={
                     "temperature": 0.7,
                     "max_output_tokens": 8192,
                     "response_mime_type": "application/json",
-                }
+                },
+                cache_ttl_hours=168  # 1 week
             )
-            
-            result = json.loads(response.text)
-            
-            # Cache the result (curriculum plans are expensive to generate)
-            _cache_set(cache_key, result, ttl_hours=168)  # 1 week
-            
-            return result
-            
-        except Exception as e:
-            # Fallback to template-based generation
+        except Exception:
+            # Final fallback to template-based generation
             return self._generate_fallback_curriculum(skill_profile, duration_weeks)
     
     def _build_curriculum_prompt(

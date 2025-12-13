@@ -876,3 +876,94 @@ export const curriculumApi = {
         return handleResponse<CurriculumExercise>(response);
     },
 };
+
+    // === Phase 1: Audio API ===
+    getExerciseAudio: async (exerciseId: string, method: 'fluidsynth' | 'stable_audio' = 'fluidsynth'): Promise<Blob> => {
+        const response = await fetch(`${API_BASE_URL}/api/v1/audio/exercises/${exerciseId}/audio?method=${method}`);
+        if (!response.ok) throw new Error('Failed to fetch audio');
+        return response.blob();
+    },
+
+    getExerciseMIDI: async (exerciseId: string): Promise<Blob> => {
+        const response = await fetch(`${API_BASE_URL}/api/v1/audio/exercises/${exerciseId}/midi`);
+        if (!response.ok) throw new Error('Failed to fetch MIDI');
+        return response.blob();
+    },
+
+    getAudioStatus: async (exerciseId: string): Promise<{ status: string; midi_file?: string; audio_files?: any }> => {
+        const response = await fetch(`${API_BASE_URL}/api/v1/audio/exercises/${exerciseId}/status`);
+        return handleResponse(response);
+    },
+
+    generateExerciseAudio: async (exerciseId: string, method: 'fluidsynth' | 'stable_audio' | 'both' = 'both'): Promise<any> => {
+        const response = await fetch(`${API_BASE_URL}/api/v1/audio/exercises/${exerciseId}/generate`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ method }),
+        });
+        return handleResponse(response);
+    },
+
+    regenerateExerciseAudio: async (exerciseId: string, method: 'fluidsynth' | 'stable_audio' | 'both' = 'both'): Promise<any> => {
+        const response = await fetch(`${API_BASE_URL}/api/v1/audio/exercises/${exerciseId}/regenerate`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ method }),
+        });
+        return handleResponse(response);
+    },
+
+    // === Phase 2: Tutorial & Performance API ===
+    getLessonTutorial: async (lessonId: string, forceRegenerate: boolean = false): Promise<any> => {
+        const response = await fetch(`${API_BASE_URL}/api/v1/curriculum/lessons/${lessonId}/tutorial?force_regenerate=${forceRegenerate}`);
+        return handleResponse(response);
+    },
+
+    getPerformanceAnalysis: async (lookbackDays: number = 7): Promise<any> => {
+        const response = await fetch(`${API_BASE_URL}/api/v1/curriculum/performance-analysis?lookback_days=${lookbackDays}`);
+        return handleResponse(response);
+    },
+
+    applyCurriculumAdaptations: async (): Promise<any> => {
+        const response = await fetch(`${API_BASE_URL}/api/v1/curriculum/apply-adaptations`, {
+            method: 'POST',
+        });
+        return handleResponse(response);
+    },
+
+    // === Phase 3: Assessment API ===
+    getCurrentAssessment: async (): Promise<any> => {
+        const response = await fetch(`${API_BASE_URL}/api/v1/curriculum/assessments/current`);
+        if (response.status === 404) return null;
+        return handleResponse(response);
+    },
+
+    submitAssessment: async (assessmentId: string, responses: any): Promise<any> => {
+        const response = await fetch(`${API_BASE_URL}/api/v1/curriculum/assessments/${assessmentId}/submit`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(responses),
+        });
+        return handleResponse(response);
+    },
+
+    generateDiagnosticAssessment: async (): Promise<any> => {
+        const response = await fetch(`${API_BASE_URL}/api/v1/curriculum/generate-diagnostic-assessment`, {
+            method: 'POST',
+        });
+        return handleResponse(response);
+    },
+
+    checkMilestoneAssessments: async (curriculumId: string): Promise<any> => {
+        const response = await fetch(`${API_BASE_URL}/api/v1/curriculum/curricula/${curriculumId}/check-milestones`, {
+            method: 'POST',
+        });
+        return handleResponse(response);
+    },
+
+    // === Phase 0: AI Usage Stats ===
+    getAIUsageStats: async (days: number = 7): Promise<any> => {
+        const response = await fetch(`${API_BASE_URL}/api/v1/ai/usage/stats?days=${days}`);
+        return handleResponse(response);
+    },
+};

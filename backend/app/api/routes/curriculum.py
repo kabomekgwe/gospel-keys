@@ -370,3 +370,362 @@ async def get_daily_practice(
         overdue_count=overdue_count,
         new_count=new_count,
     )
+
+# === Phase 2: Tutorial & Performance Endpoints ===
+
+@router.get("/lessons/{lesson_id}/tutorial")
+async def get_lesson_tutorial(
+    lesson_id: str,
+    force_regenerate: bool = False,
+    session: AsyncSession = Depends(get_async_session)
+):
+    """Get or generate tutorial for a lesson
+
+    Args:
+        lesson_id: Lesson ID
+        force_regenerate: Force regeneration even if exists
+        session: Database session
+
+    Returns:
+        Tutorial content JSON
+    """
+    from app.services.tutorial_service import tutorial_service
+
+    try:
+        # Get lesson
+        result = await session.execute(
+            select(CurriculumLesson).where(CurriculumLesson.id == lesson_id)
+        )
+        lesson = result.scalar_one_or_none()
+
+        if not lesson:
+            raise HTTPException(status_code=404, detail="Lesson not found")
+
+        # Check if tutorial exists
+        if not force_regenerate and lesson.tutorial_content_json:
+            tutorial = json.loads(lesson.tutorial_content_json)
+            if tutorial:
+                return tutorial
+
+        # Generate tutorial
+        tutorial = await tutorial_service.generate_lesson_tutorial(lesson, force_regenerate)
+
+        # Save to database
+        lesson.tutorial_content_json = json.dumps(tutorial)
+        lesson.tutorial_generated_at = datetime.utcnow()
+        await session.commit()
+
+        return tutorial
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/performance-analysis")
+async def get_performance_analysis(
+    lookback_days: int = 7,
+    current_user: User = Depends(get_current_active_user),
+    session: AsyncSession = Depends(get_async_session)
+):
+    """Get performance analysis for current user
+
+    Args:
+        lookback_days: Days to analyze (default: 7)
+        current_user: Current authenticated user
+        session: Database session
+
+    Returns:
+        Performance analysis data
+    """
+    from app.services.adaptive_curriculum_service import AdaptiveCurriculumService
+
+    try:
+        adaptive_service = AdaptiveCurriculumService(session)
+
+        analysis = await adaptive_service.analyze_user_performance(
+            user_id=current_user.id,
+            lookback_days=lookback_days
+        )
+
+        return {
+            "completion_rate": analysis.completion_rate,
+            "avg_quality_score": analysis.avg_quality_score,
+            "total_exercises": analysis.total_exercises,
+            "reviewed_exercises": analysis.reviewed_exercises,
+            "struggling_exercises_count": len(analysis.struggling_exercises),
+            "mastered_exercises_count": len(analysis.mastered_exercises),
+            "weak_skill_areas": analysis.weak_skill_areas,
+            "strong_skill_areas": analysis.strong_skill_areas,
+            "recommended_actions": analysis.recommended_actions,
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/apply-adaptations")
+async def apply_curriculum_adaptations(
+    current_user: User = Depends(get_current_active_user),
+    session: AsyncSession = Depends(get_async_session)
+):
+    """Apply recommended adaptations to user's active curriculum
+
+    Args:
+        current_user: Current authenticated user
+        session: Database session
+
+    Returns:
+        Applied changes
+    """
+    from app.services.adaptive_curriculum_service import AdaptiveCurriculumService
+
+    try:
+        # Get active curriculum
+        result = await session.execute(
+            select(Curriculum).where(
+                and_(
+                    Curriculum.user_id == current_user.id,
+                    Curriculum.status == 'active'
+                )
+            ).order_by(Curriculum.created_at.desc())
+        )
+        curriculum = result.scalar_one_or_none()
+
+        if not curriculum:
+            raise HTTPException(status_code=404, detail="No active curriculum found")
+
+        # Analyze and apply
+        adaptive_service = AdaptiveCurriculumService(session)
+
+        analysis = await adaptive_service.analyze_user_performance(
+            user_id=current_user.id,
+            lookback_days=7
+        )
+
+        if not analysis.recommended_actions:
+            return {
+                "message": "No adaptations needed at this time",
+                "changes_applied": []
+            }
+
+        result = await adaptive_service.apply_adaptations(
+            curriculum_id=curriculum.id,
+            analysis=analysis
+        )
+
+        return result
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# === Phase 3: Assessment Endpoints ===
+
+@router.get("/assessments/current")
+async def get_current_assessment(
+    current_user: User = Depends(get_current_active_user),
+    session: AsyncSession = Depends(get_async_session)
+):
+    """Get current active assessment for user
+
+    Args:
+        current_user: Current authenticated user
+        session: Database session
+
+    Returns:
+        Active assessment or None
+    """
+    from app.database.curriculum_models import Assessment
+
+    try:
+        # Get most recent assessment without scores (not completed yet)
+        result = await session.execute(
+            select(Assessment)
+            .where(
+                and_(
+                    Assessment.user_id == current_user.id,
+                    Assessment.overall_score == None
+                )
+            )
+            .order_by(Assessment.created_at.desc())
+        )
+        assessment = result.scalar_one_or_none()
+
+        if not assessment:
+            return None
+
+        # Parse assessment content
+        content = json.loads(assessment.ai_feedback_json)
+
+        return {
+            "id": assessment.id,
+            "assessment_type": assessment.assessment_type,
+            "curriculum_id": assessment.curriculum_id,
+            "created_at": assessment.created_at.isoformat(),
+            "content": content
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/assessments/{assessment_id}/submit")
+async def submit_assessment(
+    assessment_id: str,
+    responses: dict,
+    current_user: User = Depends(get_current_active_user),
+    session: AsyncSession = Depends(get_async_session)
+):
+    """Submit assessment responses and trigger evaluation + feedback loop
+
+    Args:
+        assessment_id: Assessment ID
+        responses: User responses dict
+        current_user: Current authenticated user
+        session: Database session
+
+    Returns:
+        Evaluation results with updated skill profile
+    """
+    from app.services.assessment_service import AssessmentService
+    from app.services.curriculum_service import CurriculumService
+
+    try:
+        # Verify assessment belongs to user
+        result = await session.execute(
+            select(Assessment).where(Assessment.id == assessment_id)
+        )
+        assessment = result.scalar_one_or_none()
+
+        if not assessment:
+            raise HTTPException(status_code=404, detail="Assessment not found")
+
+        if assessment.user_id != current_user.id:
+            raise HTTPException(status_code=403, detail="Access denied")
+
+        # Evaluate assessment
+        assessment_service = AssessmentService(session)
+        evaluation = await assessment_service.evaluate_assessment(
+            assessment_id=assessment_id,
+            responses=responses
+        )
+
+        # Complete feedback loop (update profile + trigger adaptation)
+        curriculum_service = CurriculumService(session)
+        await curriculum_service.complete_assessment_feedback_loop(
+            assessment_id=assessment_id,
+            evaluation=evaluation
+        )
+
+        # Get updated skill profile
+        result = await session.execute(
+            select(UserSkillProfile).where(UserSkillProfile.user_id == current_user.id)
+        )
+        updated_profile = result.scalar_one_or_none()
+
+        return {
+            "evaluation": evaluation,
+            "skill_profile": {
+                "technical_ability": updated_profile.technical_ability,
+                "theory_knowledge": updated_profile.theory_knowledge,
+                "rhythm_competency": updated_profile.rhythm_competency,
+                "ear_training": updated_profile.ear_training,
+                "improvisation": updated_profile.improvisation,
+                "updated_at": updated_profile.updated_at.isoformat()
+            },
+            "message": "Assessment evaluated and curriculum adapted"
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/generate-diagnostic-assessment")
+async def generate_diagnostic_assessment(
+    current_user: User = Depends(get_current_active_user),
+    session: AsyncSession = Depends(get_async_session)
+):
+    """Generate initial diagnostic assessment for user
+
+    Args:
+        current_user: Current authenticated user
+        session: Database session
+
+    Returns:
+        Generated assessment
+    """
+    from app.services.assessment_service import AssessmentService
+
+    try:
+        assessment_service = AssessmentService(session)
+        assessment = await assessment_service.generate_diagnostic_assessment(
+            user_id=current_user.id
+        )
+
+        # Parse content
+        content = json.loads(assessment.ai_feedback_json)
+
+        return {
+            "id": assessment.id,
+            "assessment_type": assessment.assessment_type,
+            "created_at": assessment.created_at.isoformat(),
+            "content": content
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/curricula/{curriculum_id}/check-milestones")
+async def check_milestone_assessments(
+    curriculum_id: str,
+    current_user: User = Depends(get_current_active_user),
+    session: AsyncSession = Depends(get_async_session)
+):
+    """Check and trigger milestone assessments for a curriculum
+
+    Args:
+        curriculum_id: Curriculum ID
+        current_user: Current authenticated user
+        session: Database session
+
+    Returns:
+        List of triggered assessment IDs
+    """
+    from app.services.curriculum_service import CurriculumService
+
+    try:
+        # Verify curriculum belongs to user
+        result = await session.execute(
+            select(Curriculum).where(Curriculum.id == curriculum_id)
+        )
+        curriculum = result.scalar_one_or_none()
+
+        if not curriculum:
+            raise HTTPException(status_code=404, detail="Curriculum not found")
+
+        if curriculum.user_id != current_user.id:
+            raise HTTPException(status_code=403, detail="Access denied")
+
+        # Check and trigger milestones
+        curriculum_service = CurriculumService(session)
+        triggered = await curriculum_service.check_and_trigger_milestone_assessments(
+            curriculum_id=curriculum_id
+        )
+
+        return {
+            "curriculum_id": curriculum_id,
+            "triggered_assessments": triggered,
+            "count": len(triggered)
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
