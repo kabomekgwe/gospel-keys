@@ -4,6 +4,7 @@ Manages curriculum generation, CRUD operations, progress tracking, and adaptive 
 """
 
 import json
+import logging
 import uuid
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Any
@@ -23,6 +24,8 @@ from app.database.curriculum_models import (
 from app.database.models import User
 from app.services.ai_orchestrator import ai_orchestrator
 from app.services.srs_service import SRSService
+
+logger = logging.getLogger(__name__)
 
 
 class CurriculumService:

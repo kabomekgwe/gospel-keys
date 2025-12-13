@@ -17,6 +17,8 @@ from app.services.stable_audio_service import stable_audio_service
 from app.services.midi_generation_service import midi_generation_service
 from app.core.config import settings
 
+logger = logging.getLogger(__name__)
+
 # Import Rust audio engine (M4 GPU-accelerated)
 try:
     import rust_audio_engine
@@ -25,8 +27,6 @@ try:
 except ImportError:
     RUST_ENGINE_AVAILABLE = False
     logger.warning("Rust audio engine not available, falling back to FluidSynth")
-
-logger = logging.getLogger(__name__)
 
 AudioMethod = Literal["fluidsynth", "stable_audio", "both"]
 

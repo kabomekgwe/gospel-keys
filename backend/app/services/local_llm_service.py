@@ -138,21 +138,31 @@ JSON Response:"""
         # Extract JSON from response (handle markdown code blocks and extra text)
         json_text = response
 
-        # Handle markdown code blocks
-        if "```json" in response:
-            json_text = response.split("```json")[1].split("```")[0].strip()
-        elif "```" in response:
-            json_text = response.split("```")[1].split("```")[0].strip()
-
-        # Handle Phi-3 special tokens (strip everything after <|end|>)
+        # Handle Phi-3 special tokens FIRST (strip everything after <|end|>)
         if "<|end|>" in json_text:
             json_text = json_text.split("<|end|>")[0].strip()
 
-        # Try to find JSON object boundaries
-        # Look for first { and last }
+        # Handle markdown code blocks
+        if "```json" in json_text:
+            json_text = json_text.split("```json")[1].split("```")[0].strip()
+        elif "```" in json_text:
+            json_text = json_text.split("```")[1].split("```")[0].strip()
+
+        # Try to find JSON object boundaries by counting braces
+        # This handles cases where Phi-3 adds extra } characters
         if '{' in json_text and '}' in json_text:
             start = json_text.find('{')
-            end = json_text.rfind('}') + 1
+            # Find matching closing brace by counting
+            brace_count = 0
+            end = start
+            for i in range(start, len(json_text)):
+                if json_text[i] == '{':
+                    brace_count += 1
+                elif json_text[i] == '}':
+                    brace_count -= 1
+                    if brace_count == 0:
+                        end = i + 1
+                        break
             json_text = json_text[start:end]
 
         # Parse JSON
@@ -160,7 +170,7 @@ JSON Response:"""
             return json.loads(json_text)
         except json.JSONDecodeError as e:
             logger.error(f"Failed to parse JSON from local LLM: {e}")
-            logger.error(f"Response was: {response}")
+            logger.error(f"Response was: {response[:500]}...")
             logger.error(f"Extracted JSON text: {json_text}")
             raise ValueError(f"Invalid JSON from local LLM: {e}")
 
