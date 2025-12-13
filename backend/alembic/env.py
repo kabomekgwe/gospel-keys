@@ -10,6 +10,9 @@ from alembic import context
 
 # Import your models
 from app.database.models import Base
+# Import curriculum models so they're registered with Base.metadata
+from app.database import curriculum_models  # noqa: F401
+
 target_metadata = Base.metadata
 
 # this is the Alembic Config object, which provides

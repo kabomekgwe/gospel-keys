@@ -17,7 +17,8 @@ import {
     Dumbbell,
     BookOpen,
     Compass,
-    Sparkles
+    Sparkles,
+    GraduationCap
 } from 'lucide-react';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -34,6 +35,7 @@ const navItems: NavItem[] = [
     { to: '/library', icon: <Library className="w-5 h-5" />, label: 'Library' },
     { to: '/discover', icon: <Compass className="w-5 h-5" />, label: 'Discover' },
     { to: '/practice', icon: <Dumbbell className="w-5 h-5" />, label: 'Practice' },
+    { to: '/curriculum', icon: <GraduationCap className="w-5 h-5" />, label: 'Curriculum' },
     { to: '/generator', icon: <Sparkles className="w-5 h-5" />, label: 'Generator' },
     { to: '/theory', icon: <BookOpen className="w-5 h-5" />, label: 'Theory' },
     { to: '/jobs', icon: <ListMusic className="w-5 h-5" />, label: 'Jobs' },

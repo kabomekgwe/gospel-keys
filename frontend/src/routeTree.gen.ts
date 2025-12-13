@@ -18,7 +18,9 @@ import { Route as PracticeIndexRouteImport } from './routes/practice/index'
 import { Route as LibraryIndexRouteImport } from './routes/library/index'
 import { Route as GeneratorIndexRouteImport } from './routes/generator/index'
 import { Route as DiscoverIndexRouteImport } from './routes/discover/index'
+import { Route as CurriculumIndexRouteImport } from './routes/curriculum/index'
 import { Route as LibrarySongIdRouteImport } from './routes/library/$songId'
+import { Route as CurriculumDailyRouteImport } from './routes/curriculum/daily'
 import { Route as LibrarySongIdPracticeRouteImport } from './routes/library/$songId/practice'
 import { Route as LibrarySongIdAnalyzeRouteImport } from './routes/library/$songId/analyze'
 
@@ -67,9 +69,19 @@ const DiscoverIndexRoute = DiscoverIndexRouteImport.update({
   path: '/discover/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CurriculumIndexRoute = CurriculumIndexRouteImport.update({
+  id: '/curriculum/',
+  path: '/curriculum/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LibrarySongIdRoute = LibrarySongIdRouteImport.update({
   id: '/library/$songId',
   path: '/library/$songId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CurriculumDailyRoute = CurriculumDailyRouteImport.update({
+  id: '/curriculum/daily',
+  path: '/curriculum/daily',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LibrarySongIdPracticeRoute = LibrarySongIdPracticeRouteImport.update({
@@ -88,7 +100,9 @@ export interface FileRoutesByFullPath {
   '/jobs': typeof JobsRoute
   '/settings': typeof SettingsRoute
   '/upload': typeof UploadRoute
+  '/curriculum/daily': typeof CurriculumDailyRoute
   '/library/$songId': typeof LibrarySongIdRouteWithChildren
+  '/curriculum': typeof CurriculumIndexRoute
   '/discover': typeof DiscoverIndexRoute
   '/generator': typeof GeneratorIndexRoute
   '/library': typeof LibraryIndexRoute
@@ -102,7 +116,9 @@ export interface FileRoutesByTo {
   '/jobs': typeof JobsRoute
   '/settings': typeof SettingsRoute
   '/upload': typeof UploadRoute
+  '/curriculum/daily': typeof CurriculumDailyRoute
   '/library/$songId': typeof LibrarySongIdRouteWithChildren
+  '/curriculum': typeof CurriculumIndexRoute
   '/discover': typeof DiscoverIndexRoute
   '/generator': typeof GeneratorIndexRoute
   '/library': typeof LibraryIndexRoute
@@ -117,7 +133,9 @@ export interface FileRoutesById {
   '/jobs': typeof JobsRoute
   '/settings': typeof SettingsRoute
   '/upload': typeof UploadRoute
+  '/curriculum/daily': typeof CurriculumDailyRoute
   '/library/$songId': typeof LibrarySongIdRouteWithChildren
+  '/curriculum/': typeof CurriculumIndexRoute
   '/discover/': typeof DiscoverIndexRoute
   '/generator/': typeof GeneratorIndexRoute
   '/library/': typeof LibraryIndexRoute
@@ -133,7 +151,9 @@ export interface FileRouteTypes {
     | '/jobs'
     | '/settings'
     | '/upload'
+    | '/curriculum/daily'
     | '/library/$songId'
+    | '/curriculum'
     | '/discover'
     | '/generator'
     | '/library'
@@ -147,7 +167,9 @@ export interface FileRouteTypes {
     | '/jobs'
     | '/settings'
     | '/upload'
+    | '/curriculum/daily'
     | '/library/$songId'
+    | '/curriculum'
     | '/discover'
     | '/generator'
     | '/library'
@@ -161,7 +183,9 @@ export interface FileRouteTypes {
     | '/jobs'
     | '/settings'
     | '/upload'
+    | '/curriculum/daily'
     | '/library/$songId'
+    | '/curriculum/'
     | '/discover/'
     | '/generator/'
     | '/library/'
@@ -176,7 +200,9 @@ export interface RootRouteChildren {
   JobsRoute: typeof JobsRoute
   SettingsRoute: typeof SettingsRoute
   UploadRoute: typeof UploadRoute
+  CurriculumDailyRoute: typeof CurriculumDailyRoute
   LibrarySongIdRoute: typeof LibrarySongIdRouteWithChildren
+  CurriculumIndexRoute: typeof CurriculumIndexRoute
   DiscoverIndexRoute: typeof DiscoverIndexRoute
   GeneratorIndexRoute: typeof GeneratorIndexRoute
   LibraryIndexRoute: typeof LibraryIndexRoute
@@ -249,11 +275,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DiscoverIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/curriculum/': {
+      id: '/curriculum/'
+      path: '/curriculum'
+      fullPath: '/curriculum'
+      preLoaderRoute: typeof CurriculumIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/library/$songId': {
       id: '/library/$songId'
       path: '/library/$songId'
       fullPath: '/library/$songId'
       preLoaderRoute: typeof LibrarySongIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/curriculum/daily': {
+      id: '/curriculum/daily'
+      path: '/curriculum/daily'
+      fullPath: '/curriculum/daily'
+      preLoaderRoute: typeof CurriculumDailyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/library/$songId/practice': {
@@ -292,7 +332,9 @@ const rootRouteChildren: RootRouteChildren = {
   JobsRoute: JobsRoute,
   SettingsRoute: SettingsRoute,
   UploadRoute: UploadRoute,
+  CurriculumDailyRoute: CurriculumDailyRoute,
   LibrarySongIdRoute: LibrarySongIdRouteWithChildren,
+  CurriculumIndexRoute: CurriculumIndexRoute,
   DiscoverIndexRoute: DiscoverIndexRoute,
   GeneratorIndexRoute: GeneratorIndexRoute,
   LibraryIndexRoute: LibraryIndexRoute,

@@ -32,6 +32,10 @@ class User(Base):
     # Relationships
     songs: Mapped[List["Song"]] = relationship(back_populates="user", cascade="all, delete-orphan")
     practice_sessions: Mapped[List["PracticeSession"]] = relationship(back_populates="user", cascade="all, delete-orphan")
+    
+    # Curriculum relationships
+    skill_profile: Mapped["UserSkillProfile"] = relationship(back_populates="user", uselist=False, cascade="all, delete-orphan")
+    curricula: Mapped[List["Curriculum"]] = relationship(back_populates="user", cascade="all, delete-orphan")
 
 
 
