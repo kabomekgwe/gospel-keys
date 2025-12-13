@@ -33,7 +33,7 @@ def melody_with_fills_pattern(context: ChordContext) -> HandPattern:
     Returns:
         HandPattern with melody and fills
     """
-    chord_tones = get_chord_tones(context.chord, octave=4)  # C4 register
+    chord_tones = get_chord_tones(context.chord, octave=5)  # C4 register
 
     # Use top note of chord as melody
     if len(chord_tones) >= 4:
@@ -47,9 +47,14 @@ def melody_with_fills_pattern(context: ChordContext) -> HandPattern:
         harmony_notes = [chord_tones[0]]  # Root
 
     notes = [
-        # Beat 1-2: Sustained melody with harmony
-        Note(pitch=melody_note, time=0.0, duration=2.0, velocity=85, hand="right"),
-        *[Note(pitch=p, time=0.0, duration=2.0, velocity=75, hand="right")
+        # Beat 1: Melody with harmony
+        Note(pitch=melody_note, time=0.0, duration=0.9, velocity=85, hand="right"),
+        *[Note(pitch=p, time=0.0, duration=0.9, velocity=75, hand="right")
+          for p in harmony_notes],
+
+        # Beat 2: Re-attack for rhythm
+        Note(pitch=melody_note, time=1.0, duration=0.9, velocity=80, hand="right"),
+        *[Note(pitch=p, time=1.0, duration=0.9, velocity=70, hand="right")
           for p in harmony_notes],
 
         # Beat 3: Fill (scalar approach)
@@ -83,7 +88,7 @@ def chord_fills_pattern(context: ChordContext) -> HandPattern:
     Returns:
         HandPattern with chord fills
     """
-    chord_tones = get_chord_tones(context.chord, octave=4)
+    chord_tones = get_chord_tones(context.chord, octave=5)
 
     # Close voicing for right hand (within octave)
     if len(chord_tones) >= 4:
@@ -133,7 +138,7 @@ def octave_doubling_pattern(context: ChordContext) -> HandPattern:
     Returns:
         HandPattern with octave doubling
     """
-    chord_tones = get_chord_tones(context.chord, octave=4)
+    chord_tones = get_chord_tones(context.chord, octave=5)
 
     # Use chord tones as melodic sequence
     if len(chord_tones) >= 4:
@@ -171,7 +176,7 @@ def block_chord_pattern(context: ChordContext) -> HandPattern:
     Returns:
         HandPattern with block chords
     """
-    chord_tones = get_chord_tones(context.chord, octave=4)
+    chord_tones = get_chord_tones(context.chord, octave=5)
 
     # Drop-2 voicing for rich sound (drop second-highest note by octave)
     if len(chord_tones) >= 4:
@@ -193,17 +198,23 @@ def block_chord_pattern(context: ChordContext) -> HandPattern:
     # Remove duplicates and sort
     voicing = sorted(list(set(voicing)))
 
-    notes = [
-        Note(pitch=p, time=0.0, duration=4.0, velocity=75, hand="right")
-        for p in voicing
-    ]
+    # Instead of one sustained chord, play rhythmic re-attacks
+    # Pattern: beats 1, 2, 3, 4 (four quarter note attacks)
+    notes = []
+    for beat in [0.0, 1.0, 2.0, 3.0]:
+        for p in voicing:
+            # Slightly shorter duration (0.9) for articulation
+            velocity = 75 if beat in [0.0, 2.0] else 70  # Slight emphasis on downbeats
+            notes.append(
+                Note(pitch=p, time=beat, duration=0.9, velocity=velocity, hand="right")
+            )
 
     return HandPattern(
         name="block_chord",
         notes=notes,
         difficulty="beginner",
         tempo_range=(50, 100),
-        characteristics=["sustained", "harmonic", "worship", "simple"]
+        characteristics=["rhythmic", "harmonic", "worship", "active"]
     )
 
 
@@ -219,7 +230,7 @@ def polychord_pattern(context: ChordContext) -> HandPattern:
     Returns:
         HandPattern with polychord voicing
     """
-    chord_tones = get_chord_tones(context.chord, octave=4)
+    chord_tones = get_chord_tones(context.chord, octave=5)
     root = chord_tones[0]
 
     # Build upper structure triad
@@ -245,17 +256,22 @@ def polychord_pattern(context: ChordContext) -> HandPattern:
         # Default to close voicing
         upper_structure = chord_tones[:min(4, len(chord_tones))]
 
-    notes = [
-        Note(pitch=p, time=0.0, duration=4.0, velocity=80, hand="right")
-        for p in upper_structure
-    ]
+    # Play syncopated polychord pattern (gospel comping style)
+    # Pattern: beat 1, beat 2.5, beat 4 (syncopated)
+    notes = []
+    for beat in [0.0, 2.5, 3.5]:
+        for p in upper_structure:
+            velocity = 85 if beat == 2.5 else 80  # Emphasis on backbeat
+            notes.append(
+                Note(pitch=p, time=beat, duration=0.4, velocity=velocity, hand="right")
+            )
 
     return HandPattern(
         name="polychord",
         notes=notes,
         difficulty="expert",
         tempo_range=(60, 140),
-        characteristics=["modern", "jazz", "sophisticated", "upper_structure"]
+        characteristics=["modern", "jazz", "sophisticated", "syncopated", "active"]
     )
 
 
@@ -271,7 +287,7 @@ def arpeggiated_voicing_pattern(context: ChordContext) -> HandPattern:
     Returns:
         HandPattern with arpeggiated voicing
     """
-    chord_tones = get_chord_tones(context.chord, octave=4)
+    chord_tones = get_chord_tones(context.chord, octave=5)
 
     # Extend to higher octave for full arpeggio
     if len(chord_tones) >= 4:

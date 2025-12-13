@@ -87,12 +87,12 @@ def parse_chord_symbol(chord: str) -> Tuple[str, str, List[str]]:
     return root, quality, extensions
 
 
-def get_chord_tones(chord: str, octave: int = 2) -> List[int]:
+def get_chord_tones(chord: str, octave: int = 4) -> List[int]:
     """Get MIDI note numbers for chord tones.
 
     Args:
         chord: Chord symbol (e.g., "Cmaj7")
-        octave: Base octave (default 2 for left hand bass register)
+        octave: Base octave (default 4 for left hand bass register - produces C3)
 
     Returns:
         List of MIDI note numbers for chord tones
@@ -129,7 +129,7 @@ def stride_bass_pattern(context: ChordContext) -> HandPattern:
     Returns:
         HandPattern with stride bass notes
     """
-    chord_tones = get_chord_tones(context.chord, octave=2)
+    chord_tones = get_chord_tones(context.chord, octave=4)
     root = chord_tones[0]
 
     # Chord voicing (3rd and 7th, or available tones)
@@ -180,13 +180,13 @@ def walking_bass_pattern(context: ChordContext) -> HandPattern:
     Returns:
         HandPattern with walking bass notes
     """
-    chord_tones = get_chord_tones(context.chord, octave=2)
+    chord_tones = get_chord_tones(context.chord, octave=4)
     root = chord_tones[0]
 
     # Get next chord root for voice leading
     next_root = root
     if context.next_chord:
-        next_chord_tones = get_chord_tones(context.next_chord, octave=2)
+        next_chord_tones = get_chord_tones(context.next_chord, octave=4)
         next_root = next_chord_tones[0]
 
     # Build walking line: root -> 3rd -> 5th -> chromatic approach to next root
@@ -238,7 +238,7 @@ def alberti_bass_pattern(context: ChordContext) -> HandPattern:
     Returns:
         HandPattern with arpeggiated notes
     """
-    chord_tones = get_chord_tones(context.chord, octave=2)
+    chord_tones = get_chord_tones(context.chord, octave=4)
 
     # Ensure we have at least 3 tones
     if len(chord_tones) < 3:
@@ -284,7 +284,7 @@ def shell_voicing_pattern(context: ChordContext) -> HandPattern:
     Returns:
         HandPattern with shell voicing
     """
-    chord_tones = get_chord_tones(context.chord, octave=2)
+    chord_tones = get_chord_tones(context.chord, octave=4)
     root = chord_tones[0]
 
     # Shell: root in bass + 3rd and 7th in mid-range
@@ -330,7 +330,7 @@ def syncopated_comping_pattern(context: ChordContext) -> HandPattern:
     Returns:
         HandPattern with syncopated chords
     """
-    chord_tones = get_chord_tones(context.chord, octave=2)
+    chord_tones = get_chord_tones(context.chord, octave=4)
 
     # Use mid-register chord voicing (3rd, 5th, 7th)
     if len(chord_tones) >= 4:
