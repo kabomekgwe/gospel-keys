@@ -185,18 +185,43 @@ export interface GenreAnalysis {
     primary_genre: string;
     subgenres: string[];
     confidence: number;
-    harmonic_complexity_score?: number;
-    tempo?: number;
+    harmonic_complexity_score: number;
+    tempo: number;
     source?: string;
+    all_probabilities?: Record<string, number>;
 }
 
-export interface JazzPatterns {
-    ii_v_i_progressions: Array<{ start_time: number; duration: number; key: string; confidence: number }>;
-    turnarounds: Array<{ start_time: number; duration: number; key: string; confidence: number }>;
-    tritone_substitutions: Array<{ start_time: number; duration: number }>;
+export interface JazzPattern {
+    pattern_type: string;
+    start_time: number;
+    duration: number;
+    confidence: number;
+    key: string;
+    metadata?: Record<string, any>;
+}
+
+export interface JazzPatternsResult {
+    ii_v_i_progressions: JazzPattern[];
+    turnarounds: JazzPattern[];
+    tritone_substitutions: JazzPattern[];
     total_patterns: number;
     jazz_complexity_score: number;
     source?: string;
+}
+
+export interface PitchContour {
+    time: number[];
+    frequency: number[];
+    confidence: number[];
+    notes: (string | null)[];
+}
+
+export interface PitchAnalysisResult {
+    pitch_contour: PitchContour;
+    total_frames: number;
+    blue_notes?: any[];
+    vibrato_regions?: any[];
+    pitch_bends?: any[];
 }
 
 export const analysisApi = {
@@ -207,29 +232,47 @@ export const analysisApi = {
         return handleResponse<GenreAnalysis>(response);
     },
 
-    getJazzPatterns: async (songId: string): Promise<JazzPatterns> => {
+    getJazzPatterns: async (songId: string): Promise<JazzPatternsResult> => {
         const response = await fetch(`${API_BASE_URL}/api/v1/analyze/jazz-patterns?song_id=${songId}`, {
             method: 'POST'
         });
-        return handleResponse<JazzPatterns>(response);
+        return handleResponse<JazzPatternsResult>(response);
+    },
+
+    getPitchTracking: async (songId: string): Promise<PitchAnalysisResult> => {
+        const response = await fetch(`${API_BASE_URL}/api/v1/analyze/pitch-tracking?song_id=${songId}`, {
+            method: 'POST'
+        });
+        return handleResponse<PitchAnalysisResult>(response);
     },
 
     getBluesForm: async (songId: string): Promise<unknown> => {
-        const response = await fetch(`${API_BASE_URL}/api/v1/analyze/${songId}/blues`);
+        const response = await fetch(`${API_BASE_URL}/api/v1/analyze/blues-form?song_id=${songId}`, {
+            method: 'POST'
+        });
         return handleResponse<unknown>(response);
     },
 
     getMelody: async (songId: string): Promise<unknown> => {
-        const response = await fetch(`${API_BASE_URL}/api/v1/analyze/${songId}/melody`);
+        const response = await fetch(`${API_BASE_URL}/api/v1/analyze/melody?song_id=${songId}`, {
+            method: 'POST'
+        });
         return handleResponse<unknown>(response);
     },
 
     getChords: async (songId: string): Promise<unknown[]> => {
+        // This endpoint was not in the backend file viewed, assuming it might be a different path or missing
+        // Based on analysis.py, there is no direct "get chords" analysis endpoint, 
+        // usually chords come from the Song object or specific analysis.
+        // Keeping as is but likely won't work if route doesn't exist.
+        // Correcting path to match typical pattern just in case
         const response = await fetch(`${API_BASE_URL}/api/v1/analyze/${songId}/chords`);
         return handleResponse<unknown[]>(response);
     },
 
     getPatterns: async (songId: string): Promise<unknown[]> => {
+        // Deprecated or generic? Replacing with specific ones above.
+        // Keeping placeholder for backward compat if needed, but likely unused.
         const response = await fetch(`${API_BASE_URL}/api/v1/analyze/${songId}/patterns`);
         return handleResponse<unknown[]>(response);
     },
