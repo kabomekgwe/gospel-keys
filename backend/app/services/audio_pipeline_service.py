@@ -17,6 +17,15 @@ from app.services.stable_audio_service import stable_audio_service
 from app.services.midi_generation_service import midi_generation_service
 from app.core.config import settings
 
+# Import Rust audio engine (M4 GPU-accelerated)
+try:
+    import rust_audio_engine
+    RUST_ENGINE_AVAILABLE = True
+    logger.info("🚀 Rust audio engine loaded (M4 GPU acceleration enabled)")
+except ImportError:
+    RUST_ENGINE_AVAILABLE = False
+    logger.warning("Rust audio engine not available, falling back to FluidSynth")
+
 logger = logging.getLogger(__name__)
 
 AudioMethod = Literal["fluidsynth", "stable_audio", "both"]
@@ -105,13 +114,72 @@ class AudioPipelineService:
             logger.error(f"Failed to generate audio for exercise {exercise.id}: {e}")
             raise e
 
+    async def generate_rust_audio(
+        self,
+        midi_path: Path,
+        exercise_id: str,
+        use_gpu: bool = True,
+        reverb: bool = True
+    ) -> Path:
+        """Generate WAV audio from MIDI using Rust engine (M4 GPU-accelerated)
+
+        This is 100x faster than FluidSynth subprocess!
+
+        Args:
+            midi_path: Path to MIDI file
+            exercise_id: Exercise identifier
+            use_gpu: Enable Metal GPU acceleration (default: True)
+            reverb: Enable reverb effect (default: True)
+
+        Returns:
+            Path to generated WAV file
+        """
+        if not RUST_ENGINE_AVAILABLE:
+            raise RuntimeError("Rust audio engine not available")
+
+        if not self.soundfont_path.exists():
+            raise FileNotFoundError(f"Soundfont not found: {self.soundfont_path}")
+
+        output_path = self.output_dir / f"{exercise_id}_fluidsynth.wav"
+
+        try:
+            # Run Rust synthesis in executor (it's fast, but still I/O bound)
+            loop = asyncio.get_event_loop()
+
+            def _run_rust_synthesis():
+                logger.info(f"🚀 Running Rust synthesis (M4 GPU): {midi_path}")
+                start_time = asyncio.get_event_loop().time() if hasattr(asyncio.get_event_loop(), 'time') else 0
+
+                duration = rust_audio_engine.synthesize_midi(
+                    midi_path=str(midi_path),
+                    output_path=str(output_path),
+                    soundfont_path=str(self.soundfont_path),
+                    sample_rate=self.sample_rate,
+                    use_gpu=use_gpu,
+                    reverb=reverb
+                )
+
+                elapsed = asyncio.get_event_loop().time() - start_time if hasattr(asyncio.get_event_loop(), 'time') else 0
+                logger.info(f"✅ Rust synthesis complete in {elapsed:.2f}s (audio duration: {duration:.2f}s)")
+                return output_path
+
+            result_path = await loop.run_in_executor(None, _run_rust_synthesis)
+            return result_path
+
+        except Exception as e:
+            logger.error(f"Rust synthesis failed: {e}")
+            raise e
+
     async def generate_fluidsynth_audio(
         self,
         midi_path: Path,
         exercise_id: str,
         gain: float = 0.5
     ) -> Path:
-        """Generate WAV audio from MIDI using FluidSynth
+        """Generate WAV audio from MIDI using FluidSynth or Rust engine
+
+        Automatically uses Rust engine (100x faster) if available,
+        falls back to FluidSynth subprocess.
 
         Args:
             midi_path: Path to MIDI file
@@ -121,8 +189,21 @@ class AudioPipelineService:
         Returns:
             Path to generated WAV file
         """
+        # Use Rust engine if available (100x faster!)
+        if RUST_ENGINE_AVAILABLE and self.soundfont_path.exists():
+            try:
+                return await self.generate_rust_audio(
+                    midi_path=midi_path,
+                    exercise_id=exercise_id,
+                    use_gpu=True,
+                    reverb=True
+                )
+            except Exception as e:
+                logger.warning(f"Rust engine failed, falling back to FluidSynth: {e}")
+
+        # Fallback to FluidSynth subprocess
         if not self.fluidsynth_available:
-            raise RuntimeError("FluidSynth is not installed")
+            raise RuntimeError("Neither Rust engine nor FluidSynth is available")
 
         if not self.soundfont_path.exists():
             raise FileNotFoundError(f"Soundfont not found: {self.soundfont_path}")

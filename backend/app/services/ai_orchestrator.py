@@ -16,6 +16,14 @@ import google.generativeai as genai
 # Configure Gemini
 genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
 
+# Import local LLM service (M4 Neural Engine)
+try:
+    from app.services.local_llm_service import local_llm_service, MLX_AVAILABLE
+    LOCAL_LLM_ENABLED = MLX_AVAILABLE and local_llm_service and local_llm_service.is_available()
+except ImportError:
+    local_llm_service = None
+    LOCAL_LLM_ENABLED = False
+
 
 class TaskType(Enum):
     """Types of AI tasks for routing"""
@@ -115,9 +123,9 @@ class AIOrchestrator:
     }
 
     # Complexity thresholds for model selection
-    COMPLEXITY_LOCAL = 3      # 1-3: Use local/rule-based
-    COMPLEXITY_FLASH = 4      # 4: Use Flash
-    COMPLEXITY_PRO = 7        # 5-7: Use Pro
+    COMPLEXITY_LOCAL = 4      # 1-4: Use local LLM (M4 Neural Engine) - FREE!
+    COMPLEXITY_FLASH = 5      # 5: Use Flash
+    COMPLEXITY_PRO = 7        # 6-7: Use Pro
     # 8-10: Use Ultra
 
     def __init__(self, budget_mode: BudgetMode = BudgetMode.BALANCED):
@@ -127,6 +135,7 @@ class AIOrchestrator:
             GeminiModel.PRO: genai.GenerativeModel('gemini-2.0-pro'),
             # GeminiModel.ULTRA: genai.GenerativeModel('gemini-ultra'),  # Not released yet
         }
+        self.local_llm = local_llm_service
         # Claude client would be initialized here when API key is available
         # self.claude_client = Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
     
@@ -191,7 +200,7 @@ class AIOrchestrator:
         """
         Generate AI content with automatic fallback chain.
 
-        Fallback order: Pro/Ultra → Flash → Template
+        Fallback order: Local LLM (M4) → Pro/Ultra → Flash → Error
 
         Args:
             prompt: The generation prompt
@@ -218,6 +227,24 @@ class AIOrchestrator:
 
         # Get complexity and select model
         complexity = self.TASK_COMPLEXITY.get(task_type, 5)
+
+        # Try local LLM first for simple tasks (complexity 1-4)
+        if complexity <= self.COMPLEXITY_LOCAL and LOCAL_LLM_ENABLED:
+            try:
+                # Use local M4 Neural Engine (FREE and FAST!)
+                result = self.local_llm.generate_structured(
+                    prompt=prompt,
+                    schema={},  # Let LLM infer structure
+                    max_tokens=generation_config.get("max_output_tokens", 1024),
+                    temperature=generation_config.get("temperature", 0.7),
+                )
+                _cache_set(cache_key, result, ttl_hours=cache_ttl_hours)
+                return result
+            except Exception as local_error:
+                # Fallback to Gemini if local LLM fails
+                print(f"⚠️ Local LLM failed for {task_type.value}, falling back to Gemini: {local_error}")
+
+        # Select Gemini model for complex tasks
         selected_model = self.select_gemini_model(complexity)
 
         # Try primary model

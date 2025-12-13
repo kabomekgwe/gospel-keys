@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, Asyn
 from app.core.config import settings
 
 # Database URL for SQLite with async driver
-DATABASE_URL = f"sqlite+aiosqlite:///{settings.base_dir}/gospel_keys.db"
+DATABASE_URL = f"sqlite+aiosqlite:///{settings.BASE_DIR}/piano_keys.db"
 
 # Create async engine
 engine = create_async_engine(
