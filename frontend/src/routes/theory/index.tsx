@@ -14,18 +14,16 @@ import {
     BookOpen,
     Layers,
     Music,
-    Circle,
-    Sparkles,
+    Circle
 } from 'lucide-react';
 import { ChordDictionary, ScaleExplorer, CircleOfFifths } from '../../components/theory';
-import { AIGenerator } from '../../components/theory/AIGenerator';
 import { usePiano } from '../../hooks/usePiano';
 
 export const Route = createFileRoute('/theory/')({
     component: TheoryHub,
 });
 
-type TabId = 'ai' | 'chords' | 'scales' | 'circle';
+type TabId = 'chords' | 'scales' | 'circle';
 
 interface Tab {
     id: TabId;
@@ -34,14 +32,13 @@ interface Tab {
 }
 
 const TABS: Tab[] = [
-    { id: 'ai', label: 'AI Generator', icon: <Sparkles className="w-5 h-5" /> },
     { id: 'chords', label: 'Chord Dictionary', icon: <Layers className="w-5 h-5" /> },
     { id: 'scales', label: 'Scale Explorer', icon: <Music className="w-5 h-5" /> },
     { id: 'circle', label: 'Circle of Fifths', icon: <Circle className="w-5 h-5" /> },
 ];
 
 function TheoryHub() {
-    const [activeTab, setActiveTab] = useState<TabId>('ai');
+    const [activeTab, setActiveTab] = useState<TabId>('chords');
     const [selectedKey, setSelectedKey] = useState('C');
 
     // Real piano audio for playing chords and scales
@@ -91,9 +88,7 @@ function TheoryHub() {
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id)}
                         className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all whitespace-nowrap ${activeTab === tab.id
-                            ? tab.id === 'ai'
-                                ? 'bg-gradient-to-r from-violet-500/20 to-cyan-500/20 text-violet-400 border border-violet-500/30'
-                                : 'bg-violet-500/20 text-violet-400 border border-violet-500/30'
+                            ? 'bg-violet-500/20 text-violet-400 border border-violet-500/30'
                             : 'text-slate-400 hover:text-white hover:bg-slate-800'
                             }`}
                     >
@@ -110,10 +105,6 @@ function TheoryHub() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.2 }}
             >
-                {activeTab === 'ai' && (
-                    <AIGenerator onPlayChord={handlePlayChord} />
-                )}
-
                 {activeTab === 'chords' && (
                     <ChordDictionary onPlayChord={handlePlayChord} />
                 )}

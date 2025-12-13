@@ -16,6 +16,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as TheoryIndexRouteImport } from './routes/theory/index'
 import { Route as PracticeIndexRouteImport } from './routes/practice/index'
 import { Route as LibraryIndexRouteImport } from './routes/library/index'
+import { Route as GeneratorIndexRouteImport } from './routes/generator/index'
 import { Route as DiscoverIndexRouteImport } from './routes/discover/index'
 import { Route as LibrarySongIdRouteImport } from './routes/library/$songId'
 import { Route as LibrarySongIdPracticeRouteImport } from './routes/library/$songId/practice'
@@ -56,6 +57,11 @@ const LibraryIndexRoute = LibraryIndexRouteImport.update({
   path: '/library/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GeneratorIndexRoute = GeneratorIndexRouteImport.update({
+  id: '/generator/',
+  path: '/generator/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DiscoverIndexRoute = DiscoverIndexRouteImport.update({
   id: '/discover/',
   path: '/discover/',
@@ -84,6 +90,7 @@ export interface FileRoutesByFullPath {
   '/upload': typeof UploadRoute
   '/library/$songId': typeof LibrarySongIdRouteWithChildren
   '/discover': typeof DiscoverIndexRoute
+  '/generator': typeof GeneratorIndexRoute
   '/library': typeof LibraryIndexRoute
   '/practice': typeof PracticeIndexRoute
   '/theory': typeof TheoryIndexRoute
@@ -97,6 +104,7 @@ export interface FileRoutesByTo {
   '/upload': typeof UploadRoute
   '/library/$songId': typeof LibrarySongIdRouteWithChildren
   '/discover': typeof DiscoverIndexRoute
+  '/generator': typeof GeneratorIndexRoute
   '/library': typeof LibraryIndexRoute
   '/practice': typeof PracticeIndexRoute
   '/theory': typeof TheoryIndexRoute
@@ -111,6 +119,7 @@ export interface FileRoutesById {
   '/upload': typeof UploadRoute
   '/library/$songId': typeof LibrarySongIdRouteWithChildren
   '/discover/': typeof DiscoverIndexRoute
+  '/generator/': typeof GeneratorIndexRoute
   '/library/': typeof LibraryIndexRoute
   '/practice/': typeof PracticeIndexRoute
   '/theory/': typeof TheoryIndexRoute
@@ -126,6 +135,7 @@ export interface FileRouteTypes {
     | '/upload'
     | '/library/$songId'
     | '/discover'
+    | '/generator'
     | '/library'
     | '/practice'
     | '/theory'
@@ -139,6 +149,7 @@ export interface FileRouteTypes {
     | '/upload'
     | '/library/$songId'
     | '/discover'
+    | '/generator'
     | '/library'
     | '/practice'
     | '/theory'
@@ -152,6 +163,7 @@ export interface FileRouteTypes {
     | '/upload'
     | '/library/$songId'
     | '/discover/'
+    | '/generator/'
     | '/library/'
     | '/practice/'
     | '/theory/'
@@ -166,6 +178,7 @@ export interface RootRouteChildren {
   UploadRoute: typeof UploadRoute
   LibrarySongIdRoute: typeof LibrarySongIdRouteWithChildren
   DiscoverIndexRoute: typeof DiscoverIndexRoute
+  GeneratorIndexRoute: typeof GeneratorIndexRoute
   LibraryIndexRoute: typeof LibraryIndexRoute
   PracticeIndexRoute: typeof PracticeIndexRoute
   TheoryIndexRoute: typeof TheoryIndexRoute
@@ -222,6 +235,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LibraryIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/generator/': {
+      id: '/generator/'
+      path: '/generator'
+      fullPath: '/generator'
+      preLoaderRoute: typeof GeneratorIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/discover/': {
       id: '/discover/'
       path: '/discover'
@@ -274,6 +294,7 @@ const rootRouteChildren: RootRouteChildren = {
   UploadRoute: UploadRoute,
   LibrarySongIdRoute: LibrarySongIdRouteWithChildren,
   DiscoverIndexRoute: DiscoverIndexRoute,
+  GeneratorIndexRoute: GeneratorIndexRoute,
   LibraryIndexRoute: LibraryIndexRoute,
   PracticeIndexRoute: PracticeIndexRoute,
   TheoryIndexRoute: TheoryIndexRoute,
