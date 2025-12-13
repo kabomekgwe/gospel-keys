@@ -208,6 +208,11 @@ class CurriculumExercise(Base):
     audio_generation_status: Mapped[str] = mapped_column(String(20), default='pending')  # pending, generating, complete, failed
     audio_generated_at: Mapped[Optional[datetime]] = mapped_column(DateTime)
 
+    # Gospel piano generation fields (Gospel MIDI Enhancement)
+    application_type: Mapped[Optional[str]] = mapped_column(String(20))  # "worship", "uptempo", "practice", "concert"
+    variant_count: Mapped[int] = mapped_column(Integer, default=4)  # Number of style variants to generate
+    midi_files_json: Mapped[str] = mapped_column(Text, default='{}')  # {"worship": "path", "uptempo": "path", ...}
+
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
     # Relationships

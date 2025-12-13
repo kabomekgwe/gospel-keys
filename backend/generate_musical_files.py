@@ -16,6 +16,10 @@ import time
 from app.database.session import async_session_maker
 from app.services.curriculum_service import CurriculumService
 
+# Import new gospel piano system
+from app.gospel.arrangement.arranger import GospelArranger
+from app.gospel.midi.enhanced_exporter import export_enhanced_midi
+
 
 # Gospel piano voicings (MIDI note numbers)
 CHORD_VOICINGS = {
@@ -277,9 +281,32 @@ async def generate_all_musical_files():
                             print(f"         Chords: {' → '.join(chords)}")
                             print(f"         Key: {key} | BPM: {bpm}")
 
-                            create_gospel_midi(chords, key, bpm, midi_path)
-                            print(f"         ✅ MIDI: {midi_path.name}")
-                            total_files += 1
+                            # NEW: Generate 4 gospel piano application variants
+                            arranger = GospelArranger()
+                            midi_files_dict = {}
+
+                            for app_type in ["worship", "uptempo", "practice", "concert"]:
+                                # Generate arrangement
+                                arrangement = arranger.arrange_progression(
+                                    chords=chords,
+                                    key=key,
+                                    bpm=bpm,
+                                    application=app_type
+                                )
+
+                                # Export to MIDI with application suffix
+                                variant_midi_path = midi_dir / f"{safe_name}_{app_type}.mid"
+                                export_enhanced_midi(arrangement, variant_midi_path)
+
+                                # Store path
+                                midi_files_dict[app_type] = str(variant_midi_path.relative_to(Path.cwd()))
+
+                                print(f"         ✅ MIDI ({app_type}): {variant_midi_path.name}")
+                                total_files += 1
+
+                            # Update exercise with MIDI file paths
+                            exercise.midi_files_json = json.dumps(midi_files_dict)
+                            exercise.variant_count = len(midi_files_dict)
 
                             # Create chord chart
                             chart_path = charts_dir / f"{safe_name}.txt"
@@ -312,6 +339,10 @@ async def generate_all_musical_files():
 
                     except Exception as e:
                         print(f"         ❌ Error: {e}")
+
+        # Commit database updates for exercise MIDI file paths
+        await session.commit()
+        print(f"\n✅ Database updated with MIDI file paths")
 
         # Generate audio files using Rust engine
         print(f"\n{'=' * 80}")
