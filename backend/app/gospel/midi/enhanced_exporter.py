@@ -139,11 +139,12 @@ def _create_hand_track(
 
         # Humanization: slight random variations
         if humanize:
-            # Timing jitter: ±10 ticks (about ±20ms at 480 ticks/beat, 120 BPM)
+            # Timing jitter: +/-10 ticks (about +/-20ms at 480 ticks/beat, 120 BPM)
             timing_jitter = random.randint(-10, 10)
-            note_start_ticks += timing_jitter
+            note_start_ticks = max(0, note_start_ticks + timing_jitter)  # Ensure non-negative
+            note_end_ticks = max(note_start_ticks + 1, note_end_ticks)  # Ensure end > start
 
-            # Velocity variation: ±3
+            # Velocity variation: +/-3
             velocity_jitter = random.randint(-3, 3)
             velocity = max(1, min(127, note.velocity + velocity_jitter))
         else:

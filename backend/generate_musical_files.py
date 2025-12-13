@@ -298,8 +298,8 @@ async def generate_all_musical_files():
                                 variant_midi_path = midi_dir / f"{safe_name}_{app_type}.mid"
                                 export_enhanced_midi(arrangement, variant_midi_path)
 
-                                # Store path
-                                midi_files_dict[app_type] = str(variant_midi_path.relative_to(Path.cwd()))
+                                # Store path (relative to output base)
+                                midi_files_dict[app_type] = str(variant_midi_path)
 
                                 print(f"         ✅ MIDI ({app_type}): {variant_midi_path.name}")
                                 total_files += 1

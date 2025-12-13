@@ -120,7 +120,7 @@ def get_chord_tones(chord: str, octave: int = 2) -> List[int]:
 def stride_bass_pattern(context: ChordContext) -> HandPattern:
     """Generate traditional gospel stride bass pattern.
 
-    Pattern: Root (beat 1) ’ Chord (beat 2) ’ Root (beat 3) ’ Chord (beat 4)
+    Pattern: Root (beat 1) -> Chord (beat 2) -> Root (beat 3) -> Chord (beat 4)
     Classic Thomas Dorsey/traditional gospel style.
 
     Args:
@@ -189,7 +189,7 @@ def walking_bass_pattern(context: ChordContext) -> HandPattern:
         next_chord_tones = get_chord_tones(context.next_chord, octave=2)
         next_root = next_chord_tones[0]
 
-    # Build walking line: root ’ 3rd ’ 5th ’ chromatic approach to next root
+    # Build walking line: root -> 3rd -> 5th -> chromatic approach to next root
     if len(chord_tones) >= 3:
         # Standard walking pattern
         beat_1 = root
@@ -229,7 +229,7 @@ def walking_bass_pattern(context: ChordContext) -> HandPattern:
 def alberti_bass_pattern(context: ChordContext) -> HandPattern:
     """Generate Alberti bass arpeggiation pattern.
 
-    Pattern: Root ’ 3rd ’ 5th ’ 3rd (arpeggiated)
+    Pattern: Root -> 3rd -> 5th -> 3rd (arpeggiated)
     Classical/contemporary gospel blend.
 
     Args:
