@@ -109,6 +109,7 @@ async def get_song(song_id: str, db: AsyncSession = Depends(get_db)):
         chord_count=len(song.chords),
         annotation_count=len(song.annotations),
         snippet_count=len(song.snippets),
+        unique_notes_count=len(set(note.pitch % 12 for note in song.notes)),
         favorite=song.favorite,
         created_at=song.created_at,
         last_accessed_at=song.last_accessed_at,

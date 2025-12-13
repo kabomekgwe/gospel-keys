@@ -1,11 +1,18 @@
-"""MIDI transcription using Spotify's basic-pitch"""
-
+"""MIDI conversion pipeline using basic-pitch"""
 import asyncio
+import os
 from pathlib import Path
 from typing import Optional
 import numpy as np
-from basic_pitch.inference import predict
-from basic_pitch import ICASSP_2022_MODEL_PATH
+
+# Optional import - basic-pitch requires TensorFlow which doesn't support Python 3.13 yet
+try:
+    from basic_pitch.inference import predict
+    from basic_pitch import ICASSP_2022_MODEL_PATH
+    BASIC_PITCH_AVAILABLE = True
+except ImportError:
+    BASIC_PITCH_AVAILABLE = False
+    print("Warning: basic-pitch not available. MIDI transcription will be disabled.")
 import pretty_midi
 
 from app.schemas.transcription import NoteEvent
@@ -23,7 +30,7 @@ async def transcribe_audio(
     frame_threshold: float = 0.3,
 ) -> tuple[list[NoteEvent], Path, Optional[float]]:
     """
-    Transcribe audio to MIDI using basic-pitch
+    Transcribe audio to MIDI using basic-pitch (preferred) or librosa (fallback)
     
     Args:
         audio_path: Input audio file (WAV)
@@ -35,8 +42,23 @@ async def transcribe_audio(
         Tuple of (note events list, MIDI file path, estimated tempo)
     
     Raises:
-        TranscriptionError: If transcription fails
+        TranscriptionError: If transcription fails or basic-pitch not available
     """
+    if BASIC_PITCH_AVAILABLE:
+        return await _transcribe_with_basic_pitch(
+            audio_path, midi_output_path, onset_threshold, frame_threshold
+        )
+    else:
+        return await _transcribe_with_librosa(audio_path, midi_output_path)
+
+
+async def _transcribe_with_basic_pitch(
+    audio_path: Path,
+    midi_output_path: Path,
+    onset_threshold: float,
+    frame_threshold: float,
+) -> tuple[list[NoteEvent], Path, Optional[float]]:
+    """Transcribe using basic-pitch (neural network approach)"""
     try:
         midi_output_path.parent.mkdir(parents=True, exist_ok=True)
         
@@ -74,6 +96,114 @@ async def transcribe_audio(
         
     except Exception as e:
         raise TranscriptionError(f"MIDI transcription failed: {str(e)}")
+
+
+async def _transcribe_with_librosa(
+    audio_path: Path,
+    midi_output_path: Path,
+) -> tuple[list[NoteEvent], Path, Optional[float]]:
+    """
+    Transcribe using librosa + pretty_midi (traditional DSP approach)
+    
+    This is a fallback when basic-pitch is not available.
+    Works well for monophonic and piano music.
+    """
+    try:
+        import librosa
+        
+        midi_output_path.parent.mkdir(parents=True, exist_ok=True)
+        
+        def _transcribe():
+            # Load audio
+            y, sr = librosa.load(str(audio_path), sr=22050, mono=True)
+            
+            # 1. Detect note onsets
+            onset_frames = librosa.onset.onset_detect(
+                y=y, sr=sr, units='frames',
+                backtrack=True,
+                pre_max=20,
+                post_max=20,
+                pre_avg=100,
+                post_avg=100,
+                delta=0.2,
+                wait=30
+            )
+            onset_times = librosa.frames_to_time(onset_frames, sr=sr)
+            
+            # 2. Extract pitch using pyin (probabilistic YIN)
+            f0, voiced_flag, voiced_probs = librosa.pyin(
+                y,
+                fmin=librosa.note_to_hz('C2'),
+                fmax=librosa.note_to_hz('C7'),
+                sr=sr,
+                frame_length=2048
+            )
+            
+            # 3. Create MIDI file
+            midi = pretty_midi.PrettyMIDI()
+            piano = pretty_midi.Instrument(program=0)  # Acoustic Grand Piano
+            
+            # 4. Build notes from onsets and pitch
+            for i, onset in enumerate(onset_times):
+                # Determine note offset
+                if i < len(onset_times) - 1:
+                    offset = onset_times[i + 1]
+                else:
+                    offset = onset + 0.5  # Default duration
+                
+                # Get pitch at onset time
+                onset_frame = librosa.time_to_frames(onset, sr=sr)
+                
+                # Look ahead a few frames to get stable pitch
+                pitch_window = f0[onset_frame:onset_frame + 10]
+                voiced_window = voiced_flag[onset_frame:onset_frame + 10]
+                
+                # Filter to voiced frames only
+                voiced_pitches = pitch_window[voiced_window]
+                
+                if len(voiced_pitches) > 0 and not np.all(np.isnan(voiced_pitches)):
+                    # Use median pitch in window
+                    pitch_hz = np.nanmedian(voiced_pitches)
+                    pitch_midi = int(round(librosa.hz_to_midi(pitch_hz)))
+                    
+                    # Clamp to valid MIDI range
+                    pitch_midi = np.clip(pitch_midi, 0, 127)
+                    
+                    # Create note
+                    note = pretty_midi.Note(
+                        velocity=80,
+                        pitch=pitch_midi,
+                        start=onset,
+                        end=offset
+                    )
+                    piano.notes.append(note)
+            
+            midi.instruments.append(piano)
+            midi.write(str(midi_output_path))
+            
+            return midi
+        
+        loop = asyncio.get_event_loop()
+        midi_data = await loop.run_in_executor(None, _transcribe)
+        
+        # Convert to NoteEvent schema
+        notes = []
+        for instrument in midi_data.instruments:
+            for note in instrument.notes:
+                notes.append(NoteEvent(
+                    pitch=note.pitch,
+                    start_time=note.start,
+                    end_time=note.end,
+                    velocity=note.velocity,
+                ))
+        
+        # Estimate tempo
+        tempo = estimate_tempo(midi_data)
+        
+        return notes, midi_output_path, tempo
+        
+    except Exception as e:
+        raise TranscriptionError(f"Librosa transcription failed: {str(e)}")
 
 
 def estimate_tempo(midi_data: pretty_midi.PrettyMIDI) -> Optional[float]:

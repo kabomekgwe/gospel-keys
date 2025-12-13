@@ -35,6 +35,7 @@ class SongDetail(BaseModel):
     chord_count: int = 0
     annotation_count: int = 0
     snippet_count: int = 0
+    unique_notes_count: int = 0
     favorite: bool = False
     created_at: datetime
     last_accessed_at: Optional[datetime] = None

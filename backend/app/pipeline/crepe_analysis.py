@@ -1,17 +1,18 @@
-"""
-CREPE Neural Pitch Tracking Wrapper
+"""Crepe-based pitch analysis"""
 
-Provides neural network-based pitch estimation for:
-- Blue notes detection
-- Pitch bends/vibrato
-- Microtonal variations
-"""
-
-import numpy as np
 from pathlib import Path
-from typing import Tuple, List, Dict, Optional
-import crepe
+from typing import List, Dict, Tuple, Optional
+import numpy as np
 import librosa
+import soundfile as sf
+
+# Optional import - crepe requires TensorFlow which doesn't support Python 3.13 yet
+try:
+    import crepe
+    CREPE_AVAILABLE = True
+except ImportError:
+    CREPE_AVAILABLE = False
+    print("Warning: crepe not available. Advanced pitch analysis will be disabled.")
 
 
 async def extract_pitch_contour(
@@ -21,17 +22,30 @@ async def extract_pitch_contour(
     viterbi: bool = True
 ) -> Dict:
     """
-    Extract detailed pitch contour using CREPE neural network
+    Extract detailed pitch contour using CREPE (preferred) or librosa.pyin (fallback)
     
     Args:
         audio_path: Path to audio file
-        sample_rate: Sampling rate (16kHz recommended for CREPE)
-        model_capacity: "tiny", "small", "medium", "large", "full"
+        sample_rate: Sampling rate (16kHz recommended for CREPE, 22kHz for pyin)
+        model_capacity: "tiny", "small", "medium", "large", "full" (CREPE only)
         viterbi: Use viterbi smoothing algorithm
     
-    Re turns:
-        Dict with time, frequency, confidence, and notes
+    Returns:
+        Dict with time, frequency, confidence/voicing, and notes
     """
+    if CREPE_AVAILABLE:
+        return await _extract_pitch_crepe(audio_path, sample_rate, model_capacity, viterbi)
+    else:
+        return await _extract_pitch_pyin(audio_path, sample_rate)
+
+
+async def _extract_pitch_crepe(
+    audio_path: Path,
+    sample_rate: int,
+    model_capacity: str,
+    viterbi: bool
+) -> Dict:
+    """Extract pitch using CREPE neural network"""
     # Load audio
     audio, sr = librosa.load(str(audio_path), sr=sample_rate, mono=True)
     
@@ -52,6 +66,48 @@ async def extract_pitch_contour(
         "time": time.tolist(),
         "frequency": frequency.tolist(),
         "confidence": confidence.tolist(),
+        "notes": notes,
+        "sampling_rate": sample_rate
+    }
+
+
+async def _extract_pitch_pyin(
+    audio_path: Path,
+    sample_rate: int = 22050
+) -> Dict:
+    """
+    Extract pitch using librosa.pyin (traditional DSP approach)
+    
+    This is a fallback when CREPE is not available.
+    Works well for monophonic audio (voice, single instruments).
+    """
+    # Load audio
+    y, sr = librosa.load(str(audio_path), sr=sample_rate, mono=True)
+    
+    # Extract F0 with pyin
+    f0, voiced_flag, voiced_probs = librosa.pyin(
+        y,
+        fmin=librosa.note_to_hz('C2'),
+        fmax=librosa.note_to_hz('C7'),
+        sr=sr,
+        frame_length=2048
+    )
+    
+    # Time stamps
+    times = librosa.times_like(f0, sr=sr)
+    
+    # Convert to note names (same format as CREPE)
+    notes = []
+    for freq, voiced in zip(f0, voiced_flag):
+        if voiced and not np.isnan(freq):
+            notes.append(_frequency_to_note(freq))
+        else:
+            notes.append(None)
+    
+    return {
+        "time": times.tolist(),
+        "frequency": f0.tolist(),
+        "confidence": voiced_probs.tolist(),  # Use voicing probability as confidence
         "notes": notes,
         "sampling_rate": sample_rate
     }

@@ -1,7 +1,7 @@
 [project]
 name = "piano-keys-backend"
 version = "2.0.0"
-requires-python = ">=3.10,<3.12"
+requires-python = ">=3.10,<3.14"
 dependencies = [
     # Core FastAPI
     "fastapi[standard]>=0.124.4",
@@ -19,7 +19,7 @@ dependencies = [
     # Pipeline - Source separation
     "demucs>=4.0.0",
     # Pipeline - MIDI transcription
-    "basic-pitch>=0.4.0",
+    # "basic-pitch>=0.4.0",  # Requires TensorFlow, not compatible with Python 3.13 yet
     "pretty-midi>=0.2.11",
     # Pipeline - Audio analysis
     "librosa>=0.10.0",
@@ -32,8 +32,8 @@ dependencies = [
     "alembic>=1.13.0",
     "music21>=9.1.0",
     # Phase 4 - Multi-genre advanced analysis (Python-only)
-    "crepe>=0.0.13",             # Neural pitch tracking
-    "scikit-learn>=1.4.0",       # Genre classification
+    # "crepe>=0.0.13",       # Neural pitch tracking - Requires TensorFlow, not compatible with Python 3.13 yet
+    "scikit-learn>=1.4.0",  # Genre classification
     # System dependencies
     "setuptools>=80.9.0",
     "google-generativeai>=0.3.0",

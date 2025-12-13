@@ -35,6 +35,7 @@ import { SheetMusicRenderer } from '../../components/sheet-music';
 import { AnalysisTab } from '../../components/AnalysisTab';
 import { PracticeTab } from '../../components/PracticeTab';
 
+
 export const Route = createFileRoute('/library/$songId')({
     component: SongDetailPage,
     validateSearch: (search: Record<string, unknown>): { tab?: TabId; snippetId?: string } => ({
@@ -43,54 +44,6 @@ export const Route = createFileRoute('/library/$songId')({
     }),
 });
 
-// Generate demo notes for testing (replace with real API data)
-function generateDemoNotes(duration: number): MidiNote[] {
-    const notes: MidiNote[] = [];
-    const scale = [60, 62, 64, 65, 67, 69, 71, 72]; // C major scale
-
-    let time = 0;
-    let noteId = 0;
-
-    while (time < duration) {
-        // Random chord or single note
-        if (Math.random() > 0.3) {
-            // Chord (3-4 notes)
-            const chordRoot = scale[Math.floor(Math.random() * 4)];
-            const chordNotes = [
-                chordRoot,
-                chordRoot + 4, // Major third
-                chordRoot + 7, // Perfect fifth
-            ];
-            if (Math.random() > 0.5) chordNotes.push(chordRoot + 12); // Octave
-
-            chordNotes.forEach((pitch) => {
-                notes.push({
-                    id: `note-${noteId++}`,
-                    pitch: pitch - 12, // Bass register
-                    startTime: time,
-                    duration: 0.8 + Math.random() * 0.4,
-                    velocity: 60 + Math.floor(Math.random() * 40),
-                    hand: 'left',
-                } as MidiNote & { hand: 'left' | 'right' });
-            });
-        }
-
-        // Melody note
-        const melodyPitch = scale[Math.floor(Math.random() * scale.length)];
-        notes.push({
-            id: `note-${noteId++}`,
-            pitch: melodyPitch + 12,
-            startTime: time + 0.1,
-            duration: 0.3 + Math.random() * 0.3,
-            velocity: 70 + Math.floor(Math.random() * 30),
-            hand: 'right',
-        } as MidiNote & { hand: 'left' | 'right' });
-
-        time += 0.5 + Math.random() * 0.5;
-    }
-
-    return notes;
-}
 
 type TabId = 'overview' | 'piano-roll' | 'sheet-music' | 'analysis' | 'practice';
 
@@ -126,11 +79,16 @@ function SongDetailPage() {
         enabled: !!song,
     });
 
+    const { data: chordsData } = useQuery({
+        queryKey: ['song', songId, 'chords'],
+        queryFn: () => notesApi.getChords(songId),
+        enabled: !!song,
+    });
+
     // Convert API notes to MidiNote format
     const songNotes = useMemo<MidiNote[]>(() => {
-        if (!notesData || notesData.length === 0) {
-            // Fallback to demo notes if no data
-            return song ? generateDemoNotes(song.duration) : [];
+        if (!notesData) {
+            return [];
         }
         return notesData.map((note) => ({
             id: note.id,
@@ -140,7 +98,7 @@ function SongDetailPage() {
             velocity: note.velocity,
             hand: note.hand || 'right',
         }));
-    }, [notesData, song]);
+    }, [notesData]);
 
     // MIDI player
     const [playerState, playerControls] = useNewMidiPlayer(
@@ -158,7 +116,6 @@ function SongDetailPage() {
             </div>
         );
     }
-
     if (error || !song) {
         return (
             <div className="flex-1 flex items-center justify-center bg-slate-900">
@@ -174,7 +131,6 @@ function SongDetailPage() {
             </div>
         );
     }
-
     return (
         <div className="flex-1 flex flex-col bg-slate-900 overflow-hidden">
             {/* Header */}
@@ -358,7 +314,11 @@ function SongDetailPage() {
                 )}
 
                 {activeTab === 'analysis' && (
-                    <AnalysisTab notes={songNotes} />
+                    <AnalysisTab
+                        songId={songId}
+                        detectedChords={chordsData || []}
+                        totalNotes={songNotes.length}
+                    />
                 )}
 
                 {activeTab === 'practice' && (

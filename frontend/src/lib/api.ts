@@ -185,24 +185,32 @@ export interface GenreAnalysis {
     primary_genre: string;
     subgenres: string[];
     confidence: number;
-    characteristics: Record<string, unknown>;
+    harmonic_complexity_score?: number;
+    tempo?: number;
+    source?: string;
 }
 
 export interface JazzPatterns {
-    ii_v_i_patterns: Array<{ start: number; end: number; key: string }>;
-    turnarounds: Array<{ start: number; end: number }>;
-    tritone_substitutions: Array<{ position: number; original: string; substitution: string }>;
+    ii_v_i_progressions: Array<{ start_time: number; duration: number; key: string; confidence: number }>;
+    turnarounds: Array<{ start_time: number; duration: number; key: string; confidence: number }>;
+    tritone_substitutions: Array<{ start_time: number; duration: number }>;
+    total_patterns: number;
     jazz_complexity_score: number;
+    source?: string;
 }
 
 export const analysisApi = {
     getGenre: async (songId: string): Promise<GenreAnalysis> => {
-        const response = await fetch(`${API_BASE_URL}/api/v1/analyze/${songId}/genre`);
+        const response = await fetch(`${API_BASE_URL}/api/v1/analyze/genre?song_id=${songId}`, {
+            method: 'POST'
+        });
         return handleResponse<GenreAnalysis>(response);
     },
 
     getJazzPatterns: async (songId: string): Promise<JazzPatterns> => {
-        const response = await fetch(`${API_BASE_URL}/api/v1/analyze/${songId}/jazz-patterns`);
+        const response = await fetch(`${API_BASE_URL}/api/v1/analyze/jazz-patterns?song_id=${songId}`, {
+            method: 'POST'
+        });
         return handleResponse<JazzPatterns>(response);
     },
 
