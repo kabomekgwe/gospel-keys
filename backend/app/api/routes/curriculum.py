@@ -26,6 +26,7 @@ from app.schemas.curriculum import (
     AssessmentSubmission,
     UserSkillProfileResponse,
     CurriculumGenerateRequest,
+    CurriculumDefaultRequest,
     CurriculumResponse,
     CurriculumSummary,
     CurriculumModuleResponse,
@@ -138,6 +139,67 @@ async def generate_curriculum(
     return await _curriculum_to_response(curriculum, service)
 
 
+@router.post("/default", response_model=CurriculumResponse)
+async def create_default_curriculum(
+    request: CurriculumDefaultRequest,
+    user_id: int = Depends(get_current_user_id),
+    service: CurriculumService = Depends(get_curriculum_service)
+):
+    """Create a new curriculum from a default template"""
+    try:
+        curriculum = await service.create_default_curriculum(
+            user_id=user_id,
+            template_key=request.template_key
+        )
+        return await _curriculum_to_response(curriculum, service)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.get("/templates", response_model=List[dict])
+async def list_curriculum_templates():
+    """List available default curriculum templates"""
+    from app.services.curriculum_defaults import DEFAULT_CURRICULUMS
+    return [
+        {
+            "key": key,
+            "title": template["title"],
+            "description": template["description"],
+            "weeks": sum(
+                (m.get('end_week', 4) - m.get('start_week', 1) + 1) 
+                for m in template.get('modules', [])
+            )
+        }
+        for key, template in DEFAULT_CURRICULUMS.items()
+    ]
+
+
+
+
+@router.get("/list", response_model=List[CurriculumSummary])
+async def list_user_curriculums(
+    user_id: int = Depends(get_current_user_id),
+    service: CurriculumService = Depends(get_curriculum_service)
+):
+    """List all curriculums for the user"""
+    curriculums = await service.get_user_curriculums(user_id)
+    return [await _curriculum_to_summary(c, service) for c in curriculums]
+
+
+@router.post("/{curriculum_id}/activate", response_model=CurriculumResponse)
+async def activate_curriculum(
+    curriculum_id: str,
+    user_id: int = Depends(get_current_user_id),
+    service: CurriculumService = Depends(get_curriculum_service)
+):
+    """Set a curriculum as active"""
+    try:
+        curriculum = await service.activate_curriculum(curriculum_id, user_id)
+        # We need details for the response
+        full_curriculum = await service.get_curriculum_with_details(curriculum.id)
+        return await _curriculum_to_response(full_curriculum, service)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
 @router.get("/", response_model=Optional[CurriculumResponse])
 async def get_active_curriculum(
     user_id: int = Depends(get_current_user_id),

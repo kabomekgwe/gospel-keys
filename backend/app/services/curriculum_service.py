@@ -23,6 +23,7 @@ from app.database.curriculum_models import (
 )
 from app.database.models import User
 from app.services.ai_orchestrator import ai_orchestrator
+from app.services.curriculum_defaults import DEFAULT_CURRICULUMS
 from app.services.srs_service import SRSService
 
 logger = logging.getLogger(__name__)
@@ -134,6 +135,52 @@ class CurriculumService:
         # Generate curriculum plan using AI
         plan = await ai_orchestrator.generate_curriculum_plan(profile_dict, duration_weeks)
         
+        return await self._create_curriculum_from_plan(
+            user_id=user_id,
+            plan=plan,
+            title=title,
+            duration_weeks=duration_weeks,
+            ai_model=f"gemini-{ai_orchestrator.budget_mode.value}"
+        )
+
+    async def create_default_curriculum(
+        self,
+        user_id: int,
+        template_key: str = "gospel_essentials"
+    ) -> Curriculum:
+        """Create a curriculum from a default template"""
+        if template_key not in DEFAULT_CURRICULUMS:
+            raise ValueError(f"Unknown template: {template_key}")
+            
+        plan = DEFAULT_CURRICULUMS[template_key]
+        
+        # Calculate duration from modules (approx 4 weeks per module)
+        duration_weeks = sum(
+            (m.get('end_week', 4) - m.get('start_week', 1) + 1) 
+            for m in plan.get('modules', [])
+        )
+        # Or just use max end_week
+        last_module = plan['modules'][-1] if plan['modules'] else {}
+        duration_weeks = last_module.get('end_week', 12)
+        
+        return await self._create_curriculum_from_plan(
+            user_id=user_id,
+            plan=plan,
+            title=plan.get('title'),
+            duration_weeks=duration_weeks,
+            ai_model="template"
+        )
+
+    async def _create_curriculum_from_plan(
+        self,
+        user_id: int,
+        plan: Dict[str, Any],
+        title: Optional[str] = None,
+        duration_weeks: int = 12,
+        ai_model: str = "gemini"
+    ) -> Curriculum:
+        """Helper to save curriculum plan to database"""
+        
         # Create curriculum record
         curriculum = Curriculum(
             id=str(uuid.uuid4()),
@@ -143,7 +190,7 @@ class CurriculumService:
             duration_weeks=duration_weeks,
             current_week=1,
             status='active',
-            ai_model_used='gemini',
+            ai_model_used=ai_model,
         )
         self.db.add(curriculum)
         
@@ -253,10 +300,10 @@ class CurriculumService:
             .where(
                 and_(
                     Curriculum.user_id == user_id,
-                    Curriculum.status == 'active'
+                    Curriculum.status.in_(['active', 'completed'])
                 )
             )
-            .order_by(Curriculum.created_at.desc())
+            .order_by(Curriculum.updated_at.desc())
             .limit(1)
         )
         return result.unique().scalars().first()
@@ -273,6 +320,162 @@ class CurriculumService:
             .where(Curriculum.id == curriculum_id)
         )
         return result.scalar_one_or_none()
+    
+    async def get_user_curriculums(self, user_id: int) -> List[Curriculum]:
+        """Get all curriculums for a user, PLUS global curriculums owned by admin"""
+        
+        # 1. Get user's personal curriculums
+        result = await self.db.execute(
+            select(Curriculum)
+            .where(Curriculum.user_id == user_id)
+            .order_by(Curriculum.updated_at.desc())
+        )
+        user_curriculums = result.scalars().all()
+        
+        # 2. Get global curriculums (from admin)
+        # Assuming admin email is static or we can find it
+        # Ideally we'd cache the admin ID, but for now query it
+        admin_result = await self.db.execute(
+            select(User.id).where(User.email == "admin@gospelkeys.ai")
+        )
+        admin_id = admin_result.scalar_one_or_none()
+        
+        if admin_id and admin_id != user_id:
+            global_result = await self.db.execute(
+                select(Curriculum)
+                .where(Curriculum.user_id == admin_id)
+                .order_by(Curriculum.title) 
+            )
+            global_curriculums = global_result.scalars().all()
+            
+            # Combine: User's first, then Globals
+            # Avoid duplicates if logic changes? (User shouldn't own admin's)
+            return list(user_curriculums) + list(global_curriculums)
+            
+        return user_curriculums
+
+    async def activate_curriculum(self, curriculum_id: str, user_id: int) -> Curriculum:
+        """
+        Make a curriculum active. 
+        If it belongs to another user (Global Admin), CLONE it first.
+        """
+        # Get the curriculum provided
+        result = await self.db.execute(
+            select(Curriculum)
+            .options(
+                selectinload(Curriculum.modules)
+                .selectinload(CurriculumModule.lessons)
+                .selectinload(CurriculumLesson.exercises)
+            )
+            .where(Curriculum.id == curriculum_id)
+        )
+        target = result.scalar_one_or_none()
+        
+        if not target:
+            raise ValueError("Curriculum not found")
+        
+        # Case 1: Curriculum belongs to user -> Just activate
+        if target.user_id == user_id:
+            target.updated_at = datetime.utcnow()
+            target.status = 'active'
+            await self.db.commit()
+            await self.db.refresh(target)
+            return target
+            
+        # Case 2: Curriculum is Global (belongs to admin/other) -> Clone it
+        # Verify it is indeed global (optional check, but good for security)
+        # For now, if it exists and not ours, we assume we can clone it if we can see it.
+        
+        return await self._clone_curriculum(target, user_id)
+
+    async def _clone_curriculum(self, source: Curriculum, new_owner_id: int) -> Curriculum:
+        """Deep clone a curriculum for a new owner"""
+        logger.info(f"Cloning curriculum {source.id} for user {new_owner_id}")
+        
+        # 1. Clone Curriculum Root
+        new_curriculum = Curriculum(
+            id=str(uuid.uuid4()),
+            user_id=new_owner_id,
+            title=source.title, # Keep name or add (Copy)? Keep name for standard paths.
+            description=source.description,
+            duration_weeks=source.duration_weeks,
+            current_week=1,
+            status='active', # Activate immediately
+            ai_model_used=source.ai_model_used,
+            created_at=datetime.utcnow(),
+            updated_at=datetime.utcnow()
+        )
+        self.db.add(new_curriculum)
+        
+        # 2. Clone Modules
+        # Ensure we sort by order_index
+        sorted_modules = sorted(source.modules, key=lambda m: m.order_index)
+        
+        for mod in sorted_modules:
+            new_mod = CurriculumModule(
+                id=str(uuid.uuid4()),
+                curriculum_id=new_curriculum.id,
+                title=mod.title,
+                description=mod.description,
+                theme=mod.theme,
+                order_index=mod.order_index,
+                start_week=mod.start_week,
+                end_week=mod.end_week,
+                # JSON fields might need parsing/serializing loop but simple assign works
+                prerequisites_json=mod.prerequisites_json,
+                outcomes_json=mod.outcomes_json,
+                completion_percentage=0.0
+            )
+            self.db.add(new_mod)
+            
+            # 3. Clone Lessons
+            sorted_lessons = sorted(mod.lessons, key=lambda l: l.week_number)
+            for lesson in sorted_lessons:
+                new_lesson = CurriculumLesson(
+                    id=str(uuid.uuid4()),
+                    module_id=new_mod.id,
+                    title=lesson.title,
+                    description=lesson.description,
+                    week_number=lesson.week_number,
+                    theory_content_json=lesson.theory_content_json,
+                    concepts_json=lesson.concepts_json,
+                    estimated_duration_minutes=lesson.estimated_duration_minutes,
+                    is_completed=False
+                )
+                self.db.add(new_lesson)
+                
+                # 4. Clone Exercises
+                sorted_exercises = sorted(lesson.exercises, key=lambda e: e.order_index)
+                for ex in sorted_exercises:
+                    new_ex = CurriculumExercise(
+                        id=str(uuid.uuid4()),
+                        lesson_id=new_lesson.id,
+                        title=ex.title,
+                        description=ex.description,
+                        order_index=ex.order_index,
+                        exercise_type=ex.exercise_type,
+                        content_json=ex.content_json,
+                        difficulty=ex.difficulty,
+                        estimated_duration_minutes=ex.estimated_duration_minutes,
+                        target_bpm=ex.target_bpm,
+                        # Reset Tracking
+                        practice_count=0,
+                        is_mastered=False,
+                        # Reset Stats
+                        next_review_at=datetime.utcnow(), # Start fresh
+                        # Copy Audio Data?
+                        # Crucial decision: Do we re-generate audio or point to same files?
+                        # Since audio files are static (midi_file_path), we can copy the path!
+                        # This saves massive re-generation time.
+                        midi_file_path=ex.midi_file_path,
+                        audio_files_json=ex.audio_files_json,
+                        audio_generation_status=ex.audio_generation_status,
+                    )
+                    self.db.add(new_ex)
+        
+        await self.db.commit()
+        await self.db.refresh(new_curriculum)
+        return new_curriculum
     
     async def get_module(self, module_id: str) -> Optional[CurriculumModule]:
         """Get a module with its lessons"""

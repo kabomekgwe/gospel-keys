@@ -205,6 +205,11 @@ class CurriculumGenerateRequest(BaseModel):
     duration_weeks: int = Field(ge=4, le=52, default=12)
 
 
+class CurriculumDefaultRequest(BaseModel):
+    """Request to create a curriculum from a default template"""
+    template_key: str = Field(default="gospel_essentials", description="Key of the default template to use")
+
+
 class CurriculumResponse(BaseModel):
     """Full curriculum with modules"""
     id: str

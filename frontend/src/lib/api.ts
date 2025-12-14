@@ -839,6 +839,24 @@ export interface Curriculum {
     updated_at: string;
 }
 
+export interface CurriculumSummary {
+    id: string;
+    title: string;
+    description?: string;
+    duration_weeks: number;
+    current_week: number;
+    status: string;
+    completion_percentage: number;
+    updated_at: string;
+}
+
+export interface CurriculumTemplate {
+    key: string;
+    title: string;
+    description: string;
+    weeks: number;
+}
+
 // Type alias for backward compatibility
 export type CurriculumResponse = Curriculum;
 
@@ -902,6 +920,34 @@ export const curriculumApi = {
         const response = await fetch(`${API_BASE_URL}/api/v1/curriculum/${curriculumId}`);
         return handleResponse<Curriculum>(response);
     },
+
+    listCurriculums: async (): Promise<CurriculumSummary[]> => {
+        const response = await fetch(`${API_BASE_URL}/api/v1/curriculum/list`);
+        return handleResponse<CurriculumSummary[]>(response);
+    },
+
+    activateCurriculum: async (curriculumId: string): Promise<Curriculum> => {
+        const response = await fetch(`${API_BASE_URL}/api/v1/curriculum/${curriculumId}/activate`, {
+            method: 'POST',
+        });
+        return handleResponse<Curriculum>(response);
+    },
+
+    getTemplates: async (): Promise<CurriculumTemplate[]> => {
+        const response = await fetch(`${API_BASE_URL}/api/v1/curriculum/templates`);
+        return handleResponse<CurriculumTemplate[]>(response);
+    },
+
+    createDefaultCurriculum: async (templateKey: string): Promise<Curriculum> => {
+        const response = await fetch(`${API_BASE_URL}/api/v1/curriculum/default`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ template_key: templateKey }),
+        });
+        return handleResponse<Curriculum>(response);
+    },
+
+
 
     // Modules & Lessons
     getModule: async (moduleId: string): Promise<CurriculumModule> => {

@@ -58,6 +58,10 @@ class Settings(BaseSettings):
     # Background job settings
     audio_generation_timeout: int = 300  # 5 minutes per exercise
 
+    # Local LLM Config (MLX)
+    local_llm_model: str = "mlx-community/Phi-3.5-mini-instruct-4bit"
+    force_local_llm: bool = False  # Force local LLM for all compatible tasks
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",

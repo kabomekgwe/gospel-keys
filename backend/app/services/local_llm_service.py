@@ -14,6 +14,8 @@ from typing import Dict, Any, Optional
 from pathlib import Path
 import json
 
+from app.core.config import settings
+
 logger = logging.getLogger(__name__)
 
 # Try to import MLX
@@ -32,7 +34,7 @@ class LocalLLMService:
     def __init__(self):
         self.model = None
         self.tokenizer = None
-        self.model_name = "mlx-community/Phi-3.5-mini-instruct-4bit"  # 4-bit quantized for speed
+        self.model_name = settings.local_llm_model
         self.loaded = False
 
         if MLX_AVAILABLE:

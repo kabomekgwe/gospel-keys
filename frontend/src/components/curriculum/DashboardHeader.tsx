@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Link } from '@tanstack/react-router';
-import { Activity, Trophy, FileText, Settings } from 'lucide-react';
-import type { CurriculumResponse } from '../../lib/api';
+import { Activity, Trophy, FileText, Settings, ChevronDown, Check } from 'lucide-react';
+import { type CurriculumResponse, curriculumApi } from '../../lib/api';
 import { CurriculumSettings } from './CurriculumSettings';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface DashboardHeaderProps {
   curriculum: CurriculumResponse;
@@ -10,15 +11,73 @@ interface DashboardHeaderProps {
 
 export function DashboardHeader({ curriculum }: DashboardHeaderProps) {
   const [showSettings, setShowSettings] = useState(false);
+  const [showSelector, setShowSelector] = useState(false);
+  const queryClient = useQueryClient();
+
   const progressPercentage = Math.round((curriculum.current_week / curriculum.duration_weeks) * 100);
 
+  // Fetch all user curriculums
+  const { data: allCurriculums } = useQuery({
+    queryKey: ['curriculum', 'list'],
+    queryFn: curriculumApi.listCurriculums,
+  });
+
+  // Switch curriculum mutation
+  const switchMutation = useMutation({
+    mutationFn: curriculumApi.activateCurriculum,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['curriculum'] });
+      setShowSelector(false);
+    },
+  });
+
+  const handleSwitch = (id: string) => {
+    switchMutation.mutate(id);
+  };
+
   return (
-    <div className="mb-8">
+    <div className="mb-8 relative">
       {/* Title and Description */}
       <div className="mb-6">
-        <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">{curriculum.title}</h1>
+        <div className="flex items-center gap-3 mb-2">
+          <h1 className="text-3xl md:text-4xl font-bold text-white">{curriculum.title}</h1>
+
+          {allCurriculums && allCurriculums.length > 1 && (
+            <div className="relative">
+              <button
+                onClick={() => setShowSelector(!showSelector)}
+                className="p-1 hover:bg-gray-700 rounded-full transition text-gray-400 hover:text-white"
+                title="Switch Curriculum"
+              >
+                <ChevronDown className="w-6 h-6" />
+              </button>
+
+              {showSelector && (
+                <div className="absolute top-10 left-0 bg-gray-800 border border-gray-700 rounded-lg shadow-xl z-50 w-72 max-h-96 overflow-y-auto">
+                  <div className="p-2">
+                    <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 px-2">Your Curriculums</h3>
+                    {allCurriculums.map(c => (
+                      <button
+                        key={c.id}
+                        onClick={() => handleSwitch(c.id)}
+                        className={`w-full text-left px-3 py-2 rounded-md flex items-center justify-between text-sm ${c.id === curriculum.id
+                            ? 'bg-purple-600/20 text-purple-400'
+                            : 'text-gray-300 hover:bg-gray-700'
+                          }`}
+                      >
+                        <span className="truncate">{c.title}</span>
+                        {c.id === curriculum.id && <Check className="w-4 h-4" />}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
         {curriculum.description && (
-          <p className="text-gray-300 text-lg">{curriculum.description}</p>
+          <p className="text-gray-300 text-lg max-w-3xl">{curriculum.description}</p>
         )}
       </div>
 

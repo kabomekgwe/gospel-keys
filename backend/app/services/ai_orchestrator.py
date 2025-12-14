@@ -12,6 +12,7 @@ from enum import Enum
 from typing import Any, Dict, List, Optional
 
 import google.generativeai as genai
+from app.core.config import settings
 
 # Configure Gemini
 genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
@@ -150,6 +151,10 @@ class AIOrchestrator:
         Returns:
             ModelType to use
         """
+        # Check for forced local LLM
+        if settings.force_local_llm and LOCAL_LLM_ENABLED:
+            return ModelType.LOCAL
+
         # Auto-detect complexity if not provided
         if complexity is None:
             complexity = self.TASK_COMPLEXITY.get(task_type, 5)
@@ -201,15 +206,6 @@ class AIOrchestrator:
         Generate AI content with automatic fallback chain.
 
         Fallback order: Local LLM (M4) → Pro/Ultra → Flash → Error
-
-        Args:
-            prompt: The generation prompt
-            task_type: Type of task for routing
-            generation_config: Optional Gemini config
-            cache_ttl_hours: Cache TTL in hours
-
-        Returns:
-            Generated content as dict
         """
         # Check cache
         cache_key = _get_cache_key(task_type.value, prompt)
@@ -225,13 +221,19 @@ class AIOrchestrator:
                 "response_mime_type": "application/json",
             }
 
-        # Get complexity and select model
+        # Get complexity
         complexity = self.TASK_COMPLEXITY.get(task_type, 5)
+        
+        # Check if we should use local LLM (either logical preference or forced)
+        use_local = LOCAL_LLM_ENABLED and (
+            complexity <= self.COMPLEXITY_LOCAL or settings.force_local_llm
+        )
 
-        # Try local LLM first for simple tasks (complexity 1-4)
-        if complexity <= self.COMPLEXITY_LOCAL and LOCAL_LLM_ENABLED:
+        # Try local LLM first
+        if use_local:
             try:
                 # Use local M4 Neural Engine (FREE and FAST!)
+                # Note: Schema is not strictly enforced by Phi-3 but prompt helps
                 result = self.local_llm.generate_structured(
                     prompt=prompt,
                     schema={},  # Let LLM infer structure
@@ -243,6 +245,8 @@ class AIOrchestrator:
             except Exception as local_error:
                 # Fallback to Gemini if local LLM fails
                 print(f"⚠️ Local LLM failed for {task_type.value}, falling back to Gemini: {local_error}")
+        
+        # Select Gemini model for complex tasks (or fallback)
 
         # Select Gemini model for complex tasks
         selected_model = self.select_gemini_model(complexity)
