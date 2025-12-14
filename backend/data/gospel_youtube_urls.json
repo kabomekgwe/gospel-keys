@@ -1,0 +1,129 @@
+{
+  "description": "Curated gospel piano YouTube videos for MLX training dataset",
+  "target_count": 500,
+  "categories": {
+    "contemporary": {
+      "description": "Kirk Franklin, Israel Houghton, Tye Tribbett style",
+      "tempo_range": "100-160 BPM",
+      "videos": [
+        {
+          "search_query": "kirk franklin piano tutorial",
+          "expected_results": 50,
+          "characteristics": "syncopated, extended chords, uptempo"
+        },
+        {
+          "search_query": "israel houghton piano",
+          "expected_results": 30,
+          "characteristics": "praise worship, contemporary"
+        },
+        {
+          "search_query": "tye tribbett piano tutorial",
+          "expected_results": 20,
+          "characteristics": "high energy, modern gospel"
+        }
+      ]
+    },
+    "traditional": {
+      "description": "Thomas Dorsey, Mahalia Jackson era",
+      "tempo_range": "50-90 BPM",
+      "videos": [
+        {
+          "search_query": "thomas dorsey precious lord piano",
+          "expected_results": 40,
+          "characteristics": "traditional, hymn-based, sustained chords"
+        },
+        {
+          "search_query": "traditional gospel piano tutorial",
+          "expected_results": 50,
+          "characteristics": "classic gospel, church style"
+        }
+      ]
+    },
+    "jazz_gospel": {
+      "description": "Richard Smallwood, James Hall style",
+      "tempo_range": "60-120 BPM",
+      "videos": [
+        {
+          "search_query": "richard smallwood total praise piano",
+          "expected_results": 30,
+          "characteristics": "jazz harmony, sophisticated voicings"
+        },
+        {
+          "search_query": "jazz gospel piano tutorial",
+          "expected_results": 40,
+          "characteristics": "extended harmony, walking bass"
+        },
+        {
+          "search_query": "james hall piano tutorial",
+          "expected_results": 20,
+          "characteristics": "jazz-gospel fusion"
+        }
+      ]
+    },
+    "worship": {
+      "description": "Contemporary worship, Hillsong style",
+      "tempo_range": "60-100 BPM",
+      "videos": [
+        {
+          "search_query": "gospel worship piano tutorial",
+          "expected_results": 50,
+          "characteristics": "sustained, atmospheric, modern"
+        },
+        {
+          "search_query": "hillsong gospel piano",
+          "expected_results": 30,
+          "characteristics": "contemporary worship"
+        }
+      ]
+    },
+    "tutorials": {
+      "description": "Gospel piano instruction videos",
+      "tempo_range": "Variable",
+      "videos": [
+        {
+          "search_query": "gospel piano lesson",
+          "expected_results": 60,
+          "characteristics": "instructional, covers various styles"
+        },
+        {
+          "search_query": "gospel piano chords tutorial",
+          "expected_results": 40,
+          "characteristics": "chord progressions, voicings"
+        }
+      ]
+    }
+  },
+  "specific_high_quality_channels": [
+    {
+      "channel": "@PianoWithWillie",
+      "description": "Gospel piano tutorials, various styles",
+      "estimated_videos": 50
+    },
+    {
+      "channel": "@GospelChops",
+      "description": "Advanced gospel piano techniques",
+      "estimated_videos": 40
+    },
+    {
+      "channel": "@GospelMusicTraining",
+      "description": "Gospel music training channel",
+      "estimated_videos": 30
+    }
+  ],
+  "automated_collection_strategy": {
+    "method": "yt-dlp with search queries",
+    "steps": [
+      "1. Use yt-dlp to search YouTube with each query",
+      "2. Filter results for piano-only content (check title/description)",
+      "3. Download top N results per query",
+      "4. Transcribe to MIDI using basic-pitch",
+      "5. Validate gospel characteristics",
+      "6. Deduplicate based on MIDI similarity"
+    ],
+    "estimated_total": "500-1000 unique gospel piano MIDIs"
+  },
+  "usage": {
+    "command": "python scripts/build_gospel_dataset.py --source youtube --limit 100",
+    "note": "Script will automatically search, download, and transcribe based on these queries"
+  }
+}

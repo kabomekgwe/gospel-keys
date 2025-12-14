@@ -60,6 +60,7 @@ dependencies = [
     "mlx>=0.30.0",
     "mlx-lm>=0.28.4",
     "mido>=1.3.3",
+    # AI Music Generation - Using MLX (M-series optimized, no dependency conflicts)
 ]
 
 [project.optional-dependencies]
