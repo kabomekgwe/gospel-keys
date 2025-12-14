@@ -13,6 +13,8 @@ from sqlalchemy import select, and_, or_
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+logger = logging.getLogger(__name__)
+
 from app.database.curriculum_models import (
     UserSkillProfile,
     Curriculum,
@@ -122,7 +124,7 @@ class CurriculumService:
     # =========================================================================
     
     async def generate_curriculum(
-        self, 
+        self,
         user_id: int,
         title: Optional[str] = None,
         duration_weeks: int = 12
@@ -131,10 +133,37 @@ class CurriculumService:
         # Get user's skill profile
         profile = await self.get_or_create_skill_profile(user_id)
         profile_dict = self._profile_to_dict(profile)
-        
-        # Generate curriculum plan using AI
-        plan = await ai_orchestrator.generate_curriculum_plan(profile_dict, duration_weeks)
-        
+
+        # Generate curriculum plan with error handling
+        try:
+            # Check if AI is available before calling
+            if not ai_orchestrator.is_available():
+                raise ValueError(
+                    "AI curriculum generation is unavailable. "
+                    "Initialization errors: " + ", ".join(ai_orchestrator.initialization_errors)
+                )
+
+            plan = await ai_orchestrator.generate_curriculum_plan(profile_dict, duration_weeks)
+
+        except Exception as e:
+            # Log detailed error for debugging
+            logger.error(
+                "AI curriculum generation failed",
+                extra={
+                    "user_id": user_id,
+                    "duration_weeks": duration_weeks,
+                    "error_type": type(e).__name__,
+                    "error_message": str(e)
+                },
+                exc_info=True
+            )
+
+            # Provide user-friendly error message
+            raise ValueError(
+                "AI curriculum generation failed. Please ensure GEMINI_API_KEY is set correctly. "
+                f"Error: {str(e)}"
+            ) from e
+
         return await self._create_curriculum_from_plan(
             user_id=user_id,
             plan=plan,
@@ -323,7 +352,7 @@ class CurriculumService:
     
     async def get_user_curriculums(self, user_id: int) -> List[Curriculum]:
         """Get all curriculums for a user, PLUS global curriculums owned by admin"""
-        
+
         # 1. Get user's personal curriculums
         result = await self.db.execute(
             select(Curriculum)
@@ -331,27 +360,28 @@ class CurriculumService:
             .order_by(Curriculum.updated_at.desc())
         )
         user_curriculums = result.scalars().all()
-        
-        # 2. Get global curriculums (from admin)
-        # Assuming admin email is static or we can find it
-        # Ideally we'd cache the admin ID, but for now query it
-        admin_result = await self.db.execute(
-            select(User.id).where(User.email == "admin@gospelkeys.ai")
-        )
-        admin_id = admin_result.scalar_one_or_none()
-        
-        if admin_id and admin_id != user_id:
-            global_result = await self.db.execute(
-                select(Curriculum)
-                .where(Curriculum.user_id == admin_id)
-                .order_by(Curriculum.title) 
+
+        # 2. Get global curriculums (from admin) - gracefully handle if admin doesn't exist
+        try:
+            admin_result = await self.db.execute(
+                select(User.id).where(User.email == "admin@gospelkeys.ai")
             )
-            global_curriculums = global_result.scalars().all()
-            
-            # Combine: User's first, then Globals
-            # Avoid duplicates if logic changes? (User shouldn't own admin's)
-            return list(user_curriculums) + list(global_curriculums)
-            
+            admin_id = admin_result.scalar_one_or_none()
+
+            if admin_id and admin_id != user_id:
+                global_result = await self.db.execute(
+                    select(Curriculum)
+                    .where(Curriculum.user_id == admin_id)
+                    .order_by(Curriculum.title)
+                )
+                global_curriculums = global_result.scalars().all()
+
+                # Combine: User's first, then Globals
+                return list(user_curriculums) + list(global_curriculums)
+        except Exception as e:
+            logger.warning(f"Could not fetch admin curriculums: {e}")
+            # Continue without admin curriculums
+
         return user_curriculums
 
     async def activate_curriculum(self, curriculum_id: str, user_id: int) -> Curriculum:

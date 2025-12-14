@@ -186,6 +186,56 @@ async def list_user_curriculums(
     return [await _curriculum_to_summary(c, service) for c in curriculums]
 
 
+async def _curriculum_to_summary(
+    curriculum: Curriculum,
+    service: CurriculumService
+) -> CurriculumSummary:
+    """Convert curriculum to summary view"""
+    # Load details if needed for stats
+    # Optimization: ideally service.get_user_curriculums should load these stats
+    # For now, we fetch details individually if needed, or calculate from basic fields
+    
+    # If we want accurate module count and progress, we need children.
+    # Since get_user_curriculums DOES NOT load children, we must fetch them.
+    # To avoid N+1 for large lists, we should optimize the service method later.
+    # For < 20 curriculums, this is acceptable.
+    
+    # Check if modules are loaded (basic check)
+    # Since we can't easily check 'loaded' state on async object without touching it and potentially triggering error,
+    # we'll assume we need to fetch stats.
+    # Or, we can use a lightweight query or just 0 for now if performance issues arise.
+    
+    # Reload with details to get module count
+    detailed = await service.get_curriculum_with_details(curriculum.id)
+    if detailed:
+        curriculum = detailed
+
+    module_count = len(curriculum.modules) if curriculum.modules else 0
+    
+    # Calculate overall progress
+    total_lessons = 0
+    completed_lessons = 0
+    
+    if curriculum.modules:
+        for m in curriculum.modules:
+            if m.lessons:
+                total_lessons += len(m.lessons)
+                completed_lessons += sum(1 for l in m.lessons if l.is_completed)
+    
+    overall_progress = (completed_lessons / total_lessons * 100) if total_lessons > 0 else 0.0
+
+    return CurriculumSummary(
+        id=curriculum.id,
+        title=curriculum.title,
+        description=curriculum.description,
+        status=curriculum.status,
+        duration_weeks=curriculum.duration_weeks,
+        current_week=curriculum.current_week,
+        module_count=module_count,
+        overall_progress=overall_progress
+    )
+
+
 @router.post("/{curriculum_id}/activate", response_model=CurriculumResponse)
 async def activate_curriculum(
     curriculum_id: str,

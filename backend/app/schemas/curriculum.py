@@ -232,6 +232,7 @@ class CurriculumSummary(BaseModel):
     """Brief curriculum info for listings"""
     id: str
     title: str
+    description: Optional[str]
     status: str
     duration_weeks: int
     current_week: int

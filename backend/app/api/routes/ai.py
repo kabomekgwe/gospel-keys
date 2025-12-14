@@ -18,6 +18,8 @@ from app.schemas.ai import (
     LicksRequest, LicksResponse,
     GeneratorsListResponse,
     UsageStatsResponse, ModelUsageStats, TaskTypeStats,
+    ArrangeRequest, ArrangeResponse,
+    SplitVoicingRequest, SplitVoicingResponse,
 )
 from app.services.ai_generator import ai_generator_service
 from app.database.session import get_db
@@ -97,6 +99,42 @@ async def generate_licks(request: LicksRequest):
         print(f"ERROR in generate_licks: {str(e)}")
         print(traceback.format_exc())
         raise HTTPException(status_code=500, detail=f"Lick generation failed: {str(e)}")
+
+
+@router.post("/arrange", response_model=ArrangeResponse)
+async def arrange_progression(request: ArrangeRequest):
+    """Convert chord progression to full two-hand MIDI arrangement
+
+    Uses genre-specific arrangers to generate authentic piano arrangements:
+    - Jazz: Rootless voicings, swing feel, bebop lines
+    - Gospel: Polychords, runs, worship applications
+    - Neo-Soul: Extended harmonies, laid-back timing
+    - Blues: Shuffle feel, boogie bass, blues licks
+    - Classical: Strict voice leading, period styles
+    """
+    try:
+        return await ai_generator_service.arrange_progression(request)
+    except Exception as e:
+        import traceback
+        print(f"ERROR in arrange_progression: {str(e)}")
+        print(traceback.format_exc())
+        raise HTTPException(status_code=500, detail=f"Arrangement failed: {str(e)}")
+
+
+@router.post("/voicing/split", response_model=SplitVoicingResponse)
+async def generate_split_voicing(request: SplitVoicingRequest):
+    """Generate separate left and right hand voicings for a chord
+
+    Returns optimized left/right hand split with proper voice leading.
+    """
+    try:
+        # TODO: Implement split voicing generation
+        # For now, return a simple implementation
+        raise HTTPException(status_code=501, detail="Split voicing endpoint not yet implemented")
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Split voicing failed: {str(e)}")
 
 
 @router.get("/usage/stats", response_model=UsageStatsResponse)

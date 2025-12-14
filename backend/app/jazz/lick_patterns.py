@@ -67,7 +67,11 @@ class LickPatternService:
         style: str,
         difficulty: str
     ) -> ValidationResult:
-        """Validate a generated lick against theory rules"""
+        """Validate a generated lick against theory rules
+
+        Enhanced with knowledge base validation rules for voice leading,
+        idiomatic patterns, and style-specific correctness.
+        """
 
         issues = []
         suggestions = []
@@ -115,8 +119,16 @@ class LickPatternService:
         elif num_notes > 50:
             issues.append("Too many notes (maximum 50)")
 
+        # 7. Enhanced validation using knowledge base (if available)
+        kb_validation = self._validate_with_knowledge_base(
+            lick_data, context_chords, style, difficulty
+        )
+        if kb_validation:
+            issues.extend(kb_validation.get("issues", []))
+            suggestions.extend(kb_validation.get("suggestions", []))
+
         # Calculate confidence
-        max_issues = 6
+        max_issues = 8  # Increased from 6 to account for KB validation
         confidence = 1.0 - (len(issues) / max_issues)
         is_valid = confidence >= 0.6 and len(issues) == 0
 
@@ -193,6 +205,84 @@ class LickPatternService:
                     scales.append(f"{root} Dorian")
 
         return list(set(scales))  # Remove duplicates
+
+    def _validate_with_knowledge_base(
+        self,
+        lick_data: Dict,
+        context_chords: List[str],
+        style: str,
+        difficulty: str
+    ) -> Optional[Dict]:
+        """Enhanced validation using knowledge base documentation
+
+        Checks against researched voice leading rules, voicing correctness,
+        and idiomatic patterns from documentation.
+
+        Returns:
+            Dictionary with 'issues' and 'suggestions' lists, or None if KB unavailable
+        """
+        try:
+            from app.main import music_knowledge_base
+
+            if not music_knowledge_base or not music_knowledge_base.is_loaded():
+                return None
+
+            issues = []
+            suggestions = []
+
+            # Get validation rules from knowledge base
+            voice_leading_rules = music_knowledge_base.get_validation_rules("voice_leading")
+            idiomatic_patterns = music_knowledge_base.get_validation_rules("idiomatic_patterns")
+
+            # Check voice leading quality
+            if voice_leading_rules:
+                # Get common mistakes for this style
+                style_mistakes = voice_leading_rules.get(f"{style}_common_mistakes", [])
+
+                # Check for parallel motion issues (if documented)
+                if "parallel_motion" in voice_leading_rules:
+                    parallel_rules = voice_leading_rules["parallel_motion"]
+                    # Simplified check: look for repeated intervals
+                    midi_notes = lick_data.get("midi_notes", [])
+                    if len(midi_notes) >= 3:
+                        intervals = [midi_notes[i+1] - midi_notes[i] for i in range(len(midi_notes)-1)]
+                        # Check for 3+ consecutive parallel perfect intervals (5ths or octaves)
+                        for i in range(len(intervals)-2):
+                            if (intervals[i] == intervals[i+1] == intervals[i+2] and
+                                intervals[i] in [7, 12]):  # Perfect 5th or octave
+                                if "when_matters" in parallel_rules:
+                                    suggestions.append(
+                                        f"Consider varying voice leading - parallel {intervals[i]}-semitone intervals detected"
+                                    )
+
+            # Check idiomatic patterns
+            if idiomatic_patterns and style in idiomatic_patterns:
+                style_patterns = idiomatic_patterns[style]
+
+                # Check for required characteristics
+                if "required_characteristics" in style_patterns:
+                    required = style_patterns["required_characteristics"]
+                    # This is a suggestion rather than hard requirement
+                    if difficulty == "advanced":
+                        suggestions.append(
+                            f"Advanced {style} licks should incorporate: {', '.join(required[:2])}"
+                        )
+
+                # Check for forbidden patterns
+                if "forbidden_patterns" in style_patterns:
+                    forbidden = style_patterns["forbidden_patterns"]
+                    # Check note patterns against forbidden list (simplified)
+                    # In production, would do detailed pattern matching
+                    notes_str = str(lick_data.get("notes", []))
+                    for pattern in forbidden:
+                        if pattern.lower() in notes_str.lower():
+                            issues.append(f"Pattern '{pattern}' is not idiomatic for {style}")
+
+            return {"issues": issues, "suggestions": suggestions}
+
+        except Exception:
+            # Knowledge base not available or error
+            return None
 
     def _check_scale_conformance(
         self,

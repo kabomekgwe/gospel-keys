@@ -47,6 +47,7 @@ class NeosoulArranger(BaseArranger):
                 "left_patterns": ["sustained_root_with_pedal", "low_interval_voicing", "chromatic_bass_walk"],
                 "right_patterns": ["extended_chord_voicing", "suspended_melody", "chromatic_fills"],
                 "rhythm": ["laid_back"],  # Laid-back timing
+                "improvisation_probability": 0.4,
                 "tempo_range": (70, 90),
                 "velocity_range": (60, 90),
             },
@@ -54,6 +55,7 @@ class NeosoulArranger(BaseArranger):
                 "left_patterns": ["syncopated_groove", "broken_chord_arpeggio", "chromatic_bass_walk"],
                 "right_patterns": ["chord_stabs_sparse", "arpeggiated_extensions", "suspended_melody"],
                 "rhythm": ["16th_groove", "syncopated"],  # 16th-note groove
+                "improvisation_probability": 0.5,
                 "tempo_range": (90, 110),
                 "velocity_range": (70, 100),
             },

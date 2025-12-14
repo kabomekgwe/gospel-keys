@@ -4,6 +4,8 @@ import json
 import os
 import re
 import subprocess
+import base64
+from pathlib import Path
 from typing import Optional
 
 import google.generativeai as genai
@@ -19,9 +21,19 @@ from app.schemas.ai import (
     LicksRequest, LicksResponse, LickInfo,
     LickStyle, ContextType, Difficulty,
     GeneratorInfo, GeneratorsListResponse, GeneratorCategory,
+    ArrangeRequest, ArrangeResponse,
+    SplitVoicingRequest, SplitVoicingResponse,
 )
 from app.core.config import settings
 from app.jazz.lick_patterns import lick_pattern_service
+
+# Import genre arrangers
+from app.gospel.arrangement.arranger import GospelArranger
+from app.jazz.arrangement.arranger import JazzArranger
+from app.neosoul.arrangement.arranger import NeosoulArranger
+from app.blues.arrangement.arranger import BluesArranger
+from app.classical.arrangement.arranger import ClassicalArranger
+from app.gospel.midi.enhanced_exporter import export_enhanced_midi
 
 
 # Configure Gemini
@@ -91,7 +103,7 @@ class AIGeneratorService:
         if settings.google_api_key:
             try:
                 genai.configure(api_key=settings.google_api_key)
-                self.model = genai.GenerativeModel('gemini-2.0-flash')
+                self.model = genai.GenerativeModel('gemini-1.5-flash')
                 self.gemini_available = True
             except Exception as e:
                 print(f"Warning: Gemini initialization failed: {e}")
@@ -775,6 +787,79 @@ Return ONLY the JSON, no other text."""
 - 10+ notes per bar possible"""
         }
         return guidelines.get(difficulty, "")
+
+    def _get_arranger_for_style(self, style: str):
+        """Get the appropriate arranger for a style"""
+        style_to_arranger = {
+            "jazz": JazzArranger(),
+            "gospel": GospelArranger(),
+            "neo_soul": NeosoulArranger(),
+            "blues": BluesArranger(),
+            "classical": ClassicalArranger(),
+            "pop": JazzArranger(),  # Use jazz arranger for pop
+            "rnb": NeosoulArranger(),  # Use neosoul arranger for R&B
+        }
+        return style_to_arranger.get(style.lower(), JazzArranger())
+
+    async def arrange_progression(self, request: ArrangeRequest) -> ArrangeResponse:
+        """Convert chord progression to full MIDI arrangement"""
+        try:
+            # Get arranger for style
+            arranger = self._get_arranger_for_style(request.style.value)
+
+            # Determine default application if not provided
+            default_apps = {
+                "jazz": "standard",
+                "gospel": "uptempo",
+                "neo_soul": "smooth",
+                "blues": "shuffle",
+                "classical": "classical",
+            }
+            application = request.application or default_apps.get(request.style.value, "standard")
+
+            # Generate arrangement
+            arrangement = arranger.arrange_progression(
+                chords=request.chords,
+                key=request.key,
+                bpm=request.tempo,
+                application=application,
+                time_signature=request.time_signature
+            )
+
+            # Export to MIDI
+            output_dir = settings.OUTPUTS_DIR / "ai_generated"
+            output_dir.mkdir(parents=True, exist_ok=True)
+
+            import time
+            filename = f"ai_{request.style.value}_{request.key}_{request.tempo}bpm_{int(time.time())}.mid"
+            midi_path = output_dir / filename
+
+            export_enhanced_midi(arrangement, midi_path)
+
+            # Read MIDI file as base64
+            with open(midi_path, 'rb') as f:
+                midi_base64 = base64.b64encode(f.read()).decode('utf-8')
+
+            return ArrangeResponse(
+                success=True,
+                midi_file_path=str(midi_path),
+                midi_base64=midi_base64,
+                arrangement_info={
+                    "tempo": arrangement.tempo,
+                    "key": arrangement.key,
+                    "time_signature": f"{arrangement.time_signature[0]}/{arrangement.time_signature[1]}",
+                    "total_bars": arrangement.total_bars,
+                    "total_notes": len(arrangement.left_hand_notes) + len(arrangement.right_hand_notes),
+                    "left_hand_notes": len(arrangement.left_hand_notes),
+                    "right_hand_notes": len(arrangement.right_hand_notes),
+                    "duration_seconds": round(arrangement.total_duration_seconds, 2),
+                    "application": arrangement.application,
+                }
+            )
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            return ArrangeResponse(success=False, error=str(e))
 
 
 # Global service instance

@@ -995,24 +995,24 @@ export const curriculumApi = {
     },
 
     // === Phase 1: Audio API ===
-    getExerciseAudio: async (exerciseId: string, method: 'fluidsynth' | 'stable_audio' = 'fluidsynth'): Promise<Blob> => {
+    getExerciseAudio: async (exerciseId: string, method: 'fluidsynth' | 'stable_audio' = 'fluidsynth') => {
         const response = await fetch(`${API_BASE_URL}/api/v1/audio/exercises/${exerciseId}/audio?method=${method}`);
         if (!response.ok) throw new Error('Failed to fetch audio');
         return response.blob();
     },
 
-    getExerciseMIDI: async (exerciseId: string): Promise<Blob> => {
+    getExerciseMIDI: async (exerciseId: string) => {
         const response = await fetch(`${API_BASE_URL}/api/v1/audio/exercises/${exerciseId}/midi`);
         if (!response.ok) throw new Error('Failed to fetch MIDI');
         return response.blob();
     },
 
-    getAudioStatus: async (exerciseId: string): Promise<{ status: string; midi_file?: string; audio_files?: any }> => {
+    getAudioStatus: async (exerciseId: string) => {
         const response = await fetch(`${API_BASE_URL}/api/v1/audio/exercises/${exerciseId}/status`);
         return handleResponse(response);
     },
 
-    generateExerciseAudio: async (exerciseId: string, method: 'fluidsynth' | 'stable_audio' | 'both' = 'both'): Promise<any> => {
+    generateExerciseAudio: async (exerciseId: string, method: 'fluidsynth' | 'stable_audio' | 'both' = 'both') => {
         const response = await fetch(`${API_BASE_URL}/api/v1/audio/exercises/${exerciseId}/generate`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

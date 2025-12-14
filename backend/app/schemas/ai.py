@@ -90,6 +90,11 @@ class ProgressionRequest(BaseModel):
     mood: Optional[Mood] = Field(None, description="Emotional mood")
     length: int = Field(4, ge=2, le=16, description="Number of chords in progression")
     include_extensions: bool = Field(True, description="Include 7ths, 9ths, etc.")
+    # NEW: Arrangement generation support
+    arrange_as_midi: bool = Field(False, description="Generate full two-hand piano arrangement")
+    application: Optional[str] = Field(None, description="Application type (ballad, uptempo, shuffle, etc.)")
+    tempo: Optional[int] = Field(None, ge=40, le=300, description="Tempo in BPM (for MIDI arrangement)")
+    ai_percentage: float = Field(0.0, ge=0.0, le=1.0, description="AI hybrid percentage (0.0 = pure rules, 1.0 = pure AI)")
 
 
 class ReharmonizationRequest(BaseModel):
@@ -141,6 +146,25 @@ class LicksRequest(BaseModel):
     include_chromatics: bool = Field(True, description="Include chromatic approaches")
 
 
+class ArrangeRequest(BaseModel):
+    """Request for converting chord progression to full MIDI arrangement"""
+    chords: list[str] = Field(..., description="Chord symbols to arrange")
+    key: str = Field("C", description="Musical key")
+    style: ProgressionStyle = Field(ProgressionStyle.JAZZ, description="Genre/style")
+    tempo: int = Field(120, ge=40, le=300, description="Tempo in BPM")
+    application: Optional[str] = Field(None, description="Application type (ballad, uptempo, etc.)")
+    ai_percentage: float = Field(0.0, ge=0.0, le=1.0, description="AI hybrid percentage")
+    time_signature: tuple = Field((4, 4), description="Time signature (numerator, denominator)")
+
+
+class SplitVoicingRequest(BaseModel):
+    """Request for split-hand chord voicing"""
+    chord: str = Field(..., description="Chord symbol")
+    style: ProgressionStyle = Field(ProgressionStyle.JAZZ, description="Genre/style")
+    previous_left: Optional[list[int]] = Field(None, description="Previous left hand MIDI notes for voice leading")
+    previous_right: Optional[list[int]] = Field(None, description="Previous right hand MIDI notes for voice leading")
+
+
 # === Response Models ===
 
 class ChordInfo(BaseModel):
@@ -176,6 +200,10 @@ class ProgressionResponse(BaseModel):
     style: str = Field(..., description="Style applied")
     analysis: Optional[str] = Field(None, description="Brief analysis of the progression")
     tips: Optional[list[str]] = Field(None, description="Performance tips")
+    # NEW: Arrangement data (when arrange_as_midi=True)
+    midi_file_path: Optional[str] = Field(None, description="Path to generated MIDI file")
+    midi_base64: Optional[str] = Field(None, description="Base64-encoded MIDI data")
+    arrangement_info: Optional[dict] = Field(None, description="Arrangement metadata (tempo, bars, notes, etc.)")
 
 
 class ReharmonizationResponse(BaseModel):
@@ -248,6 +276,23 @@ class LicksResponse(BaseModel):
     licks: list[LickInfo] = Field(..., description="Generated lick variations")
     analysis: str = Field(..., description="How licks fit the harmonic context")
     practice_tips: list[str] = Field(..., description="Performance suggestions")
+
+
+class ArrangeResponse(BaseModel):
+    """Response with full piano arrangement"""
+    success: bool = Field(..., description="Whether arrangement was successful")
+    midi_file_path: Optional[str] = Field(None, description="Path to MIDI file")
+    midi_base64: Optional[str] = Field(None, description="Base64-encoded MIDI data")
+    arrangement_info: dict = Field(default_factory=dict, description="Arrangement metadata")
+    error: Optional[str] = Field(None, description="Error message if failed")
+
+
+class SplitVoicingResponse(BaseModel):
+    """Response with split left/right hand voicings"""
+    chord: str = Field(..., description="Chord symbol")
+    left_hand: VoicingInfo = Field(..., description="Left hand voicing")
+    right_hand: VoicingInfo = Field(..., description="Right hand voicing")
+    voice_leading_tips: Optional[list[str]] = Field(None, description="Voice leading suggestions")
 
 
 # === Category Response ===

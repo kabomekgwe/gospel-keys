@@ -2,360 +2,690 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+---
+
 ## Project Overview
 
-**Gospel Keys / Piano Keys** - Multi-genre piano transcription and analysis platform supporting Gospel, Jazz, Blues, Classical, and Contemporary music. The system processes YouTube videos or uploaded audio files through a sophisticated pipeline to generate MIDI transcriptions, chord analysis, and music theory insights.
+**Gospel Keys** (formerly "Piano Learning") is a full-stack music analysis and learning platform that transcribes YouTube videos/audio files to MIDI, performs deep music theory analysis, and provides AI-powered learning features.
 
-**Architecture**: Monorepo with Python FastAPI backend and React TanStack frontend, containerized with Docker.
+**Core Capabilities:**
+- YouTube/file → MIDI transcription with piano isolation
+- Advanced music theory analysis (voicings, progressions, reharmonizations)
+- Gospel-specific MIDI generation with hand-crafted patterns
+- Jazz lick generation with theory analysis
+- Adaptive curriculum with spaced repetition (SRS)
+- AI-powered coaching using Gemini API
+
+---
 
 ## Tech Stack
 
-- **Backend**: Python 3.10-3.13, FastAPI, SQLAlchemy, Alembic, uv package manager
-- **Frontend**: React 19, TanStack Router (file-based), TanStack Query, Zustand, Tailwind CSS 4
-- **Audio Pipeline**: yt-dlp, ffmpeg, Demucs, librosa, pretty-midi, music21
-- **AI/ML**: Essentia, MusicPy, PyTorch, Gemini API (music theory analysis)
-- **Gospel AI**: MLX (M4 Pro optimized), REMI tokenization, LoRA fine-tuning, Mistral-7B-Instruct
-- **Database**: SQLite (dev), async via aiosqlite
-- **Testing**: pytest + pytest-asyncio (backend), vitest (frontend), Playwright (e2e)
-- **Containerization**: Docker + Docker Compose
+### Backend (Python)
+- **Framework**: FastAPI (async)
+- **Server**: Uvicorn
+- **Database**: SQLAlchemy 2.0 (async), SQLite/PostgreSQL
+- **Audio**: librosa, Demucs (source separation), yt-dlp, ffmpeg
+- **MIDI**: basic-pitch (Spotify research), pretty-midi, music21
+- **ML**: PyTorch (MPS for Apple Silicon), MLX (Apple M-series optimized)
+- **AI**: google-generativeai (Gemini), anthropic
+- **Tasks**: Celery + Redis (background jobs)
+- **Python**: 3.10-3.13
 
-## Common Commands
+### Frontend (TypeScript/React)
+- **Framework**: React 19 + TypeScript
+- **Routing**: TanStack Router v1 (file-based)
+- **State**: TanStack Query v5 (server), Zustand (client)
+- **UI**: Tailwind CSS 4, Framer Motion
+- **Music**: Tone.js (synthesis), VexFlow (notation), Web Audio API
+- **Build**: Vite 7
+- **Testing**: Vitest, Playwright
 
-### Development
+### Package Manager
+- **pnpm** 10.14.0 (strictly required - DO NOT use npm or yarn)
 
-```bash
-# Backend (from /backend)
-~/.local/bin/uv sync              # Install/sync dependencies
-~/.local/bin/uv run uvicorn app.main:app --reload  # Dev server (port 8000)
-~/.local/bin/uv run pytest tests/                  # Run all tests
-~/.local/bin/uv run pytest tests/test_*.py -v      # Run specific test
-~/.local/bin/uv run ruff check .                   # Lint
-~/.local/bin/uv run ruff format .                  # Format
+---
 
-# Frontend (from /frontend)
-pnpm install                      # Install dependencies
-pnpm dev                          # Dev server (port 3000)
-pnpm build                        # Production build
-pnpm test                         # Run vitest tests
-
-# E2E Tests (from root)
-pnpm test                         # Run Playwright tests (requires both servers running)
-
-# Docker Development (from root)
-docker-compose -f docker-compose.yml -f docker-compose.dev.yml up --build  # Dev with hot-reload
-docker-compose down                                                         # Stop services
-
-# Docker Production (from root)
-docker-compose up --build -d      # Production mode
-docker-compose logs -f            # View logs
-```
-
-### Gospel Piano AI Pipeline
-
-```bash
-# Interactive menu (recommended for full workflow)
-./scripts/quickstart.sh
-
-# Manual commands for specific tasks
-~/.local/bin/uv run python scripts/build_gospel_dataset.py --limit 100  # Collect 100 gospel MIDIs
-~/.local/bin/uv run python scripts/monitor_dataset_progress.py          # Monitor collection progress
-~/.local/bin/uv run python scripts/validate_gospel_midis.py --input data/gospel_dataset/validated
-~/.local/bin/uv run python scripts/train_mlx_gospel.py --epochs 10 --batch-size 8
-~/.local/bin/uv run python scripts/generate_gospel_batch.py --count 10000
-```
-
-### Database Migrations (Alembic)
-
-```bash
-# From /backend
-~/.local/bin/uv run alembic revision --autogenerate -m "description"  # Create migration
-~/.local/bin/uv run alembic upgrade head                               # Apply migrations
-~/.local/bin/uv run alembic downgrade -1                               # Rollback one migration
-~/.local/bin/uv run alembic history                                    # View migration history
-```
-
-## Architecture Overview
-
-### Request Flow
-
-```
-User → Frontend (React) → Backend API → Service Layer → Pipeline Modules → Audio Processing
-                              ↓
-                        SQLite Database
-                              ↓
-                        File Storage (uploads/, outputs/)
-```
-
-### Backend Pipeline (5 Stages)
-
-1. **Acquire**: YouTube download (yt-dlp) or file upload
-2. **Extract**: Video → Audio conversion (ffmpeg)
-3. **Isolate**: Piano stem separation (Demucs) - optional
-4. **Transcribe**: Audio → MIDI notes (basic-pitch or custom models)
-5. **Analyze**: Chord detection, genre classification, pattern recognition (librosa, custom analyzers)
-
-Job status flow: `queued → downloading → processing → analyzing → complete|failed|cancelled`
-
-### Gospel AI System Architecture
-
-The gospel piano generation system uses a hybrid AI + rules approach optimized for M4 Pro:
-
-```
-Input (Chord Progression, Key, Tempo, Application)
-         ↓
-MLXGospelGenerator (M4 Pro neural engine optimized)
-         ↓
-REMI Tokenization → Transformer (Mistral-7B + LoRA) → MIDI Tokens
-         ↓
-HybridGospelArranger (AI percentage: 0-100%)
-         ├─ AI Path: MLX-generated patterns
-         └─ Rules Path: Traditional pattern library
-         ↓
-Gospel Patterns (left_hand + right_hand)
-         ├─ Left: Stride bass, walking bass, shell voicings
-         └─ Right: Block chords, runs, polychords
-         ↓
-Rhythm Transformations (shuffle, backbeat, syncopation)
-         ↓
-Enhanced MIDI Export (humanization, sustain pedal)
-```
-
-**Core Data Structures** (`app/gospel/__init__.py`):
-- `Note`: MIDI note with pitch, time, duration, velocity, hand
-- `ChordContext`: Context for generation (chord, key, position, tempo, previous voicing for smooth voice leading)
-- `HandPattern`: Named pattern with difficulty, tempo range, characteristics
-- `Arrangement`: Final two-hand output ready for MIDI export
-
-**Key Components**:
-- `app/gospel/ai/mlx_music_generator.py`: M4 Pro optimized generator, REMI tokenization, LoRA fine-tuning
-- `app/gospel/arrangement/hybrid_arranger.py`: Blends AI generation with rule-based patterns
-- `app/gospel/patterns/`: Left hand, right hand, rhythm transformation modules
-- `app/gospel/applications/`: Practice, Concert, Worship, Uptempo application variants
-
-**Production Scripts** (`scripts/`):
-- `quickstart.sh`: Interactive menu with 9 workflow options
-- `build_gospel_dataset.py`: YouTube → MIDI dataset builder (automated)
-- `musescore_scraper.py`: MuseScore download helper (manual)
-- `monitor_dataset_progress.py`: Real-time collection stats with progress bar
-- `validate_gospel_midis.py`: Gospel quality validation (extended harmony, rhythm, playability)
-- `train_mlx_gospel.py`: MLX model fine-tuning (LoRA, batch size 8 for 24GB RAM)
-- `generate_gospel_batch.py`: Batch MIDI generation (10K MIDIs in ~90 min)
-
-**Workflow**: Collect 100+ MIDIs → Train MLX model (2-4 hours) → Generate 10K MIDIs (90 min)
-
-### Backend Structure
-
-```
-backend/app/
-├── main.py                    # FastAPI app, CORS, lifespan, routers
-├── core/config.py             # Settings (env vars, paths, feature flags)
-├── api/routes/                # API endpoints
-│   ├── transcribe.py          # POST /transcribe/url|upload, GET /{id}/result
-│   ├── jobs.py                # Job management (list, cancel, delete)
-│   ├── library.py             # Song library CRUD
-│   ├── practice.py            # Practice sessions, time-stretch
-│   ├── export.py              # MusicXML, quantized MIDI export
-│   ├── analysis.py            # Advanced analysis (patterns, functions)
-│   ├── ai.py                  # Gemini API for theory explanations
-│   └── curriculum.py          # SRS (Spaced Repetition System) for practice
-├── schemas/                   # Pydantic models (request/response contracts)
-├── services/                  # Business logic orchestration
-│   └── transcription.py       # Coordinates pipeline execution
-├── pipeline/                  # Audio processing modules
-│   ├── downloader.py          # YouTube download
-│   ├── midi_converter.py      # Audio → MIDI
-│   ├── chord_detector.py      # Chord analysis
-│   ├── progression_detector.py # Chord progression patterns
-│   ├── genre_classifier.py    # Genre detection (Gospel/Jazz/Blues/Classical)
-│   ├── blues_analyzer.py      # 12-bar form, blue notes
-│   ├── harmonic_function_analyzer.py  # Roman numeral analysis
-│   └── reharmonization_engine.py      # Suggest alternative voicings
-├── database/
-│   ├── models.py              # SQLAlchemy ORM models
-│   └── session.py             # Async DB session management
-├── gospel/                    # Gospel piano AI system (2,492 lines)
-│   ├── __init__.py            # Core data structures (Note, ChordContext, HandPattern, Arrangement)
-│   ├── ai/                    # MLX generator, REMI tokenizer
-│   ├── arrangement/           # Arranger, hybrid AI+rules logic
-│   ├── patterns/              # Left/right hand patterns, rhythm transformations
-│   ├── applications/          # Application-specific variants (Practice, Concert, Worship, Uptempo)
-│   ├── midi/                  # Enhanced MIDI export, humanization
-│   └── validation/            # Gospel quality validation
-└── theory/                    # Music theory utilities (scales, chords, voicings)
-```
-
-### Frontend Structure (File-Based Routing)
-
-```
-frontend/src/
-├── router.tsx                 # TanStack Router setup
-├── routeTree.gen.ts           # Auto-generated route tree
-├── routes/                    # File-based routes
-│   ├── __root.tsx             # Root layout, QueryProvider, global nav
-│   ├── index.tsx              # Home page (/)
-│   ├── transcribe.tsx         # Upload interface (/transcribe)
-│   ├── result.$jobId.tsx      # Job status + results (/result/:jobId)
-│   ├── library.tsx            # Song library list
-│   └── practice.$songId.tsx   # Practice mode with playback controls
-├── components/
-│   ├── upload/                # UrlInput, FileUpload
-│   ├── piano/                 # PianoRoll, ChordTimeline (visualizations)
-│   ├── library/               # SongCard, LibraryGrid
-│   └── practice/              # PlaybackControls, LoopSelector
-├── hooks/
-│   ├── useTranscription.ts    # Mutations + queries for transcription jobs
-│   ├── useLibrary.ts          # Library CRUD operations
-│   └── usePractice.ts         # Practice session tracking
-└── lib/
-    ├── api.ts                 # Axios client with typed endpoints
-    └── utils.ts               # Helper functions (cn, formatters)
-```
-
-**Routing Pattern**: TanStack Router uses file-based routing. Files in `src/routes/` automatically become routes. Use `$param` syntax for dynamic segments (e.g., `result.$jobId.tsx` → `/result/:jobId`).
-
-### Data Flow Patterns
-
-**Backend Service Pattern**: Routes delegate to services → services orchestrate pipeline modules → results stored in DB + files.
-
-**Frontend State Management**:
-- **TanStack Query**: Server state (API data, caching, polling for job status)
-  - Query keys: `["transcription", "job", jobId]`, `["library", "songs"]`
-  - Auto-refetch on job status polling (every 1s while in-progress)
-- **Zustand**: Client state (UI preferences, playback state)
-
-**Job Polling**: Frontend polls `GET /api/v1/transcribe/{jobId}` every 1 second while status is `queued|downloading|processing|analyzing`. Polling stops on `complete|failed|cancelled`.
-
-## Key Patterns & Conventions
+## Development Commands
 
 ### Backend
 
-- **Dependency injection**: Services injected into route modules via `lifespan` event
-- **Async everywhere**: All DB operations and pipeline I/O are async
-- **Error handling**: Pydantic validation → 400, not found → 404, processing errors → job.error + status=failed
-- **File organization**: Outputs in `outputs/{job_id}/`, uploads in `uploads/{job_id}/`
-- **Settings**: All config via `app/core/config.py` reading from `.env` (never hardcode paths/URLs)
+```bash
+# Navigate to backend
+cd backend
 
-### Gospel AI System
+# Install dependencies (first time)
+pip install -e ".[dev]"
 
-- **Hybrid approach**: AI percentage (0-100%) controls blend between AI-generated and rule-based patterns
-- **Voice leading**: Previous chord voicing passed in `ChordContext` for smooth transitions
-- **Pattern selection**: Based on tempo suitability, difficulty level, application type
-- **REMI tokenization**: 284 vocab tokens, max sequence length 2048 (~16 bars)
-- **MLX optimization**: Batch size 8 optimal for 24GB RAM, leverages M4 Pro GPU acceleration
-- **Validation**: Extended harmony detection (9ths, 11ths, 13ths), gospel rhythm patterns, playability checks (hand span ≤12 semitones)
+# Run dev server (auto-reload)
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+
+# Run tests
+pytest
+
+# Lint/format
+ruff check .
+ruff format .
+
+# Database migrations
+alembic revision --autogenerate -m "description"
+alembic upgrade head
+```
 
 ### Frontend
 
-- **API client**: All backend calls through `lib/api.ts` with TypeScript types matching backend schemas
-- **Component co-location**: Components in `components/`, organized by feature (upload/, piano/, library/)
-- **Query hooks**: Custom hooks wrap TanStack Query (e.g., `useTranscriptionJob()` handles polling logic)
-- **Route data loading**: Use TanStack Router loaders for initial data, Query for mutations/polling
-
-### Multi-Genre Analysis
-
-The system detects and analyzes music across genres:
-- **Gospel**: Extended jazz chords (9ths, 11ths, 13ths), chromatic passing chords
-- **Jazz**: ii-V-I progressions, tritone substitutions, altered dominants
-- **Blues**: 12-bar form, blue notes (b3, b5, b7), dominant 7th chains
-- **Classical**: Functional harmony, cadences, modulations
-
-Pipeline modules in `app/pipeline/*_analyzer.py` provide genre-specific insights stored in job results.
-
-## Important Files
-
-- **Backend entry**: `backend/app/main.py` (FastAPI app, router includes, CORS, lifespan)
-- **Frontend entry**: `frontend/src/router.tsx` (TanStack Router setup)
-- **Settings**: `backend/app/core/config.py` (all environment-based config)
-- **API contracts**: `backend/app/schemas/` (Pydantic models) mirrored in frontend TypeScript types
-- **Gospel core**: `backend/app/gospel/__init__.py` (Note, ChordContext, HandPattern, Arrangement data structures)
-- **MLX generator**: `backend/app/gospel/ai/mlx_music_generator.py` (M4 Pro optimized generation)
-- **Hybrid arranger**: `backend/app/gospel/arrangement/hybrid_arranger.py` (AI + rules blending)
-- **Gospel production**: `backend/PRODUCTION_READY.md` (complete workflow guide for 10K MIDI generation)
-- **Architecture docs**: `architecture.md` (detailed flow diagrams), `flow idagrams.md`
-- **Backend README**: `backend/README.md` (Docker setup, API examples)
-
-## Environment Setup
-
-**Backend** requires `.env` file in `backend/` directory (copy from `.env.example`):
-- Database path, upload/output directories
-- CORS origins for frontend
-- Gemini API key (for AI theory features)
-
-**Frontend** requires `VITE_API_URL` environment variable (defaults to `http://localhost:8000` in dev).
-
-## Docker Notes
-
-- **Development mode**: Uses `docker-compose.dev.yml` overlay with volume mounts for hot-reload
-- **Production mode**: Standard `docker-compose.yml` builds optimized images
-- **Backend port**: 8009 (mapped from internal 8000)
-- **Frontend port**: 3000
-- **Volumes**: `uploads/` and `outputs/` persist between container restarts
-
-## Dependencies & Installation
-
-**Backend**: Uses `uv` (fast Python package manager). Dependencies in `pyproject.toml`.
-
-**System Requirements**:
-- ffmpeg (audio processing): `brew install ffmpeg` on macOS
-- Python 3.10-3.13 (full support, including basic-pitch)
-- MLX framework (M-series Macs only for gospel AI features)
-
-**Frontend**: Uses `pnpm` (specified in `package.json` via packageManager field). Lock file is `pnpm-lock.yaml`.
-
-## Testing Strategy
-
-- **Backend unit tests**: `tests/test_*.py` cover services, pipeline modules, theory utilities
-- **Backend integration tests**: `tests/integration/` test full API endpoints with test DB
-- **Gospel validation**: `scripts/validate_gospel_midis.py` validates gospel characteristics (extended harmony, rhythm patterns, playability)
-- **Frontend component tests**: `src/test/*.test.tsx` with vitest + @testing-library/react
-- **E2E tests**: Root `tests/*.spec.ts` with Playwright (full user flows)
-
-**Test data**: Backend uses sample audio files in `tests/fixtures/` for pipeline testing.
-
-## Gospel AI Production Workflow
-
-**Quick Start** (Interactive Menu):
 ```bash
-cd backend
-./scripts/quickstart.sh
+# Navigate to frontend
+cd frontend
+
+# Install dependencies (first time)
+pnpm install
+
+# Run dev server (port 3000)
+pnpm dev
+
+# Build for production
+pnpm build
+
+# Run tests
+pnpm test
+
+# Preview production build
+pnpm preview
 ```
 
-**Menu Options**:
-1. Test YouTube search (30 sec)
-2. Collect 10 MIDIs (test, 15 min)
-3. Collect 100 MIDIs (full dataset, 2-3 hours)
-4. Monitor progress (real-time)
-5. Validate MIDIs
-6. Train MLX model (2-4 hours on M4 Pro)
-7. Generate 100 test MIDIs
-8. Generate 10,000 production MIDIs (90 min)
-9. Complete pipeline (all steps, 6-8 hours)
+### Root-level E2E Tests
 
-**Manual Pipeline Steps**:
-1. **Collect Dataset** (2-3 hours): `build_gospel_dataset.py --limit 100` - Downloads from YouTube, isolates piano, transcribes to MIDI
-2. **Monitor Progress**: `monitor_dataset_progress.py` - Real-time stats, ETA, style distribution
-3. **Validate Quality**: `validate_gospel_midis.py` - Checks extended harmony, rhythm, voice leading
-4. **Train Model** (2-4 hours): `train_mlx_gospel.py --epochs 10 --batch-size 8` - Fine-tune Mistral-7B with LoRA on M4 Pro
-5. **Generate MIDIs** (90 min): `generate_gospel_batch.py --count 10000` - Batch generation with automatic variation
+```bash
+# Run Playwright tests
+pnpm exec playwright test
 
-**Training Configuration** (M4 Pro optimized):
-- Model: Mistral-7B-Instruct-4bit
-- LoRA rank: 8
-- Batch size: 8 (optimal for 24GB RAM)
-- Epochs: 10-20
-- Max sequence: 2048 tokens (~16 bars)
-- Dataset requirement: 100+ validated gospel MIDIs
+# Run with UI
+pnpm exec playwright test --ui
+```
 
-**Generation Parameters**:
-- Keys: All 24 major/minor
-- Tempos: 60-160 BPM
-- Applications: Practice, Concert, Worship, Uptempo
-- Styles: Contemporary, Traditional, Jazz-gospel (auto-inferred)
-- Output: `output/gospel_production_10k/{style}/gospel_{index}_{key}_{tempo}bpm_{application}.mid`
+---
 
-## Known Limitations
+## Architecture Overview
 
-- Demucs piano isolation: Works best on clear piano recordings, may struggle with heavily layered mixes
-- MIDI transcription: Polyphonic accuracy varies by audio quality and playing complexity
-- MLX framework: M-series Macs only (no CUDA support for gospel AI features)
-- Gospel AI training: Requires 100+ validated MIDIs for quality results
+### Monorepo Structure
+
+```
+youtube-transcript/
+├── backend/           # Python FastAPI service
+│   └── app/
+│       ├── api/routes/       # HTTP endpoints (transcribe, library, curriculum, ai, gospel)
+│       ├── schemas/          # Pydantic models (API contracts)
+│       ├── services/         # Business logic orchestration
+│       ├── pipeline/         # Audio processing modules (22 specialized processors)
+│       ├── database/         # SQLAlchemy ORM models
+│       ├── gospel/           # Gospel MIDI generation (patterns, arrangement)
+│       ├── jazz/             # Jazz lick generation and analysis
+│       ├── theory/           # Music theory utilities (chords, scales, intervals)
+│       └── main.py           # FastAPI app factory
+└── frontend/          # React + TanStack app
+    └── src/
+        ├── routes/           # File-based routing (TanStack Router)
+        ├── components/       # React UI (analysis, curriculum, generator)
+        ├── hooks/            # Custom hooks (useMidiPlayer, useChordPlayback, usePiano)
+        ├── lib/              # Utilities and typed API client
+        └── main.tsx          # Entry point
+```
+
+### Request Flow (Transcription Pipeline)
+
+```
+HTTP POST /api/v1/transcribe/url
+    ↓
+TranscriptionService.create_job()
+    ↓
+Background Task Chain (7 steps):
+    1. Download (yt-dlp)          → 5-10% progress
+    2. Extract Audio (ffmpeg)     → 15%
+    3. Isolate Piano (Demucs)     → 30-50%
+    4. Transcribe MIDI (basic-pitch) → 55%
+    5. Detect Chords (librosa)    → 80%
+    6. Theory Analysis (music21)  → 85%
+    7. Advanced Analysis:
+       - Voicing Classification   → 90%
+       - Progression Detection    → 95%
+       - Reharmonization Suggest  → 100%
+    ↓
+TranscriptionResult (JSON with MIDI notes, chords, patterns, analysis)
+    ↓
+Frontend polls GET /api/v1/transcribe/{job_id} every 1s
+    ↓
+When complete: fetch GET /api/v1/transcribe/{job_id}/result
+    ↓
+Display in AnalysisTab (piano roll, voicings, progressions, reharmonizations)
+```
+
+### Key Backend Services
+
+**TranscriptionService** (`services/transcription.py`)
+- Orchestrates 7-step pipeline from URL/file → MIDI
+- Manages job lifecycle (QUEUED → DOWNLOADING → PROCESSING → ANALYZING → COMPLETE)
+- Error handling with retries and cleanup
+
+**GospelGeneratorService** (`services/gospel_generator.py`)
+- Generates gospel-style MIDI from chord progressions
+- Hand-crafted pattern libraries (left-hand bass, right-hand comping)
+- Velocity curves for expressive playback
+
+**AIGeneratorService** (`services/ai_generator.py`)
+- Gemini API integration for music generation
+- Generates: progressions, voicings, exercises, licks, reharmonizations
+- Hybrid AI + rule-based validation
+
+**CurriculumService** (`services/curriculum_service.py`)
+- Adaptive learning paths with SRS (SuperMemo-2 algorithm)
+- Skill assessment and progress tracking
+- AI coach integration
+
+### Key Pipeline Modules (22 total)
+
+**Core Analysis:**
+- `voicing_analyzer.py` - Classifies 9 voicing types (drop-2, rootless, shell, cluster, etc.)
+- `progression_detector.py` - Matches against 30+ patterns (jazz, pop, blues, modal)
+- `reharmonization_engine.py` - Suggests 8 alternative chord types per chord
+- `voice_leading_analyzer.py` - Analyzes smooth voice transitions
+- `chord_detector.py` - Detects chords using librosa + templates
+
+**Genre-Specific:**
+- `jazz_analyzer.py` - Jazz theory patterns (ii-V-I, rhythm changes, Coltrane changes)
+- `blues_analyzer.py` - Blues-specific detection
+- `classical_analyzer.py` - Classical form analysis
+
+**Input/Processing:**
+- `downloader.py` - yt-dlp wrapper
+- `audio_extractor.py` - ffmpeg conversion to 44.1kHz mono WAV
+- `source_separator.py` - Demucs model for piano isolation
+- `midi_converter.py` - basic-pitch transcription
+
+### Frontend Architecture
+
+**Routing** (TanStack Router, file-based):
+- `/` - Dashboard
+- `/upload` - Transcription input
+- `/library` - User's songs
+- `/library/[id]` - Song analysis view
+- `/curriculum` - Learning paths
+- `/generator` - AI generation tools
+- `/practice` - Practice exercises
+
+**State Management:**
+- **Server State**: TanStack Query (caching, polling, mutations)
+- **Client State**: Zustand (global UI state)
+
+**API Client Pattern** (`lib/api.ts`):
+```typescript
+export const transcriptionApi = {
+  fromUrl: (url, options) => fetch(...),
+  getStatus: (jobId) => fetch(...),
+  getResult: (jobId) => fetch(...),
+};
+
+// Usage with TanStack Query:
+const { data: job } = useQuery({
+  queryKey: ['transcription', 'job', jobId],
+  queryFn: () => transcriptionApi.getStatus(jobId),
+  refetchInterval: 1000, // Poll every 1s
+});
+```
+
+**Custom Hooks:**
+- `useMidiPlayer.ts` - MIDI playback control
+- `useChordPlayback.ts` - Chord audio synthesis with Tone.js
+- `usePiano.ts` - Interactive piano keyboard
+- `useVexFlow.ts` - Musical notation rendering
+
+---
+
+## Music Theory Domain
+
+### Voicing Classification (9 types)
+
+Algorithm groups MIDI notes by chord time, then classifies:
+1. **Quartal** - All intervals are 4ths
+2. **Cluster** - Adjacent semitones
+3. **Rootless** - No root note
+4. **Shell** - Root-3rd-7th only
+5. **Close** - All notes within octave
+6. **Drop-2/Drop-3** - Specific voicing patterns
+7. **Open** - Spans >1 octave
+8. **Spread** - Very wide spacing (>2 octaves)
+
+Output: voicing type, MIDI notes, intervals, width, complexity score, hand span
+
+### Progression Detection (30+ patterns)
+
+**Pop** (5): Axis of Awesome (I-V-vi-IV), Sensitive Female, 50s, Pachelbel, Andalusian
+**Jazz** (15+): ii-V-I, turnarounds, rhythm changes, Coltrane changes, backdoor, tritone subs
+**Blues** (4): 12-bar (standard/quick-change), 8-bar, minor blues
+**Modal** (3+): Dorian/Mixolydian/Lydian vamps
+
+Detection: Convert to root intervals → match against templates → return with roman numerals
+
+### Reharmonization (8 types)
+
+1. Tritone Substitution (V7 → bII7)
+2. Diatonic Substitutes (I→vi, IV→ii, V→iii)
+3. Passing Chords (chromatic approach)
+4. Approach Chords (half-step above)
+5. Backdoor Progressions (bVII7 → I)
+6. Modal Interchange (parallel minor/major)
+7. Upper Structure Triads (complex extensions)
+8. Diminished Passing Chords
+
+Each suggestion includes: chord, explanation, jazz difficulty (1-5), voice-leading quality
+
+---
+
+## AI Integration (Gemini API)
+
+### AI Generator Endpoints (`/api/v1/ai/*`)
+
+- `POST /progressions` - Generate chord progressions (key, mode, style, mood, length)
+- `POST /voicings` - Generate voicing options (chord, style, hand)
+- `POST /exercises` - Generate practice exercises (type, key, difficulty)
+- `POST /licks` - Generate jazz licks (style, context, difficulty) **NEW**
+- `POST /reharmonization` - AI-powered reharmonization suggestions
+- `POST /substitutions` - Chord substitution ideas
+
+### Hybrid AI + Validation Pattern
+
+**Jazz Licks Example** (`services/ai_generator.py`):
+```python
+async def generate_licks(request: LicksRequest):
+    # 1. Get appropriate scales for context
+    scales = lick_pattern_service.get_scales_for_context(chords, style)
+
+    # 2. Build Gemini prompt with style guidelines
+    prompt = self._build_licks_prompt(request, scales)
+
+    # 3. Generate with Gemini
+    response = self.model.generate_content(prompt)
+    licks_data = parse_json_from_response(response.text)
+
+    # 4. Validate each lick (scale conformance, playability)
+    for lick in licks_data["licks"]:
+        validation = lick_pattern_service.validate_lick(lick, ...)
+        if validation.is_valid:
+            validated_licks.append(lick)
+
+    # 5. Retry if <3 valid licks
+    return LicksResponse(licks=validated_licks, ...)
+```
+
+**Validation Rules** (`jazz/lick_patterns.py`):
+- MIDI range: 48-84 (playable piano range)
+- Scale conformance: 90-95% (allow chromatic passing tones)
+- Difficulty-appropriate intervals (beginner: max 5th, advanced: any)
+- Rhythm complexity matching difficulty level
+
+---
+
+## Gospel MIDI Generation
+
+### Pattern-Based System (`gospel/`)
+
+**Components:**
+- `Note` class - MIDI note with hand/timing context
+- `ChordContext` - Voicing/rhythm decision data
+- `patterns/left_hand.py` - Bass patterns (walking bass, root-fifth, stride)
+- `patterns/right_hand.py` - Comping patterns (block chords, rhythmic fills)
+- `arrangement/arranger.py` - Full composition orchestration
+- `midi/exporter.py` - Enhanced MIDI export with velocity curves
+
+**Generation Flow:**
+```
+Chord Progression
+    ↓
+Select Application Type (worship, uptempo, practice)
+    ↓
+Choose Patterns (left-hand bass, right-hand rhythm)
+    ↓
+Arrange Hands (distribute notes, avoid collisions)
+    ↓
+Apply Velocity Curves (expression, dynamics)
+    ↓
+Export to MIDI
+```
+
+---
+
+## Curriculum System (SRS)
+
+### Database Models (`database/curriculum_models.py`)
+
+- `Curriculum` - Master learning plan (duration_weeks, status)
+- `CurriculumModule` - Themed blocks (4-8 weeks)
+- `CurriculumLesson` - Weekly lessons
+- `CurriculumExercise` - Practice items with SRS fields:
+  - `next_review_at` - When to practice next
+  - `interval_days` - Current review interval
+  - `ease_factor` - Difficulty multiplier (2.5 default)
+  - `repetition_count` - Total reviews
+
+### SuperMemo-2 Algorithm (`services/srs_service.py`)
+
+After practice, user rates quality (0-5):
+- **0 (Blackout)** → Reset interval to 1 day
+- **3 (Hesitant)** → Reduce ease factor
+- **4 (Good)** → Increase interval by ease factor
+- **5 (Perfect)** → Max interval increase
+
+Formula: `new_interval = old_interval * ease_factor`
+
+### Adding Content to Practice Queue
+
+**Jazz Licks Integration** (`POST /curriculum/add-lick-to-practice`):
+```python
+# Auto-creates curriculum structure if missing
+curriculum = get_or_create_curriculum(user_id)
+module = get_or_create_module(curriculum, "Licks Practice")
+lesson = get_or_create_lesson(module, "Jazz Licks")
+
+# Create exercise with immediate review
+exercise = CurriculumExercise(
+    lesson_id=lesson.id,
+    exercise_type="lick",
+    content_json=json.dumps(lick_data),
+    next_review_at=datetime.utcnow(),  # Immediate
+    interval_days=1.0,
+    ease_factor=2.5,
+)
+```
+
+Frontend: "Add to Practice" button on each lick card → calls endpoint → lick appears in daily queue
+
+---
+
+## Key Patterns and Conventions
+
+### Backend Patterns
+
+**1. Service-Pipeline Pattern**
+- Services orchestrate high-level workflows
+- Pipeline modules are stateless processors
+- Easy composition and testing
+
+**2. Job-Based Async**
+- Long tasks don't block HTTP
+- Polling for status updates
+- Job persistence across restarts
+
+**3. Schema-Driven Development**
+- Pydantic schemas define contracts
+- Auto-validation on requests
+- Frontend imports types from schemas
+
+### Frontend Patterns
+
+**1. TanStack Query for Server State**
+```typescript
+// Polling pattern
+const { data, error } = useQuery({
+  queryKey: ['job', jobId],
+  queryFn: () => api.getStatus(jobId),
+  refetchInterval: (query) => {
+    return query.state.data?.status === 'complete' ? false : 1000;
+  },
+});
+```
+
+**2. Mutation Pattern**
+```typescript
+const mutation = useMutation({
+  mutationFn: api.createJob,
+  onSuccess: (job) => {
+    navigate({ to: `/library/${job.job_id}` });
+  },
+});
+```
+
+**3. File-Based Routing**
+- Routes auto-generated from `routes/` directory
+- `[id]` for dynamic segments
+- Type-safe navigation with TanStack Router
+
+---
+
+## Important Implementation Notes
+
+### When Working with Music Theory Code
+
+**Voicing Analyzer** (`pipeline/voicing_analyzer.py:182`):
+- Groups notes by chord time window (±0.1s tolerance)
+- Classification order matters (quartal → cluster → rootless → shell → drop voicings → close/open/spread)
+- Returns `VoicingInfo` with complexity score (0-1) and hand span in inches
+
+**Progression Detector** (`pipeline/progression_detector.py:47`):
+- Patterns defined as interval sequences from tonic
+- Requires at least 2 chords to match
+- Returns confidence score (exact=1.0, fuzzy match=0.6-0.9)
+
+**Reharmonization Engine** (`pipeline/reharmonization_engine.py:24`):
+- 8 types with varying jazz difficulty levels
+- Each suggestion includes explanation for learning
+- Voice-leading quality: smooth (common tones) vs dramatic (large leaps)
+
+### When Working with Gospel Generation
+
+**Pattern Libraries** (`gospel/patterns/`):
+- Left-hand: `WALKING_BASS`, `ROOT_FIFTH`, `STRIDE_BASS`
+- Right-hand: `BLOCK_CHORDS`, `RHYTHMIC_FILLS`, `GOSPEL_RUNS`
+- Patterns define: rhythm, note selection, velocity curves
+
+**Arrangement** (`gospel/arrangement/arranger.py:89`):
+- Distributes notes to hands based on register
+- Avoids hand collisions (checks overlap)
+- Applies application-specific styles (worship=sustained, uptempo=rhythmic)
+
+### When Working with AI Generation
+
+**Gemini Prompt Structure** (`services/ai_generator.py:469`):
+```python
+prompt = f"""
+Generate {count} jazz licks in {style} style over {context}.
+
+Requirements:
+- Style: {_get_style_guidelines(style)}
+- Difficulty: {_get_difficulty_guidelines(difficulty)}
+- Scales: {scales}
+
+Return JSON:
+{{
+  "licks": [
+    {{
+      "name": "...",
+      "notes": ["C4", "D4", "E4"],
+      "midi_notes": [60, 62, 64],
+      "theory_analysis": {{ ... }}
+    }}
+  ]
+}}
+"""
+```
+
+**Validation After Generation** (`jazz/lick_patterns.py:156`):
+- Check MIDI range (48-84)
+- Verify scale conformance (90-95% accuracy)
+- Validate interval jumps for difficulty
+- Retry up to 2 times if <3 valid licks
+
+### When Working with Curriculum
+
+**SRS Scheduling** (`services/srs_service.py:23`):
+```python
+def schedule_next_review(exercise, quality: int):
+    if quality < 3:
+        # Reset on failure
+        exercise.interval_days = 1.0
+        exercise.repetition_count = 0
+    else:
+        # Increase interval
+        exercise.interval_days *= exercise.ease_factor
+        exercise.repetition_count += 1
+        # Adjust ease factor based on quality
+        exercise.ease_factor += (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02))
+
+    exercise.next_review_at = now + timedelta(days=exercise.interval_days)
+```
+
+**Auto-Create Structure** (`api/routes/curriculum.py:875`):
+- GET/CREATE curriculum if missing
+- GET/CREATE module "Licks Practice" if missing
+- GET/CREATE lesson "Jazz Licks" if missing
+- CREATE exercise with immediate review
+- Zero user friction - all automatic
+
+---
+
+## Testing
+
+### Backend Tests
+```bash
+cd backend
+pytest                          # All tests
+pytest tests/test_pipeline.py  # Specific module
+pytest -v -s                    # Verbose with stdout
+pytest -k "voicing"             # Match test names
+```
+
+### Frontend Tests
+```bash
+cd frontend
+pnpm test                       # Run all Vitest tests
+pnpm test -- --ui               # Interactive UI
+pnpm test -- voicing            # Specific test files
+```
+
+### E2E Tests
+```bash
+pnpm exec playwright test       # Run all E2E
+pnpm exec playwright test --ui  # Interactive mode
+```
+
+---
+
+## Common Tasks
+
+### Adding a New Pipeline Module
+
+1. Create module in `backend/app/pipeline/your_analyzer.py`
+2. Implement analysis function returning Pydantic model
+3. Add to `TranscriptionService` pipeline chain
+4. Update `TranscriptionResult` schema with new field
+5. Add progress step (update percentage ranges)
+6. Update frontend `AnalysisTab` to display results
+
+### Adding a New AI Generator
+
+1. Add request/response schemas in `backend/app/schemas/ai.py`
+2. Implement generation method in `AIGeneratorService`
+3. Add validation logic if using hybrid approach
+4. Create endpoint in `api/routes/ai.py`
+5. Add TypeScript types in `frontend/src/lib/api.ts`
+6. Create UI in `components/generator/AIGenerator.tsx`
+
+### Adding a New Gospel Pattern
+
+1. Define pattern in `gospel/patterns/left_hand.py` or `right_hand.py`
+2. Specify: rhythm, note selection logic, velocity profile
+3. Register pattern in `PATTERN_LIBRARY`
+4. Add to `arranger.py` pattern selection logic
+5. Test with various chord progressions
+
+---
+
+## File Locations Reference
+
+**Backend:**
+- Schemas: `backend/app/schemas/*.py`
+- Services: `backend/app/services/*.py`
+- Pipeline: `backend/app/pipeline/*.py`
+- Routes: `backend/app/api/routes/*.py`
+- Database: `backend/app/database/*.py`
+
+**Frontend:**
+- Routes: `frontend/src/routes/**/*.tsx`
+- Components: `frontend/src/components/**/*.tsx`
+- API Client: `frontend/src/lib/api.ts`
+- Hooks: `frontend/src/hooks/*.ts`
+
+**Config:**
+- Backend deps: `backend/pyproject.toml`
+- Frontend deps: `frontend/package.json`
+- Root E2E: `package.json`
+
+---
+
+## Database Migrations
+
+```bash
+cd backend
+
+# Create new migration
+alembic revision --autogenerate -m "Add theory analysis fields"
+
+# Apply migrations
+alembic upgrade head
+
+# Rollback one step
+alembic downgrade -1
+
+# View current version
+alembic current
+
+# View migration history
+alembic history
+```
+
+---
+
+## Environment Variables
+
+**Backend** (`.env` in `backend/`):
+```bash
+DATABASE_URL=postgresql://user:pass@localhost/gospel_keys
+GEMINI_API_KEY=your_key_here
+ANTHROPIC_API_KEY=your_key_here
+REDIS_URL=redis://localhost:6379
+CELERY_BROKER_URL=redis://localhost:6379
+```
+
+**Frontend** (`.env` in `frontend/`):
+```bash
+VITE_API_BASE_URL=http://localhost:8000
+```
+
+---
+
+## Known Issues / Gotchas
+
+1. **Python 3.13 Compatibility**: Some packages (basic-pitch, audiocraft) require TensorFlow which doesn't support Python 3.13 yet. Use Python 3.10-3.12.
+
+2. **Demucs Memory**: Source separation requires significant RAM (~4GB). May timeout on large files.
+
+3. **MIDI Timing**: basic-pitch may quantize notes. For precise timing, use librosa onset detection.
+
+4. **Voicing Classification**: Requires simultaneous notes within ±0.1s window. Single notes won't be classified.
+
+5. **TanStack Router**: File-based routing requires restart when adding new route files.
+
+6. **Gemini Rate Limits**: Free tier has limits. Implement retry with exponential backoff for production.
+
+7. **MLX (Apple Silicon)**: Only works on M-series Macs. Gracefully falls back on other platforms.
+
+---
+
+## Project History
+
+Originally **"youtube-transcript"** for MIDI transcription, evolved into **Gospel Keys** with:
+- Phase 1: Basic transcription pipeline
+- Phase 2: Gospel MIDI generation
+- Phase 3: Jazz analysis and lick generation
+- Phase 4: Curriculum system with SRS
+- Phase 5: AI-powered learning features
+
+Current focus: Completing jazz lick enhancements (variations, progression alignment) and expanding curriculum content.

@@ -6,6 +6,7 @@ based on task type, complexity, and cost considerations.
 
 import hashlib
 import json
+import logging
 import os
 from datetime import datetime, timedelta
 from enum import Enum
@@ -14,8 +15,22 @@ from typing import Any, Dict, List, Optional
 import google.generativeai as genai
 from app.core.config import settings
 
-# Configure Gemini
-genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
+logger = logging.getLogger(__name__)
+
+# Validate GEMINI_API_KEY before configuration
+_gemini_api_key = os.environ.get("GEMINI_API_KEY")
+if not _gemini_api_key:
+    logger.warning(
+        "GEMINI_API_KEY not set. AI features will be unavailable. "
+        "Set GEMINI_API_KEY environment variable to enable AI curriculum generation."
+    )
+else:
+    try:
+        genai.configure(api_key=_gemini_api_key)
+        logger.info("✅ Gemini API configured successfully")
+    except Exception as e:
+        logger.error(f"Failed to configure Gemini API: {e}")
+        _gemini_api_key = None
 
 # Import local LLM service (M4 Neural Engine)
 try:
@@ -40,10 +55,14 @@ class TaskType(Enum):
 
 
 class GeminiModel(Enum):
-    """Gemini model variants for different complexity levels"""
-    FLASH = "gemini-2.0-flash"  # Fast, cheap - complexity 1-4
-    PRO = "gemini-2.0-pro"      # Balanced - complexity 5-7
-    ULTRA = "gemini-ultra"      # Best quality - complexity 8-10
+    """Gemini model variants for different complexity levels
+
+    Using production-stable Gemini 1.5 models (not experimental 2.0-exp).
+    See: https://ai.google.dev/gemini-api/docs/models
+    """
+    FLASH = "gemini-1.5-flash"      # Fast, cheap - complexity 1-4
+    FLASH_8B = "gemini-1.5-flash-8b"  # Ultra-cheap - complexity 1-2
+    PRO = "gemini-1.5-pro"          # Best quality - complexity 5-10
 
 
 class ModelType(Enum):
@@ -131,15 +150,56 @@ class AIOrchestrator:
 
     def __init__(self, budget_mode: BudgetMode = BudgetMode.BALANCED):
         self.budget_mode = budget_mode
-        self.gemini_models = {
-            GeminiModel.FLASH: genai.GenerativeModel('gemini-2.0-flash'),
-            GeminiModel.PRO: genai.GenerativeModel('gemini-2.0-pro'),
-            # GeminiModel.ULTRA: genai.GenerativeModel('gemini-ultra'),  # Not released yet
-        }
+        self.gemini_models = {}
+        self.initialization_errors = []
+
+        # Only initialize if API key is configured
+        if not _gemini_api_key:
+            self.initialization_errors.append("GEMINI_API_KEY not configured")
+            logger.warning("Skipping Gemini initialization - API key not set")
+        else:
+            # Initialize Flash model
+            try:
+                self.gemini_models[GeminiModel.FLASH] = genai.GenerativeModel(
+                    GeminiModel.FLASH.value
+                )
+                logger.info(f"✅ Initialized Gemini model: {GeminiModel.FLASH.value}")
+            except Exception as e:
+                error_msg = f"Failed to initialize {GeminiModel.FLASH.value}: {e}"
+                self.initialization_errors.append(error_msg)
+                logger.error(error_msg, exc_info=True)
+
+            # Initialize Pro model
+            try:
+                self.gemini_models[GeminiModel.PRO] = genai.GenerativeModel(
+                    GeminiModel.PRO.value
+                )
+                logger.info(f"✅ Initialized Gemini model: {GeminiModel.PRO.value}")
+            except Exception as e:
+                error_msg = f"Failed to initialize {GeminiModel.PRO.value}: {e}"
+                self.initialization_errors.append(error_msg)
+                logger.error(error_msg, exc_info=True)
+
         self.local_llm = local_llm_service
         # Claude client would be initialized here when API key is available
         # self.claude_client = Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
-    
+
+    def is_available(self) -> bool:
+        """Check if AI orchestrator has any working models"""
+        if LOCAL_LLM_ENABLED:
+            return True  # Local LLM can handle requests
+        return len(self.gemini_models) > 0
+
+    def get_status(self) -> Dict[str, Any]:
+        """Get detailed status of AI models for diagnostics"""
+        return {
+            "gemini_available": len(self.gemini_models) > 0,
+            "gemini_models_loaded": [m.value for m in self.gemini_models.keys()],
+            "local_llm_available": LOCAL_LLM_ENABLED,
+            "initialization_errors": self.initialization_errors,
+            "budget_mode": self.budget_mode.value,
+        }
+
     def route_task(self, task_type: TaskType, complexity: int = None) -> ModelType:
         """
         Determine which model type to use based on task type and complexity.
@@ -253,12 +313,46 @@ class AIOrchestrator:
 
         # Try primary model
         try:
+            # Validate models are available
+            if not self.gemini_models:
+                raise ValueError(
+                    "No Gemini models available. Check GEMINI_API_KEY configuration."
+                )
+
+            # Fallback to Flash if selected model not available
+            if selected_model not in self.gemini_models:
+                logger.warning(
+                    f"Selected model {selected_model.value} not available, "
+                    f"falling back to {GeminiModel.FLASH.value}"
+                )
+                if GeminiModel.FLASH in self.gemini_models:
+                    selected_model = GeminiModel.FLASH
+                else:
+                    raise ValueError("No fallback model available")
+
             model = self.gemini_models[selected_model]
             response = await model.generate_content_async(prompt, generation_config=generation_config)
-            result = json.loads(response.text)
+
+            # Parse response
+            try:
+                result = json.loads(response.text)
+            except json.JSONDecodeError as json_err:
+                logger.error(
+                    f"Failed to parse Gemini response as JSON: {json_err}",
+                    extra={"response_text": response.text[:500]}  # Log first 500 chars
+                )
+                raise
+
             _cache_set(cache_key, result, ttl_hours=cache_ttl_hours)
             return result
         except Exception as primary_error:
+            error_details = {
+                "task_type": task_type.value,
+                "selected_model": selected_model.value if selected_model in self.gemini_models else "none",
+                "error_type": type(primary_error).__name__,
+                "error_message": str(primary_error)
+            }
+            logger.error("Gemini API call failed", extra=error_details)
             # Fallback to Flash if we were using Pro/Ultra
             if selected_model != GeminiModel.FLASH:
                 try:

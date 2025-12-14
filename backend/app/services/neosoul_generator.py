@@ -44,7 +44,7 @@ class NeosoulGeneratorService:
         # Initialize Gemini
         if settings.google_api_key:
             try:
-                self.gemini_model = genai.GenerativeModel('gemini-2.0-flash')
+                self.gemini_model = genai.GenerativeModel('gemini-1.5-flash')
                 print("✅ Gemini API initialized for Neo-Soul")
             except Exception as e:
                 print(f"⚠️  Gemini initialization failed: {e}")
