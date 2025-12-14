@@ -1,9 +1,26 @@
-"""MIDI conversion pipeline using basic-pitch"""
+"""MIDI conversion pipeline using GPU-accelerated pitch detection"""
 import asyncio
+import logging
 import os
+import time
 from pathlib import Path
 from typing import Optional
+
 import numpy as np
+import torch
+
+# GPU utilities
+from app.core.gpu import get_device, is_gpu_available, warmup_device
+
+logger = logging.getLogger(__name__)
+
+# Optional import - torchcrepe for GPU-accelerated pitch detection
+try:
+    import torchcrepe
+    TORCHCREPE_AVAILABLE = True
+except ImportError:
+    TORCHCREPE_AVAILABLE = False
+    logger.warning("torchcrepe not available. GPU transcription disabled.")
 
 # Optional import - basic-pitch requires TensorFlow which doesn't support Python 3.13 yet
 try:
@@ -12,7 +29,8 @@ try:
     BASIC_PITCH_AVAILABLE = True
 except ImportError:
     BASIC_PITCH_AVAILABLE = False
-    print("Warning: basic-pitch not available. MIDI transcription will be disabled.")
+    logger.info("basic-pitch not available (TensorFlow incompatible). Using alternatives.")
+
 import pretty_midi
 
 from app.schemas.transcription import NoteEvent
@@ -28,28 +46,258 @@ async def transcribe_audio(
     midi_output_path: Path,
     onset_threshold: float = 0.5,
     frame_threshold: float = 0.3,
+    use_gpu: bool = True,
 ) -> tuple[list[NoteEvent], Path, Optional[float]]:
     """
-    Transcribe audio to MIDI using basic-pitch (preferred) or librosa (fallback)
+    Transcribe audio to MIDI using GPU-accelerated methods when available.
+    
+    Priority: torchcrepe (GPU) > basic-pitch (TensorFlow) > librosa (CPU)
     
     Args:
         audio_path: Input audio file (WAV)
         midi_output_path: Output MIDI file path
         onset_threshold: Note onset threshold (0-1)
         frame_threshold: Note frame threshold (0-1)
+        use_gpu: Whether to prefer GPU-accelerated transcription
     
     Returns:
         Tuple of (note events list, MIDI file path, estimated tempo)
     
     Raises:
-        TranscriptionError: If transcription fails or basic-pitch not available
+        TranscriptionError: If transcription fails
     """
+    start_time = time.time()
+    
+    # GPU-accelerated path (torchcrepe)
+    if use_gpu and TORCHCREPE_AVAILABLE and is_gpu_available():
+        logger.info(f"Using torchcrepe (GPU: {get_device().type}) for transcription")
+        try:
+            result = await _transcribe_with_torchcrepe(
+                audio_path, midi_output_path, onset_threshold
+            )
+            elapsed = time.time() - start_time
+            logger.info(f"GPU transcription completed in {elapsed:.2f}s")
+            return result
+        except Exception as e:
+            logger.warning(f"GPU transcription failed, falling back: {e}")
+    
+    # TensorFlow path (basic-pitch)
     if BASIC_PITCH_AVAILABLE:
+        logger.info("Using basic-pitch (TensorFlow) for transcription")
         return await _transcribe_with_basic_pitch(
             audio_path, midi_output_path, onset_threshold, frame_threshold
         )
-    else:
-        return await _transcribe_with_librosa(audio_path, midi_output_path)
+    
+    # CPU fallback (librosa)
+    logger.info("Using librosa (CPU) for transcription")
+    result = await _transcribe_with_librosa(audio_path, midi_output_path)
+    elapsed = time.time() - start_time
+    logger.info(f"CPU transcription completed in {elapsed:.2f}s")
+    return result
+
+
+async def _transcribe_with_torchcrepe(
+    audio_path: Path,
+    midi_output_path: Path,
+    onset_threshold: float = 0.5,
+) -> tuple[list[NoteEvent], Path, Optional[float]]:
+    """
+    GPU-accelerated transcription using torchcrepe.
+    
+    Torchcrepe provides neural network-based pitch detection that runs
+    efficiently on Apple Silicon MPS and NVIDIA CUDA GPUs.
+    """
+    import torchaudio
+    
+    try:
+        midi_output_path.parent.mkdir(parents=True, exist_ok=True)
+        
+        def _transcribe():
+            device = get_device()
+            warmup_device(device)
+            
+            # Load audio
+            audio, sr = torchaudio.load(str(audio_path))
+            
+            # Convert to mono if stereo
+            if audio.shape[0] > 1:
+                audio = audio.mean(dim=0, keepdim=True)
+            
+            # Resample to 16kHz (torchcrepe requirement)
+            if sr != 16000:
+                resampler = torchaudio.transforms.Resample(sr, 16000)
+                audio = resampler(audio)
+                sr = 16000
+            
+            # Move to GPU
+            audio = audio.to(device)
+            
+            # Run pitch detection
+            # Returns: time, frequency, confidence, activation
+            pitch, periodicity = torchcrepe.predict(
+                audio,
+                sr,
+                hop_length=160,  # 10ms hop
+                fmin=50,
+                fmax=2000,
+                model='full',
+                decoder=torchcrepe.decode.weighted_argmax,
+                device=device,
+                return_periodicity=True,
+                batch_size=1024,
+            )
+            
+            # Apply confidence threshold
+            pitch = torchcrepe.filter.median(pitch, 3)
+            pitch = torchcrepe.threshold.At(onset_threshold)(pitch, periodicity)
+            
+            # Move back to CPU for MIDI generation
+            pitch = pitch.cpu().numpy().flatten()
+            periodicity = periodicity.cpu().numpy().flatten()
+            
+            # Convert pitch track to note events
+            notes = _pitch_to_notes(pitch, periodicity, sr, hop_length=160)
+            
+            # Create MIDI file
+            midi = pretty_midi.PrettyMIDI()
+            piano = pretty_midi.Instrument(program=0)
+            
+            for note_data in notes:
+                note = pretty_midi.Note(
+                    velocity=int(note_data['velocity']),
+                    pitch=note_data['pitch'],
+                    start=note_data['start'],
+                    end=note_data['end'],
+                )
+                piano.notes.append(note)
+            
+            midi.instruments.append(piano)
+            midi.write(str(midi_output_path))
+            
+            return midi, notes
+        
+        loop = asyncio.get_event_loop()
+        midi_data, notes_data = await loop.run_in_executor(None, _transcribe)
+        
+        # Convert to NoteEvent schema
+        note_events = [
+            NoteEvent(
+                pitch=n['pitch'],
+                start_time=n['start'],
+                end_time=n['end'],
+                velocity=n['velocity'],
+            )
+            for n in notes_data
+        ]
+        
+        tempo = estimate_tempo(midi_data)
+        return note_events, midi_output_path, tempo
+        
+    except Exception as e:
+        raise TranscriptionError(f"GPU transcription failed: {str(e)}")
+
+
+def _pitch_to_notes(
+    pitch: np.ndarray,
+    periodicity: np.ndarray,
+    sample_rate: int,
+    hop_length: int,
+    min_note_duration: float = 0.05,
+) -> list[dict]:
+    """
+    Convert continuous pitch track to discrete note events.
+    
+    Uses onset detection and pitch stability to segment notes.
+    """
+    import librosa
+    
+    notes = []
+    
+    # Time per frame
+    frame_time = hop_length / sample_rate
+    
+    # Find voiced regions (non-NaN pitch)
+    voiced = ~np.isnan(pitch) & (periodicity > 0.3)
+    
+    if not np.any(voiced):
+        return notes
+    
+    # Find note boundaries (pitch changes or voice breaks)
+    in_note = False
+    note_start = 0
+    current_pitch = 0
+    pitch_buffer = []
+    
+    for i, (p, v) in enumerate(zip(pitch, voiced)):
+        current_time = i * frame_time
+        
+        if v and not in_note:
+            # Start of new note
+            in_note = True
+            note_start = current_time
+            pitch_buffer = [p]
+            
+        elif v and in_note:
+            # Check if pitch changed significantly
+            pitch_buffer.append(p)
+            buffer_median = np.median(pitch_buffer[-10:])
+            
+            if abs(librosa.hz_to_midi(p) - librosa.hz_to_midi(buffer_median)) > 0.5:
+                # Pitch jump - end current note and start new
+                note_end = current_time
+                if note_end - note_start >= min_note_duration:
+                    median_pitch = np.median(pitch_buffer[:-1])
+                    midi_pitch = int(round(librosa.hz_to_midi(median_pitch)))
+                    midi_pitch = np.clip(midi_pitch, 0, 127)
+                    
+                    notes.append({
+                        'pitch': int(midi_pitch),
+                        'start': note_start,
+                        'end': note_end,
+                        'velocity': 80,
+                    })
+                
+                # Start new note
+                note_start = current_time
+                pitch_buffer = [p]
+                
+        elif not v and in_note:
+            # End of note
+            in_note = False
+            note_end = current_time
+            
+            if note_end - note_start >= min_note_duration and len(pitch_buffer) > 0:
+                median_pitch = np.median(pitch_buffer)
+                midi_pitch = int(round(librosa.hz_to_midi(median_pitch)))
+                midi_pitch = np.clip(midi_pitch, 0, 127)
+                
+                notes.append({
+                    'pitch': int(midi_pitch),
+                    'start': note_start,
+                    'end': note_end,
+                    'velocity': 80,
+                })
+            
+            pitch_buffer = []
+    
+    # Handle last note if still in progress
+    if in_note and len(pitch_buffer) > 0:
+        note_end = len(pitch) * frame_time
+        if note_end - note_start >= min_note_duration:
+            median_pitch = np.median(pitch_buffer)
+            midi_pitch = int(round(librosa.hz_to_midi(median_pitch)))
+            midi_pitch = np.clip(midi_pitch, 0, 127)
+            
+            notes.append({
+                'pitch': int(midi_pitch),
+                'start': note_start,
+                'end': note_end,
+                'velocity': 80,
+            })
+    
+    return notes
+
+
 
 
 async def _transcribe_with_basic_pitch(

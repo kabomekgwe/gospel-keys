@@ -208,3 +208,36 @@ async def add_tags(
     await db.commit()
     
     return {"message": f"Added {len(tags)} tags to song"}
+
+
+@router.get("/songs/{song_id}/notation/svg")
+async def get_notation_svg(song_id: str, db: AsyncSession = Depends(get_db)):
+    """
+    Get Verovio-rendered SVG notation for the song
+    
+    Renders the MIDI file to SVG using the backend Verovio service.
+    """
+    from app.services.verovio_service import verovio_service, VEROVIO_AVAILABLE
+    from pathlib import Path
+    
+    if not VEROVIO_AVAILABLE:
+        raise HTTPException(
+            status_code=501, 
+            detail="Verovio notation rendering is not available on the server"
+        )
+        
+    song = await db.get(Song, song_id)
+    if not song:
+        raise HTTPException(status_code=404, detail="Song not found")
+        
+    midi_path = Path(song.midi_file_path) if song.midi_file_path else None
+    if not midi_path or not midi_path.exists():
+        raise HTTPException(status_code=404, detail="MIDI file not found")
+        
+    # Render SVG
+    svg_content = verovio_service.render_midi_to_svg(midi_path)
+    
+    if not svg_content:
+        raise HTTPException(status_code=500, detail="Failed to render notation")
+        
+    return {"svg": svg_content}

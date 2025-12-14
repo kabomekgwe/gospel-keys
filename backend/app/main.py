@@ -8,7 +8,7 @@ from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 
 from app.core.config import settings
-from app.api.routes import health, auth, transcribe, jobs, library, practice, snippets, export, analysis, ai, gospel, jazz, curriculum  # audio
+from app.api.routes import health, auth, transcribe, jobs, library, practice, snippets, export, analysis, ai, gospel, jazz, curriculum, voicing  # audio
 from app.services.transcription import TranscriptionService
 
 
@@ -92,6 +92,7 @@ app.include_router(curriculum.router, prefix=settings.api_v1_prefix)
 # app.include_router(audio.router, prefix=settings.api_v1_prefix)  # Temporarily disabled - has bugs
 app.include_router(gospel.router, prefix=settings.api_v1_prefix)
 app.include_router(jazz.router, prefix=settings.api_v1_prefix)
+app.include_router(voicing.router, prefix=settings.api_v1_prefix)
 
 
 # File serving endpoint

@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Activity, Music2, Mic2, AlertCircle, Loader2, Zap } from 'lucide-react';
+import { Activity, Music2, Mic2, AlertCircle, Loader2, Zap, Layers } from 'lucide-react';
 import { analysisApi, type GenreAnalysis, type JazzPatternsResult, type PitchAnalysisResult, type ChordRegion } from '../../lib/api';
 import { GenreRadar } from './GenreRadar';
 import { MelodyContour } from './MelodyContour';
+import { VoicingsDisplay } from './VoicingsDisplay';
 
 interface AnalysisOverviewProps {
     songId: string;
@@ -12,7 +13,7 @@ interface AnalysisOverviewProps {
 }
 
 export function AnalysisOverview({ songId, detectedChords = [] }: AnalysisOverviewProps) {
-    const [selectedView, setSelectedView] = useState<'genre' | 'melody' | 'jazz' | 'chords'>('genre');
+    const [selectedView, setSelectedView] = useState<'genre' | 'melody' | 'jazz' | 'chords' | 'voicings'>('genre');
 
     // Fetch Genre Analysis
     const {
@@ -74,6 +75,12 @@ export function AnalysisOverview({ songId, detectedChords = [] }: AnalysisOvervi
                     onClick={() => setSelectedView('chords')}
                     icon={<Zap className="w-4 h-4" />}
                     label="Chords"
+                />
+                <TabButton
+                    active={selectedView === 'voicings'}
+                    onClick={() => setSelectedView('voicings')}
+                    icon={<Layers className="w-4 h-4" />}
+                    label="Voicings"
                 />
             </div>
 
@@ -282,6 +289,22 @@ export function AnalysisOverview({ songId, detectedChords = [] }: AnalysisOvervi
                                     </p>
                                 </div>
                             )}
+                        </motion.div>
+                    )}
+
+                    {/* VOICINGS VIEW */}
+                    {selectedView === 'voicings' && (
+                        <motion.div
+                            key="voicings"
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                        >
+                            <VoicingsDisplay
+                                chords={detectedChords}
+                                songId={songId}
+                                maxVisible={6}
+                            />
                         </motion.div>
                     )}
                 </AnimatePresence>

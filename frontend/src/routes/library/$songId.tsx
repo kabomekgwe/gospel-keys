@@ -32,6 +32,7 @@ import { Piano, MiniPiano } from '../../components/Piano';
 import { PlaybackControls } from '../../components/PlaybackControls';
 import { useNewMidiPlayer, type MidiNote } from '../../hooks/useNewMidiPlayer';
 import { SheetMusicRenderer } from '../../components/sheet-music';
+import { VerovioRenderer } from '../../components/sheet-music/VerovioRenderer';
 import { AnalysisTab } from '../../components/AnalysisTab';
 import { PracticeTab } from '../../components/PracticeTab';
 
@@ -284,7 +285,16 @@ function SongDetailPage() {
 
                 {activeTab === 'sheet-music' && (
                     <div className="h-full p-6 overflow-auto">
-                        <div className="max-w-5xl mx-auto space-y-6">
+                        <div className="max-w-5xl mx-auto space-y-6 h-full flex flex-col">
+                            {/* Verovio Renderer (Backend SVG) */}
+                            <div className="flex-1 min-h-0">
+                                <VerovioRenderer
+                                    songId={songId}
+                                    height={undefined} // Let flexbox handle it
+                                />
+                            </div>
+
+                            {/* Legacy Client-side Renderer (Hidden for now, or could be a toggle) 
                             <SheetMusicRenderer
                                 notes={songNotes}
                                 currentTime={playerState.currentTime}
@@ -294,9 +304,10 @@ function SongDetailPage() {
                                 keySignature={song.key_signature ?? 'C'}
                                 timeSignature={song.time_signature ?? '4/4'}
                             />
+                            */}
 
                             {/* Playback controls for sheet music view */}
-                            <div className="card p-4">
+                            <div className="card p-4 flex-shrink-0">
                                 <PlaybackControls
                                     isPlaying={playerState.isPlaying}
                                     currentTime={playerState.currentTime}

@@ -236,3 +236,164 @@ async def get_due_snippets(
         snippets.extend(new_snippets)
         
     return snippets
+
+
+# -------------------------------------------------------------------------
+# Combined Hands Practice Endpoints
+# -------------------------------------------------------------------------
+
+class HandsPracticeRequest(BaseModel):
+    """Request to generate hands practice material"""
+    chords: list[str] = Field(..., description="List of chord symbols", min_length=1)
+    key: str = Field("C", description="Key signature")
+    tempo: int = Field(80, ge=40, le=200, description="Tempo in BPM")
+    left_pattern: str = Field("syncopated_groove", description="Left hand pattern name")
+    right_pattern: str = Field("extended_chord_voicing", description="Right hand pattern name")
+    style: str = Field("neosoul", description="Musical style (neosoul, gospel, jazz)")
+    active_hand: str = Field("both", description="Which hand(s) to generate: left, right, both")
+    bars_per_chord: int = Field(1, ge=1, le=4, description="Bars per chord change")
+
+
+class HandsPracticeResponse(BaseModel):
+    """Response with generated hands practice material"""
+    midi_url: str
+    left_notes_count: int
+    right_notes_count: int
+    total_bars: int
+    duration_seconds: float
+    patterns_used: dict
+
+
+class PatternInfo(BaseModel):
+    """Information about an available pattern"""
+    name: str
+    difficulty: str
+    characteristics: list[str]
+
+
+@router.get("/patterns/{style}")
+async def list_patterns(style: str = "neosoul"):
+    """
+    List available left and right hand patterns for a style.
+    
+    Returns pattern names that can be used with the hands practice endpoint.
+    """
+    from app.services.combined_hands_generator import combined_hands_generator
+    
+    patterns = combined_hands_generator.get_available_patterns(style)
+    
+    if not patterns:
+        raise HTTPException(
+            status_code=404, 
+            detail=f"Unknown style: {style}. Available: neosoul, gospel, jazz"
+        )
+    
+    return {
+        "style": style,
+        "left_hand_patterns": patterns.get("left", []),
+        "right_hand_patterns": patterns.get("right", []),
+    }
+
+
+@router.post("/hands", response_model=HandsPracticeResponse, status_code=201)
+async def generate_hands_practice(request: HandsPracticeRequest):
+    """
+    Generate combined hands practice material.
+    
+    Creates a MIDI file with left and right hand patterns for the given
+    chord progression. Patterns can be filtered by hand (left, right, both).
+    
+    Example request:
+    ```json
+    {
+        "chords": ["Dm7", "G7", "Cmaj7", "Am7"],
+        "tempo": 72,
+        "left_pattern": "broken_chord_arpeggio",
+        "right_pattern": "extended_chord_voicing",
+        "style": "neosoul"
+    }
+    ```
+    """
+    import uuid
+    from app.services.combined_hands_generator import (
+        combined_hands_generator,
+        HandsPracticeConfig,
+    )
+    
+    # Build config
+    config = HandsPracticeConfig(
+        chords=request.chords,
+        key=request.key,
+        tempo=request.tempo,
+        left_pattern=request.left_pattern,
+        right_pattern=request.right_pattern,
+        style=request.style,
+        active_hand=request.active_hand,
+        bars_per_chord=request.bars_per_chord,
+    )
+    
+    # Generate arrangement
+    try:
+        arrangement = combined_hands_generator.generate_arrangement(config)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    
+    # Export to MIDI
+    output_id = f"hands_{uuid.uuid4().hex[:8]}"
+    midi_path = combined_hands_generator.arrangement_to_midi(
+        arrangement, 
+        output_id,
+        hand_filter=request.active_hand,
+    )
+    
+    return HandsPracticeResponse(
+        midi_url=f"/files/hands/{midi_path.name}",
+        left_notes_count=len(arrangement.left_hand_notes),
+        right_notes_count=len(arrangement.right_hand_notes),
+        total_bars=arrangement.total_bars,
+        duration_seconds=arrangement.total_duration_seconds,
+        patterns_used={
+            "left": request.left_pattern,
+            "right": request.right_pattern,
+        },
+    )
+
+
+@router.get("/hands/demo")
+async def get_hands_demo():
+    """
+    Get a demo hands practice with default settings.
+    
+    Uses a classic ii-V-I progression in neo-soul style.
+    """
+    import uuid
+    from app.services.combined_hands_generator import (
+        combined_hands_generator,
+        HandsPracticeConfig,
+    )
+    
+    config = HandsPracticeConfig(
+        chords=["Dm9", "G13", "Cmaj9", "Am11"],
+        key="C",
+        tempo=72,
+        left_pattern="syncopated_groove",
+        right_pattern="extended_chord_voicing",
+        style="neosoul",
+        active_hand="both",
+        bars_per_chord=2,
+    )
+    
+    arrangement = combined_hands_generator.generate_arrangement(config)
+    
+    output_id = f"demo_{uuid.uuid4().hex[:8]}"
+    midi_path = combined_hands_generator.arrangement_to_midi(arrangement, output_id)
+    
+    return {
+        "midi_url": f"/files/hands/{midi_path.name}",
+        "chords": config.chords,
+        "left_notes": len(arrangement.left_hand_notes),
+        "right_notes": len(arrangement.right_hand_notes),
+        "duration_seconds": arrangement.total_duration_seconds,
+        "message": "Demo ii-V-I progression in neo-soul style",
+    }
+

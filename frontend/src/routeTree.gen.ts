@@ -20,6 +20,7 @@ import { Route as LibraryIndexRouteImport } from './routes/library/index'
 import { Route as GeneratorIndexRouteImport } from './routes/generator/index'
 import { Route as DiscoverIndexRouteImport } from './routes/discover/index'
 import { Route as CurriculumIndexRouteImport } from './routes/curriculum/index'
+import { Route as PracticeHandsRouteImport } from './routes/practice/hands'
 import { Route as LibrarySongIdRouteImport } from './routes/library/$songId'
 import { Route as CurriculumPerformanceRouteImport } from './routes/curriculum/performance'
 import { Route as CurriculumDailyRouteImport } from './routes/curriculum/daily'
@@ -83,6 +84,11 @@ const CurriculumIndexRoute = CurriculumIndexRouteImport.update({
   path: '/curriculum/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PracticeHandsRoute = PracticeHandsRouteImport.update({
+  id: '/practice/hands',
+  path: '/practice/hands',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LibrarySongIdRoute = LibrarySongIdRouteImport.update({
   id: '/library/$songId',
   path: '/library/$songId',
@@ -130,6 +136,7 @@ export interface FileRoutesByFullPath {
   '/curriculum/daily': typeof CurriculumDailyRoute
   '/curriculum/performance': typeof CurriculumPerformanceRoute
   '/library/$songId': typeof LibrarySongIdRouteWithChildren
+  '/practice/hands': typeof PracticeHandsRoute
   '/curriculum': typeof CurriculumIndexRoute
   '/discover': typeof DiscoverIndexRoute
   '/generator': typeof GeneratorIndexRoute
@@ -150,6 +157,7 @@ export interface FileRoutesByTo {
   '/curriculum/daily': typeof CurriculumDailyRoute
   '/curriculum/performance': typeof CurriculumPerformanceRoute
   '/library/$songId': typeof LibrarySongIdRouteWithChildren
+  '/practice/hands': typeof PracticeHandsRoute
   '/curriculum': typeof CurriculumIndexRoute
   '/discover': typeof DiscoverIndexRoute
   '/generator': typeof GeneratorIndexRoute
@@ -171,6 +179,7 @@ export interface FileRoutesById {
   '/curriculum/daily': typeof CurriculumDailyRoute
   '/curriculum/performance': typeof CurriculumPerformanceRoute
   '/library/$songId': typeof LibrarySongIdRouteWithChildren
+  '/practice/hands': typeof PracticeHandsRoute
   '/curriculum/': typeof CurriculumIndexRoute
   '/discover/': typeof DiscoverIndexRoute
   '/generator/': typeof GeneratorIndexRoute
@@ -193,6 +202,7 @@ export interface FileRouteTypes {
     | '/curriculum/daily'
     | '/curriculum/performance'
     | '/library/$songId'
+    | '/practice/hands'
     | '/curriculum'
     | '/discover'
     | '/generator'
@@ -213,6 +223,7 @@ export interface FileRouteTypes {
     | '/curriculum/daily'
     | '/curriculum/performance'
     | '/library/$songId'
+    | '/practice/hands'
     | '/curriculum'
     | '/discover'
     | '/generator'
@@ -233,6 +244,7 @@ export interface FileRouteTypes {
     | '/curriculum/daily'
     | '/curriculum/performance'
     | '/library/$songId'
+    | '/practice/hands'
     | '/curriculum/'
     | '/discover/'
     | '/generator/'
@@ -254,6 +266,7 @@ export interface RootRouteChildren {
   CurriculumDailyRoute: typeof CurriculumDailyRoute
   CurriculumPerformanceRoute: typeof CurriculumPerformanceRoute
   LibrarySongIdRoute: typeof LibrarySongIdRouteWithChildren
+  PracticeHandsRoute: typeof PracticeHandsRoute
   CurriculumIndexRoute: typeof CurriculumIndexRoute
   DiscoverIndexRoute: typeof DiscoverIndexRoute
   GeneratorIndexRoute: typeof GeneratorIndexRoute
@@ -342,6 +355,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CurriculumIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/practice/hands': {
+      id: '/practice/hands'
+      path: '/practice/hands'
+      fullPath: '/practice/hands'
+      preLoaderRoute: typeof PracticeHandsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/library/$songId': {
       id: '/library/$songId'
       path: '/library/$songId'
@@ -418,6 +438,7 @@ const rootRouteChildren: RootRouteChildren = {
   CurriculumDailyRoute: CurriculumDailyRoute,
   CurriculumPerformanceRoute: CurriculumPerformanceRoute,
   LibrarySongIdRoute: LibrarySongIdRouteWithChildren,
+  PracticeHandsRoute: PracticeHandsRoute,
   CurriculumIndexRoute: CurriculumIndexRoute,
   DiscoverIndexRoute: DiscoverIndexRoute,
   GeneratorIndexRoute: GeneratorIndexRoute,

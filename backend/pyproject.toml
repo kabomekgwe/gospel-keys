@@ -53,6 +53,8 @@ dependencies = [
     # PyTorch for GPU acceleration (Apple Silicon MPS support)
     "torch>=2.0.0",
     "torchaudio>=2.0.0",
+    # GPU-accelerated pitch detection (Python 3.13 compatible)
+    "torchcrepe>=0.0.21",
     # Stable Audio (Python 3.13 compatible alternative to AudioCraft)
     "diffusers>=0.31.0",
     "transformers>=4.40.0",
