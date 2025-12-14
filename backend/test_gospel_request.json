@@ -1,0 +1,8 @@
+{
+  "description": "Slow worship ballad in C major with rich harmonies",
+  "tempo": 68,
+  "num_bars": 8,
+  "application": "worship",
+  "ai_percentage": 0.0,
+  "include_progression": true
+}

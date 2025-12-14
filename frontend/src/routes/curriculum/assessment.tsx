@@ -142,7 +142,7 @@ function AssessmentInterface() {
     setIsSubmitting(true);
 
     try {
-      const evaluationResults = await api.submitAssessment(assessment.id, responses);
+      const evaluationResults = await api.submitAssessmentResponses(assessment.id, responses);
       setResults(evaluationResults);
       setViewMode('results');
       localStorage.removeItem('assessment_responses');

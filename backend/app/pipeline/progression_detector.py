@@ -389,3 +389,40 @@ def list_all_patterns() -> Dict[str, List[str]]:
         "jazz": list(JAZZ_PROGRESSIONS.keys()),
         "modal": list(MODAL_PROGRESSIONS.keys()),
     }
+
+
+# ============================================================================
+# ASYNC WRAPPERS FOR PIPELINE INTEGRATION
+# ============================================================================
+
+import asyncio
+from typing import List
+
+
+async def detect_progressions_async(chords: List, key: str = None) -> List[ProgressionMatch]:
+    """
+    Async wrapper for progression detection.
+    
+    Args:
+        chords: List of ChordEvent objects from transcription
+        key: Optional key hint for better matching
+        
+    Returns:
+        List of detected progression patterns
+    """
+    def _detect():
+        # Convert ChordEvent objects to dicts for the detector
+        chord_dicts = []
+        for chord in chords:
+            chord_dicts.append({
+                'root': chord.root,
+                'quality': chord.quality,
+                'time': chord.time,
+                'symbol': chord.chord
+            })
+        
+        # Run detection
+        return detect_progressions(chord_dicts)
+    
+    loop = asyncio.get_event_loop()
+    return await loop.run_in_executor(None, _detect)

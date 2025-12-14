@@ -178,34 +178,132 @@ class TranscriptionService:
             if job.options.detect_chords:
                 job.status = JobStatus.ANALYZING
                 job.current_step = "Detecting chords..."
-                job.progress = 80
-                
+                job.progress = 70
+
                 chords = await detect_chords(piano_audio_path)
-                job.progress = 85
+                job.progress = 75
 
             # Step 6: Advanced Music Theory Analysis (music21)
             job.current_step = "Analyzing music theory..."
-            job.progress = 90
-            
+            job.progress = 80
+
             from app.services.music_theory import music_theory_service
             analysis_result = music_theory_service.analyze_score(midi_path)
-            
+
             # Use analyzed key if available, otherwise fall back to estimation
             # Using the analyzed key is much more accurate than simple estimation
             estimated_key = analysis_result.get("key") or estimate_key(notes)
-            
+
+            # Step 7: NEW - Voicing Analysis
+            job.current_step = "Analyzing voicings..."
+            job.progress = 85
+
+            from app.pipeline.voicing_analyzer import analyze_all_voicings
+            from app.gospel import Note
+            from app.schemas.transcription import VoicingInfo
+
+            # Convert NoteEvent to Note for voicing analyzer
+            note_objects = [Note(pitch=n.pitch, start_time=n.start_time, end_time=n.end_time, velocity=n.velocity, hand=None) for n in notes]
+
+            # Analyze voicings for all chords
+            voicings = await analyze_all_voicings(note_objects, chords)
+
+            # Attach voicing info to corresponding chords
+            for i, chord in enumerate(chords):
+                if i < len(voicings):
+                    voicing = voicings[i]
+                    chord.voicing = VoicingInfo(
+                        voicing_type=voicing.voicing_type.value,
+                        notes=voicing.notes,
+                        note_names=voicing.note_names,
+                        intervals=voicing.intervals,
+                        width_semitones=voicing.width_semitones,
+                        inversion=voicing.inversion,
+                        has_root=voicing.has_root,
+                        has_third=voicing.has_third,
+                        has_seventh=voicing.has_seventh,
+                        extensions=voicing.extensions,
+                        complexity_score=voicing.complexity_score,
+                        hand_span_inches=voicing.hand_span_inches
+                    )
+                # Add start_time and end_time for compatibility
+                chord.start_time = chord.time
+                chord.end_time = chord.time + chord.duration
+
+            # Step 8: NEW - Progression Detection
+            job.current_step = "Detecting progressions..."
+            job.progress = 90
+
+            from app.pipeline.progression_detector import detect_progressions_async
+            from app.schemas.transcription import ProgressionPattern
+
+            progression_matches = await detect_progressions_async(chords, estimated_key)
+            patterns = [
+                ProgressionPattern(
+                    pattern_name=match.pattern_name,
+                    genre=match.genre.value,
+                    roman_numerals=match.roman_numerals,
+                    start_index=match.start_index,
+                    end_index=match.end_index,
+                    key=match.key,
+                    confidence=match.confidence,
+                    description=match.description
+                )
+                for match in progression_matches
+            ]
+
+            # Step 9: NEW - Reharmonization Suggestions
+            job.current_step = "Generating reharmonization ideas..."
+            job.progress = 95
+
+            from app.pipeline.reharmonization_engine import suggest_reharmonizations_async
+            from app.schemas.transcription import ReharmonizationSuggestion
+
+            # Generate reharmonization suggestions for each chord
+            for chord in chords:
+                chord_dict = {
+                    'root': chord.root,
+                    'quality': chord.quality
+                }
+                suggestions = await suggest_reharmonizations_async(chord_dict, estimated_key)
+                chord.reharmonizations = [
+                    ReharmonizationSuggestion(
+                        original_chord=sugg.original_chord,
+                        suggested_chord=sugg.suggested_chord,
+                        reharmonization_type=sugg.reharmonization_type.value,
+                        explanation=sugg.explanation,
+                        jazz_level=sugg.jazz_level,
+                        voice_leading_quality=sugg.voice_leading_quality
+                    )
+                    for sugg in suggestions
+                ]
+
+            # Calculate average voicing complexity
+            voicing_complexity_avg = None
+            if voicings:
+                voicing_complexity_avg = sum(v.complexity_score for v in voicings) / len(voicings)
+
+            # Generate progression summary
+            progression_summary = None
+            if patterns:
+                pattern_names = [p.pattern_name for p in patterns[:3]]  # Top 3
+                progression_summary = f"Detected {len(patterns)} patterns: {', '.join(pattern_names)}"
+
             # Create result
             midi_url = f"/files/{job_id}/transcription.mid"
-            
+
             result = TranscriptionResult(
                 song_id=job_id,
                 notes=notes,
                 chords=chords,
+                patterns=patterns,
                 tempo=estimated_tempo if job.options.detect_tempo else None,
                 key=estimated_key,
                 duration=duration,
                 midi_url=midi_url,
                 source_title=source_title,
+                voicing_complexity_avg=voicing_complexity_avg,
+                progression_summary=progression_summary,
                 # We could extend TranscriptionResult to include time_signature, etc.
                 # For now, we'll store it in the database via the song record
             )

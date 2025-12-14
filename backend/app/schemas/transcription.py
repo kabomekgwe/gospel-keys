@@ -34,6 +34,44 @@ class NoteEvent(BaseModel):
         return v
 
 
+class VoicingInfo(BaseModel):
+    """Detailed voicing analysis for a chord"""
+    voicing_type: str = Field(..., description="Type of voicing (close, open, drop_2, etc.)")
+    notes: list[int] = Field(..., description="MIDI note numbers in the voicing")
+    note_names: list[str] = Field(..., description="Note names (e.g., ['C3', 'E3', 'G3'])")
+    intervals: list[int] = Field(..., description="Intervals between consecutive notes (semitones)")
+    width_semitones: int = Field(..., description="Total span in semitones")
+    inversion: int = Field(..., description="Inversion (0=root position, 1=1st, etc.)")
+    has_root: bool = Field(..., description="Whether root is present")
+    has_third: bool = Field(..., description="Whether 3rd is present")
+    has_seventh: bool = Field(..., description="Whether 7th is present")
+    extensions: list[str] = Field(default_factory=list, description="Extensions (9, 11, 13, etc.)")
+    complexity_score: float = Field(..., ge=0.0, le=1.0, description="Complexity (0=simple, 1=advanced)")
+    hand_span_inches: float = Field(..., description="Approximate hand span in inches")
+
+
+class ReharmonizationSuggestion(BaseModel):
+    """Alternative chord suggestion for improvisation"""
+    original_chord: str = Field(..., description="Original chord")
+    suggested_chord: str = Field(..., description="Suggested replacement")
+    reharmonization_type: str = Field(..., description="Type (tritone_sub, diatonic_sub, etc.)")
+    explanation: str = Field(..., description="Why this works")
+    jazz_level: int = Field(..., ge=1, le=5, description="Difficulty level (1=easy, 5=advanced)")
+    voice_leading_quality: str = Field(..., description="smooth, moderate, or dramatic")
+
+
+class ProgressionPattern(BaseModel):
+    """Detected chord progression pattern"""
+    pattern_name: str = Field(..., description="Pattern name (e.g., '12_bar_blues', 'ii-V-I')")
+    genre: str = Field(..., description="Genre (pop, jazz, blues, etc.)")
+    roman_numerals: list[str] = Field(..., description="Roman numeral analysis")
+    start_index: int = Field(..., description="Starting chord index")
+    end_index: int = Field(..., description="Ending chord index")
+    key: str = Field(..., description="Key of progression")
+    confidence: float = Field(..., ge=0.0, le=1.0, description="Match confidence")
+    description: str = Field(..., description="What this pattern means")
+
+
 class ChordEvent(BaseModel):
     """Detected chord event"""
     time: float = Field(..., ge=0, description="Chord start time in seconds")
@@ -44,6 +82,12 @@ class ChordEvent(BaseModel):
     quality: str = Field(..., description="Chord quality (e.g., 'maj7', 'm9')")
     bass_note: Optional[str] = Field(None, description="Bass note for slash chords")
     voicing_notes: Optional[list[str]] = Field(None, description="Actual notes in the voicing")
+
+    # New enriched analysis
+    voicing: Optional[VoicingInfo] = Field(None, description="Detailed voicing analysis")
+    reharmonizations: list[ReharmonizationSuggestion] = Field(default_factory=list, description="Alternative chord suggestions")
+    start_time: Optional[float] = Field(None, description="Alias for time (compatibility)")
+    end_time: Optional[float] = Field(None, description="Calculated end time (time + duration)")
 
 
 class GospelPattern(BaseModel):
@@ -70,8 +114,8 @@ class TranscriptionResult(BaseModel):
     """Complete transcription result"""
     song_id: str = Field(..., description="ID of the created song (same as job ID)")
     notes: list[NoteEvent] = Field(..., description="Detected MIDI notes")
-    chords: list[ChordEvent] = Field(default_factory=list, description="Detected chords")
-    patterns: list[GospelPattern] = Field(default_factory=list, description="Gospel patterns (Phase 2)")
+    chords: list[ChordEvent] = Field(default_factory=list, description="Detected chords with voicing analysis")
+    patterns: list[ProgressionPattern] = Field(default_factory=list, description="Detected chord progression patterns")
     tempo: Optional[float] = Field(None, gt=0, description="Estimated tempo in BPM")
     time_signature: Optional[str] = Field(None, description="Time signature (e.g., '4/4')")
     key: Optional[str] = Field(None, description="Detected key (e.g., 'C major', 'G minor')")
@@ -79,6 +123,10 @@ class TranscriptionResult(BaseModel):
     difficulty: Optional[str] = Field(None, description="Difficulty level")
     midi_url: Optional[str] = Field(None, description="URL to download MIDI file")
     source_title: Optional[str] = Field(None, description="Original video/file title")
+
+    # New analysis data
+    voicing_complexity_avg: Optional[float] = Field(None, description="Average voicing complexity across all chords")
+    progression_summary: Optional[str] = Field(None, description="Summary of detected progressions")
 
 
 class TranscriptionJob(BaseModel):

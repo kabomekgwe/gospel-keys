@@ -875,7 +875,6 @@ export const curriculumApi = {
         });
         return handleResponse<CurriculumExercise>(response);
     },
-};
 
     // === Phase 1: Audio API ===
     getExerciseAudio: async (exerciseId: string, method: 'fluidsynth' | 'stable_audio' = 'fluidsynth'): Promise<Blob> => {
@@ -938,7 +937,7 @@ export const curriculumApi = {
         return handleResponse(response);
     },
 
-    submitAssessment: async (assessmentId: string, responses: any): Promise<any> => {
+    submitAssessmentResponses: async (assessmentId: string, responses: any): Promise<any> => {
         const response = await fetch(`${API_BASE_URL}/api/v1/curriculum/assessments/${assessmentId}/submit`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -966,4 +965,17 @@ export const curriculumApi = {
         const response = await fetch(`${API_BASE_URL}/api/v1/ai/usage/stats?days=${days}`);
         return handleResponse(response);
     },
+};
+
+// Combined API export for convenience
+export const api = {
+    ...transcriptionApi,
+    ...libraryApi,
+    ...analysisApi,
+    ...practiceApi,
+    ...exportApi,
+    ...notesApi,
+    ...healthApi,
+    ...aiApi,
+    ...curriculumApi,
 };

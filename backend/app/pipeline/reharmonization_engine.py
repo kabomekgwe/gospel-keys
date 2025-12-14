@@ -335,3 +335,28 @@ def reharmonize_progression(
         "reharmonization_options": all_suggestions,
         "total_suggestions": sum(len(s["suggestions"]) for s in all_suggestions)
     }
+
+
+# ============================================================================
+# ASYNC WRAPPERS FOR PIPELINE INTEGRATION
+# ============================================================================
+
+import asyncio
+
+
+async def suggest_reharmonizations_async(chord_dict: Dict, key: str) -> List[ReharmonizationSuggestion]:
+    """
+    Async wrapper for generating reharmonization suggestions for a single chord.
+    
+    Args:
+        chord_dict: Dict with 'root' and 'quality' keys
+        key: Musical key context
+        
+    Returns:
+        List of reharmonization suggestions
+    """
+    def _suggest():
+        return get_all_reharmonizations_for_chord(chord_dict, key)
+    
+    loop = asyncio.get_event_loop()
+    return await loop.run_in_executor(None, _suggest)
