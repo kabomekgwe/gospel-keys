@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as UploadRouteImport } from './routes/upload'
+import { Route as TestAudioRouteImport } from './routes/test-audio'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as JobsRouteImport } from './routes/jobs'
 import { Route as IndexRouteImport } from './routes/index'
@@ -25,10 +26,16 @@ import { Route as CurriculumDailyRouteImport } from './routes/curriculum/daily'
 import { Route as CurriculumAssessmentRouteImport } from './routes/curriculum/assessment'
 import { Route as LibrarySongIdPracticeRouteImport } from './routes/library/$songId/practice'
 import { Route as LibrarySongIdAnalyzeRouteImport } from './routes/library/$songId/analyze'
+import { Route as CurriculumLessonsLessonIdRouteImport } from './routes/curriculum/lessons/$lessonId'
 
 const UploadRoute = UploadRouteImport.update({
   id: '/upload',
   path: '/upload',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TestAudioRoute = TestAudioRouteImport.update({
+  id: '/test-audio',
+  path: '/test-audio',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsRoute = SettingsRouteImport.update({
@@ -106,11 +113,18 @@ const LibrarySongIdAnalyzeRoute = LibrarySongIdAnalyzeRouteImport.update({
   path: '/analyze',
   getParentRoute: () => LibrarySongIdRoute,
 } as any)
+const CurriculumLessonsLessonIdRoute =
+  CurriculumLessonsLessonIdRouteImport.update({
+    id: '/curriculum/lessons/$lessonId',
+    path: '/curriculum/lessons/$lessonId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/jobs': typeof JobsRoute
   '/settings': typeof SettingsRoute
+  '/test-audio': typeof TestAudioRoute
   '/upload': typeof UploadRoute
   '/curriculum/assessment': typeof CurriculumAssessmentRoute
   '/curriculum/daily': typeof CurriculumDailyRoute
@@ -122,6 +136,7 @@ export interface FileRoutesByFullPath {
   '/library': typeof LibraryIndexRoute
   '/practice': typeof PracticeIndexRoute
   '/theory': typeof TheoryIndexRoute
+  '/curriculum/lessons/$lessonId': typeof CurriculumLessonsLessonIdRoute
   '/library/$songId/analyze': typeof LibrarySongIdAnalyzeRoute
   '/library/$songId/practice': typeof LibrarySongIdPracticeRoute
 }
@@ -129,6 +144,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/jobs': typeof JobsRoute
   '/settings': typeof SettingsRoute
+  '/test-audio': typeof TestAudioRoute
   '/upload': typeof UploadRoute
   '/curriculum/assessment': typeof CurriculumAssessmentRoute
   '/curriculum/daily': typeof CurriculumDailyRoute
@@ -140,6 +156,7 @@ export interface FileRoutesByTo {
   '/library': typeof LibraryIndexRoute
   '/practice': typeof PracticeIndexRoute
   '/theory': typeof TheoryIndexRoute
+  '/curriculum/lessons/$lessonId': typeof CurriculumLessonsLessonIdRoute
   '/library/$songId/analyze': typeof LibrarySongIdAnalyzeRoute
   '/library/$songId/practice': typeof LibrarySongIdPracticeRoute
 }
@@ -148,6 +165,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/jobs': typeof JobsRoute
   '/settings': typeof SettingsRoute
+  '/test-audio': typeof TestAudioRoute
   '/upload': typeof UploadRoute
   '/curriculum/assessment': typeof CurriculumAssessmentRoute
   '/curriculum/daily': typeof CurriculumDailyRoute
@@ -159,6 +177,7 @@ export interface FileRoutesById {
   '/library/': typeof LibraryIndexRoute
   '/practice/': typeof PracticeIndexRoute
   '/theory/': typeof TheoryIndexRoute
+  '/curriculum/lessons/$lessonId': typeof CurriculumLessonsLessonIdRoute
   '/library/$songId/analyze': typeof LibrarySongIdAnalyzeRoute
   '/library/$songId/practice': typeof LibrarySongIdPracticeRoute
 }
@@ -168,6 +187,7 @@ export interface FileRouteTypes {
     | '/'
     | '/jobs'
     | '/settings'
+    | '/test-audio'
     | '/upload'
     | '/curriculum/assessment'
     | '/curriculum/daily'
@@ -179,6 +199,7 @@ export interface FileRouteTypes {
     | '/library'
     | '/practice'
     | '/theory'
+    | '/curriculum/lessons/$lessonId'
     | '/library/$songId/analyze'
     | '/library/$songId/practice'
   fileRoutesByTo: FileRoutesByTo
@@ -186,6 +207,7 @@ export interface FileRouteTypes {
     | '/'
     | '/jobs'
     | '/settings'
+    | '/test-audio'
     | '/upload'
     | '/curriculum/assessment'
     | '/curriculum/daily'
@@ -197,6 +219,7 @@ export interface FileRouteTypes {
     | '/library'
     | '/practice'
     | '/theory'
+    | '/curriculum/lessons/$lessonId'
     | '/library/$songId/analyze'
     | '/library/$songId/practice'
   id:
@@ -204,6 +227,7 @@ export interface FileRouteTypes {
     | '/'
     | '/jobs'
     | '/settings'
+    | '/test-audio'
     | '/upload'
     | '/curriculum/assessment'
     | '/curriculum/daily'
@@ -215,6 +239,7 @@ export interface FileRouteTypes {
     | '/library/'
     | '/practice/'
     | '/theory/'
+    | '/curriculum/lessons/$lessonId'
     | '/library/$songId/analyze'
     | '/library/$songId/practice'
   fileRoutesById: FileRoutesById
@@ -223,6 +248,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   JobsRoute: typeof JobsRoute
   SettingsRoute: typeof SettingsRoute
+  TestAudioRoute: typeof TestAudioRoute
   UploadRoute: typeof UploadRoute
   CurriculumAssessmentRoute: typeof CurriculumAssessmentRoute
   CurriculumDailyRoute: typeof CurriculumDailyRoute
@@ -234,6 +260,7 @@ export interface RootRouteChildren {
   LibraryIndexRoute: typeof LibraryIndexRoute
   PracticeIndexRoute: typeof PracticeIndexRoute
   TheoryIndexRoute: typeof TheoryIndexRoute
+  CurriculumLessonsLessonIdRoute: typeof CurriculumLessonsLessonIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -243,6 +270,13 @@ declare module '@tanstack/react-router' {
       path: '/upload'
       fullPath: '/upload'
       preLoaderRoute: typeof UploadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/test-audio': {
+      id: '/test-audio'
+      path: '/test-audio'
+      fullPath: '/test-audio'
+      preLoaderRoute: typeof TestAudioRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings': {
@@ -350,6 +384,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LibrarySongIdAnalyzeRouteImport
       parentRoute: typeof LibrarySongIdRoute
     }
+    '/curriculum/lessons/$lessonId': {
+      id: '/curriculum/lessons/$lessonId'
+      path: '/curriculum/lessons/$lessonId'
+      fullPath: '/curriculum/lessons/$lessonId'
+      preLoaderRoute: typeof CurriculumLessonsLessonIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -371,6 +412,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   JobsRoute: JobsRoute,
   SettingsRoute: SettingsRoute,
+  TestAudioRoute: TestAudioRoute,
   UploadRoute: UploadRoute,
   CurriculumAssessmentRoute: CurriculumAssessmentRoute,
   CurriculumDailyRoute: CurriculumDailyRoute,
@@ -382,6 +424,7 @@ const rootRouteChildren: RootRouteChildren = {
   LibraryIndexRoute: LibraryIndexRoute,
   PracticeIndexRoute: PracticeIndexRoute,
   TheoryIndexRoute: TheoryIndexRoute,
+  CurriculumLessonsLessonIdRoute: CurriculumLessonsLessonIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

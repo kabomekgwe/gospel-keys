@@ -542,7 +542,7 @@ Return JSON:
     "teaching_points": ["point 1", "point 2"]
 }}
 """
-        
+
         try:
             response = await self.gemini_model.generate_content_async(
                 prompt,
@@ -555,6 +555,221 @@ Return JSON:
             return json.loads(response.text)
         except Exception:
             return {"error": "Analysis failed"}
+
+    async def generate_personalized_curriculum_with_history(
+        self,
+        skill_profile: Dict[str, Any],
+        performance_history: Optional[Dict[str, Any]] = None,
+        duration_weeks: int = 12
+    ) -> Dict[str, Any]:
+        """
+        Generate curriculum with performance-aware personalization.
+
+        This enhanced version includes user's past performance to create
+        a more adaptive curriculum that addresses specific struggles.
+
+        Args:
+            skill_profile: User's skill levels and preferences
+            performance_history: Past performance data (optional)
+            duration_weeks: Curriculum duration
+
+        Returns:
+            Enhanced curriculum with performance-aware adaptations
+        """
+        # Build enhanced prompt with performance context
+        base_prompt = self._build_curriculum_prompt(skill_profile, duration_weeks)
+
+        if performance_history:
+            perf_context = self._build_performance_context(performance_history)
+            enhanced_prompt = f"{base_prompt}\n\n{perf_context}"
+        else:
+            enhanced_prompt = base_prompt
+
+        try:
+            return await self.generate_with_fallback(
+                prompt=enhanced_prompt,
+                task_type=TaskType.CURRICULUM_PLANNING,
+                generation_config={
+                    "temperature": 0.7,
+                    "max_output_tokens": 8192,
+                    "response_mime_type": "application/json",
+                },
+                cache_ttl_hours=24  # Shorter cache for personalized content
+            )
+        except Exception:
+            return self._generate_fallback_curriculum(skill_profile, duration_weeks)
+
+    def _build_performance_context(self, performance_history: Dict[str, Any]) -> str:
+        """Build performance context for enhanced prompts"""
+        weak_areas = performance_history.get('weak_skill_areas', [])
+        strong_areas = performance_history.get('strong_skill_areas', [])
+        avg_quality = performance_history.get('avg_quality_score', 0)
+        trend = performance_history.get('recent_performance_trend', 'stable')
+        consecutive_struggles = performance_history.get('consecutive_struggles', 0)
+
+        context = """## Performance History Context
+
+**Recent Performance:**
+"""
+
+        if avg_quality > 0:
+            quality_assessment = "excellent" if avg_quality > 4.0 else "good" if avg_quality > 3.0 else "struggling"
+            context += f"- Average quality score: {avg_quality:.1f}/5.0 ({quality_assessment})\n"
+
+        context += f"- Performance trend: {trend}\n"
+
+        if consecutive_struggles > 0:
+            context += f"- Consecutive difficulties: {consecutive_struggles} recent exercises\n"
+
+        if weak_areas:
+            context += f"\n**Areas Needing Attention:**\n"
+            for area in weak_areas:
+                context += f"- {area}: Requires additional practice and simpler exercises\n"
+
+        if strong_areas:
+            context += f"\n**Strong Areas:**\n"
+            for area in strong_areas:
+                context += f"- {area}: Can introduce advanced concepts here\n"
+
+        context += """
+**Adaptation Instructions:**
+1. For weak areas: Start with fundamentals, increase repetition, provide more guidance
+2. For strong areas: Accelerate pace, introduce complex variations
+3. Balance challenge to maintain motivation
+4. If performance is declining: reduce difficulty and increase support
+5. If performance is improving: gradually increase complexity
+
+Create a curriculum that directly addresses these performance patterns.
+"""
+
+        return context
+
+    async def generate_contextual_tutorial(
+        self,
+        lesson_content: Dict[str, Any],
+        user_skill_level: Dict[str, float],
+        user_struggles: Optional[List[str]] = None
+    ) -> str:
+        """
+        Generate tutorial that references user's actual skill level and struggles.
+
+        Args:
+            lesson_content: Lesson details (title, concepts, etc.)
+            user_skill_level: User's skill scores
+            user_struggles: Areas where user is struggling
+
+        Returns:
+            Personalized tutorial text
+        """
+        prompt = f"""You are a patient, expert piano teacher creating a personalized lesson tutorial.
+
+## Lesson Content
+- Title: {lesson_content.get('title')}
+- Concepts: {', '.join(lesson_content.get('concepts', []))}
+- Description: {lesson_content.get('description')}
+
+## Student's Current Level
+- Technical Ability: {user_skill_level.get('technical_ability', 5)}/10
+- Theory Knowledge: {user_skill_level.get('theory_knowledge', 5)}/10
+- Rhythm: {user_skill_level.get('rhythm_competency', 5)}/10
+"""
+
+        if user_struggles:
+            prompt += f"\n## Known Struggles\nThis student has been struggling with:\n"
+            for struggle in user_struggles:
+                prompt += f"- {struggle}\n"
+            prompt += "\nAddress these struggles directly in your explanation. Break down difficult concepts into simpler steps.\n"
+
+        prompt += """
+## Tutorial Guidelines
+1. Start with a friendly introduction that acknowledges their current level
+2. Explain concepts clearly, using analogies when helpful
+3. Break complex ideas into digestible steps
+4. Provide specific practice tips related to their struggles
+5. End with encouragement and next steps
+6. Keep tone conversational and supportive
+7. Reference their strengths to build confidence
+
+Write a comprehensive tutorial (400-600 words) that feels personally crafted for this student.
+"""
+
+        try:
+            response = await self.generate_with_fallback(
+                prompt=prompt,
+                task_type=TaskType.TUTORIAL_GENERATION,
+                generation_config={
+                    "temperature": 0.8,
+                    "max_output_tokens": 2048,
+                    "response_mime_type": "text/plain",
+                },
+                cache_ttl_hours=1  # Short cache for personalized content
+            )
+            return response if isinstance(response, str) else response.get('text', 'Tutorial generation failed')
+        except Exception as e:
+            return f"Welcome to this lesson on {lesson_content.get('title')}! Let's dive into these concepts together."
+
+    async def generate_exercise_feedback(
+        self,
+        exercise_title: str,
+        quality_score: float,
+        exercise_type: str,
+        user_skill_level: float
+    ) -> str:
+        """
+        Generate contextual feedback based on exercise performance.
+
+        Args:
+            exercise_title: Exercise name
+            quality_score: 0-5 performance score
+            exercise_type: Type of exercise
+            user_skill_level: User's skill in this area (0-10)
+
+        Returns:
+            Personalized feedback message
+        """
+        if quality_score >= 4.0:
+            tone = "congratulatory"
+            focus = "next challenge"
+        elif quality_score >= 3.0:
+            tone = "encouraging"
+            focus = "refinement tips"
+        else:
+            tone = "supportive"
+            focus = "simplification and fundamentals"
+
+        prompt = f"""Generate brief, {tone} feedback for a piano student.
+
+**Exercise:** {exercise_title}
+**Type:** {exercise_type}
+**Performance Score:** {quality_score}/5.0
+**Student's Skill Level:** {user_skill_level}/10
+
+Provide 2-3 sentences that:
+1. Acknowledge their performance
+2. Give {focus}
+3. Maintain positive, growth-oriented tone
+
+Be specific to the exercise type and performance level."""
+
+        try:
+            response = await self.generate_with_fallback(
+                prompt=prompt,
+                task_type=TaskType.CONTENT_VALIDATION,
+                generation_config={
+                    "temperature": 0.9,
+                    "max_output_tokens": 256,
+                    "response_mime_type": "text/plain",
+                },
+                cache_ttl_hours=0  # No cache for dynamic feedback
+            )
+            return response if isinstance(response, str) else response.get('text', 'Great work!')
+        except Exception:
+            if quality_score >= 4.0:
+                return f"Excellent work on {exercise_title}! You're showing real mastery here."
+            elif quality_score >= 3.0:
+                return f"Nice progress on {exercise_title}! Focus on consistency and you'll have this down soon."
+            else:
+                return f"Keep practicing {exercise_title}. Try slowing down the tempo to build accuracy first."
 
 
 # Global service instance

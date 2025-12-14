@@ -1,6 +1,6 @@
 /**
  * AI Generator Component
- * 
+ *
  * Categorized UI for AI-powered music theory generation
  */
 import { useState } from 'react';
@@ -17,21 +17,33 @@ import {
     ChevronDown,
     ChevronRight,
     Volume2,
+    Zap,
+    Download,
+    BookmarkPlus,
 } from 'lucide-react';
 import {
     aiApi,
+    curriculumApi,
     type ProgressionStyle,
     type Mood,
     type VoicingStyle,
     type ExerciseType,
     type Difficulty,
+    type LickStyle,
+    type ContextType,
     type ProgressionResponse,
     type VoicingResponse,
     type ExerciseResponse,
     type SubstitutionResponse,
+    type LicksResponse,
     type ChordInfo,
-    type VoicingInfo,
+    type VoicingInfo as APIVoicingInfo,
+    type LickInfo,
 } from '../../lib/api';
+import { VoicingVisualizer, type VoicingInfo as VoicingAnalysisInfo } from '../analysis/VoicingVisualizer';
+import { exportLickToMIDI, exportLicksToMIDI } from '../../lib/midi-export';
+import { LickNotation } from './LickNotation';
+import { generateBackingTrack } from '../../lib/backing-track';
 
 // ============================================================================
 // Types & Constants
@@ -90,12 +102,22 @@ const CATEGORIES: CategoryConfig[] = [
             { id: 'substitution', name: 'Chord Substitutions', description: 'Find substitute chords' },
         ],
     },
+    {
+        id: 'licks',
+        name: 'Licks & Phrases',
+        icon: <Zap className="w-5 h-5" />,
+        color: 'pink',
+        generators: [
+            { id: 'licks', name: 'Jazz Licks', description: 'Generate idiomatic jazz licks in multiple styles' },
+        ],
+    },
 ];
 
 const KEYS = ['C', 'C#', 'Db', 'D', 'D#', 'Eb', 'E', 'F', 'F#', 'Gb', 'G', 'G#', 'Ab', 'A', 'A#', 'Bb', 'B'];
 const MODES = ['major', 'minor', 'dorian', 'mixolydian', 'lydian', 'phrygian', 'locrian'];
 const STYLES: ProgressionStyle[] = ['jazz', 'gospel', 'pop', 'classical', 'neo_soul', 'rnb', 'blues'];
 const MOODS: Mood[] = ['happy', 'sad', 'tense', 'peaceful', 'energetic', 'mysterious', 'romantic'];
+const LICK_STYLES: LickStyle[] = ['bebop', 'blues', 'modern', 'gospel', 'swing', 'bossa'];
 const VOICING_STYLES: VoicingStyle[] = ['open', 'closed', 'drop2', 'drop3', 'rootless', 'spread', 'gospel'];
 const EXERCISE_TYPES: ExerciseType[] = ['scales', 'arpeggios', 'progressions', 'voice_leading', 'rhythm'];
 const DIFFICULTIES: Difficulty[] = ['beginner', 'intermediate', 'advanced'];
@@ -139,38 +161,67 @@ function ChordDisplay({ chord, onPlay }: ChordDisplayProps) {
     );
 }
 
-interface VoicingDisplayProps {
-    voicing: VoicingInfo;
-    onPlay?: (midiNotes: number[]) => void;
-}
+/**
+ * Convert API VoicingInfo to VoicingAnalysisInfo for VoicingVisualizer
+ */
+function convertToVoicingAnalysisInfo(
+    voicing: APIVoicingInfo,
+    chordSymbol: string
+): VoicingAnalysisInfo {
+    // Determine voicing type from name (basic heuristic)
+    let voicingType = 'close';
+    const nameLower = voicing.name.toLowerCase();
+    if (nameLower.includes('drop')) voicingType = nameLower.includes('drop-2') || nameLower.includes('drop 2') ? 'drop_2' : 'drop_3';
+    else if (nameLower.includes('open')) voicingType = 'open';
+    else if (nameLower.includes('rootless')) voicingType = 'rootless';
+    else if (nameLower.includes('shell')) voicingType = 'shell';
+    else if (nameLower.includes('spread')) voicingType = 'spread';
 
-function VoicingDisplay({ voicing, onPlay }: VoicingDisplayProps) {
-    return (
-        <div className="p-3 bg-slate-800/50 rounded-lg border border-slate-700">
-            <div className="flex items-center justify-between mb-2">
-                <span className="font-medium text-white">{voicing.name}</span>
-                <span className="text-xs px-2 py-0.5 bg-violet-500/20 text-violet-400 rounded">
-                    {voicing.hand}
-                </span>
-            </div>
-            <div className="text-sm text-slate-300 mb-1">
-                Notes: {voicing.notes.join(' - ')}
-            </div>
-            {voicing.fingering && (
-                <div className="text-xs text-slate-400">
-                    Fingering: {voicing.fingering.join(' - ')}
-                </div>
-            )}
-            {onPlay && (
-                <button
-                    onClick={() => onPlay(voicing.midi_notes)}
-                    className="mt-2 flex items-center gap-1 text-xs text-violet-400 hover:text-violet-300"
-                >
-                    <Volume2 className="w-3 h-3" /> Play
-                </button>
-            )}
-        </div>
+    // Calculate intervals between consecutive notes
+    const intervals: number[] = [];
+    for (let i = 1; i < voicing.midi_notes.length; i++) {
+        intervals.push(voicing.midi_notes[i] - voicing.midi_notes[i - 1]);
+    }
+
+    // Calculate width
+    const widthSemitones = voicing.midi_notes.length > 0
+        ? voicing.midi_notes[voicing.midi_notes.length - 1] - voicing.midi_notes[0]
+        : 0;
+
+    // Simple complexity score (0-1) based on number of notes and width
+    const complexityScore = Math.min(
+        1.0,
+        (voicing.midi_notes.length / 7 + widthSemitones / 24) / 2
     );
+
+    // Estimate hand span in inches (rough approximation: 1 semitone ≈ 0.65")
+    const handSpanInches = widthSemitones * 0.65;
+
+    // Basic chord tone detection (simplified)
+    const noteSet = new Set(voicing.midi_notes.map(n => n % 12));
+    const rootNote = chordSymbol.match(/^([A-G][#b]?)/)?.[1] || 'C';
+    const noteMap: Record<string, number> = {
+        'C': 0, 'C#': 1, 'Db': 1, 'D': 2, 'D#': 3, 'Eb': 3,
+        'E': 4, 'F': 5, 'F#': 6, 'Gb': 6, 'G': 7, 'G#': 8,
+        'Ab': 8, 'A': 9, 'A#': 10, 'Bb': 10, 'B': 11,
+    };
+    const rootPitchClass = noteMap[rootNote] || 0;
+
+    return {
+        chord_symbol: chordSymbol,
+        voicing_type: voicingType,
+        notes: voicing.midi_notes,
+        note_names: voicing.notes,
+        intervals,
+        width_semitones: widthSemitones,
+        inversion: 0, // Would need more analysis to determine
+        has_root: noteSet.has(rootPitchClass),
+        has_third: noteSet.has((rootPitchClass + 3) % 12) || noteSet.has((rootPitchClass + 4) % 12),
+        has_seventh: noteSet.has((rootPitchClass + 10) % 12) || noteSet.has((rootPitchClass + 11) % 12),
+        extensions: [],
+        complexity_score: complexityScore,
+        hand_span_inches: handSpanInches,
+    };
 }
 
 // ============================================================================
@@ -199,12 +250,25 @@ export function AIGenerator({ onPlayChord }: AIGeneratorProps) {
     const [exerciseType, setExerciseType] = useState<ExerciseType>('scales');
     const [difficulty, setDifficulty] = useState<Difficulty>('intermediate');
     const [originalProgression, setOriginalProgression] = useState('C Am F G');
+    const [lickStyle, setLickStyle] = useState<LickStyle>('bebop');
+    const [contextType, setContextType] = useState<ContextType>('chord');
+    const [lickContext, setLickContext] = useState('Dm7');
+    const [lengthBars, setLengthBars] = useState(2);
+
+    // Lick playback controls
+    const [playbackSpeed, setPlaybackSpeed] = useState(100); // 50-200%
+    const [loopEnabled, setLoopEnabled] = useState(false);
+    const [backingTrackEnabled, setBackingTrackEnabled] = useState(false);
+    const [isPlayingLick, setIsPlayingLick] = useState(false);
+    const [currentLickTimeouts, setCurrentLickTimeouts] = useState<number[]>([]);
+    const [expandedNotation, setExpandedNotation] = useState<Set<number>>(new Set());
 
     // Results
     const [progressionResult, setProgressionResult] = useState<ProgressionResponse | null>(null);
     const [voicingResult, setVoicingResult] = useState<VoicingResponse | null>(null);
     const [exerciseResult, setExerciseResult] = useState<ExerciseResponse | null>(null);
     const [substitutionResult, setSubstitutionResult] = useState<SubstitutionResponse | null>(null);
+    const [licksResult, setLicksResult] = useState<LicksResponse | null>(null);
 
     const [error, setError] = useState<string | null>(null);
 
@@ -273,9 +337,29 @@ export function AIGenerator({ onPlayChord }: AIGeneratorProps) {
         onError: (err) => setError(err.message),
     });
 
+    const licksMutation = useMutation({
+        mutationFn: aiApi.generateLicks,
+        onSuccess: (data) => {
+            setLicksResult(data);
+            setError(null);
+        },
+        onError: (err) => setError(err.message),
+    });
+
+    const addLickToPracticeMutation = useMutation({
+        mutationFn: curriculumApi.addLickToPractice,
+        onSuccess: () => {
+            // Show success feedback
+            alert('Lick added to practice queue!');
+        },
+        onError: (err) => {
+            alert(`Failed to add lick: ${err.message}`);
+        },
+    });
+
     const isLoading = progressionMutation.isPending || reharmonizationMutation.isPending ||
         voicingMutation.isPending || voiceLeadingMutation.isPending ||
-        exerciseMutation.isPending || substitutionMutation.isPending;
+        exerciseMutation.isPending || substitutionMutation.isPending || licksMutation.isPending;
 
     const handleGenerate = () => {
         switch (activeGenerator) {
@@ -324,7 +408,98 @@ export function AIGenerator({ onPlayChord }: AIGeneratorProps) {
                     style,
                 });
                 break;
+            case 'licks':
+                licksMutation.mutate({
+                    style: lickStyle,
+                    context_type: contextType,
+                    context: lickContext,
+                    difficulty,
+                    length_bars: lengthBars,
+                    include_chromatics: true,
+                });
+                break;
         }
+    };
+
+    const stopLick = () => {
+        currentLickTimeouts.forEach(timeoutId => clearTimeout(timeoutId));
+        setCurrentLickTimeouts([]);
+        setIsPlayingLick(false);
+    };
+
+    const toggleNotation = (index: number) => {
+        const newExpanded = new Set(expandedNotation);
+        if (newExpanded.has(index)) {
+            newExpanded.delete(index);
+        } else {
+            newExpanded.add(index);
+        }
+        setExpandedNotation(newExpanded);
+    };
+
+    const playLick = (midiNotes: number[]) => {
+        // Clear any existing playback
+        stopLick();
+
+        setIsPlayingLick(true);
+        const timeouts: number[] = [];
+
+        // Generate backing track if enabled
+        let backingTrack = null;
+        if (backingTrackEnabled && licksResult) {
+            try {
+                backingTrack = generateBackingTrack(
+                    licksResult.context,
+                    licksResult.style,
+                    lengthBars
+                );
+            } catch (error) {
+                console.error('Failed to generate backing track:', error);
+            }
+        }
+
+        const playSequence = () => {
+            const baseDelay = 200; // Base delay in ms
+            const speedMultiplier = 100 / playbackSpeed; // Speed adjustment (100% = 1x, 50% = 2x slower, 200% = 0.5x faster)
+            const beatsPerSecond = 2; // Assumes 120 BPM (2 beats per second)
+            const beatDuration = 1000 / beatsPerSecond; // ms per beat
+
+            // Play backing track notes
+            if (backingTrack && onPlayChord) {
+                backingTrack.notes.forEach((backingNote) => {
+                    const timeoutId = window.setTimeout(() => {
+                        onPlayChord([backingNote.midi]);
+                    }, backingNote.time * beatDuration * speedMultiplier);
+                    timeouts.push(timeoutId);
+                });
+            }
+
+            // Play lick notes
+            midiNotes.forEach((note, i) => {
+                const timeoutId = window.setTimeout(() => {
+                    if (onPlayChord) {
+                        onPlayChord([note]);
+                    }
+
+                    // If this is the last note and loop is enabled, restart
+                    if (i === midiNotes.length - 1 && loopEnabled) {
+                        const loopTimeoutId = window.setTimeout(() => {
+                            playSequence();
+                        }, baseDelay * speedMultiplier);
+                        timeouts.push(loopTimeoutId);
+                    } else if (i === midiNotes.length - 1) {
+                        // Last note and no loop, stop playing
+                        setIsPlayingLick(false);
+                    }
+                }, i * baseDelay * speedMultiplier);
+
+                timeouts.push(timeoutId);
+            });
+
+            setCurrentLickTimeouts(timeouts);
+        };
+
+        playSequence();
     };
 
     const toggleCategory = (categoryId: string) => {
@@ -336,6 +511,7 @@ export function AIGenerator({ onPlayChord }: AIGeneratorProps) {
         violet: 'text-violet-400 bg-violet-500/10 border-violet-500/30',
         amber: 'text-amber-400 bg-amber-500/10 border-amber-500/30',
         emerald: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30',
+        pink: 'text-pink-400 bg-pink-500/10 border-pink-500/30',
     };
 
     return (
@@ -614,6 +790,75 @@ export function AIGenerator({ onPlayChord }: AIGeneratorProps) {
                                 />
                             </div>
                         )}
+
+                        {activeGenerator === 'licks' && (
+                            <>
+                                <div>
+                                    <label className="block text-xs text-slate-400 mb-1">Style</label>
+                                    <select
+                                        value={lickStyle}
+                                        onChange={(e) => setLickStyle(e.target.value as LickStyle)}
+                                        className="w-full bg-slate-700 text-white rounded px-3 py-2 text-sm"
+                                    >
+                                        {LICK_STYLES.map(s => (
+                                            <option key={s} value={s}>{s}</option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label className="block text-xs text-slate-400 mb-1">Context Type</label>
+                                    <select
+                                        value={contextType}
+                                        onChange={(e) => setContextType(e.target.value as ContextType)}
+                                        className="w-full bg-slate-700 text-white rounded px-3 py-2 text-sm"
+                                    >
+                                        <option value="chord">Single Chord</option>
+                                        <option value="progression">Progression</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label className="block text-xs text-slate-400 mb-1">
+                                        {contextType === 'chord' ? 'Chord' : 'Progression'}
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={lickContext}
+                                        onChange={(e) => setLickContext(e.target.value)}
+                                        placeholder={contextType === 'chord' ? 'Dm7' : 'Dm7 G7 Cmaj7'}
+                                        className="w-full bg-slate-700 text-white rounded px-3 py-2 text-sm"
+                                    />
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label className="block text-xs text-slate-400 mb-1">Difficulty</label>
+                                        <select
+                                            value={difficulty}
+                                            onChange={(e) => setDifficulty(e.target.value as Difficulty)}
+                                            className="w-full bg-slate-700 text-white rounded px-3 py-2 text-sm"
+                                        >
+                                            {DIFFICULTIES.map(d => (
+                                                <option key={d} value={d}>{d}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-xs text-slate-400 mb-1">Length (bars)</label>
+                                        <input
+                                            type="number"
+                                            min="1"
+                                            max="4"
+                                            value={lengthBars}
+                                            onChange={(e) => setLengthBars(parseInt(e.target.value))}
+                                            className="w-full bg-slate-700 text-white rounded px-3 py-2 text-sm"
+                                        />
+                                    </div>
+                                </div>
+                            </>
+                        )}
                     </div>
 
                     {error && (
@@ -701,28 +946,36 @@ export function AIGenerator({ onPlayChord }: AIGeneratorProps) {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -20 }}
-                            className="bg-slate-800/50 rounded-lg border border-slate-700 p-4"
+                            className="space-y-4"
                         >
-                            <h4 className="font-semibold text-white mb-4">
-                                Voicings for {voicingResult.chord}
-                            </h4>
+                            <div className="bg-slate-800/50 rounded-lg border border-slate-700 p-4">
+                                <h4 className="font-semibold text-white mb-4">
+                                    Voicings for {voicingResult.chord}
+                                </h4>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
-                                {voicingResult.voicings.map((voicing, i) => (
-                                    <VoicingDisplay key={i} voicing={voicing} onPlay={onPlayChord} />
-                                ))}
-                            </div>
-
-                            {voicingResult.tips && voicingResult.tips.length > 0 && (
-                                <div className="p-3 bg-slate-900/50 rounded-lg">
-                                    <h5 className="text-sm font-medium text-slate-300 mb-1">Tips</h5>
-                                    <ul className="text-sm text-slate-400 list-disc list-inside">
-                                        {voicingResult.tips.map((tip, i) => (
-                                            <li key={i}>{tip}</li>
-                                        ))}
-                                    </ul>
+                                <div className="space-y-4">
+                                    {voicingResult.voicings.map((voicing, i) => (
+                                        <VoicingVisualizer
+                                            key={i}
+                                            chord={voicingResult.chord}
+                                            voicing={convertToVoicingAnalysisInfo(voicing, voicingResult.chord)}
+                                            showDetails={true}
+                                            compact={true}
+                                        />
+                                    ))}
                                 </div>
-                            )}
+
+                                {voicingResult.tips && voicingResult.tips.length > 0 && (
+                                    <div className="p-3 bg-slate-900/50 rounded-lg mt-4">
+                                        <h5 className="text-sm font-medium text-slate-300 mb-1">Tips</h5>
+                                        <ul className="text-sm text-slate-400 list-disc list-inside">
+                                            {voicingResult.tips.map((tip, i) => (
+                                                <li key={i}>{tip}</li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )}
+                            </div>
                         </motion.div>
                     )}
 
@@ -791,6 +1044,255 @@ export function AIGenerator({ onPlayChord }: AIGeneratorProps) {
                                     <ChordDisplay key={i} chord={sub} onPlay={onPlayChord} />
                                 ))}
                             </div>
+                        </motion.div>
+                    )}
+
+                    {/* Licks Results */}
+                    {licksResult && activeGenerator === 'licks' && (
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                            className="bg-slate-800/50 rounded-lg border border-slate-700 p-4"
+                        >
+                            <h4 className="font-semibold text-white mb-4">
+                                {licksResult.style} Licks - {licksResult.difficulty}
+                            </h4>
+
+                            {/* Playback Controls */}
+                            <div className="mb-4 p-3 bg-slate-700/50 rounded-lg border border-slate-600">
+                                <div className="flex items-center gap-4 flex-wrap mb-3">
+                                    <div className="flex-1 min-w-[200px]">
+                                        <label className="block text-xs text-slate-400 mb-1">
+                                            Playback Speed: {playbackSpeed}%
+                                        </label>
+                                        <input
+                                            type="range"
+                                            min="50"
+                                            max="200"
+                                            step="10"
+                                            value={playbackSpeed}
+                                            onChange={(e) => setPlaybackSpeed(Number(e.target.value))}
+                                            className="w-full h-2 bg-slate-600 rounded-lg appearance-none cursor-pointer accent-pink-500"
+                                        />
+                                        <div className="flex justify-between text-xs text-slate-500 mt-1">
+                                            <span>50% (Slower)</span>
+                                            <span>200% (Faster)</span>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center gap-2">
+                                        <button
+                                            onClick={() => setLoopEnabled(!loopEnabled)}
+                                            className={`flex items-center gap-1 px-3 py-2 rounded text-xs font-medium transition-all ${
+                                                loopEnabled
+                                                    ? 'bg-pink-500/20 text-pink-400 border border-pink-500/30'
+                                                    : 'bg-slate-600 text-slate-300 border border-slate-500'
+                                            }`}
+                                        >
+                                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                            </svg>
+                                            Loop
+                                        </button>
+
+                                        <button
+                                            onClick={() => setBackingTrackEnabled(!backingTrackEnabled)}
+                                            className={`flex items-center gap-1 px-3 py-2 rounded text-xs font-medium transition-all ${
+                                                backingTrackEnabled
+                                                    ? 'bg-pink-500/20 text-pink-400 border border-pink-500/30'
+                                                    : 'bg-slate-600 text-slate-300 border border-slate-500'
+                                            }`}
+                                        >
+                                            <Music className="w-3 h-3" />
+                                            Backing Track
+                                        </button>
+
+                                        {isPlayingLick && (
+                                            <button
+                                                onClick={stopLick}
+                                                className="flex items-center gap-1 px-3 py-2 rounded text-xs font-medium bg-red-500/20 text-red-400 border border-red-500/30"
+                                            >
+                                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                                </svg>
+                                                Stop
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* Download All Button */}
+                                <div className="flex justify-end">
+                                    <button
+                                        onClick={() => exportLicksToMIDI(
+                                            licksResult.licks.map(lick => ({
+                                                name: lick.name,
+                                                midi_notes: lick.midi_notes,
+                                                duration_beats: lick.duration_beats,
+                                            })),
+                                            `${licksResult.style}_licks_${licksResult.difficulty}`
+                                        )}
+                                        className="flex items-center gap-1 px-3 py-2 rounded text-xs font-medium bg-slate-600 text-slate-300 border border-slate-500 hover:bg-slate-500 transition-colors"
+                                    >
+                                        <Download className="w-3 h-3" /> Download All as MIDI
+                                    </button>
+                                </div>
+                            </div>
+
+                            {licksResult.analysis && (
+                                <div className="mb-4 p-3 bg-pink-500/10 rounded-lg text-sm text-slate-300">
+                                    {licksResult.analysis}
+                                </div>
+                            )}
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                {licksResult.licks.map((lick, i) => (
+                                    <div key={i} className="p-4 bg-slate-700/50 rounded-lg border border-slate-600">
+                                        <h5 className="font-semibold text-white mb-2">{lick.name}</h5>
+
+                                        {/* Sheet Music Notation */}
+                                        {expandedNotation.has(i) && (
+                                            <div className="mb-3">
+                                                <LickNotation
+                                                    midiNotes={lick.midi_notes}
+                                                    durationBeats={lick.duration_beats}
+                                                />
+                                            </div>
+                                        )}
+
+                                        <div className="text-sm text-slate-300 mb-2 font-mono">
+                                            {lick.notes.join(' → ')}
+                                        </div>
+                                        <div className="flex gap-2 flex-wrap mb-3">
+                                            {lick.style_tags.map((tag, j) => (
+                                                <span key={j} className="text-xs px-2 py-0.5 bg-pink-500/20 text-pink-400 rounded">
+                                                    {tag}
+                                                </span>
+                                            ))}
+                                        </div>
+                                        <div className="text-xs text-slate-400 mb-2">
+                                            {lick.start_note} → {lick.end_note} ({lick.duration_beats} beats)
+                                        </div>
+                                        <div className="flex items-center gap-2 flex-wrap">
+                                            <button
+                                                onClick={() => playLick(lick.midi_notes)}
+                                                className="flex items-center gap-1 text-xs text-pink-400 hover:text-pink-300 transition-colors"
+                                            >
+                                                <Volume2 className="w-3 h-3" /> Play
+                                            </button>
+                                            <button
+                                                onClick={() => exportLickToMIDI({
+                                                    name: lick.name,
+                                                    midi_notes: lick.midi_notes,
+                                                    duration_beats: lick.duration_beats,
+                                                })}
+                                                className="flex items-center gap-1 text-xs text-slate-400 hover:text-slate-300 transition-colors"
+                                            >
+                                                <Download className="w-3 h-3" /> MIDI
+                                            </button>
+                                            <button
+                                                onClick={() => toggleNotation(i)}
+                                                className="flex items-center gap-1 text-xs text-slate-400 hover:text-slate-300 transition-colors"
+                                            >
+                                                <Music className="w-3 h-3" />
+                                                {expandedNotation.has(i) ? 'Hide' : 'Show'} Notation
+                                            </button>
+                                            <button
+                                                onClick={() => {
+                                                    if (!licksResult) return;
+                                                    addLickToPracticeMutation.mutate({
+                                                        lick_name: lick.name,
+                                                        notes: lick.notes,
+                                                        midi_notes: lick.midi_notes,
+                                                        context: licksResult.context,
+                                                        style: licksResult.style,
+                                                        difficulty: licksResult.difficulty,
+                                                        duration_beats: lick.duration_beats,
+                                                    });
+                                                }}
+                                                disabled={addLickToPracticeMutation.isPending}
+                                                className="flex items-center gap-1 text-xs text-cyan-400 hover:text-cyan-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                            >
+                                                <BookmarkPlus className="w-3 h-3" />
+                                                {addLickToPracticeMutation.isPending ? 'Adding...' : 'Add to Practice'}
+                                            </button>
+                                        </div>
+
+                                        {/* Theory Analysis Section */}
+                                        {lick.theory_analysis && (
+                                            <details className="mt-3 text-xs">
+                                                <summary className="cursor-pointer text-slate-400 hover:text-slate-300 font-medium flex items-center gap-1">
+                                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                                    </svg>
+                                                    Theory Analysis
+                                                </summary>
+                                                <div className="mt-2 p-3 bg-slate-800/50 rounded-lg space-y-2 border border-slate-600">
+                                                    {/* Color-coded notes */}
+                                                    <div>
+                                                        <div className="text-xs text-slate-400 mb-1 font-medium">Notes & Scale Degrees:</div>
+                                                        <div className="flex gap-1 flex-wrap">
+                                                            {lick.notes.map((note, noteIdx) => (
+                                                                <span
+                                                                    key={noteIdx}
+                                                                    className={`px-2 py-1 rounded text-xs font-mono ${
+                                                                        lick.theory_analysis!.chord_tones[noteIdx]
+                                                                            ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                                                                            : 'bg-slate-600/30 text-slate-400 border border-slate-500/30'
+                                                                    }`}
+                                                                    title={lick.theory_analysis!.chord_tones[noteIdx] ? 'Chord tone' : 'Passing/approach tone'}
+                                                                >
+                                                                    {note} <span className="text-xs opacity-70">({lick.theory_analysis!.scale_degrees[noteIdx]})</span>
+                                                                </span>
+                                                            ))}
+                                                        </div>
+                                                        <div className="text-xs text-slate-500 mt-1">
+                                                            <span className="text-emerald-400">●</span> Chord tones
+                                                            <span className="ml-2 text-slate-400">●</span> Passing/approach tones
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Voice Leading */}
+                                                    <div>
+                                                        <div className="text-xs text-slate-400 font-medium">Voice Leading:</div>
+                                                        <div className="text-xs text-slate-300 mt-0.5">{lick.theory_analysis.voice_leading}</div>
+                                                    </div>
+
+                                                    {/* Harmonic Function */}
+                                                    <div>
+                                                        <div className="text-xs text-slate-400 font-medium">Harmonic Function:</div>
+                                                        <div className="text-xs text-slate-300 mt-0.5">{lick.theory_analysis.harmonic_function}</div>
+                                                    </div>
+
+                                                    {/* Approach Tones */}
+                                                    {lick.theory_analysis.approach_tones.length > 0 && (
+                                                        <div>
+                                                            <div className="text-xs text-slate-400 font-medium">Approach Tones:</div>
+                                                            <ul className="text-xs text-slate-300 mt-0.5 space-y-0.5 list-disc list-inside">
+                                                                {lick.theory_analysis.approach_tones.map((approach, idx) => (
+                                                                    <li key={idx}>{approach}</li>
+                                                                ))}
+                                                            </ul>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </details>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+
+                            {licksResult.practice_tips && licksResult.practice_tips.length > 0 && (
+                                <div className="p-3 bg-slate-700/50 rounded-lg">
+                                    <h5 className="font-semibold text-white text-sm mb-2">Practice Tips:</h5>
+                                    <ul className="space-y-1">
+                                        {licksResult.practice_tips.map((tip, i) => (
+                                            <li key={i} className="text-xs text-slate-300">• {tip}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
                         </motion.div>
                     )}
                 </AnimatePresence>

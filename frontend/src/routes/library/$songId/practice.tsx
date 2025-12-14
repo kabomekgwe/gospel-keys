@@ -23,10 +23,13 @@ import {
     Clock,
     Trophy,
     Zap,
+    Eye,
+    EyeOff,
 } from 'lucide-react';
 import { PianoRoll } from '../../../components/PianoRoll';
 import { Piano } from '../../../components/Piano';
 import { useMidiPlayer, type MidiNote } from '../../../hooks/useMidiPlayer';
+import { VoicingVisualizer, type VoicingInfo } from '../../../components/analysis/VoicingVisualizer';
 
 export const Route = createFileRoute('/library/$songId/practice')({
     component: PracticePage,
@@ -65,6 +68,39 @@ const TEMPO_PRESETS = [
     { value: 1.5, label: '1.5×', description: 'Very fast' },
 ];
 
+// Generate demo voicing for practice
+function generateDemoVoicing(currentTime: number): { chord: string; voicing: VoicingInfo } {
+    // Simple progression that cycles every 8 seconds
+    const chords = [
+        { symbol: 'Cmaj7', notes: [48, 60, 64, 71, 67], noteNames: ['C3', 'C4', 'E4', 'B4', 'G4'] },
+        { symbol: 'Dm7', notes: [50, 62, 65, 69, 72], noteNames: ['D3', 'D4', 'F4', 'A4', 'C5'] },
+        { symbol: 'G7', notes: [43, 55, 59, 62, 65], noteNames: ['G2', 'G3', 'B3', 'D4', 'F4'] },
+        { symbol: 'Cmaj7', notes: [48, 60, 64, 71, 67], noteNames: ['C3', 'C4', 'E4', 'B4', 'G4'] },
+    ];
+
+    const index = Math.floor(currentTime / 2) % chords.length;
+    const current = chords[index];
+
+    return {
+        chord: current.symbol,
+        voicing: {
+            chord_symbol: current.symbol,
+            voicing_type: 'drop_2',
+            notes: current.notes,
+            note_names: current.noteNames,
+            intervals: [12, 4, 7, -4],
+            width_semitones: current.notes[current.notes.length - 1] - current.notes[0],
+            inversion: 0,
+            has_root: true,
+            has_third: true,
+            has_seventh: true,
+            extensions: [],
+            complexity_score: 0.6,
+            hand_span_inches: 9.5,
+        },
+    };
+}
+
 function PracticePage() {
     const { songId } = useParams({ from: '/library/$songId/practice' });
 
@@ -73,6 +109,7 @@ function PracticePage() {
     const [loopStart, setLoopStart] = useState(0);
     const [loopEnd, setLoopEnd] = useState(30);
     const [showTempoMenu, setShowTempoMenu] = useState(false);
+    const [showVoicing, setShowVoicing] = useState(false);
 
     // Fetch song data
     const { data: song, isLoading } = useQuery({
@@ -137,6 +174,11 @@ function PracticePage() {
         if (!sessions) return 0;
         return sessions.reduce((acc, s) => acc + s.duration_seconds, 0);
     }, [sessions]);
+
+    // Get current voicing based on playback time
+    const currentVoicing = useMemo(() => {
+        return generateDemoVoicing(playerState.currentTime);
+    }, [playerState.currentTime]);
 
     if (isLoading) {
         return (
@@ -313,6 +355,29 @@ function PracticePage() {
                         )}
                     </div>
 
+                    {/* Show Voicing toggle */}
+                    <div className="flex items-center gap-3">
+                        <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => setShowVoicing(!showVoicing)}
+                            className={`
+                flex items-center gap-2 px-4 py-2 rounded-lg transition-colors
+                ${showVoicing
+                                    ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30'
+                                    : 'bg-slate-700/50 text-slate-300 hover:text-white'
+                                }
+              `}
+                        >
+                            {showVoicing ? (
+                                <Eye className="w-4 h-4" />
+                            ) : (
+                                <EyeOff className="w-4 h-4" />
+                            )}
+                            <span className="text-sm">Show Voicing</span>
+                        </motion.button>
+                    </div>
+
                     {/* Progress */}
                     <div className="flex items-center gap-3">
                         <span className="text-sm font-mono text-slate-300">
@@ -343,6 +408,30 @@ function PracticePage() {
                             ).filter(Boolean)}
                         />
                     </div>
+
+                    {/* Voicing Helper (when enabled) */}
+                    {showVoicing && (
+                        <motion.div
+                            initial={{ opacity: 0, y: -10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            className="flex-shrink-0"
+                        >
+                            <div className="mb-2 flex items-center gap-2">
+                                <div className="h-px flex-1 bg-slate-700" />
+                                <span className="text-xs text-slate-500 uppercase tracking-wide">
+                                    Current Chord: {currentVoicing.chord}
+                                </span>
+                                <div className="h-px flex-1 bg-slate-700" />
+                            </div>
+                            <VoicingVisualizer
+                                chord={currentVoicing.chord}
+                                voicing={currentVoicing.voicing}
+                                showDetails={true}
+                                compact={true}
+                            />
+                        </motion.div>
+                    )}
 
                     {/* Interactive piano */}
                     <div className="flex-shrink-0 p-4 bg-slate-800/50 rounded-xl border border-slate-700/50 overflow-x-auto">

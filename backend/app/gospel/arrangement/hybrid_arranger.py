@@ -10,7 +10,7 @@ Strategy:
 
 Usage:
     arranger = HybridGospelArranger(ai_percentage=0.5)  # 50% AI, 50% rules
-    arrangement = arranger.arrange_progression(chords, key, tempo, "worship")
+    arrangement = arranger.arrange_progression(chords, key, bpm, "worship")
 """
 
 from pathlib import Path
@@ -73,7 +73,7 @@ class HybridGospelArranger(GospelArranger):
         self,
         chords: list[str],
         key: str,
-        tempo: int,
+        bpm: int,
         application: str,
         time_signature: str = "4/4",
         use_ai: Optional[bool] = None
@@ -84,7 +84,7 @@ class HybridGospelArranger(GospelArranger):
         Args:
             chords: Chord progression
             key: Musical key
-            tempo: BPM
+            bpm: BPM
             application: "worship", "uptempo", "practice", "concert"
             time_signature: Time signature
             use_ai: Override ai_percentage (None = use configured percentage)
@@ -99,7 +99,7 @@ class HybridGospelArranger(GospelArranger):
             try:
                 # Generate with MLX AI
                 print(f"🤖 Generating with MLX AI (application: {application})")
-                return self._generate_with_ai(chords, key, tempo, application, time_signature)
+                return self._generate_with_ai(chords, key, bpm, application, time_signature)
             except Exception as e:
                 print(f"⚠️  AI generation failed: {e}")
                 if not self.fallback_to_rules:
@@ -109,14 +109,14 @@ class HybridGospelArranger(GospelArranger):
         # Generate with rules (original GospelArranger)
         print(f"📏 Generating with rules (application: {application})")
         return super().arrange_progression(
-            chords, key, tempo, application, time_signature
+            chords, key, bpm, application, time_signature
         )
 
     def _generate_with_ai(
         self,
         chords: list[str],
         key: str,
-        tempo: int,
+        bpm: int,
         application: str,
         time_signature: str
     ) -> Arrangement:
@@ -125,7 +125,7 @@ class HybridGospelArranger(GospelArranger):
         arrangement = self.mlx_generator.generate_arrangement(
             chord_progression=chords,
             key=key,
-            tempo=tempo,
+            tempo=bpm,
             application=application,
             num_bars=len(chords),
             creativity=0.8  # Allow creative variation

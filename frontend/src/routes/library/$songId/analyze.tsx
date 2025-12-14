@@ -26,6 +26,9 @@ import { analysisApi, libraryApi } from '../../../lib/api';
 import { ChordChart, type ChordData } from '../../../components/ChordChart';
 import { TensionCurve, type TensionPoint } from '../../../components/TensionCurve';
 import { ProgressionPatterns, type ProgressionPattern } from '../../../components/ProgressionPatterns';
+import { VoicingVisualizer, type VoicingInfo } from '../../../components/analysis/VoicingVisualizer';
+import { ReharmonizationPanel, type ReharmonizationSuggestion } from '../../../components/analysis/ReharmonizationPanel';
+import { ProgressionPatternDisplay, type ChordEvent as ChordEventType, type ProgressionPattern as PatternType } from '../../../components/analysis/ProgressionPatternDisplay';
 
 export const Route = createFileRoute('/library/$songId/analyze')({
     component: AnalyzePage,
@@ -118,6 +121,71 @@ function generateDemoPatterns(): ProgressionPattern[] {
             description: 'Same progression repeated with slight variation.',
         },
     ];
+}
+
+// Demo data for new piano learning components
+function generateDemoVoicing(): VoicingInfo {
+    return {
+        chord_symbol: 'Cmaj7',
+        voicing_type: 'drop_2',
+        notes: [48, 60, 64, 71, 67], // C3, C4, E4, B4, G4
+        note_names: ['C3', 'C4', 'E4', 'B4', 'G4'],
+        intervals: [12, 4, 7, -4],
+        width_semitones: 19,
+        inversion: 0,
+        has_root: true,
+        has_third: true,
+        has_seventh: true,
+        extensions: [],
+        complexity_score: 0.6,
+        hand_span_inches: 9.5,
+    };
+}
+
+function generateDemoReharmonizations(): ReharmonizationSuggestion[] {
+    return [
+        {
+            original_chord: 'Cmaj7',
+            suggested_chord: 'Em7',
+            reharmonization_type: 'diatonic_substitution',
+            explanation: 'Diatonic substitute - Em7 shares the tonic function with Cmaj7.',
+            jazz_level: 1,
+            voice_leading_quality: 'smooth',
+            voicing: { notes: [52, 64, 67, 71, 74] },
+        },
+        {
+            original_chord: 'Cmaj7',
+            suggested_chord: 'Am7',
+            reharmonization_type: 'diatonic_substitution',
+            explanation: 'Relative minor - Am7 is the vi chord in C major.',
+            jazz_level: 1,
+            voice_leading_quality: 'smooth',
+            voicing: { notes: [57, 64, 67, 69, 72] },
+        },
+    ];
+}
+
+function generateDemoProgressionPatterns(): PatternType[] {
+    return [
+        {
+            pattern_name: 'ii-V-I in C Major',
+            genre: 'jazz',
+            roman_numerals: ['ii', 'V', 'I'],
+            start_index: 0,
+            end_index: 2,
+            key: 'C major',
+            confidence: 0.95,
+            description: 'The most common jazz progression.',
+        },
+    ];
+}
+
+function generateDemoChordEvents(chords: ChordData[]): ChordEventType[] {
+    return chords.map(c => ({
+        time: c.startTime,
+        duration: c.endTime - c.startTime,
+        chord: `${c.root}${c.quality === 'maj' ? '' : 'm'}${c.quality.includes('7') ? '7' : ''}`,
+    }));
 }
 
 function AnalyzePage() {
@@ -400,6 +468,54 @@ function AnalyzePage() {
                     <ProgressionPatterns
                         patterns={patterns}
                         currentTime={currentTime}
+                    />
+                </motion.section>
+
+                {/* Detected Chord Progressions */}
+                <motion.section
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 }}
+                >
+                    <ProgressionPatternDisplay
+                        patterns={generateDemoProgressionPatterns()}
+                        totalDuration={song.duration}
+                        chords={generateDemoChordEvents(chords)}
+                        enableAudio={true}
+                    />
+                </motion.section>
+
+                {/* Chord Voicing Analysis */}
+                {chords.length > 0 && (
+                    <motion.section
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.5 }}
+                    >
+                        <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                            <Music className="w-5 h-5 text-cyan-400" />
+                            Chord Voicing Example
+                        </h2>
+
+                        <VoicingVisualizer
+                            chord="Cmaj7"
+                            voicing={generateDemoVoicing()}
+                            showDetails={true}
+                            compact={false}
+                        />
+                    </motion.section>
+                )}
+
+                {/* Reharmonization Suggestions */}
+                <motion.section
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.6 }}
+                >
+                    <ReharmonizationPanel
+                        originalChord="Cmaj7"
+                        suggestions={generateDemoReharmonizations()}
+                        enableAudio={true}
                     />
                 </motion.section>
             </div>

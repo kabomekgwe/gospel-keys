@@ -46,7 +46,7 @@ class GospelGeneratorService:
         # Initialize Gemini
         if settings.google_api_key:
             try:
-                self.gemini_model = genai.GenerativeModel('gemini-flash-latest')
+                self.gemini_model = genai.GenerativeModel('gemini-2.0-flash')
                 print("✅ Gemini API initialized")
             except Exception as e:
                 print(f"⚠️  Gemini initialization failed: {e}")

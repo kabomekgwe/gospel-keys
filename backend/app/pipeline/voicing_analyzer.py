@@ -10,7 +10,8 @@ from dataclasses import dataclass
 from enum import Enum
 import asyncio
 
-from app.schemas.transcription import Note, ChordEvent
+from app.gospel import Note
+from app.schemas.transcription import ChordEvent
 from app.theory.interval_utils import note_to_semitone, get_interval
 from app.theory.chord_library import get_chord_notes
 
@@ -74,15 +75,20 @@ def group_notes_by_time(notes: List[Note], chord: ChordEvent, window: float = 0.
         List of MIDI note numbers (sorted)
     """
     chord_notes = []
-    chord_start = chord.start_time
-    chord_end = chord.end_time
+    # Use start_time/end_time if available, otherwise calculate from time/duration
+    chord_start = chord.start_time if chord.start_time is not None else chord.time
+    chord_end = chord.end_time if chord.end_time is not None else (chord.time + chord.duration)
 
     for note in notes:
+        # Note uses time + duration (app.gospel.Note)
+        note_start = note.time
+        note_end = note.time + note.duration
+
         # Check if note overlaps with chord time window
         note_overlaps = (
-            (note.start_time >= chord_start - window and note.start_time <= chord_end) or
-            (note.end_time >= chord_start and note.end_time <= chord_end + window) or
-            (note.start_time <= chord_start and note.end_time >= chord_end)
+            (note_start >= chord_start - window and note_start <= chord_end) or
+            (note_end >= chord_start and note_end <= chord_end + window) or
+            (note_start <= chord_start and note_end >= chord_end)
         )
 
         if note_overlaps:

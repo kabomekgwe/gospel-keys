@@ -64,6 +64,22 @@ class GeneratorCategory(str, Enum):
     ANALYSIS = "analysis"
 
 
+class LickStyle(str, Enum):
+    """Jazz lick styles"""
+    BEBOP = "bebop"
+    BLUES = "blues"
+    MODERN = "modern"
+    GOSPEL = "gospel"
+    SWING = "swing"
+    BOSSA = "bossa"
+
+
+class ContextType(str, Enum):
+    """Lick generation context"""
+    CHORD = "chord"
+    PROGRESSION = "progression"
+
+
 # === Request Models ===
 
 class ProgressionRequest(BaseModel):
@@ -111,6 +127,18 @@ class SubstitutionRequest(BaseModel):
     chord: str = Field(..., description="Chord to substitute")
     context: Optional[list[str]] = Field(None, description="Surrounding chords for context")
     style: ProgressionStyle = Field(ProgressionStyle.JAZZ, description="Style context")
+
+
+class LicksRequest(BaseModel):
+    """Request for jazz licks generation"""
+    style: LickStyle = Field(..., description="Jazz style (bebop, blues, etc.)")
+    context_type: ContextType = Field(..., description="Single chord or progression")
+    context: str = Field(..., description="Chord symbol or space-separated progression")
+    difficulty: Difficulty = Field(Difficulty.INTERMEDIATE, description="Difficulty level")
+    length_bars: int = Field(2, ge=1, le=4, description="Length in bars")
+    starting_note: Optional[str] = Field(None, description="Suggested starting note")
+    direction: Optional[str] = Field("mixed", description="Melodic direction")
+    include_chromatics: bool = Field(True, description="Include chromatic approaches")
 
 
 # === Response Models ===
@@ -188,6 +216,38 @@ class SubstitutionResponse(BaseModel):
     original: str = Field(..., description="Original chord")
     substitutions: list[ChordInfo] = Field(..., description="Substitution options")
     explanations: dict[str, str] = Field(..., description="Explanation for each sub")
+
+
+class TheoryAnalysis(BaseModel):
+    """Music theory analysis of a lick"""
+    chord_tones: list[bool] = Field(..., description="Which notes are chord tones (vs passing)")
+    scale_degrees: list[str] = Field(..., description="Scale degree for each note (e.g., '1', 'b3', '5')")
+    approach_tones: list[str] = Field(..., description="Chromatic/diatonic approach notes explained")
+    voice_leading: str = Field(..., description="Explanation of melodic contour and direction")
+    harmonic_function: str = Field(..., description="How the lick outlines the harmony")
+
+
+class LickInfo(BaseModel):
+    """Information about a single lick"""
+    name: str = Field(..., description="Lick name/description")
+    notes: list[str] = Field(..., description="Note names in sequence")
+    midi_notes: list[int] = Field(..., description="MIDI note numbers")
+    fingering: Optional[list[int]] = Field(None, description="Suggested fingering")
+    start_note: str = Field(..., description="First note")
+    end_note: str = Field(..., description="Last note")
+    duration_beats: float = Field(..., description="Total duration in beats")
+    style_tags: list[str] = Field(..., description="Style characteristics")
+    theory_analysis: Optional[TheoryAnalysis] = Field(None, description="Music theory breakdown")
+
+
+class LicksResponse(BaseModel):
+    """Response with generated licks"""
+    context: str = Field(..., description="Chord or progression context")
+    style: str = Field(..., description="Style applied")
+    difficulty: str = Field(..., description="Difficulty level")
+    licks: list[LickInfo] = Field(..., description="Generated lick variations")
+    analysis: str = Field(..., description="How licks fit the harmonic context")
+    practice_tips: list[str] = Field(..., description="Performance suggestions")
 
 
 # === Category Response ===

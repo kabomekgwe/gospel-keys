@@ -48,6 +48,7 @@ class Settings(BaseSettings):
     
     # AI Config
     google_api_key: Optional[str] = None
+    anthropic_api_key: Optional[str] = None
 
     # Celery & Redis Config
     celery_broker_url: str = "redis://localhost:6379/0"
@@ -72,3 +73,10 @@ class Settings(BaseSettings):
 
 # Global settings instance
 settings = Settings()
+
+# IMPORTANT: Set API keys in os.environ for libraries that check it directly
+import os
+if settings.google_api_key and 'GOOGLE_API_KEY' not in os.environ:
+    os.environ['GOOGLE_API_KEY'] = settings.google_api_key
+if settings.anthropic_api_key and 'ANTHROPIC_API_KEY' not in os.environ:
+    os.environ['ANTHROPIC_API_KEY'] = settings.anthropic_api_key

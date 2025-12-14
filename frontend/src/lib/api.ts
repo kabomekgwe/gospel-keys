@@ -464,6 +464,8 @@ export type VoicingStyle = 'open' | 'closed' | 'drop2' | 'drop3' | 'rootless' | 
 export type ExerciseType = 'scales' | 'arpeggios' | 'progressions' | 'voice_leading' | 'rhythm';
 export type Difficulty = 'beginner' | 'intermediate' | 'advanced';
 export type GeneratorCategory = 'progressions' | 'voicings' | 'exercises' | 'analysis';
+export type LickStyle = 'bebop' | 'blues' | 'modern' | 'gospel' | 'swing' | 'bossa';
+export type ContextType = 'chord' | 'progression';
 
 // Request types
 export interface ProgressionRequest {
@@ -505,6 +507,17 @@ export interface SubstitutionRequest {
     chord: string;
     context?: string[];
     style: ProgressionStyle;
+}
+
+export interface LicksRequest {
+    style: LickStyle;
+    context_type: ContextType;
+    context: string;
+    difficulty: Difficulty;
+    length_bars?: number;
+    starting_note?: string;
+    direction?: 'ascending' | 'descending' | 'both' | 'mixed';
+    include_chromatics?: boolean;
 }
 
 // Response types
@@ -572,6 +585,35 @@ export interface SubstitutionResponse {
     original: string;
     substitutions: ChordInfo[];
     explanations: Record<string, string>;
+}
+
+export interface TheoryAnalysis {
+    chord_tones: boolean[];
+    scale_degrees: string[];
+    approach_tones: string[];
+    voice_leading: string;
+    harmonic_function: string;
+}
+
+export interface LickInfo {
+    name: string;
+    notes: string[];
+    midi_notes: number[];
+    fingering?: number[];
+    start_note: string;
+    end_note: string;
+    duration_beats: number;
+    style_tags: string[];
+    theory_analysis?: TheoryAnalysis;
+}
+
+export interface LicksResponse {
+    context: string;
+    style: string;
+    difficulty: string;
+    licks: LickInfo[];
+    analysis: string;
+    practice_tips: string[];
 }
 
 export interface GeneratorInfo {
@@ -643,6 +685,15 @@ export const aiApi = {
             body: JSON.stringify(request),
         });
         return handleResponse<SubstitutionResponse>(response);
+    },
+
+    generateLicks: async (request: LicksRequest): Promise<LicksResponse> => {
+        const response = await fetch(`${API_BASE_URL}/api/v1/ai/licks`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(request),
+        });
+        return handleResponse<LicksResponse>(response);
     },
 };
 
@@ -872,6 +923,24 @@ export const curriculumApi = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data),
+        });
+        return handleResponse<CurriculumExercise>(response);
+    },
+
+    // Add Lick to Practice
+    addLickToPractice: async (lick: {
+        lick_name: string;
+        notes: string[];
+        midi_notes: number[];
+        context: string;
+        style: string;
+        difficulty: string;
+        duration_beats: number;
+    }): Promise<CurriculumExercise> => {
+        const response = await fetch(`${API_BASE_URL}/api/v1/curriculum/add-lick-to-practice`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(lick),
         });
         return handleResponse<CurriculumExercise>(response);
     },

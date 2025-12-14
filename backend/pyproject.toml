@@ -36,7 +36,9 @@ dependencies = [
     "scikit-learn>=1.4.0", # Genre classification
     # System dependencies
     "setuptools>=80.9.0",
+    # AI APIs
     "google-generativeai>=0.3.0",
+    "anthropic>=0.39.0",
     # Auth
     "python-jose[cryptography]>=3.3.0",
     "passlib[bcrypt]>=1.7.4",
@@ -61,7 +63,7 @@ dependencies = [
     "mlx-lm>=0.28.4",
     "mido>=1.3.3",
     # AI Music Generation - Using MLX (M-series optimized, no dependency conflicts)
-    "basic-pitch>=0.4.0",
+    # "basic-pitch>=0.4.0",  # Requires TensorFlow, not compatible with Python 3.13 yet
 ]
 
 [project.optional-dependencies]

@@ -15,6 +15,7 @@ from app.schemas.ai import (
     VoiceLeadingRequest, VoiceLeadingResponse,
     ExerciseRequest, ExerciseResponse,
     SubstitutionRequest, SubstitutionResponse,
+    LicksRequest, LicksResponse,
     GeneratorsListResponse,
     UsageStatsResponse, ModelUsageStats, TaskTypeStats,
 )
@@ -84,6 +85,18 @@ async def get_substitutions(request: SubstitutionRequest):
         return await ai_generator_service.get_substitutions(request)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Substitution lookup failed: {str(e)}")
+
+
+@router.post("/licks", response_model=LicksResponse)
+async def generate_licks(request: LicksRequest):
+    """Generate jazz licks for chord or progression context"""
+    try:
+        return await ai_generator_service.generate_licks(request)
+    except Exception as e:
+        import traceback
+        print(f"ERROR in generate_licks: {str(e)}")
+        print(traceback.format_exc())
+        raise HTTPException(status_code=500, detail=f"Lick generation failed: {str(e)}")
 
 
 @router.get("/usage/stats", response_model=UsageStatsResponse)

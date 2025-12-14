@@ -33,6 +33,19 @@ class PerformanceAnalysis:
     recommended_actions: List[str]  # List of recommended adaptations
     total_exercises: int
     reviewed_exercises: int
+    recent_performance_trend: str  # 'improving', 'declining', 'stable'
+    consecutive_struggles: int  # Number of consecutive low-quality completions
+    skill_area_trends: Dict[str, float]  # Skill area -> trend score (-1 to 1)
+
+
+@dataclass
+class RealTimePerformance:
+    """Real-time performance metrics from recent completions"""
+    last_5_quality_scores: List[float]
+    avg_recent_quality: float
+    trend: str  # 'improving', 'declining', 'stable'
+    needs_difficulty_adjustment: bool
+    recommended_difficulty_change: Optional[str]  # 'increase', 'decrease', None
 
 
 class AdaptiveCurriculumService:
@@ -125,6 +138,7 @@ class AdaptiveCurriculumService:
 
             weak_skill_areas = []
             strong_skill_areas = []
+            skill_area_trends = {}
 
             for skill_type, scores in skill_performance.items():
                 avg_score = sum(scores) / len(scores) if scores else 2.5
@@ -132,6 +146,39 @@ class AdaptiveCurriculumService:
                     weak_skill_areas.append(skill_type)
                 elif avg_score > self.MASTERY_EASE_THRESHOLD:
                     strong_skill_areas.append(skill_type)
+
+                # Calculate trend for this skill area (if enough data)
+                if len(scores) >= 3:
+                    mid = len(scores) // 2
+                    first_half = sum(scores[:mid]) / mid
+                    second_half = sum(scores[mid:]) / (len(scores) - mid)
+                    trend_score = (second_half - first_half) / 5.0  # Normalize to -1 to 1
+                    skill_area_trends[skill_type] = min(1.0, max(-1.0, trend_score))
+
+            # Calculate recent performance trend and consecutive struggles
+            recent_exercises = [ex for ex in exercises if ex.last_reviewed_at and ex.last_reviewed_at >= cutoff_date]
+            recent_exercises.sort(key=lambda x: x.last_reviewed_at)
+
+            recent_performance_trend = 'stable'
+            consecutive_struggles = 0
+
+            if len(recent_exercises) >= 3:
+                recent_scores = [ex.ease_factor for ex in recent_exercises]
+                mid = len(recent_scores) // 2
+                first_half_avg = sum(recent_scores[:mid]) / mid if mid > 0 else 2.5
+                second_half_avg = sum(recent_scores[mid:]) / (len(recent_scores) - mid)
+
+                if second_half_avg - first_half_avg > 0.3:
+                    recent_performance_trend = 'improving'
+                elif second_half_avg - first_half_avg < -0.3:
+                    recent_performance_trend = 'declining'
+
+                # Count consecutive low-quality completions
+                for ex in reversed(recent_exercises):
+                    if ex.ease_factor < self.STRUGGLING_EASE_THRESHOLD:
+                        consecutive_struggles += 1
+                    else:
+                        break
 
             # Generate recommendations
             recommended_actions = self._generate_recommendations(
@@ -151,7 +198,10 @@ class AdaptiveCurriculumService:
                 strong_skill_areas=strong_skill_areas,
                 recommended_actions=recommended_actions,
                 total_exercises=total_exercises,
-                reviewed_exercises=reviewed_exercises
+                reviewed_exercises=reviewed_exercises,
+                recent_performance_trend=recent_performance_trend,
+                consecutive_struggles=consecutive_struggles,
+                skill_area_trends=skill_area_trends
             )
 
         except Exception as e:
@@ -323,5 +373,193 @@ class AdaptiveCurriculumService:
             strong_skill_areas=[],
             recommended_actions=[],
             total_exercises=0,
-            reviewed_exercises=0
+            reviewed_exercises=0,
+            recent_performance_trend='stable',
+            consecutive_struggles=0,
+            skill_area_trends={}
         )
+
+    async def get_real_time_performance(
+        self,
+        user_id: int,
+        exercise_count: int = 5
+    ) -> RealTimePerformance:
+        """Analyze user's most recent exercise completions for real-time difficulty adjustment
+
+        Args:
+            user_id: User ID
+            exercise_count: Number of recent exercises to analyze (default 5)
+
+        Returns:
+            RealTimePerformance with trend analysis and recommendations
+        """
+        try:
+            # Get user's active curriculum
+            result = await self.db.execute(
+                select(Curriculum)
+                .where(and_(
+                    Curriculum.user_id == user_id,
+                    Curriculum.status == 'active'
+                ))
+                .order_by(Curriculum.created_at.desc())
+            )
+            curriculum = result.scalar_one_or_none()
+
+            if not curriculum:
+                return self._get_default_real_time_performance()
+
+            # Get last N completed exercises ordered by completion time
+            result = await self.db.execute(
+                select(CurriculumExercise)
+                .join(CurriculumLesson)
+                .join(CurriculumModule)
+                .where(and_(
+                    CurriculumModule.curriculum_id == curriculum.id,
+                    CurriculumExercise.last_reviewed_at.isnot(None)
+                ))
+                .order_by(CurriculumExercise.last_reviewed_at.desc())
+                .limit(exercise_count)
+            )
+            recent_exercises = result.scalars().all()
+
+            if len(recent_exercises) < 3:  # Need at least 3 for trend analysis
+                return self._get_default_real_time_performance()
+
+            # Extract quality scores (using ease_factor as proxy: 2.5 = baseline, convert to 0-5 scale)
+            quality_scores = [
+                min(5.0, max(0.0, (ex.ease_factor - 1.0) * 2.0))  # Convert ease_factor to 0-5 scale
+                for ex in recent_exercises
+            ]
+            quality_scores.reverse()  # Chronological order
+
+            avg_recent_quality = sum(quality_scores) / len(quality_scores)
+
+            # Determine trend (comparing first half vs second half)
+            mid_point = len(quality_scores) // 2
+            first_half_avg = sum(quality_scores[:mid_point]) / mid_point if mid_point > 0 else avg_recent_quality
+            second_half_avg = sum(quality_scores[mid_point:]) / (len(quality_scores) - mid_point)
+
+            trend_diff = second_half_avg - first_half_avg
+
+            if trend_diff > 0.3:
+                trend = 'improving'
+            elif trend_diff < -0.3:
+                trend = 'declining'
+            else:
+                trend = 'stable'
+
+            # Determine if difficulty adjustment is needed
+            needs_adjustment = False
+            recommended_change = None
+
+            if avg_recent_quality < 2.5 and trend in ['declining', 'stable']:
+                needs_adjustment = True
+                recommended_change = 'decrease'
+            elif avg_recent_quality > 4.2 and trend in ['improving', 'stable']:
+                needs_adjustment = True
+                recommended_change = 'increase'
+
+            return RealTimePerformance(
+                last_5_quality_scores=quality_scores,
+                avg_recent_quality=avg_recent_quality,
+                trend=trend,
+                needs_difficulty_adjustment=needs_adjustment,
+                recommended_difficulty_change=recommended_change
+            )
+
+        except Exception as e:
+            logger.error(f"Failed to get real-time performance for user {user_id}: {e}")
+            return self._get_default_real_time_performance()
+
+    def _get_default_real_time_performance(self) -> RealTimePerformance:
+        """Get default real-time performance when data is insufficient"""
+        return RealTimePerformance(
+            last_5_quality_scores=[],
+            avg_recent_quality=2.5,
+            trend='stable',
+            needs_difficulty_adjustment=False,
+            recommended_difficulty_change=None
+        )
+
+    async def auto_adjust_difficulty(
+        self,
+        user_id: int,
+        real_time_perf: RealTimePerformance
+    ) -> Dict:
+        """Automatically adjust curriculum difficulty based on real-time performance
+
+        Args:
+            user_id: User ID
+            real_time_perf: Real-time performance analysis
+
+        Returns:
+            Dict with adjustment details
+        """
+        try:
+            if not real_time_perf.needs_difficulty_adjustment:
+                return {
+                    "adjusted": False,
+                    "reason": "Performance within acceptable range"
+                }
+
+            # Get user's active curriculum
+            result = await self.db.execute(
+                select(Curriculum)
+                .where(and_(
+                    Curriculum.user_id == user_id,
+                    Curriculum.status == 'active'
+                ))
+                .order_by(Curriculum.created_at.desc())
+            )
+            curriculum = result.scalar_one_or_none()
+
+            if not curriculum:
+                return {"adjusted": False, "reason": "No active curriculum"}
+
+            changes = []
+
+            if real_time_perf.recommended_difficulty_change == 'decrease':
+                # Reduce difficulty: increase SRS intervals (more time to practice)
+                await self._adjust_srs_intervals(curriculum.id, factor=1.3)
+                changes.append("Increased practice intervals by 30% to allow more time for mastery")
+
+                # Log the adjustment
+                adaptation_log = {
+                    "timestamp": datetime.utcnow().isoformat(),
+                    "type": "auto_difficulty_decrease",
+                    "trigger": f"Recent avg quality: {real_time_perf.avg_recent_quality:.2f}",
+                    "changes": changes
+                }
+
+            elif real_time_perf.recommended_difficulty_change == 'increase':
+                # Increase difficulty: decrease SRS intervals (faster progression)
+                await self._adjust_srs_intervals(curriculum.id, factor=0.7)
+                changes.append("Decreased practice intervals by 30% to accelerate progression")
+
+                adaptation_log = {
+                    "timestamp": datetime.utcnow().isoformat(),
+                    "type": "auto_difficulty_increase",
+                    "trigger": f"Recent avg quality: {real_time_perf.avg_recent_quality:.2f}",
+                    "changes": changes
+                }
+
+            # Update curriculum adaptation history
+            history = json.loads(curriculum.adaptation_history_json)
+            history.append(adaptation_log)
+            curriculum.adaptation_history_json = json.dumps(history)
+            curriculum.last_adapted_at = datetime.utcnow()
+
+            await self.db.commit()
+
+            logger.info(f"Auto-adjusted difficulty for user {user_id}: {real_time_perf.recommended_difficulty_change}")
+
+            return {
+                "adjusted": True,
+                "change_type": real_time_perf.recommended_difficulty_change,
+                "changes_applied": changes,
+                "timestamp": datetime.utcnow().isoformat()
+            }
+
+        except Exception as e:
+            logger.error(f"Failed to auto-adjust difficulty for user {user_id}: {e}")
+            return {"adjusted": False, "reason": str(e)}

@@ -116,6 +116,17 @@ class ExerciseCompleteRequest(BaseModel):
     duration_seconds: Optional[int] = Field(ge=0, description="Time spent practicing")
 
 
+class AddLickToPracticeRequest(BaseModel):
+    """Request to add a lick to practice queue"""
+    lick_name: str = Field(..., description="Lick name/description")
+    notes: List[str] = Field(..., description="Note names")
+    midi_notes: List[int] = Field(..., description="MIDI note numbers")
+    context: str = Field(..., description="Chord or progression context")
+    style: str = Field(..., description="Jazz style")
+    difficulty: str = Field(..., description="Difficulty level")
+    duration_beats: float = Field(..., description="Duration in beats")
+
+
 # ============================================================================
 # Lesson Schemas
 # ============================================================================

@@ -239,7 +239,7 @@ function SongDetailPage() {
             {/* Tab content */}
             <div className="flex-1 overflow-hidden">
                 {activeTab === 'overview' && (
-                    <OverviewTab song={song} />
+                    <OverviewTab song={song} onNavigateToAnalysis={() => setActiveTab('analysis')} />
                 )}
 
                 {activeTab === 'piano-roll' && (
@@ -350,7 +350,11 @@ function SongDetailPage() {
 }
 
 // Overview tab content
-function OverviewTab({ song }: { song: SongDetail }) {
+function OverviewTab({ song, onNavigateToAnalysis }: { song: SongDetail; onNavigateToAnalysis: () => void }) {
+    // Demo data - would come from API in production
+    const avgVoicingComplexity = 0.65; // 0-1 scale
+    const detectedPatternsCount = 3;
+
     return (
         <div className="p-6 overflow-y-auto">
             <div className="max-w-4xl mx-auto grid gap-6 md:grid-cols-2">
@@ -399,11 +403,79 @@ function OverviewTab({ song }: { song: SongDetail }) {
                     </div>
                 </motion.div>
 
-                {/* Source info */}
+                {/* Quick Analysis card */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2 }}
+                    className="card p-6 md:col-span-2"
+                >
+                    <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-lg font-semibold text-white">Quick Analysis</h3>
+                        <button
+                            onClick={onNavigateToAnalysis}
+                            className="text-sm text-cyan-400 hover:text-cyan-300 transition-colors flex items-center gap-1"
+                        >
+                            View Full Analysis
+                            <BarChart2 className="w-4 h-4" />
+                        </button>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-6">
+                        <div>
+                            <div className="flex items-center gap-2 mb-2">
+                                <Layers className="w-5 h-5 text-violet-400" />
+                                <span className="text-slate-400 text-sm">Voicing Complexity</span>
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <div className="flex-1 h-3 bg-slate-800 rounded-full overflow-hidden">
+                                    <div
+                                        className="h-full bg-gradient-to-r from-emerald-500 to-violet-500 transition-all duration-500"
+                                        style={{ width: `${avgVoicingComplexity * 100}%` }}
+                                    />
+                                </div>
+                                <span className="text-lg font-bold text-white">
+                                    {Math.round(avgVoicingComplexity * 100)}%
+                                </span>
+                            </div>
+                            <p className="text-xs text-slate-500 mt-2">
+                                {avgVoicingComplexity < 0.4 ? 'Simple voicings' :
+                                    avgVoicingComplexity < 0.7 ? 'Moderate complexity' :
+                                        'Advanced voicings'}
+                            </p>
+                        </div>
+
+                        <div>
+                            <div className="flex items-center gap-2 mb-2">
+                                <BarChart2 className="w-5 h-5 text-cyan-400" />
+                                <span className="text-slate-400 text-sm">Detected Patterns</span>
+                            </div>
+                            <div className="flex items-baseline gap-2">
+                                <span className="text-3xl font-bold text-cyan-400">
+                                    {detectedPatternsCount}
+                                </span>
+                                <span className="text-sm text-slate-500">progressions</span>
+                            </div>
+                            <p className="text-xs text-slate-500 mt-2">
+                                Including jazz, pop, and classical patterns
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="mt-4 p-3 bg-slate-800/50 rounded-lg border border-slate-700/50">
+                        <p className="text-xs text-slate-400 leading-relaxed">
+                            <strong className="text-slate-300">Tip:</strong> Switch to the Analysis tab to explore
+                            detailed chord voicings, reharmonization suggestions, and progression patterns with interactive
+                            piano visualizations.
+                        </p>
+                    </div>
+                </motion.div>
+
+                {/* Source info */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
                     className="card p-6 md:col-span-2"
                 >
                     <h3 className="text-lg font-semibold text-white mb-4">Source</h3>

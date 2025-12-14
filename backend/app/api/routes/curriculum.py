@@ -10,6 +10,8 @@ from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.api.deps import get_current_user
+from app.database.models import User
 from app.database.session import get_db
 from app.database.curriculum_models import (
     UserSkillProfile,
@@ -29,6 +31,7 @@ from app.schemas.curriculum import (
     CurriculumLessonResponse,
     CurriculumExerciseResponse,
     ExerciseCompleteRequest,
+    AddLickToPracticeRequest,
     DailyPracticeQueue,
     DailyPracticeItem,
     SkillLevels,
@@ -426,7 +429,7 @@ async def get_lesson_tutorial(
 @router.get("/performance-analysis")
 async def get_performance_analysis(
     lookback_days: int = 7,
-    current_user: User = Depends(get_current_active_user),
+    current_user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_db)
 ):
     """Get performance analysis for current user
@@ -467,7 +470,7 @@ async def get_performance_analysis(
 
 @router.post("/apply-adaptations")
 async def apply_curriculum_adaptations(
-    current_user: User = Depends(get_current_active_user),
+    current_user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_db)
 ):
     """Apply recommended adaptations to user's active curriculum
@@ -527,7 +530,7 @@ async def apply_curriculum_adaptations(
 
 @router.get("/assessments/current")
 async def get_current_assessment(
-    current_user: User = Depends(get_current_active_user),
+    current_user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_db)
 ):
     """Get current active assessment for user
@@ -577,7 +580,7 @@ async def get_current_assessment(
 async def submit_assessment(
     assessment_id: str,
     responses: dict,
-    current_user: User = Depends(get_current_active_user),
+    current_user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_db)
 ):
     """Submit assessment responses and trigger evaluation + feedback loop
@@ -648,7 +651,7 @@ async def submit_assessment(
 
 @router.post("/generate-diagnostic-assessment")
 async def generate_diagnostic_assessment(
-    current_user: User = Depends(get_current_active_user),
+    current_user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_db)
 ):
     """Generate initial diagnostic assessment for user
@@ -685,7 +688,7 @@ async def generate_diagnostic_assessment(
 @router.post("/curricula/{curriculum_id}/check-milestones")
 async def check_milestone_assessments(
     curriculum_id: str,
-    current_user: User = Depends(get_current_active_user),
+    current_user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_db)
 ):
     """Check and trigger milestone assessments for a curriculum
@@ -729,3 +732,270 @@ async def check_milestone_assessments(
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# =============================================================================
+# AI Coach Endpoints
+# =============================================================================
+
+@router.post("/ai-coach/chat")
+async def chat_with_ai_coach(
+    message: dict,
+    user_id: int = Depends(get_current_user_id),
+    service: CurriculumService = Depends(get_curriculum_service),
+    session: AsyncSession = Depends(get_db)
+):
+    """Chat with AI coach for personalized guidance
+
+    Args:
+        message: Dict with 'text' (user message) and optional 'context' (current exercise, lesson, etc.)
+        user_id: Current user ID
+        service: Curriculum service
+        session: Database session
+
+    Returns:
+        AI coach response with personalized guidance
+    """
+    from app.services.ai_orchestrator import ai_orchestrator
+    from app.services.adaptive_curriculum_service import AdaptiveCurriculumService
+    from sqlalchemy import select
+    import logging
+
+    logger = logging.getLogger(__name__)
+
+    try:
+        user_message = message.get('text', '')
+        context = message.get('context', {})
+
+        if not user_message:
+            raise HTTPException(status_code=400, detail="Message text required")
+
+        # Get user's active curriculum for context
+        result = await session.execute(
+            select(Curriculum)
+            .where(Curriculum.user_id == user_id)
+            .where(Curriculum.status == 'active')
+            .order_by(Curriculum.created_at.desc())
+        )
+        curriculum = result.scalar_one_or_none()
+
+        # Get user's skill profile
+        profile = await service.get_or_create_skill_profile(user_id)
+        skill_levels = json.loads(profile.skill_levels_json or '{}')
+
+        # Get recent performance data
+        adaptive_service = AdaptiveCurriculumService(session)
+        performance = await adaptive_service.analyze_user_performance(user_id, lookback_days=7)
+
+        # Build context-aware prompt for AI coach
+        coach_prompt = f"""You are a warm, encouraging piano coach having a conversation with a student.
+
+## Student Context
+**Skill Levels:**
+- Technical Ability: {skill_levels.get('technical_ability', 5)}/10
+- Theory Knowledge: {skill_levels.get('theory_knowledge', 5)}/10
+- Rhythm: {skill_levels.get('rhythm_competency', 5)}/10
+- Ear Training: {skill_levels.get('ear_training', 5)}/10
+- Improvisation: {skill_levels.get('improvisation', 5)}/10
+
+**Recent Performance:**
+- Average Quality: {performance.avg_quality_score:.1f}/5.0
+- Trend: {performance.recent_performance_trend}
+- Completion Rate: {performance.completion_rate * 100:.0f}%
+"""
+
+        if curriculum:
+            coach_prompt += f"""
+**Current Curriculum:**
+- Title: {curriculum.title}
+- Week {curriculum.current_week} of {curriculum.duration_weeks}
+"""
+
+        if performance.weak_skill_areas:
+            coach_prompt += f"\n**Areas to Support:** {', '.join(performance.weak_skill_areas)}"
+
+        if performance.strong_skill_areas:
+            coach_prompt += f"\n**Strengths to Celebrate:** {', '.join(performance.strong_skill_areas)}"
+
+        if context.get('current_exercise'):
+            coach_prompt += f"\n\n**Current Exercise:** {context['current_exercise']}"
+
+        if context.get('current_lesson'):
+            coach_prompt += f"\n**Current Lesson:** {context['current_lesson']}"
+
+        coach_prompt += f"""
+
+**Student's Question/Message:**
+"{user_message}"
+
+**Instructions:**
+1. Respond warmly and personally, addressing their specific situation
+2. Reference their actual skill levels and recent performance
+3. If they're struggling, provide specific, actionable tips
+4. If they're doing well, celebrate and suggest next challenges
+5. Keep responses conversational (2-4 paragraphs)
+6. Be encouraging but realistic
+7. Provide concrete practice suggestions when relevant
+
+Respond as if you're their personal piano coach who knows them well."""
+
+        # Generate AI response using Gemini
+        try:
+            model = ai_orchestrator.gemini_models[ai_orchestrator.select_gemini_model(7)]
+            gemini_response = await model.generate_content_async(
+                coach_prompt,
+                generation_config={
+                    "temperature": 0.9,
+                    "max_output_tokens": 512,
+                }
+            )
+            response_text = gemini_response.text
+        except Exception as e:
+            logger.warning(f"Gemini generation failed, using fallback: {e}")
+            # Fallback response
+            response_text = "I'm here to help! Could you tell me more about what you're working on?"
+
+        return {
+            "response": response_text,
+            "context_used": {
+                "skill_level": skill_levels.get('technical_ability', 5),
+                "recent_quality": performance.avg_quality_score,
+                "trend": performance.recent_performance_trend
+            },
+            "timestamp": datetime.utcnow().isoformat()
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"AI Coach error: {e}")
+        raise HTTPException(status_code=500, detail=f"AI Coach error: {str(e)}")
+
+
+@router.post("/add-lick-to-practice", response_model=CurriculumExerciseResponse)
+async def add_lick_to_practice(
+    request: AddLickToPracticeRequest,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+    curriculum_service: CurriculumService = Depends(get_curriculum_service)
+):
+    """Add a generated lick to the user's practice queue"""
+    from sqlalchemy import select
+
+    try:
+        # Get or create active curriculum
+        result = await db.execute(
+            select(Curriculum)
+            .where(Curriculum.user_id == current_user.id)
+            .where(Curriculum.status == "active")
+        )
+        curriculum = result.scalar_one_or_none()
+
+        if not curriculum:
+            # Create a default curriculum for practice queue
+            curriculum = Curriculum(
+                user_id=current_user.id,
+                title="Practice Queue",
+                description="Collection of licks and exercises for practice",
+                duration_weeks=52,  # One year
+                status="active"
+            )
+            db.add(curriculum)
+            await db.flush()
+
+        # Get or create "Practice Queue" module
+        result = await db.execute(
+            select(CurriculumModule)
+            .where(CurriculumModule.curriculum_id == curriculum.id)
+            .where(CurriculumModule.title == "Licks Practice")
+        )
+        module = result.scalar_one_or_none()
+
+        if not module:
+            module = CurriculumModule(
+                curriculum_id=curriculum.id,
+                title="Licks Practice",
+                description="Jazz licks for practice",
+                order_index=0,
+                duration_weeks=52
+            )
+            db.add(module)
+            await db.flush()
+
+        # Get or create "Licks" lesson
+        result = await db.execute(
+            select(CurriculumLesson)
+            .where(CurriculumLesson.module_id == module.id)
+            .where(CurriculumLesson.title == "Jazz Licks")
+        )
+        lesson = result.scalar_one_or_none()
+
+        if not lesson:
+            lesson = CurriculumLesson(
+                module_id=module.id,
+                title="Jazz Licks",
+                description="Generated jazz licks",
+                week_number=1,
+                theory_content_json="{}",
+                concepts_json="[]",
+                estimated_duration_minutes=30
+            )
+            db.add(lesson)
+            await db.flush()
+
+        # Create lick exercise
+        lick_content = {
+            "notes": request.notes,
+            "midi_notes": request.midi_notes,
+            "context": request.context,
+            "style": request.style,
+            "duration_beats": request.duration_beats
+        }
+
+        exercise = CurriculumExercise(
+            lesson_id=lesson.id,
+            title=request.lick_name,
+            description=f"{request.style.title()} lick over {request.context}",
+            order_index=0,
+            exercise_type="lick",
+            content_json=json.dumps(lick_content),
+            difficulty=request.difficulty,
+            estimated_duration_minutes=5,
+            # Set for immediate practice (SRS defaults)
+            next_review_at=datetime.utcnow(),
+            interval_days=1.0,
+            ease_factor=2.5,
+            repetition_count=0
+        )
+
+        db.add(exercise)
+        await db.commit()
+        await db.refresh(exercise)
+
+        # Convert to response format
+        return CurriculumExerciseResponse(
+            id=exercise.id,
+            lesson_id=exercise.lesson_id,
+            title=exercise.title,
+            description=exercise.description,
+            order_index=exercise.order_index,
+            exercise_type=exercise.exercise_type,
+            content=json.loads(exercise.content_json),
+            difficulty=exercise.difficulty,
+            estimated_duration_minutes=exercise.estimated_duration_minutes,
+            target_bpm=exercise.target_bpm,
+            practice_count=exercise.practice_count,
+            best_score=exercise.best_score,
+            is_mastered=exercise.is_mastered,
+            mastered_at=exercise.mastered_at,
+            next_review_at=exercise.next_review_at,
+            last_reviewed_at=exercise.last_reviewed_at,
+            interval_days=exercise.interval_days,
+            ease_factor=exercise.ease_factor,
+            repetition_count=exercise.repetition_count,
+            created_at=exercise.created_at
+        )
+
+    except Exception as e:
+        await db.rollback()
+        raise HTTPException(status_code=500, detail=f"Failed to add lick to practice queue: {str(e)}")

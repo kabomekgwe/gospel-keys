@@ -19,6 +19,8 @@ export interface PianoProps {
     activeNotes?: number[];
     /** Notes highlighted for learning (MIDI pitches) */
     targetNotes?: number[];
+    /** Custom colors for specific notes (MIDI pitch → color) */
+    noteColors?: Map<number, string>;
     /** Callback when a key is clicked */
     onNotePlay?: (pitch: number) => void;
     /** Callback when a key is released */
@@ -29,6 +31,8 @@ export interface PianoProps {
     orientation?: 'horizontal' | 'vertical';
     /** Key height/width in pixels */
     keySize?: number;
+    /** Additional CSS classes */
+    className?: string;
 }
 
 const NOTE_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
@@ -61,11 +65,13 @@ export function Piano({
     maxPitch = 84, // C6
     activeNotes = [],
     targetNotes = [],
+    noteColors,
     onNotePlay,
     onNoteStop,
     showLabels = true,
     orientation = 'horizontal',
     keySize = 40,
+    className = '',
 }: PianoProps) {
     // Build key data
     const keys = useMemo(() => {
@@ -105,6 +111,14 @@ export function Piano({
     const getKeyStyle = useCallback((pitch: number, isWhite: boolean) => {
         const isActive = activeNotes.includes(pitch);
         const isTarget = targetNotes.includes(pitch);
+        const customColor = noteColors?.get(pitch);
+
+        // Custom color takes precedence
+        if (customColor) {
+            return isWhite
+                ? `bg-gradient-to-b from-${customColor}-300 to-${customColor}-400 shadow-md shadow-${customColor}-400/30`
+                : `bg-gradient-to-b from-${customColor}-500 to-${customColor}-600`;
+        }
 
         if (isActive) {
             return isWhite
@@ -119,7 +133,7 @@ export function Piano({
         return isWhite
             ? 'bg-gradient-to-b from-slate-100 to-slate-200 hover:from-slate-50 hover:to-slate-100'
             : 'bg-gradient-to-b from-slate-800 to-slate-900 hover:from-slate-700 hover:to-slate-800';
-    }, [activeNotes, targetNotes]);
+    }, [activeNotes, targetNotes, noteColors]);
 
     // Calculate black key positions
     const getBlackKeyPosition = useCallback((pitch: number): number => {
@@ -134,9 +148,26 @@ export function Piano({
         return whiteKeyIndex * whiteKeyWidth - blackKeyWidth * offset;
     }, [minPitch, whiteKeyWidth, blackKeyWidth]);
 
+    // Handle keyboard events for accessibility
+    const handleKeyDown = useCallback((event: React.KeyboardEvent, pitch: number) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            onNotePlay?.(pitch);
+        }
+    }, [onNotePlay]);
+
+    const handleKeyUp = useCallback((event: React.KeyboardEvent, pitch: number) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            onNoteStop?.(pitch);
+        }
+    }, [onNoteStop]);
+
     return (
         <div
-            className={`relative select-none ${isVertical ? 'flex flex-col' : ''}`}
+            className={`relative select-none ${isVertical ? 'flex flex-col' : ''} ${className}`}
+            role="application"
+            aria-label="Piano Keyboard"
             style={{
                 width: isVertical ? whiteKeyHeight : totalWidth,
                 height: isVertical ? totalWidth : whiteKeyHeight,
@@ -154,11 +185,13 @@ export function Piano({
                     return (
                         <motion.button
                             key={pitch}
+                            type="button"
                             className={`
                 relative flex items-end justify-center pb-2
                 border border-slate-300
                 rounded-b-md
                 transition-colors duration-75
+                focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2
                 ${getKeyStyle(pitch, true)}
               `}
                             style={{
@@ -168,6 +201,11 @@ export function Piano({
                             onMouseDown={() => handleMouseDown(pitch)}
                             onMouseUp={() => handleMouseUp(pitch)}
                             onMouseLeave={() => handleMouseUp(pitch)}
+                            onKeyDown={(e) => handleKeyDown(e, pitch)}
+                            onKeyUp={(e) => handleKeyUp(e, pitch)}
+                            aria-label={`${getNoteName(pitch)} key${isActive ? ', active' : ''}`}
+                            aria-pressed={isActive}
+                            tabIndex={0}
                             whileTap={{ scale: 0.98 }}
                         >
                             {showLabels && isC && (
@@ -207,11 +245,13 @@ export function Piano({
                     return (
                         <motion.button
                             key={pitch}
+                            type="button"
                             className={`
                 absolute flex items-end justify-center pb-1
                 rounded-b-md
                 shadow-md
                 transition-colors duration-75
+                focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2
                 ${getKeyStyle(pitch, false)}
               `}
                             style={{
@@ -223,6 +263,11 @@ export function Piano({
                             onMouseDown={() => handleMouseDown(pitch)}
                             onMouseUp={() => handleMouseUp(pitch)}
                             onMouseLeave={() => handleMouseUp(pitch)}
+                            onKeyDown={(e) => handleKeyDown(e, pitch)}
+                            onKeyUp={(e) => handleKeyUp(e, pitch)}
+                            aria-label={`${getNoteName(pitch)} key${isActive ? ', active' : ''}`}
+                            aria-pressed={isActive}
+                            tabIndex={0}
                             whileTap={{ scale: 0.95 }}
                         >
                             {/* Active indicator glow */}
