@@ -244,10 +244,12 @@ class CurriculumService:
     # =========================================================================
     
     async def get_active_curriculum(self, user_id: int) -> Optional[Curriculum]:
-        """Get user's active curriculum with modules"""
+        """Get user's active curriculum with modules (returns most recent if multiple exist)"""
         result = await self.db.execute(
             select(Curriculum)
-            .options(selectinload(Curriculum.modules))
+            .options(
+                selectinload(Curriculum.modules).selectinload(CurriculumModule.lessons)
+            )
             .where(
                 and_(
                     Curriculum.user_id == user_id,
@@ -255,8 +257,9 @@ class CurriculumService:
                 )
             )
             .order_by(Curriculum.created_at.desc())
+            .limit(1)
         )
-        return result.scalar_one_or_none()
+        return result.unique().scalars().first()
     
     async def get_curriculum_with_details(self, curriculum_id: str) -> Optional[Curriculum]:
         """Get curriculum with all modules, lessons, and exercises"""

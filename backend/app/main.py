@@ -8,12 +8,13 @@ from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 
 from app.core.config import settings
-from app.api.routes import health, auth, transcribe, jobs, library, practice, snippets, export, analysis, ai, gospel, curriculum  # audio
+from app.api.routes import health, auth, transcribe, jobs, library, practice, snippets, export, analysis, ai, gospel, jazz, curriculum  # audio
 from app.services.transcription import TranscriptionService
 
 
-# Global service instance
+# Global service instances
 transcription_service: TranscriptionService = None
+music_knowledge_base = None
 
 
 
@@ -21,29 +22,38 @@ transcription_service: TranscriptionService = None
 async def lifespan(app: FastAPI):
     """Application lifespan events"""
     # Startup
-    global transcription_service
-    
+    global transcription_service, music_knowledge_base
+
     # Ensure directories exist
     settings.ensure_directories()
-    
+
     # Initialize database
     from app.database.session import init_db
     await init_db()
     print("✓ Database initialized")
-    
+
     # Initialize transcription service
     transcription_service = TranscriptionService()
-    
+
     # Inject service into route modules
     transcribe.transcription_service = transcription_service
     jobs.transcription_service = transcription_service
-    
+
+    # Initialize music knowledge base
+    from app.services.knowledge_base_loader import MusicKnowledgeBase
+    music_knowledge_base = MusicKnowledgeBase()
+    stats = music_knowledge_base.get_stats()
+    if music_knowledge_base.is_loaded():
+        print(f"✓ Music knowledge base loaded ({stats['style_guidelines_loaded']} genres)")
+    else:
+        print("⚠ Music knowledge base empty (run research script to populate)")
+
     print(f"✓ Started {settings.app_name} v{settings.version}")
     print(f"✓ Upload directory: {settings.UPLOAD_DIR}")
     print(f"✓ Output directory: {settings.OUTPUTS_DIR}")
-    
+
     yield
-    
+
     # Shutdown
     from app.database.session import close_db
     await close_db()
@@ -81,6 +91,7 @@ app.include_router(ai.router, prefix=settings.api_v1_prefix)
 app.include_router(curriculum.router, prefix=settings.api_v1_prefix)
 # app.include_router(audio.router, prefix=settings.api_v1_prefix)  # Temporarily disabled - has bugs
 app.include_router(gospel.router, prefix=settings.api_v1_prefix)
+app.include_router(jazz.router, prefix=settings.api_v1_prefix)
 
 
 # File serving endpoint

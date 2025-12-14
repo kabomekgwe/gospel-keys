@@ -653,7 +653,37 @@ Return ONLY the JSON, no other text."""
         return prompt
 
     def _get_style_guidelines(self, style: LickStyle) -> str:
-        """Get style-specific guidelines for prompt"""
+        """Get style-specific guidelines for prompt
+
+        First tries to load from knowledge base documentation (if available),
+        then falls back to hardcoded guidelines for backward compatibility.
+        """
+        # Try to get from knowledge base (documentation-first approach)
+        try:
+            from app.main import music_knowledge_base
+
+            # Map LickStyle enum to knowledge base style names
+            style_to_kb_map = {
+                LickStyle.BEBOP: ("jazz", "bebop"),
+                LickStyle.BLUES: ("jazz", "blues"),
+                LickStyle.MODERN: ("jazz", "modern"),
+                LickStyle.GOSPEL: ("gospel", "traditional"),
+                LickStyle.SWING: ("jazz", "swing"),
+                LickStyle.BOSSA: ("jazz", "bossa"),
+            }
+
+            if music_knowledge_base and music_knowledge_base.is_loaded():
+                kb_style, kb_substyle = style_to_kb_map.get(style, ("jazz", None))
+                kb_guidelines = music_knowledge_base.format_style_guidelines_for_prompt(kb_style, kb_substyle)
+
+                # If we got comprehensive guidelines from docs, use them
+                if kb_guidelines and len(kb_guidelines) > 100:
+                    return kb_guidelines
+        except Exception:
+            # Knowledge base not available or error, fall back to hardcoded
+            pass
+
+        # Fallback: Hardcoded guidelines (backward compatible)
         guidelines = {
             LickStyle.BEBOP: """
 - Use bebop scales (add passing tones between chord tones)
@@ -700,7 +730,28 @@ Return ONLY the JSON, no other text."""
         return guidelines.get(style, "")
 
     def _get_difficulty_guidelines(self, difficulty: Difficulty) -> str:
-        """Get difficulty-specific guidelines"""
+        """Get difficulty-specific guidelines
+
+        First tries to load from knowledge base documentation (if available),
+        then falls back to hardcoded guidelines for backward compatibility.
+        """
+        # Try to get from knowledge base (documentation-first approach)
+        try:
+            from app.main import music_knowledge_base
+
+            if music_knowledge_base and music_knowledge_base.is_loaded():
+                # Get difficulty calibration template from knowledge base
+                difficulty_template = music_knowledge_base.get_prompt_template("difficulty", difficulty.value)
+
+                # If we got specific difficulty guidelines from docs, format them
+                if difficulty_template and "characteristics" in difficulty_template:
+                    characteristics = difficulty_template["characteristics"]
+                    return "\n".join(f"- {char}" for char in characteristics)
+        except Exception:
+            # Knowledge base not available or error, fall back to hardcoded
+            pass
+
+        # Fallback: Hardcoded guidelines (backward compatible)
         guidelines = {
             Difficulty.BEGINNER: """
 - Stepwise motion (mostly 2nds, occasional 3rds)

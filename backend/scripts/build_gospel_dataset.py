@@ -349,9 +349,66 @@ class GospelDatasetBuilder:
         """
         Get comprehensive list of gospel piano search queries.
 
+        Enhanced with knowledge base to use curated, high-quality sources when available,
+        otherwise falls back to hardcoded queries.
+
         Returns:
             List of (query, expected_count) tuples
         """
+        queries = []
+
+        # Try to get from knowledge base (documentation-first approach)
+        try:
+            # Import knowledge base (scripts run standalone, so need to add path)
+            import sys
+            from pathlib import Path
+            sys.path.insert(0, str(Path(__file__).parent.parent))
+            from app.services.knowledge_base_loader import MusicKnowledgeBase
+
+            kb = MusicKnowledgeBase()
+
+            if kb.is_loaded():
+                # Get high-quality gospel YouTube channels from documentation
+                gospel_sources = kb.get_dataset_sources(
+                    genre="gospel",
+                    source_type="youtube_channels",
+                    min_quality=7.0  # Only high-quality sources
+                )
+
+                if gospel_sources:
+                    print(f"✅ Using {len(gospel_sources)} curated gospel channels from knowledge base")
+
+                    # Build queries from curated channels
+                    for source in gospel_sources:
+                        channel_name = source.get("name", "")
+                        content_type = source.get("content_type", "performances")
+
+                        # Generate search queries based on channel and content type
+                        if "tutorial" in content_type.lower():
+                            query = f"{channel_name} piano tutorial"
+                            count = 30
+                        elif "performance" in content_type.lower():
+                            query = f"{channel_name} piano performance"
+                            count = 20
+                        else:
+                            query = f"{channel_name} piano"
+                            count = 25
+
+                        queries.append((query, count))
+
+                    # Add style-specific queries from documentation
+                    style_guidelines = kb.get_style_guidelines("gospel")
+                    if "sub_styles" in style_guidelines:
+                        for style in style_guidelines["sub_styles"]:
+                            queries.append((f"{style} gospel piano", 20))
+
+                    return queries
+
+        except Exception as e:
+            # Knowledge base not available or error
+            print(f"⚠️  Knowledge base not available ({e}), using hardcoded queries")
+
+        # Fallback: Hardcoded queries (backward compatible)
         return [
             # Contemporary (150 videos target)
             ("kirk franklin piano tutorial", 30),

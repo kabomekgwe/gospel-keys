@@ -1,1 +1,1 @@
-"""Core module initialization"""
+"""Core shared components for multi-genre music generation"""

@@ -11,6 +11,7 @@ Coordinates all aspects of gospel piano arrangement generation:
 from typing import List, Tuple, Optional
 import random
 
+from app.core.arrangers.base_arranger import BaseArranger
 from app.gospel import Note, ChordContext, HandPattern, Arrangement
 from app.gospel.patterns.left_hand import LEFT_HAND_PATTERNS, generate_left_hand_pattern
 from app.gospel.patterns.right_hand import RIGHT_HAND_PATTERNS, generate_right_hand_pattern
@@ -22,7 +23,7 @@ from app.gospel.patterns.improvisation import (
 )
 
 
-class GospelArranger:
+class GospelArranger(BaseArranger):
     """Main orchestrator for gospel piano arrangement generation.
 
     Coordinates pattern selection, voice distribution, timing,
@@ -67,131 +68,46 @@ class GospelArranger:
             },
         }
 
-    def arrange_progression(
-        self,
-        chords: List[str],
-        key: str,
-        bpm: int,
-        application: str = "practice",
-        time_signature: Tuple[int, int] = (4, 4)
-    ) -> Arrangement:
-        """Generate complete two-hand gospel piano arrangement.
+    # Gospel-specific pattern generation (implements abstract methods)
+
+    def _generate_left_pattern(self, pattern_name: str, context: ChordContext) -> HandPattern:
+        """Generate gospel left hand pattern.
 
         Args:
-            chords: List of chord symbols (e.g., ["Cmaj9", "Am11", "Fmaj13", "G13"])
-            key: Key signature (e.g., "C", "F", "Bb")
-            bpm: Tempo in beats per minute
-            application: Application variant ("worship", "uptempo", "practice", "concert")
-            time_signature: Time signature tuple (default 4/4)
+            pattern_name: Name of gospel pattern
+            context: Chord context
 
         Returns:
-            Complete Arrangement with left and right hand notes
+            HandPattern with generated notes
         """
-        if application not in self.application_configs:
-            raise ValueError(
-                f"Unknown application: {application}. "
-                f"Available: {list(self.application_configs.keys())}"
-            )
+        return generate_left_hand_pattern(pattern_name, context)
 
-        config = self.application_configs[application]
-
-        # Build chord contexts
-        contexts = self._build_chord_contexts(chords, key, bpm, time_signature)
-
-        # Generate patterns for each chord
-        left_hand_notes = []
-        right_hand_notes = []
-        previous_left_voicing = None
-        previous_right_voicing = None
-
-        for i, context in enumerate(contexts):
-            # Update context with previous voicings for voice leading
-            context.previous_voicing = previous_left_voicing
-
-            # Select patterns based on application and context
-            left_pattern_name = self._select_left_pattern(context, config, i)
-            right_pattern_name = self._select_right_pattern(context, config, i)
-
-            # Generate patterns
-            left_pattern = generate_left_hand_pattern(left_pattern_name, context)
-            right_pattern = generate_right_hand_pattern(right_pattern_name, context)
-
-            # Track current voicing for next chord (use unique pitches)
-            if left_pattern.notes:
-                previous_left_voicing = sorted(list(set([n.pitch for n in left_pattern.notes])))
-            if right_pattern.notes:
-                previous_right_voicing = sorted(list(set([n.pitch for n in right_pattern.notes])))
-
-            # Adjust note times for current bar position
-            left_notes_adjusted = self._adjust_note_times(left_pattern.notes, i * 4)
-            right_notes_adjusted = self._adjust_note_times(right_pattern.notes, i * 4)
-
-            left_hand_notes.extend(left_notes_adjusted)
-            right_hand_notes.extend(right_notes_adjusted)
-
-            # Add improvisation (fills, runs, turnarounds)
-            if random.random() < config["improvisation_probability"]:
-                improv_notes = self._add_improvisation(context, i, application)
-                right_hand_notes.extend(improv_notes)
-
-        # Apply rhythm transformations
-        if config["rhythm"]:
-            for rhythm_pattern in config["rhythm"]:
-                left_hand_notes = apply_rhythm_pattern(left_hand_notes, rhythm_pattern)
-                right_hand_notes = apply_rhythm_pattern(right_hand_notes, rhythm_pattern)
-
-        # Apply velocity adjustments based on application
-        left_hand_notes = self._apply_velocity_range(left_hand_notes, config["velocity_range"])
-        right_hand_notes = self._apply_velocity_range(right_hand_notes, config["velocity_range"])
-
-        # Create arrangement
-        return Arrangement(
-            left_hand_notes=left_hand_notes,
-            right_hand_notes=right_hand_notes,
-            tempo=bpm,
-            time_signature=time_signature,
-            key=key,
-            total_bars=len(chords),
-            application=application
-        )
-
-    def _build_chord_contexts(
-        self,
-        chords: List[str],
-        key: str,
-        bpm: int,
-        time_signature: Tuple[int, int]
-    ) -> List[ChordContext]:
-        """Build ChordContext objects for each chord in progression.
+    def _generate_right_pattern(self, pattern_name: str, context: ChordContext) -> HandPattern:
+        """Generate gospel right hand pattern.
 
         Args:
-            chords: List of chord symbols
-            key: Key signature
-            bpm: Tempo
-            time_signature: Time signature
+            pattern_name: Name of gospel pattern
+            context: Chord context
 
         Returns:
-            List of ChordContext objects
+            HandPattern with generated notes
         """
-        contexts = []
+        return generate_right_hand_pattern(pattern_name, context)
 
-        for i, chord in enumerate(chords):
-            previous_chord = chords[i - 1] if i > 0 else None
-            next_chord = chords[i + 1] if i < len(chords) - 1 else None
+    def _apply_rhythm_transformations(self, notes: List[Note], rhythm_patterns: List[str]) -> List[Note]:
+        """Apply gospel rhythm transformations.
 
-            context = ChordContext(
-                chord=chord,
-                key=key,
-                position=i,
-                tempo=bpm,
-                time_signature=time_signature,
-                previous_chord=previous_chord,
-                next_chord=next_chord
-            )
+        Args:
+            notes: Notes to transform
+            rhythm_patterns: List of gospel rhythm pattern names
 
-            contexts.append(context)
-
-        return contexts
+        Returns:
+            Transformed notes with gospel rhythm feel
+        """
+        transformed = notes
+        for rhythm_pattern in rhythm_patterns:
+            transformed = apply_rhythm_pattern(transformed, rhythm_pattern)
+        return transformed
 
     def _select_left_pattern(
         self,
@@ -261,29 +177,6 @@ class GospelArranger:
         # Default: random selection
         return random.choice(available_patterns)
 
-    def _adjust_note_times(self, notes: List[Note], bar_offset: float) -> List[Note]:
-        """Adjust note times for current bar position.
-
-        Args:
-            notes: Notes to adjust
-            bar_offset: Offset in beats (bar_number * beats_per_bar)
-
-        Returns:
-            Notes with adjusted times
-        """
-        adjusted = []
-        for note in notes:
-            new_note = Note(
-                pitch=note.pitch,
-                time=note.time + bar_offset,
-                duration=note.duration,
-                velocity=note.velocity,
-                hand=note.hand
-            )
-            adjusted.append(new_note)
-
-        return adjusted
-
     def _add_improvisation(
         self,
         context: ChordContext,
@@ -325,40 +218,6 @@ class GospelArranger:
             improv_notes.extend(fill)
 
         return improv_notes
-
-    def _apply_velocity_range(
-        self,
-        notes: List[Note],
-        velocity_range: Tuple[int, int]
-    ) -> List[Note]:
-        """Apply velocity range constraints to notes.
-
-        Args:
-            notes: Notes to adjust
-            velocity_range: (min_velocity, max_velocity)
-
-        Returns:
-            Notes with adjusted velocities
-        """
-        min_vel, max_vel = velocity_range
-        adjusted = []
-
-        for note in notes:
-            # Scale velocity to fit within range
-            scaled_velocity = int(
-                min_vel + (note.velocity / 127.0) * (max_vel - min_vel)
-            )
-
-            new_note = Note(
-                pitch=note.pitch,
-                time=note.time,
-                duration=note.duration,
-                velocity=max(min_vel, min(scaled_velocity, max_vel)),
-                hand=note.hand
-            )
-            adjusted.append(new_note)
-
-        return adjusted
 
 
 __all__ = ["GospelArranger"]
