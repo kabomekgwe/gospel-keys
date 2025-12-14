@@ -44,9 +44,8 @@ export function ModuleGrid({ curriculum }: ModuleGridProps) {
           return (
             <div
               key={module.id}
-              className={`bg-gray-800/50 rounded-xl border transition-all ${
-                isCurrentModule ? 'border-purple-500 ring-2 ring-purple-500/50' : 'border-gray-700'
-              }`}
+              className={`bg-gray-800/50 rounded-xl border transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-purple-500/10 ${isCurrentModule ? 'border-purple-500 ring-2 ring-purple-500/50' : 'border-gray-700 hover:border-gray-600'
+                }`}
             >
               {/* Module Card Header */}
               <div className="p-6">
@@ -76,11 +75,10 @@ export function ModuleGrid({ curriculum }: ModuleGridProps) {
                   </div>
                   <div className="w-full bg-gray-700 rounded-full h-2">
                     <div
-                      className={`h-2 rounded-full transition-all duration-500 ${
-                        module.completion_percentage === 100
+                      className={`h-2 rounded-full transition-all duration-500 ${module.completion_percentage === 100
                           ? 'bg-green-500'
                           : 'bg-gradient-to-r from-purple-500 to-blue-500'
-                      }`}
+                        }`}
                       style={{ width: `${module.completion_percentage}%` }}
                     />
                   </div>
@@ -131,15 +129,14 @@ export function ModuleGrid({ curriculum }: ModuleGridProps) {
                     return isLocked ? (
                       <div
                         key={i}
-                        className={`w-full p-3 rounded-lg border transition text-left ${
-                          isCompleted
+                        className={`w-full p-3 rounded-lg border transition text-left ${isCompleted
                             ? 'border-green-600/30 bg-green-600/10 hover:bg-green-600/20'
                             : isCurrent
-                            ? 'border-purple-600/50 bg-purple-600/20 hover:bg-purple-600/30'
-                            : isLocked
-                            ? 'border-gray-700 bg-gray-800/50 opacity-50 cursor-not-allowed'
-                            : 'border-gray-700 bg-gray-800/50 opacity-50 cursor-not-allowed'
-                        }`}
+                              ? 'border-purple-600/50 bg-purple-600/20 hover:bg-purple-600/30'
+                              : isLocked
+                                ? 'border-gray-700 bg-gray-800/50 opacity-50 cursor-not-allowed'
+                                : 'border-gray-700 bg-gray-800/50 opacity-50 cursor-not-allowed'
+                          }`}
                       >
                         <div className="flex items-center gap-3">
                           <div className="flex-shrink-0">
@@ -166,13 +163,12 @@ export function ModuleGrid({ curriculum }: ModuleGridProps) {
                         key={i}
                         to="/curriculum/lessons/$lessonId"
                         params={{ lessonId }}
-                        className={`block w-full p-3 rounded-lg border transition text-left ${
-                          isCompleted
+                        className={`block w-full p-3 rounded-lg border transition text-left ${isCompleted
                             ? 'border-green-600/30 bg-green-600/10 hover:bg-green-600/20'
                             : isCurrent
-                            ? 'border-purple-600/50 bg-purple-600/20 hover:bg-purple-600/30'
-                            : 'border-gray-700 bg-gray-800/50 hover:bg-gray-700/50'
-                        }`}
+                              ? 'border-purple-600/50 bg-purple-600/20 hover:bg-purple-600/30'
+                              : 'border-gray-700 bg-gray-800/50 hover:bg-gray-700/50'
+                          }`}
                       >
                         <div className="flex items-center gap-3">
                           {/* Status Icon */}

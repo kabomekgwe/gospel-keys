@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { CheckCircle, Target, Lock, Calendar } from 'lucide-react';
 import type { CurriculumResponse } from '../../lib/api';
 
@@ -6,6 +7,7 @@ interface CurriculumTimelineProps {
 }
 
 export function CurriculumTimeline({ curriculum }: CurriculumTimelineProps) {
+  const [hoveredWeek, setHoveredWeek] = useState<number | null>(null);
   const weeks = Array.from({ length: curriculum.duration_weeks }, (_, i) => i + 1);
   const currentWeek = curriculum.current_week;
 
@@ -69,14 +71,30 @@ export function CurriculumTimeline({ curriculum }: CurriculumTimelineProps) {
               return (
                 <div
                   key={week}
-                  className="flex flex-col items-center"
+                  className="flex flex-col items-center relative group"
                   style={{ width: `${100 / curriculum.duration_weeks}%` }}
+                  onMouseEnter={() => setHoveredWeek(week)}
+                  onMouseLeave={() => setHoveredWeek(null)}
                 >
+                  {/* Hover Tooltip */}
+                  {hoveredWeek === week && (
+                    <div className="absolute -top-16 left-1/2 -translate-x-1/2 z-20 bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm whitespace-nowrap shadow-lg">
+                      <p className="text-white font-medium">Week {week}</p>
+                      <p className="text-xs text-gray-400">
+                        {status === 'completed' ? 'Completed' : status === 'current' ? 'In Progress' : 'Upcoming'}
+                        {milestone && ' • Assessment'}
+                      </p>
+                      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-full">
+                        <div className="border-8 border-transparent border-t-gray-900"></div>
+                      </div>
+                    </div>
+                  )}
+
                   {/* Marker Dot */}
                   <div
-                    className={`relative z-10 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${getWeekColor(
+                    className={`relative z-10 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer ${getWeekColor(
                       status
-                    )} ${milestone ? 'w-10 h-10' : ''}`}
+                    )} ${milestone ? 'w-10 h-10' : ''} ${hoveredWeek === week ? 'scale-125' : ''}`}
                   >
                     {status === 'completed' && !milestone && (
                       <CheckCircle className="w-4 h-4 text-white" />
@@ -91,13 +109,12 @@ export function CurriculumTimeline({ curriculum }: CurriculumTimelineProps) {
                   {/* Week Label */}
                   <div className="mt-2 text-center">
                     <p
-                      className={`text-xs font-medium ${
-                        status === 'current'
+                      className={`text-xs font-medium transition-colors ${status === 'current'
                           ? 'text-purple-400'
                           : status === 'completed'
-                          ? 'text-green-400'
-                          : 'text-gray-500'
-                      }`}
+                            ? 'text-green-400'
+                            : 'text-gray-500'
+                        } ${hoveredWeek === week ? 'text-white' : ''}`}
                     >
                       {week}
                     </p>

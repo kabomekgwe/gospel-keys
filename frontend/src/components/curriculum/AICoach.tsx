@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { MessageCircle, Send, X, Sparkles, Loader2 } from 'lucide-react';
-import { curriculumApi } from '../../lib/api';
+import { API_BASE_URL } from '../../lib/api';
 
 interface Message {
   id: string;
@@ -33,7 +33,7 @@ export function AICoach({ context, position = 'sidebar' }: AICoachProps) {
 
   const { mutate: sendMessage, isPending } = useMutation({
     mutationFn: async (message: string) => {
-      const response = await fetch('http://localhost:8000/api/v1/curriculum/ai-coach/chat', {
+      const response = await fetch(`${API_BASE_URL}/api/v1/curriculum/ai-coach/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -146,11 +146,10 @@ export function AICoach({ context, position = 'sidebar' }: AICoachProps) {
               className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               <div
-                className={`max-w-[80%] rounded-lg p-3 ${
-                  message.role === 'user'
-                    ? 'bg-purple-600 text-white'
-                    : 'bg-gray-700 text-gray-100'
-                }`}
+                className={`max-w-[80%] rounded-lg p-3 ${message.role === 'user'
+                  ? 'bg-purple-600 text-white'
+                  : 'bg-gray-700 text-gray-100'
+                  }`}
               >
                 <p className="text-sm whitespace-pre-wrap">{message.content}</p>
                 <p className="text-xs mt-1 opacity-70">

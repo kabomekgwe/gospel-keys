@@ -10,7 +10,6 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { api } from '@/lib/api';
 import {
   CheckCircle2,
-  Circle,
   Clock,
   ArrowRight,
   ArrowLeft,
@@ -231,10 +230,10 @@ function AssessmentInterface() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="bg-white rounded-lg shadow p-8 text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading assessment...</p>
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 flex items-center justify-center">
+        <div className="bg-gray-800/50 rounded-xl border border-gray-700 p-8 text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto mb-4"></div>
+          <p className="text-gray-400">Loading assessment...</p>
         </div>
       </div>
     );
@@ -242,19 +241,19 @@ function AssessmentInterface() {
 
   if (error || !assessment) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 p-6 flex items-center justify-center">
+        <div className="bg-yellow-900/30 border border-yellow-500/50 rounded-xl p-6 max-w-md">
           <div className="flex items-center gap-3 mb-4">
-            <AlertCircle className="w-6 h-6 text-yellow-600" />
-            <h2 className="text-lg font-semibold text-gray-900">No Active Assessment</h2>
+            <AlertCircle className="w-6 h-6 text-yellow-500" />
+            <h2 className="text-lg font-semibold text-white">No Active Assessment</h2>
           </div>
-          <p className="text-gray-700 mb-4">
+          <p className="text-gray-300 mb-4">
             You don't have any active assessments at the moment. Assessments are automatically
             generated at key milestones in your curriculum.
           </p>
           <button
             onClick={() => navigate({ to: '/curriculum/daily' })}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
+            className="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg font-medium transition"
           >
             Return to Practice
           </button>
@@ -266,7 +265,7 @@ function AssessmentInterface() {
   // Results View
   if (viewMode === 'results' && results) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 p-6">
         <div className="max-w-4xl mx-auto">
           {/* Results Header */}
           <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg shadow-lg p-8 text-white mb-8">
@@ -287,31 +286,30 @@ function AssessmentInterface() {
           </div>
 
           {/* Skill Scores */}
-          <div className="bg-white rounded-lg shadow mb-6">
-            <div className="border-b border-gray-200 px-6 py-4">
-              <h2 className="text-xl font-bold text-gray-900">Skill Breakdown</h2>
+          <div className="bg-gray-800/50 rounded-xl border border-gray-700 mb-6">
+            <div className="border-b border-gray-700 px-6 py-4">
+              <h2 className="text-xl font-bold text-white">Skill Breakdown</h2>
             </div>
             <div className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {Object.entries(results.scores).map(([skill, score]) => (
-                  <div key={skill} className="bg-gray-50 rounded-lg p-4">
+                  <div key={skill} className="bg-gray-700/50 rounded-lg p-4">
                     <div className="flex items-center justify-between mb-2">
-                      <h3 className="font-semibold text-gray-900 capitalize">
+                      <h3 className="font-semibold text-white capitalize">
                         {skill.replace(/_/g, ' ')}
                       </h3>
-                      <span className="text-2xl font-bold text-blue-600">{score.toFixed(1)}</span>
+                      <span className="text-2xl font-bold text-purple-400">{score.toFixed(1)}</span>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className="w-full bg-gray-600 rounded-full h-2">
                       <div
-                        className={`h-2 rounded-full ${
-                          score >= 8
-                            ? 'bg-green-600'
-                            : score >= 6
+                        className={`h-2 rounded-full ${score >= 8
+                          ? 'bg-green-600'
+                          : score >= 6
                             ? 'bg-blue-600'
                             : score >= 4
-                            ? 'bg-yellow-600'
-                            : 'bg-red-600'
-                        }`}
+                              ? 'bg-yellow-600'
+                              : 'bg-red-600'
+                          }`}
                         style={{ width: `${(score / 10) * 100}%` }}
                       />
                     </div>
@@ -324,19 +322,19 @@ function AssessmentInterface() {
           {/* Feedback */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
             {/* Strengths */}
-            <div className="bg-white rounded-lg shadow">
-              <div className="border-b border-gray-200 px-6 py-4">
+            <div className="bg-gray-800/50 rounded-xl border border-gray-700">
+              <div className="border-b border-gray-700 px-6 py-4">
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-5 h-5 text-green-600" />
-                  <h2 className="text-lg font-bold text-gray-900">Strengths</h2>
+                  <CheckCircle2 className="w-5 h-5 text-green-500" />
+                  <h2 className="text-lg font-bold text-white">Strengths</h2>
                 </div>
               </div>
               <div className="p-6">
                 <ul className="space-y-2">
                   {results.feedback.strengths.map((strength, index) => (
                     <li key={index} className="flex items-start gap-2">
-                      <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                      <span className="text-gray-700">{strength}</span>
+                      <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                      <span className="text-gray-300">{strength}</span>
                     </li>
                   ))}
                 </ul>
@@ -344,19 +342,19 @@ function AssessmentInterface() {
             </div>
 
             {/* Areas for Improvement */}
-            <div className="bg-white rounded-lg shadow">
-              <div className="border-b border-gray-200 px-6 py-4">
+            <div className="bg-gray-800/50 rounded-xl border border-gray-700">
+              <div className="border-b border-gray-700 px-6 py-4">
                 <div className="flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5 text-orange-600" />
-                  <h2 className="text-lg font-bold text-gray-900">Areas to Improve</h2>
+                  <TrendingUp className="w-5 h-5 text-orange-500" />
+                  <h2 className="text-lg font-bold text-white">Areas to Improve</h2>
                 </div>
               </div>
               <div className="p-6">
                 <ul className="space-y-2">
                   {results.feedback.areas_for_improvement.map((area, index) => (
                     <li key={index} className="flex items-start gap-2">
-                      <AlertCircle className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5" />
-                      <span className="text-gray-700">{area}</span>
+                      <AlertCircle className="w-5 h-5 text-orange-500 flex-shrink-0 mt-0.5" />
+                      <span className="text-gray-300">{area}</span>
                     </li>
                   ))}
                 </ul>
@@ -365,11 +363,11 @@ function AssessmentInterface() {
           </div>
 
           {/* Recommended Focus */}
-          <div className="bg-white rounded-lg shadow mb-6">
-            <div className="border-b border-gray-200 px-6 py-4">
+          <div className="bg-gray-800/50 rounded-xl border border-gray-700 mb-6">
+            <div className="border-b border-gray-700 px-6 py-4">
               <div className="flex items-center gap-2">
-                <BookOpen className="w-5 h-5 text-blue-600" />
-                <h2 className="text-lg font-bold text-gray-900">Recommended Focus Areas</h2>
+                <BookOpen className="w-5 h-5 text-purple-400" />
+                <h2 className="text-lg font-bold text-white">Recommended Focus Areas</h2>
               </div>
             </div>
             <div className="p-6">
@@ -377,7 +375,7 @@ function AssessmentInterface() {
                 {results.feedback.recommended_focus.map((focus, index) => (
                   <span
                     key={index}
-                    className="px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-medium"
+                    className="px-4 py-2 bg-purple-900/50 text-purple-300 rounded-full text-sm font-medium"
                   >
                     {focus.replace(/_/g, ' ')}
                   </span>
@@ -390,13 +388,13 @@ function AssessmentInterface() {
           <div className="flex gap-4">
             <button
               onClick={() => navigate({ to: '/curriculum/performance' })}
-              className="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg"
+              className="flex-1 px-6 py-3 bg-purple-600 hover:bg-purple-500 text-white font-medium rounded-lg transition"
             >
               View Performance Dashboard
             </button>
             <button
               onClick={() => navigate({ to: '/curriculum/daily' })}
-              className="flex-1 px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium rounded-lg"
+              className="flex-1 px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white font-medium rounded-lg transition"
             >
               Continue Practice
             </button>
@@ -412,20 +410,20 @@ function AssessmentInterface() {
   const completionPercentage = getCompletionPercentage();
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 p-6">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="bg-white rounded-lg shadow mb-6">
+        <div className="bg-gray-800/50 rounded-xl border border-gray-700 mb-6">
           <div className="px-6 py-4">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">{assessment.content.title}</h1>
-                <p className="text-sm text-gray-600 capitalize">{assessment.assessment_type} Assessment</p>
+                <h1 className="text-2xl font-bold text-white">{assessment.content.title}</h1>
+                <p className="text-sm text-gray-400 capitalize">{assessment.assessment_type} Assessment</p>
               </div>
               {timeRemaining !== null && (
-                <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-lg">
-                  <Clock className="w-5 h-5 text-blue-600" />
-                  <span className="font-mono text-lg font-bold text-blue-900">
+                <div className="flex items-center gap-2 px-4 py-2 bg-purple-900/50 rounded-lg border border-purple-500/30">
+                  <Clock className="w-5 h-5 text-purple-400" />
+                  <span className="font-mono text-lg font-bold text-white">
                     {formatTime(timeRemaining)}
                   </span>
                 </div>
@@ -434,15 +432,15 @@ function AssessmentInterface() {
 
             {/* Progress Bar */}
             <div>
-              <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
+              <div className="flex items-center justify-between text-sm text-gray-400 mb-2">
                 <span>Progress: {Math.round(completionPercentage)}%</span>
                 <span>
                   Section {currentSectionIndex + 1} of {assessment.content.sections.length}
                 </span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="w-full bg-gray-700 rounded-full h-2">
                 <div
-                  className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                  className="bg-gradient-to-r from-purple-500 to-blue-500 h-2 rounded-full transition-all duration-300"
                   style={{ width: `${completionPercentage}%` }}
                 />
               </div>
@@ -450,7 +448,7 @@ function AssessmentInterface() {
           </div>
 
           {/* Section Navigation */}
-          <div className="border-t border-gray-200 px-6 py-3 bg-gray-50">
+          <div className="border-t border-gray-700 px-6 py-3 bg-gray-900/30">
             <div className="flex gap-2 overflow-x-auto">
               {assessment.content.sections.map((section, index) => (
                 <button
@@ -459,11 +457,10 @@ function AssessmentInterface() {
                     setCurrentSectionIndex(index);
                     setCurrentItemIndex(0);
                   }}
-                  className={`px-4 py-2 rounded text-sm font-medium whitespace-nowrap transition-colors ${
-                    index === currentSectionIndex
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                  }`}
+                  className={`px-4 py-2 rounded text-sm font-medium whitespace-nowrap transition-colors ${index === currentSectionIndex
+                    ? 'bg-purple-600 text-white'
+                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                    }`}
                 >
                   {section.title}
                 </button>
@@ -474,29 +471,29 @@ function AssessmentInterface() {
 
         {/* Question/Exercise Display */}
         {currentItem && currentSection && (
-          <div className="bg-white rounded-lg shadow p-6 mb-6">
+          <div className="bg-gray-800/50 rounded-xl border border-gray-700 p-6 mb-6">
             <div className="mb-6">
               <div className="flex items-center justify-between mb-2">
-                <h2 className="text-xl font-bold text-gray-900">{currentSection.title}</h2>
-                <span className="text-sm text-gray-600">
+                <h2 className="text-xl font-bold text-white">{currentSection.title}</h2>
+                <span className="text-sm text-gray-400">
                   {currentItemIndex + 1} of {getTotalItems()}
                 </span>
               </div>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-400">
                 Weight: {(currentSection.weight * 100).toFixed(0)}% | Points: {currentItem.points}
               </p>
             </div>
 
             {currentItem.itemType === 'question' ? (
               <div className="space-y-4">
-                <p className="text-lg text-gray-900">{currentItem.question}</p>
+                <p className="text-lg text-white">{currentItem.question}</p>
 
                 {currentItem.type === 'multiple_choice' && currentItem.options && (
                   <div className="space-y-2">
                     {currentItem.options.map((option, index) => (
                       <label
                         key={index}
-                        className="flex items-center gap-3 p-4 border-2 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
+                        className="flex items-center gap-3 p-4 border-2 border-gray-600 rounded-lg cursor-pointer hover:bg-gray-700/50 transition-colors"
                       >
                         <input
                           type="radio"
@@ -504,9 +501,9 @@ function AssessmentInterface() {
                           value={index}
                           checked={responses[currentItem.id] === index}
                           onChange={() => handleResponseChange(currentItem.id, index)}
-                          className="w-5 h-5 text-blue-600"
+                          className="w-5 h-5 text-purple-600"
                         />
-                        <span className="text-gray-900">{option}</span>
+                        <span className="text-white">{option}</span>
                       </label>
                     ))}
                   </div>
@@ -517,7 +514,7 @@ function AssessmentInterface() {
                     {['True', 'False'].map((option) => (
                       <label
                         key={option}
-                        className="flex items-center gap-3 p-4 border-2 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
+                        className="flex items-center gap-3 p-4 border-2 border-gray-600 rounded-lg cursor-pointer hover:bg-gray-700/50 transition-colors"
                       >
                         <input
                           type="radio"
@@ -525,9 +522,9 @@ function AssessmentInterface() {
                           value={option}
                           checked={responses[currentItem.id] === option}
                           onChange={() => handleResponseChange(currentItem.id, option)}
-                          className="w-5 h-5 text-blue-600"
+                          className="w-5 h-5 text-purple-600"
                         />
-                        <span className="text-gray-900">{option}</span>
+                        <span className="text-white">{option}</span>
                       </label>
                     ))}
                   </div>
@@ -537,7 +534,7 @@ function AssessmentInterface() {
                   <textarea
                     value={responses[currentItem.id] || ''}
                     onChange={(e) => handleResponseChange(currentItem.id, e.target.value)}
-                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 bg-gray-700 border-2 border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent placeholder-gray-400"
                     rows={4}
                     placeholder="Type your answer here..."
                   />
@@ -545,15 +542,15 @@ function AssessmentInterface() {
               </div>
             ) : (
               <div className="space-y-4">
-                <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded">
-                  <p className="font-semibold text-gray-900 mb-2">Practical Exercise</p>
-                  <p className="text-gray-700">{currentItem.instruction}</p>
+                <div className="bg-purple-900/30 border-l-4 border-purple-500 p-4 rounded">
+                  <p className="font-semibold text-white mb-2">Practical Exercise</p>
+                  <p className="text-gray-300">{currentItem.instruction}</p>
                 </div>
 
                 {currentItem.evaluation_criteria && currentItem.evaluation_criteria.length > 0 && (
                   <div>
-                    <h4 className="font-semibold text-gray-900 mb-2">Evaluation Criteria:</h4>
-                    <ul className="list-disc list-inside space-y-1 text-gray-700">
+                    <h4 className="font-semibold text-white mb-2">Evaluation Criteria:</h4>
+                    <ul className="list-disc list-inside space-y-1 text-gray-300">
                       {currentItem.evaluation_criteria.map((criteria, index) => (
                         <li key={index}>{criteria}</li>
                       ))}
@@ -561,12 +558,12 @@ function AssessmentInterface() {
                   </div>
                 )}
 
-                <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                  <p className="text-sm text-gray-600 mb-3">Record your performance notes:</p>
+                <div className="bg-gray-700/50 border border-gray-600 rounded-lg p-4">
+                  <p className="text-sm text-gray-400 mb-3">Record your performance notes:</p>
                   <textarea
                     value={responses[currentItem.id] || ''}
                     onChange={(e) => handleResponseChange(currentItem.id, e.target.value)}
-                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 bg-gray-700 border-2 border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent placeholder-gray-400"
                     rows={4}
                     placeholder="Describe your performance and any challenges..."
                   />
@@ -581,7 +578,7 @@ function AssessmentInterface() {
           <button
             onClick={goToPreviousItem}
             disabled={currentSectionIndex === 0 && currentItemIndex === 0}
-            className="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            className="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 transition"
           >
             <ArrowLeft className="w-5 h-5" />
             Previous
@@ -590,7 +587,7 @@ function AssessmentInterface() {
           {!isLastItem() ? (
             <button
               onClick={goToNextItem}
-              className="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg flex items-center justify-center gap-2"
+              className="flex-1 px-6 py-3 bg-purple-600 hover:bg-purple-500 text-white font-medium rounded-lg flex items-center justify-center gap-2 transition"
             >
               Next
               <ArrowRight className="w-5 h-5" />
@@ -599,7 +596,7 @@ function AssessmentInterface() {
             <button
               onClick={handleSubmitAssessment}
               disabled={isSubmitting}
-              className="flex-1 px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg disabled:opacity-50 flex items-center justify-center gap-2"
+              className="flex-1 px-6 py-3 bg-green-600 hover:bg-green-500 text-white font-medium rounded-lg disabled:opacity-50 flex items-center justify-center gap-2 transition"
             >
               {isSubmitting ? (
                 <>

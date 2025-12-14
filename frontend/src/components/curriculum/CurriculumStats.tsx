@@ -1,39 +1,54 @@
 import { Link } from '@tanstack/react-router';
+import { useQuery } from '@tanstack/react-query';
 import { Target, Calendar, TrendingUp, Star, Award, Clock } from 'lucide-react';
-import type { CurriculumResponse } from '../../lib/api';
+import { curriculumApi, api, type CurriculumResponse } from '../../lib/api';
 
 interface CurriculumStatsProps {
   curriculum: CurriculumResponse;
 }
 
 export function CurriculumStats({ curriculum }: CurriculumStatsProps) {
-  // Mock data - in real implementation, this would come from API
+  // Fetch real performance data from API
+  const { data: performanceData } = useQuery({
+    queryKey: ['performance', 'analysis', 7],
+    queryFn: () => api.getPerformanceAnalysis(7),
+  });
+
+  // Fetch daily practice data for today's stats
+  const { data: dailyData } = useQuery({
+    queryKey: ['curriculum', 'daily'],
+    queryFn: curriculumApi.getDailyPractice,
+  });
+
+  // Calculate stats from API data with fallbacks
+  const completionPercentage = Math.round((curriculum.current_week / curriculum.duration_weeks) * 100);
+
   const stats = {
     overallProgress: {
-      completionPercentage: Math.round((curriculum.current_week / curriculum.duration_weeks) * 100),
-      exercisesCompleted: 42,
-      totalExercises: 120,
-      masteredExercises: 15,
-      currentStreak: 5,
+      completionPercentage,
+      exercisesCompleted: performanceData?.mastered_exercises?.length ?? 0,
+      totalExercises: (performanceData?.mastered_exercises?.length ?? 0) + (performanceData?.struggling_exercises?.length ?? 0) + 10, // Estimate
+      masteredExercises: performanceData?.mastered_exercises?.length ?? 0,
+      currentStreak: 0, // Would need dedicated API endpoint for streak tracking
     },
     weekFocus: {
       moduleTitle: curriculum.modules[0]?.title || 'Getting Started',
-      moduleTheme: 'Foundation Building',
-      currentLesson: 'Introduction to Gospel Voicings',
-      exercisesDueToday: 8,
-      estimatedTime: 25,
+      moduleTheme: curriculum.modules[0]?.theme || 'Foundation Building',
+      currentLesson: dailyData?.items?.[0]?.lesson_title || 'No lessons due',
+      exercisesDueToday: dailyData?.items?.length ?? 0,
+      estimatedTime: dailyData?.total_estimated_minutes ?? 0,
     },
     performance: {
-      avgQualityScore: 4.2,
-      strongestArea: 'Rhythm Patterns',
-      weakestArea: 'Chord Voicings',
+      avgQualityScore: performanceData?.avg_quality_score ?? 0,
+      strongestArea: performanceData?.strong_skill_areas?.[0]?.replace(/_/g, ' ') || 'N/A',
+      weakestArea: performanceData?.weak_skill_areas?.[0]?.replace(/_/g, ' ') || 'N/A',
     },
   };
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
       {/* Card 1: Overall Progress */}
-      <div className="bg-gray-800/50 p-6 rounded-xl border border-gray-700">
+      <div className="bg-gray-800/50 p-6 rounded-xl border border-gray-700 transition-all duration-300 hover:border-purple-500/50 hover:shadow-lg hover:shadow-purple-500/5">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center">
             <Target className="w-5 h-5 text-purple-400" />
@@ -99,7 +114,7 @@ export function CurriculumStats({ curriculum }: CurriculumStatsProps) {
       </div>
 
       {/* Card 2: This Week's Focus */}
-      <div className="bg-gray-800/50 p-6 rounded-xl border border-gray-700">
+      <div className="bg-gray-800/50 p-6 rounded-xl border border-gray-700 transition-all duration-300 hover:border-blue-500/50 hover:shadow-lg hover:shadow-blue-500/5">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
             <Calendar className="w-5 h-5 text-blue-400" />
@@ -135,7 +150,7 @@ export function CurriculumStats({ curriculum }: CurriculumStatsProps) {
       </div>
 
       {/* Card 3: Performance Insights */}
-      <div className="bg-gray-800/50 p-6 rounded-xl border border-gray-700">
+      <div className="bg-gray-800/50 p-6 rounded-xl border border-gray-700 transition-all duration-300 hover:border-green-500/50 hover:shadow-lg hover:shadow-green-500/5">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-10 h-10 bg-green-500/20 rounded-lg flex items-center justify-center">
             <TrendingUp className="w-5 h-5 text-green-400" />
@@ -152,13 +167,12 @@ export function CurriculumStats({ curriculum }: CurriculumStatsProps) {
                 {[1, 2, 3, 4, 5].map((star) => (
                   <Star
                     key={star}
-                    className={`w-5 h-5 ${
-                      star <= Math.floor(stats.performance.avgQualityScore)
-                        ? 'text-yellow-500 fill-yellow-500'
-                        : star === Math.ceil(stats.performance.avgQualityScore)
+                    className={`w-5 h-5 ${star <= Math.floor(stats.performance.avgQualityScore)
+                      ? 'text-yellow-500 fill-yellow-500'
+                      : star === Math.ceil(stats.performance.avgQualityScore)
                         ? 'text-yellow-500 fill-yellow-500/50'
                         : 'text-gray-600'
-                    }`}
+                      }`}
                   />
                 ))}
               </div>

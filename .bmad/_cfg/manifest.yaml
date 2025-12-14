@@ -1,0 +1,11 @@
+installation:
+  version: 6.0.0-alpha.16
+  installDate: '2025-12-14T15:59:56.260Z'
+  lastUpdated: '2025-12-14T15:59:56.260Z'
+modules:
+  - core
+customModules: []
+ides:
+  - claude-code
+  - antigravity
+  - gemini

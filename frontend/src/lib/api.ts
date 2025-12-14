@@ -4,7 +4,7 @@
  * Typed API client with error handling
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8009';
+export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8009';
 
 export class APIError extends Error {
     constructor(
@@ -838,6 +838,9 @@ export interface Curriculum {
     created_at: string;
     updated_at: string;
 }
+
+// Type alias for backward compatibility
+export type CurriculumResponse = Curriculum;
 
 export interface DailyPracticeItem {
     exercise: CurriculumExercise;
