@@ -51,6 +51,7 @@ class ChordContext:
         time_signature: Time signature as (numerator, denominator)
         previous_chord: Previous chord symbol for voice leading
         next_chord: Next chord symbol for anticipation
+        previous_voicing: Previous chord's MIDI notes for smooth voice leading
     """
     chord: str
     key: str
@@ -59,6 +60,7 @@ class ChordContext:
     time_signature: Tuple[int, int] = (4, 4)
     previous_chord: Optional[str] = None
     next_chord: Optional[str] = None
+    previous_voicing: Optional[List[int]] = None
 
     @property
     def is_phrase_start(self) -> bool:

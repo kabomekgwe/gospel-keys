@@ -101,8 +101,13 @@ class GospelArranger:
         # Generate patterns for each chord
         left_hand_notes = []
         right_hand_notes = []
+        previous_left_voicing = None
+        previous_right_voicing = None
 
         for i, context in enumerate(contexts):
+            # Update context with previous voicings for voice leading
+            context.previous_voicing = previous_left_voicing
+
             # Select patterns based on application and context
             left_pattern_name = self._select_left_pattern(context, config, i)
             right_pattern_name = self._select_right_pattern(context, config, i)
@@ -110,6 +115,12 @@ class GospelArranger:
             # Generate patterns
             left_pattern = generate_left_hand_pattern(left_pattern_name, context)
             right_pattern = generate_right_hand_pattern(right_pattern_name, context)
+
+            # Track current voicing for next chord (use unique pitches)
+            if left_pattern.notes:
+                previous_left_voicing = sorted(list(set([n.pitch for n in left_pattern.notes])))
+            if right_pattern.notes:
+                previous_right_voicing = sorted(list(set([n.pitch for n in right_pattern.notes])))
 
             # Adjust note times for current bar position
             left_notes_adjusted = self._adjust_note_times(left_pattern.notes, i * 4)

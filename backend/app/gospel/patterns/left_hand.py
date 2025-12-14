@@ -87,15 +87,16 @@ def parse_chord_symbol(chord: str) -> Tuple[str, str, List[str]]:
     return root, quality, extensions
 
 
-def get_chord_tones(chord: str, octave: int = 4) -> List[int]:
-    """Get MIDI note numbers for chord tones.
+def get_chord_tones(chord: str, octave: int = 4, previous_voicing: List[int] = None) -> List[int]:
+    """Get MIDI note numbers for chord tones with voice leading.
 
     Args:
         chord: Chord symbol (e.g., "Cmaj7")
         octave: Base octave (default 4 for left hand bass register - produces C3)
+        previous_voicing: Previous chord's voicing for smooth voice leading
 
     Returns:
-        List of MIDI note numbers for chord tones
+        List of MIDI note numbers for chord tones (with best inversion)
     """
     root, quality, _ = parse_chord_symbol(chord)
 
@@ -113,8 +114,62 @@ def get_chord_tones(chord: str, octave: int = 4) -> List[int]:
         # Default to major triad
         intervals = CHORD_INTERVALS["maj"]
 
-    # Generate chord tones
-    return [root_midi + interval for interval in intervals]
+    # Generate root position chord tones
+    root_position = [root_midi + interval for interval in intervals]
+
+    # If no previous voicing, return root position
+    if previous_voicing is None or len(previous_voicing) == 0:
+        return root_position
+
+    # VOICE LEADING: Find best inversion to minimize movement
+    return find_closest_voicing(root_position, previous_voicing)
+
+
+def find_closest_voicing(chord_tones: List[int], previous_voicing: List[int]) -> List[int]:
+    """Find the chord inversion that minimizes voice movement.
+
+    Args:
+        chord_tones: Root position chord tones
+        previous_voicing: Previous chord voicing
+
+    Returns:
+        Best inversion for smooth voice leading
+    """
+    if not previous_voicing:
+        return chord_tones
+
+    # Generate all possible inversions within +/- 1 octave
+    inversions = []
+
+    # Add root position and inversions by rotating chord tones
+    for rotation in range(len(chord_tones)):
+        inversion = chord_tones[rotation:] + chord_tones[:rotation]
+        inversions.append(inversion)
+
+        # Also try octave up/down for each inversion
+        inversions.append([n + 12 for n in inversion])
+        inversions.append([n - 12 for n in inversion])
+
+    # Find inversion with minimum total movement
+    best_inversion = chord_tones
+    min_movement = float('inf')
+
+    for inversion in inversions:
+        # Calculate total movement (sum of distances between voices)
+        movement = 0
+
+        # Compare each note in current chord to closest note in previous
+        for note in inversion:
+            if previous_voicing:
+                # Find closest note in previous voicing
+                closest_distance = min(abs(note - prev_note) for prev_note in previous_voicing)
+                movement += closest_distance
+
+        if movement < min_movement:
+            min_movement = movement
+            best_inversion = inversion
+
+    return best_inversion
 
 
 def stride_bass_pattern(context: ChordContext) -> HandPattern:
@@ -129,7 +184,7 @@ def stride_bass_pattern(context: ChordContext) -> HandPattern:
     Returns:
         HandPattern with stride bass notes
     """
-    chord_tones = get_chord_tones(context.chord, octave=4)
+    chord_tones = get_chord_tones(context.chord, octave=4, previous_voicing=context.previous_voicing)
     root = chord_tones[0]
 
     # Chord voicing (3rd and 7th, or available tones)
@@ -180,13 +235,13 @@ def walking_bass_pattern(context: ChordContext) -> HandPattern:
     Returns:
         HandPattern with walking bass notes
     """
-    chord_tones = get_chord_tones(context.chord, octave=4)
+    chord_tones = get_chord_tones(context.chord, octave=4, previous_voicing=context.previous_voicing)
     root = chord_tones[0]
 
     # Get next chord root for voice leading
     next_root = root
     if context.next_chord:
-        next_chord_tones = get_chord_tones(context.next_chord, octave=4)
+        next_chord_tones = get_chord_tones(context.next_chord, octave=4, previous_voicing=chord_tones)
         next_root = next_chord_tones[0]
 
     # Build walking line: root -> 3rd -> 5th -> chromatic approach to next root
@@ -238,7 +293,7 @@ def alberti_bass_pattern(context: ChordContext) -> HandPattern:
     Returns:
         HandPattern with arpeggiated notes
     """
-    chord_tones = get_chord_tones(context.chord, octave=4)
+    chord_tones = get_chord_tones(context.chord, octave=4, previous_voicing=context.previous_voicing)
 
     # Ensure we have at least 3 tones
     if len(chord_tones) < 3:
@@ -284,7 +339,7 @@ def shell_voicing_pattern(context: ChordContext) -> HandPattern:
     Returns:
         HandPattern with shell voicing
     """
-    chord_tones = get_chord_tones(context.chord, octave=4)
+    chord_tones = get_chord_tones(context.chord, octave=4, previous_voicing=context.previous_voicing)
     root = chord_tones[0]
 
     # Shell: root in bass + 3rd and 7th in mid-range
@@ -330,7 +385,7 @@ def syncopated_comping_pattern(context: ChordContext) -> HandPattern:
     Returns:
         HandPattern with syncopated chords
     """
-    chord_tones = get_chord_tones(context.chord, octave=4)
+    chord_tones = get_chord_tones(context.chord, octave=4, previous_voicing=context.previous_voicing)
 
     # Use mid-register chord voicing (3rd, 5th, 7th)
     if len(chord_tones) >= 4:

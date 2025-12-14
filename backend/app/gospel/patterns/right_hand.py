@@ -33,7 +33,7 @@ def melody_with_fills_pattern(context: ChordContext) -> HandPattern:
     Returns:
         HandPattern with melody and fills
     """
-    chord_tones = get_chord_tones(context.chord, octave=5)  # C4 register
+    chord_tones = get_chord_tones(context.chord, octave=5, previous_voicing=context.previous_voicing)  # C4 register
 
     # Use top note of chord as melody
     if len(chord_tones) >= 4:
@@ -88,7 +88,7 @@ def chord_fills_pattern(context: ChordContext) -> HandPattern:
     Returns:
         HandPattern with chord fills
     """
-    chord_tones = get_chord_tones(context.chord, octave=5)
+    chord_tones = get_chord_tones(context.chord, octave=5, previous_voicing=context.previous_voicing)
 
     # Close voicing for right hand (within octave)
     if len(chord_tones) >= 4:
@@ -138,7 +138,7 @@ def octave_doubling_pattern(context: ChordContext) -> HandPattern:
     Returns:
         HandPattern with octave doubling
     """
-    chord_tones = get_chord_tones(context.chord, octave=5)
+    chord_tones = get_chord_tones(context.chord, octave=5, previous_voicing=context.previous_voicing)
 
     # Use chord tones as melodic sequence
     if len(chord_tones) >= 4:
@@ -176,7 +176,7 @@ def block_chord_pattern(context: ChordContext) -> HandPattern:
     Returns:
         HandPattern with block chords
     """
-    chord_tones = get_chord_tones(context.chord, octave=5)
+    chord_tones = get_chord_tones(context.chord, octave=5, previous_voicing=context.previous_voicing)
 
     # Drop-2 voicing for rich sound (drop second-highest note by octave)
     if len(chord_tones) >= 4:
@@ -230,7 +230,7 @@ def polychord_pattern(context: ChordContext) -> HandPattern:
     Returns:
         HandPattern with polychord voicing
     """
-    chord_tones = get_chord_tones(context.chord, octave=5)
+    chord_tones = get_chord_tones(context.chord, octave=5, previous_voicing=context.previous_voicing)
     root = chord_tones[0]
 
     # Build upper structure triad
@@ -287,7 +287,7 @@ def arpeggiated_voicing_pattern(context: ChordContext) -> HandPattern:
     Returns:
         HandPattern with arpeggiated voicing
     """
-    chord_tones = get_chord_tones(context.chord, octave=5)
+    chord_tones = get_chord_tones(context.chord, octave=5, previous_voicing=context.previous_voicing)
 
     # Extend to higher octave for full arpeggio
     if len(chord_tones) >= 4:
