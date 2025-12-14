@@ -253,61 +253,63 @@ export function AnalysisOverview({ songId, detectedChords = [] }: AnalysisOvervi
                             {detectedChords.length > 0 ? (
                                 <div className="relative pt-6 pb-2 overflow-x-auto">
                                     <div className="flex gap-1 min-w-full">
-                                        {detectedChords.map((chord, index) => (
-                                            <div
-                                                key={index}
-                                                className="flex-shrink-0 flex flex-col items-center group relative cursor-help"
-                                                style={{ width: Math.max(60, (chord.endTime - chord.startTime) * 40) }}
-                                            >
-                                                <div className="w-full h-8 bg-slate-800 rounded-lg mb-2 overflow-hidden relative">
-                                                    <div className="absolute inset-0 bg-violet-500/20 group-hover:bg-violet-500/30 transition-colors" />
-                                                </div>
-                                                <span className="font-mono font-bold text-violet-400 text-sm whitespace-nowrap">
-                                                    {chord.chord}
-                                                </span>
-                                                <span className="text-[10px] text-slate-500 mt-1">
-                                                    {chord.startTime.toFixed(1)}s
-                                                </span>
+                                        <div className="flex gap-1 min-w-full">
+                                            {detectedChords.map((chord, index) => (
+                                                <div
+                                                    key={index}
+                                                    className="flex-shrink-0 flex flex-col items-center group relative cursor-help"
+                                                    style={{ width: Math.max(60, chord.duration * 40) }}
+                                                >
+                                                    <div className="w-full h-8 bg-slate-800 rounded-lg mb-2 overflow-hidden relative">
+                                                        <div className="absolute inset-0 bg-violet-500/20 group-hover:bg-violet-500/30 transition-colors" />
+                                                    </div>
+                                                    <span className="font-mono font-bold text-violet-400 text-sm whitespace-nowrap">
+                                                        {chord.chord}
+                                                    </span>
+                                                    <span className="text-[10px] text-slate-500 mt-1">
+                                                        {chord.time.toFixed(1)}s
+                                                    </span>
 
-                                                {/* Tooltip */}
-                                                <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 hidden group-hover:block z-10 bg-black/90 text-xs p-2 rounded whitespace-nowrap border border-slate-700 pointer-events-none">
-                                                    {chord.romanNumeral && (
-                                                        <>
-                                                            Roman: {chord.romanNumeral} <br />
-                                                        </>
-                                                    )}
-                                                    Duration: {(chord.endTime - chord.startTime).toFixed(2)}s
+                                                    {/* Tooltip */}
+                                                    <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 hidden group-hover:block z-10 bg-black/90 text-xs p-2 rounded whitespace-nowrap border border-slate-700 pointer-events-none">
+                                                        {chord.romanNumeral && (
+                                                            <>
+                                                                Roman: {chord.romanNumeral} <br />
+                                                            </>
+                                                        )}
+                                                        Duration: {chord.duration.toFixed(2)}s
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        ))}
+                                            ))}
+                                        </div>
+
                                     </div>
-                                </div>
-                            ) : (
-                                <div className="text-center py-12 bg-slate-800/30 rounded-xl border border-dashed border-slate-700">
-                                    <p className="text-slate-400">
-                                        No chords detected. Try uploading a song with chord progression.
-                                    </p>
-                                </div>
+                                    ) : (
+                                    <div className="text-center py-12 bg-slate-800/30 rounded-xl border border-dashed border-slate-700">
+                                        <p className="text-slate-400">
+                                            No chords detected. Try uploading a song with chord progression.
+                                        </p>
+                                    </div>
                             )}
-                        </motion.div>
-                    )}
+                                </motion.div>
+                            )}
 
-                    {/* VOICINGS VIEW */}
-                    {selectedView === 'voicings' && (
-                        <motion.div
-                            key="voicings"
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -10 }}
-                        >
-                            <VoicingsDisplay
-                                chords={detectedChords}
-                                songId={songId}
-                                maxVisible={6}
-                            />
-                        </motion.div>
-                    )}
-                </AnimatePresence>
+                            {/* VOICINGS VIEW */}
+                            {selectedView === 'voicings' && (
+                                <motion.div
+                                    key="voicings"
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -10 }}
+                                >
+                                    <VoicingsDisplay
+                                        chords={detectedChords}
+                                        songId={songId}
+                                        maxVisible={6}
+                                    />
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
             </div>
         </div>
     );

@@ -16,8 +16,8 @@ import { ZoomIn, ZoomOut, Maximize2, Minimize2 } from 'lucide-react';
 export interface Note {
     id: string;
     pitch: number;       // MIDI pitch (0-127)
-    startTime: number;   // In seconds
-    duration: number;    // In seconds
+    start_time: number;   // In seconds
+    end_time: number;    // In seconds
     velocity: number;    // 0-127
     hand?: 'left' | 'right';
 }
@@ -31,8 +31,8 @@ export interface PianoRollProps {
     isPlaying?: boolean;
     highlightedNotes?: string[];  // IDs of notes to highlight
     chordRegions?: Array<{
-        startTime: number;
-        endTime: number;
+        time: number;
+        duration: number;
         chord: string;
         romanNumeral?: string;
     }>;
@@ -152,8 +152,12 @@ export function PianoRoll({
 
         // Draw chord regions
         chordRegions.forEach(region => {
-            const x1 = PIANO_WIDTH + (region.startTime - startTime) * pixelsPerSecond;
-            const x2 = PIANO_WIDTH + (region.endTime - startTime) * pixelsPerSecond;
+            const regionStart = region.time;
+            const regionEnd = region.time + region.duration;
+
+            const x1 = PIANO_WIDTH + (regionStart - startTime) * pixelsPerSecond;
+            const x2 = PIANO_WIDTH + (regionEnd - startTime) * pixelsPerSecond;
+
             if (x2 > PIANO_WIDTH && x1 < width) {
                 // Background highlight
                 ctx.fillStyle = 'rgba(139, 92, 246, 0.1)';
@@ -206,8 +210,11 @@ export function PianoRoll({
         notes.forEach(note => {
             if (note.pitch < MIN_PITCH || note.pitch > MAX_PITCH) return;
 
-            const x = PIANO_WIDTH + (note.startTime - startTime) * pixelsPerSecond;
-            const noteWidth = Math.max(note.duration * pixelsPerSecond, 2);
+            const noteStart = note.start_time;
+            const noteDuration = note.end_time - note.start_time;
+
+            const x = PIANO_WIDTH + (noteStart - startTime) * pixelsPerSecond;
+            const noteWidth = Math.max(noteDuration * pixelsPerSecond, 2);
             const y = HEADER_HEIGHT + (MAX_PITCH - note.pitch) * NOTE_HEIGHT + 1;
             const noteHeight = NOTE_HEIGHT - 2;
 

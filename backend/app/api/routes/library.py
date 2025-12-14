@@ -7,7 +7,7 @@ from sqlalchemy import select, or_
 
 from app.database.session import get_db
 from app.database.models import Song, Tag, SongTag
-from app.schemas.library import SongSummary, SongDetail, SongUpdate
+from app.schemas.library import SongSummary, SongDetail, SongUpdate, SongNoteResponse, SongChordResponse
 
 router = APIRouter(prefix="/library", tags=["library"])
 
@@ -241,3 +241,53 @@ async def get_notation_svg(song_id: str, db: AsyncSession = Depends(get_db)):
         raise HTTPException(status_code=500, detail="Failed to render notation")
         
     return {"svg": svg_content}
+
+
+@router.get("/songs/{song_id}/notes", response_model=list[SongNoteResponse])
+async def get_song_notes(song_id: str, db: AsyncSession = Depends(get_db)):
+    """Get all MIDI notes for a song"""
+    from app.schemas.library import SongNoteResponse
+    
+    song = await db.get(Song, song_id)
+    if not song:
+        raise HTTPException(status_code=404, detail="Song not found")
+        
+    # Ensure notes are loaded
+    await db.refresh(song, ["notes"])
+    
+    return [
+        SongNoteResponse(
+            id=note.id,
+            pitch=note.pitch,
+            start_time=note.start_time,
+            end_time=note.end_time,
+            velocity=note.velocity
+        )
+        for note in song.notes
+    ]
+
+
+@router.get("/songs/{song_id}/chords", response_model=list[SongChordResponse])
+async def get_song_chords(song_id: str, db: AsyncSession = Depends(get_db)):
+    """Get all detected chords for a song"""
+    from app.schemas.library import SongChordResponse
+    
+    song = await db.get(Song, song_id)
+    if not song:
+        raise HTTPException(status_code=404, detail="Song not found")
+        
+    # Ensure chords are loaded
+    await db.refresh(song, ["chords"])
+    
+    return [
+        SongChordResponse(
+            id=chord.id,
+            time=chord.time,
+            duration=chord.duration,
+            chord=chord.chord,
+            root=chord.root,
+            quality=chord.quality,
+            bass_note=chord.bass_note
+        )
+        for chord in song.chords
+    ]

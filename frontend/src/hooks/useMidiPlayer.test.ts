@@ -7,8 +7,8 @@ import { useMidiPlayer, type MidiNote } from './useMidiPlayer';
 
 describe('useMidiPlayer', () => {
     const mockNotes: MidiNote[] = [
-        { id: '1', pitch: 60, startTime: 0, duration: 1, velocity: 100 },
-        { id: '2', pitch: 64, startTime: 1, duration: 1, velocity: 90 },
+        { id: '1', pitch: 60, start_time: 0, end_time: 1, velocity: 100 },
+        { id: '2', pitch: 64, start_time: 1, end_time: 2, velocity: 90 },
     ];
 
     beforeEach(() => {

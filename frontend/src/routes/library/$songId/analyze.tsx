@@ -56,8 +56,9 @@ function generateDemoChords(duration: number): ChordData[] {
             quality: prog.quality,
             romanNumeral: prog.roman,
             function: prog.fn,
-            startTime: time,
-            endTime: time + chordDuration,
+            function: prog.fn,
+            time: time,
+            duration: chordDuration,
         });
         time += chordDuration;
         id++;
@@ -104,8 +105,9 @@ function generateDemoPatterns(): ProgressionPattern[] {
             chords: ['C', 'G', 'Am', 'F'],
             genre: 'Pop',
             confidence: 0.95,
-            startTime: 0,
-            endTime: 32,
+            confidence: 0.95,
+            start_time: 0,
+            end_time: 32,
             description: 'The most common chord progression in pop music.',
             famousExamples: ['Let It Be', 'No Woman No Cry', 'With or Without You'],
         },
@@ -116,8 +118,8 @@ function generateDemoPatterns(): ProgressionPattern[] {
             chords: ['C', 'G', 'Am', 'F'],
             genre: 'Pop',
             confidence: 0.92,
-            startTime: 32,
-            endTime: 64,
+            start_time: 32,
+            end_time: 64,
             description: 'Same progression repeated with slight variation.',
         },
     ];
@@ -182,8 +184,8 @@ function generateDemoProgressionPatterns(): PatternType[] {
 
 function generateDemoChordEvents(chords: ChordData[]): ChordEventType[] {
     return chords.map(c => ({
-        time: c.startTime,
-        duration: c.endTime - c.startTime,
+        time: c.time,
+        duration: c.duration,
         chord: `${c.root}${c.quality === 'maj' ? '' : 'm'}${c.quality.includes('7') ? '7' : ''}`,
     }));
 }
@@ -254,8 +256,8 @@ function AnalyzePage() {
                 quality: c.quality || 'maj',
                 romanNumeral: c.roman_numeral,
                 function: c.function,
-                startTime: c.start_time || c.startTime || i * 2,
-                endTime: c.end_time || c.endTime || (i + 1) * 2,
+                time: c.time || c.startTime || i * 2,
+                duration: c.duration || (c.endTime ? c.endTime - c.startTime : 2),
             }));
         }
         return song ? generateDemoChords(song.duration) : [];
@@ -275,8 +277,8 @@ function AnalyzePage() {
                 chords: p.chords || [],
                 genre: p.genre || 'Unknown',
                 confidence: p.confidence || 0.5,
-                startTime: p.start_time || 0,
-                endTime: p.end_time || 30,
+                start_time: p.start_time || 0,
+                end_time: p.end_time || 30,
                 description: p.description,
                 famousExamples: p.famous_examples || p.examples,
             }));

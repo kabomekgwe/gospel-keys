@@ -43,9 +43,9 @@ describe('PianoRoll', () => {
     });
 
     const mockNotes: Note[] = [
-        { id: '1', pitch: 60, startTime: 0, duration: 1, velocity: 100 },
-        { id: '2', pitch: 64, startTime: 1, duration: 1, velocity: 90 }, // E4
-        { id: '3', pitch: 67, startTime: 2, duration: 2, velocity: 80 }, // G4
+        { id: '1', pitch: 60, start_time: 0, end_time: 1, velocity: 100 },
+        { id: '2', pitch: 64, start_time: 1, end_time: 2, velocity: 90 }, // E4
+        { id: '3', pitch: 67, start_time: 2, end_time: 4, velocity: 80 }, // G4
     ];
 
     it('renders without crashing', () => {

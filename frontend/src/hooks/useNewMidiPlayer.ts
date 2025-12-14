@@ -3,14 +3,59 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import * as Tone from 'tone';
 
 // Define the shape of a MIDI note
+// Define the shape of a MIDI note
 export interface MidiNote {
     id: string;
     pitch: number;
-    startTime: number;
-    duration: number;
+    start_time: number;
+    end_time: number;
     velocity: number;
     hand: 'left' | 'right';
 }
+
+// ... 
+
+// Schedule MIDI notes
+useEffect(() => {
+    if (!sampler.current || notes.length === 0) return;
+
+    clearScheduledEvents();
+
+    // Sort notes just in case
+    const sortedNotes = [...notes].sort((a, b) => a.start_time - b.start_time);
+
+    sortedNotes.forEach((note) => {
+        const duration = note.end_time - note.start_time;
+
+        const eventId = Tone.Transport.schedule((time: number) => {
+            // Check hand muting
+            if ((note.hand === 'left' && mutedHands.left) ||
+                (note.hand === 'right' && mutedHands.right)) {
+                return;
+            }
+
+            sampler.current?.triggerAttackRelease(
+                Tone.Frequency(note.pitch, 'midi').toNote(),
+                duration,
+                time,
+                note.velocity / 127
+            );
+
+            // Visual feedback
+            Tone.Draw.schedule(() => {
+                setActiveNotes((prev) => [...prev, note.pitch]);
+            }, time);
+
+            Tone.Draw.schedule(() => {
+                setActiveNotes((prev) => prev.filter((p) => p !== note.pitch));
+            }, time + duration);
+
+        }, note.start_time);
+
+        scheduledEvents.current.push(eventId);
+    });
+
+}, [notes, mutedHands, clearScheduledEvents]); // Re-schedule if hands are muted/unmuted
 
 // Player state
 export interface PlayerState {

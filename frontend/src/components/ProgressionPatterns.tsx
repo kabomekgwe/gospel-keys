@@ -16,8 +16,8 @@ export interface ProgressionPattern {
     chords: string[];         // e.g., ['C', 'G', 'Am', 'F']
     genre: string;
     confidence: number;       // 0-1
-    startTime: number;
-    endTime: number;
+    start_time: number;
+    end_time: number;
     description?: string;
     famousExamples?: string[];
 }
@@ -166,7 +166,7 @@ export function ProgressionPatterns({
                             {/* Time range */}
                             <div className="flex items-center gap-2 mt-3 pt-3 border-t border-slate-700/50 text-xs text-slate-500">
                                 <span>
-                                    {formatTime(pattern.startTime)} - {formatTime(pattern.endTime)}
+                                    {formatTime(pattern.start_time)} - {formatTime(pattern.end_time)}
                                 </span>
                             </div>
                         </motion.div>

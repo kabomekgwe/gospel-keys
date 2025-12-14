@@ -15,8 +15,8 @@ export interface ChordData {
     quality: string;
     romanNumeral?: string;
     function?: 'tonic' | 'subdominant' | 'dominant' | 'secondary';
-    startTime: number;
-    endTime: number;
+    time: number;
+    duration: number;
     extensions?: string[];
 }
 
@@ -85,7 +85,7 @@ export function ChordChart({
 
     // Find current chord
     const currentChord = useMemo(() => {
-        return chords.find(c => currentTime >= c.startTime && currentTime < c.endTime);
+        return chords.find(c => currentTime >= c.time && currentTime < c.time + c.duration);
     }, [chords, currentTime]);
 
     return (
@@ -138,8 +138,8 @@ export function ChordChart({
 
                 {/* Chords */}
                 {chords.map((chord) => {
-                    const left = (chord.startTime / duration) * 100;
-                    const width = ((chord.endTime - chord.startTime) / duration) * 100;
+                    const left = (chord.time / duration) * 100;
+                    const width = (chord.duration / duration) * 100;
                     const colors = FUNCTION_COLORS[chord.function || 'tonic'];
                     const isSelected = selectedChordId === chord.id;
                     const isCurrent = currentChord?.id === chord.id;

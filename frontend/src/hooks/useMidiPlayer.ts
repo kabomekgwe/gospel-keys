@@ -14,11 +14,32 @@ import { useRef, useState, useCallback, useEffect } from 'react';
 export interface MidiNote {
     id: string;
     pitch: number;      // MIDI pitch (0-127)
-    startTime: number;  // In seconds (original tempo)
-    duration: number;   // In seconds (original tempo)
+    start_time: number;  // In seconds (original tempo)
+    end_time: number;   // In seconds (original tempo)
     velocity: number;   // 0-127
     hand?: 'left' | 'right'; // Hand assignment for visualization
 }
+
+// ... (lines 23-171 skipped)
+
+notes.forEach(note => {
+    const duration = note.end_time - note.start_time;
+    const noteStart = note.start_time / state.tempo;
+    const noteEnd = note.end_time / state.tempo;
+
+    // Check if note is currently active
+    if (currentTime >= noteStart && currentTime < noteEnd) {
+        newActiveNotes.push(note.pitch);
+    }
+
+    // Schedule note if within look-ahead window
+    if (noteStart >= currentTime && noteStart < currentTime + lookAhead) {
+        if (!scheduledNotesRef.current.has(note.id)) {
+            scheduledNotesRef.current.add(note.id);
+            synthRef.current?.playNote(note.pitch, note.velocity, duration / state.tempo);
+        }
+    }
+});
 
 export interface MidiPlayerState {
     isPlaying: boolean;

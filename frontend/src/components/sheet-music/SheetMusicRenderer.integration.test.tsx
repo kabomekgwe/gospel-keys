@@ -10,7 +10,7 @@ import { SheetMusicRenderer } from './SheetMusicRenderer';
 describe('SheetMusicRenderer Integration', () => {
     it('defaults to C Major when keySignature is null', () => {
         const mockNotes: any[] = [
-            { id: '1', pitch: 60, startTime: 0, duration: 1, velocity: 100 }
+            { id: '1', pitch: 60, start_time: 0, end_time: 1, velocity: 100 }
         ];
 
         expect(() => {
@@ -20,7 +20,7 @@ describe('SheetMusicRenderer Integration', () => {
 
     it('does not throw an error with valid props', () => {
         const mockNotes: any[] = [
-            { id: '1', pitch: 60, startTime: 0, duration: 1, velocity: 100 }
+            { id: '1', pitch: 60, start_time: 0, end_time: 1, velocity: 100 }
         ];
 
         expect(() => {
@@ -30,7 +30,7 @@ describe('SheetMusicRenderer Integration', () => {
 
     it('normalizes "C minor" to "Cm" and does not throw', () => {
         const mockNotes: any[] = [
-            { id: '1', pitch: 60, startTime: 0, duration: 1, velocity: 100 }
+            { id: '1', pitch: 60, start_time: 0, end_time: 1, velocity: 100 }
         ];
 
         expect(() => {

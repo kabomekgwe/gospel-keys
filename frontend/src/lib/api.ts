@@ -260,14 +260,9 @@ export const analysisApi = {
         return handleResponse<unknown>(response);
     },
 
-    getChords: async (songId: string): Promise<unknown[]> => {
-        // This endpoint was not in the backend file viewed, assuming it might be a different path or missing
-        // Based on analysis.py, there is no direct "get chords" analysis endpoint, 
-        // usually chords come from the Song object or specific analysis.
-        // Keeping as is but likely won't work if route doesn't exist.
-        // Correcting path to match typical pattern just in case
-        const response = await fetch(`${API_BASE_URL}/api/v1/analyze/${songId}/chords`);
-        return handleResponse<unknown[]>(response);
+    getChords: async (songId: string): Promise<ChordRegion[]> => {
+        // Alias to notesApi.getChords since chords are stored in the library
+        return notesApi.getChords(songId);
     },
 
     getPatterns: async (songId: string): Promise<unknown[]> => {
@@ -412,19 +407,24 @@ export const exportApi = {
 // Notes API (for piano roll data)
 // ============================================================================
 
+
 export interface NoteData {
-    id: string;
+    id: number;
     pitch: number;
-    startTime: number;
-    duration: number;
+    start_time: number;
+    end_time: number;
     velocity: number;
     hand?: 'left' | 'right';
 }
 
 export interface ChordRegion {
-    startTime: number;
-    endTime: number;
+    id?: number;
+    time: number;
+    duration: number;
     chord: string;
+    root: string;
+    quality: string;
+    bass_note?: string;
     romanNumeral?: string;
     function?: 'tonic' | 'subdominant' | 'dominant' | 'secondary';
 }

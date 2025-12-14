@@ -46,4 +46,22 @@ class SongUpdate(BaseModel):
     title: Optional[str] = None
     artist: Optional[str] = None
     difficulty: Optional[str] = None
-    favorite: Optional[bool] = None
+
+class SongNoteResponse(BaseModel):
+    """MIDI note data"""
+    id: int
+    pitch: int
+    start_time: float
+    end_time: float
+    velocity: int
+
+
+class SongChordResponse(BaseModel):
+    """Detected chord data"""
+    id: int
+    time: float
+    duration: float
+    chord: str
+    root: str
+    quality: str
+    bass_note: Optional[str] = None

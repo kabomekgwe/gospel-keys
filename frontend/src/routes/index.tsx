@@ -7,7 +7,6 @@ import { useQuery } from '@tanstack/react-query'
 import {
   Upload,
   Music2,
-  Activity,
   TrendingUp,
   Clock,
   Star,
@@ -15,10 +14,13 @@ import {
 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { libraryApi, healthApi } from '../lib/api'
+import { useUIStore } from '../lib/uiStore'
 
 export const Route = createFileRoute('/')({ component: HomePage })
 
 function HomePage() {
+  const { openUploadModal } = useUIStore()
+
   // Check API health
   const { data: health } = useQuery({
     queryKey: ['health'],
@@ -32,12 +34,13 @@ function HomePage() {
     queryFn: () => libraryApi.listSongs({ limit: 5 }),
   })
 
+  // Note: 'Active Jobs' card removed as it's now integrated in Library
   const quickActions = [
     {
       title: 'Upload New Song',
       description: 'Transcribe from YouTube or file',
       icon: <Upload className="w-8 h-8" />,
-      href: '/upload',
+      onClick: openUploadModal, // Use onClick instead of href
       color: 'from-cyan-500 to-blue-500',
     },
     {
@@ -46,13 +49,6 @@ function HomePage() {
       icon: <Music2 className="w-8 h-8" />,
       href: '/library',
       color: 'from-violet-500 to-purple-500',
-    },
-    {
-      title: 'Active Jobs',
-      description: 'Check transcription progress',
-      icon: <Activity className="w-8 h-8" />,
-      href: '/jobs',
-      color: 'from-emerald-500 to-green-500',
     },
   ]
 
@@ -83,7 +79,7 @@ function HomePage() {
       {/* Quick Actions */}
       <section className="mb-12">
         <h2 className="text-xl font-semibold mb-6 text-slate-200">Quick Actions</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6"> {/* Adjusted bandwidth */}
           {quickActions.map((action, index) => (
             <motion.div
               key={action.title}
@@ -91,22 +87,41 @@ function HomePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
             >
-              <Link
-                to={action.href}
-                className="block group"
-              >
-                <div className="glass-card rounded-xl p-6 hover:border-cyan-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/10">
-                  <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${action.color} flex items-center justify-center text-white mb-4`}>
-                    {action.icon}
+              {action.href ? (
+                <Link
+                  to={action.href}
+                  className="block group"
+                >
+                  <div className="glass-card rounded-xl p-6 hover:border-cyan-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/10">
+                    <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${action.color} flex items-center justify-center text-white mb-4`}>
+                      {action.icon}
+                    </div>
+                    <h3 className="text-lg font-semibold text-white mb-1 group-hover:text-cyan-400 transition-colors">
+                      {action.title}
+                    </h3>
+                    <p className="text-slate-400 text-sm">
+                      {action.description}
+                    </p>
                   </div>
-                  <h3 className="text-lg font-semibold text-white mb-1 group-hover:text-cyan-400 transition-colors">
-                    {action.title}
-                  </h3>
-                  <p className="text-slate-400 text-sm">
-                    {action.description}
-                  </p>
-                </div>
-              </Link>
+                </Link>
+              ) : (
+                <button
+                  onClick={action.onClick}
+                  className="block w-full text-left group"
+                >
+                  <div className="glass-card rounded-xl p-6 hover:border-cyan-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/10">
+                    <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${action.color} flex items-center justify-center text-white mb-4`}>
+                      {action.icon}
+                    </div>
+                    <h3 className="text-lg font-semibold text-white mb-1 group-hover:text-cyan-400 transition-colors">
+                      {action.title}
+                    </h3>
+                    <p className="text-slate-400 text-sm">
+                      {action.description}
+                    </p>
+                  </div>
+                </button>
+              )}
             </motion.div>
           ))}
         </div>
@@ -168,13 +183,13 @@ function HomePage() {
             <p className="text-slate-500 mb-6">
               Upload your first song to get started
             </p>
-            <Link
-              to="/upload"
+            <button
+              onClick={openUploadModal}
               className="inline-flex items-center gap-2 px-6 py-3 bg-cyan-500 hover:bg-cyan-600 text-white font-medium rounded-lg transition-colors"
             >
               <Upload className="w-5 h-5" />
               Upload Song
-            </Link>
+            </button>
           </div>
         )}
       </section>

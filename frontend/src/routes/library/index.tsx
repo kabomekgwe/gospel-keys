@@ -12,11 +12,15 @@ import {
     Star,
     Music2,
     Clock,
-    Filter,
-    SlidersHorizontal
+    Loader2,
+    CheckCircle2,
+    AlertCircle,
+    Plus
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { libraryApi, Song } from '../../lib/api'
+import { useJobsStore, StoredJob } from '../../lib/jobsStore'
+import { useUIStore } from '../../lib/uiStore'
 
 export const Route = createFileRoute('/library/')({ component: LibraryPage })
 
@@ -24,6 +28,7 @@ function LibraryPage() {
     const [search, setSearch] = useState('')
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
     const [favoritesOnly, setFavoritesOnly] = useState(false)
+    const { openUploadModal } = useUIStore()
 
     const { data: songs, isLoading, error } = useQuery({
         queryKey: ['songs', { search, favoritesOnly }],
@@ -32,6 +37,12 @@ function LibraryPage() {
             favorites_only: favoritesOnly
         }),
     })
+
+    // Active jobs
+    const allJobs = useJobsStore((state) => state.jobs)
+    const activeJobs = allJobs.filter(
+        (j) => ['pending', 'downloading', 'processing', 'analyzing'].includes(j.status)
+    );
 
     const formatDuration = (seconds: number) => {
         const mins = Math.floor(seconds / 60)
@@ -45,12 +56,21 @@ function LibraryPage() {
             <motion.div
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mb-8"
+                className="mb-8 flex justify-between items-end"
             >
-                <h1 className="text-3xl font-bold mb-2">Song Library</h1>
-                <p className="text-slate-400">
-                    Browse and manage your transcribed songs
-                </p>
+                <div>
+                    <h1 className="text-3xl font-bold mb-2">Song Library</h1>
+                    <p className="text-slate-400">
+                        Browse and manage your transcribed songs
+                    </p>
+                </div>
+                <button
+                    onClick={openUploadModal}
+                    className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white rounded-lg shadow-lg shadow-cyan-500/20 transition-all font-medium"
+                >
+                    <Plus className="w-4 h-4" />
+                    New Song
+                </button>
             </motion.div>
 
             {/* Toolbar */}
@@ -76,8 +96,8 @@ function LibraryPage() {
                     <button
                         onClick={() => setFavoritesOnly(!favoritesOnly)}
                         className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${favoritesOnly
-                                ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
-                                : 'text-slate-400 hover:text-white bg-slate-800 border border-slate-700'
+                            ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
+                            : 'text-slate-400 hover:text-white bg-slate-800 border border-slate-700'
                             }`}
                     >
                         <Star className={`w-4 h-4 ${favoritesOnly ? 'fill-yellow-400' : ''}`} />
@@ -110,7 +130,7 @@ function LibraryPage() {
                 <div className="glass-card rounded-xl p-8 text-center">
                     <p className="text-red-400">Failed to load songs</p>
                 </div>
-            ) : songs && songs.length > 0 ? (
+            ) : (songs && songs.length > 0) || activeJobs.length > 0 ? (
                 <AnimatePresence mode="wait">
                     {viewMode === 'grid' ? (
                         <motion.div
@@ -120,8 +140,14 @@ function LibraryPage() {
                             exit={{ opacity: 0 }}
                             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
                         >
-                            {songs.map((song, index) => (
-                                <SongCard key={song.id} song={song} index={index} />
+                            {/* Active Jobs First */}
+                            {activeJobs.map((job) => (
+                                <JobCard key={job.job_id} job={job} />
+                            ))}
+
+                            {/* Songs */}
+                            {songs?.map((song, index) => (
+                                <SongCard key={song.id} song={song} index={index + activeJobs.length} />
                             ))}
                         </motion.div>
                     ) : (
@@ -132,8 +158,14 @@ function LibraryPage() {
                             exit={{ opacity: 0 }}
                             className="space-y-2"
                         >
-                            {songs.map((song, index) => (
-                                <SongRow key={song.id} song={song} index={index} formatDuration={formatDuration} />
+                            {/* Active Jobs First */}
+                            {activeJobs.map((job) => (
+                                <JobRow key={job.job_id} job={job} />
+                            ))}
+
+                            {/* Songs */}
+                            {songs?.map((song, index) => (
+                                <SongRow key={song.id} song={song} index={index + activeJobs.length} formatDuration={formatDuration} />
                             ))}
                         </motion.div>
                     )}
@@ -152,16 +184,73 @@ function LibraryPage() {
                         {search ? 'Try a different search term' : 'Upload your first song to get started'}
                     </p>
                     {!search && (
-                        <Link
-                            to="/upload"
+                        <button
+                            onClick={openUploadModal}
                             className="inline-flex items-center gap-2 px-6 py-3 bg-cyan-500 hover:bg-cyan-600 text-white font-medium rounded-lg transition-colors"
                         >
+                            <Plus className="w-5 h-5" />
                             Upload Song
-                        </Link>
+                        </button>
                     )}
                 </motion.div>
             )}
         </div>
+    )
+}
+
+function JobCard({ job }: { job: StoredJob }) {
+    return (
+        <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="glass-card rounded-xl p-5 border border-cyan-500/30 bg-cyan-500/5 relative overflow-hidden"
+        >
+            <div className="absolute inset-x-0 bottom-0 h-1 bg-slate-800">
+                <div
+                    className="h-full bg-cyan-400 transition-all duration-300"
+                    style={{ width: `${job.progress}%` }}
+                />
+            </div>
+
+            <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 rounded-xl bg-cyan-500/20 flex items-center justify-center">
+                    <Loader2 className="w-6 h-6 text-cyan-400 animate-spin" />
+                </div>
+                <div className="px-2 py-1 rounded bg-cyan-500/20 text-cyan-300 text-xs font-medium">
+                    {job.progress}%
+                </div>
+            </div>
+
+            <h3 className="font-semibold text-white truncate mb-1">
+                {job.title || 'Processing Song...'}
+            </h3>
+            <p className="text-sm text-cyan-300/70 truncate mb-3">
+                {job.current_step || 'Initializing...'}
+            </p>
+        </motion.div>
+    )
+}
+
+function JobRow({ job }: { job: StoredJob }) {
+    return (
+        <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="glass-card rounded-lg p-4 flex items-center gap-4 border border-cyan-500/30 bg-cyan-500/5"
+        >
+            <div className="w-10 h-10 rounded-lg bg-cyan-500/20 flex items-center justify-center flex-shrink-0">
+                <Loader2 className="w-5 h-5 text-cyan-400 animate-spin" />
+            </div>
+
+            <div className="flex-1 min-w-0">
+                <h3 className="font-medium text-white truncate">
+                    {job.title || 'Processing Song...'}
+                </h3>
+                <p className="text-sm text-cyan-300/70 truncate">
+                    {job.current_step || 'Initializing...'} • {job.progress}%
+                </p>
+            </div>
+        </motion.div>
     )
 }
 

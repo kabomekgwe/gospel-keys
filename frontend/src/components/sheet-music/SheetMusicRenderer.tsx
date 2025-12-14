@@ -48,8 +48,8 @@ export function SheetMusicRenderer({
     // Get notes visible at current time (show a window of notes)
     // Expanded window for sheet music view
     const visibleNotes = notes.filter(note =>
-        note.startTime >= currentTime - 1 &&
-        note.startTime <= currentTime + 6
+        note.start_time >= currentTime - 1 &&
+        note.start_time <= currentTime + 6
     );
 
     const { render } = useVexFlow(

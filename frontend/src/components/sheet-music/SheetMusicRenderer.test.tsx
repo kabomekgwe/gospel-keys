@@ -36,7 +36,7 @@ describe('SheetMusicRenderer', () => {
 
     it('renders rendering container when notes exist', () => {
         const mockNotes: any[] = [
-            { id: '1', pitch: 60, startTime: 0, duration: 1, velocity: 100 }
+            { id: '1', pitch: 60, start_time: 0, end_time: 1, velocity: 100 }
         ];
 
         render(<SheetMusicRenderer notes={mockNotes} />);
