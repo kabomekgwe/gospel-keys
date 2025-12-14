@@ -14,7 +14,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from pydantic import BaseModel, Field
 
-from app.database.session import get_async_session
+from app.database.session import get_db
 from app.database.curriculum_models import CurriculumExercise
 from app.tasks.audio_generation import generate_exercise_audio_task
 from app.core.config import settings
@@ -57,7 +57,7 @@ class AudioStatusResponse(BaseModel):
 async def get_exercise_audio(
     exercise_id: str,
     method: Literal["fluidsynth", "stable_audio"] = "fluidsynth",
-    session: AsyncSession = Depends(get_async_session)
+    session: AsyncSession = Depends(get_db)
 ):
     """Get audio file for an exercise
 
@@ -118,7 +118,7 @@ async def get_exercise_audio(
 @router.get("/exercises/{exercise_id}/midi", response_class=FileResponse)
 async def get_exercise_midi(
     exercise_id: str,
-    session: AsyncSession = Depends(get_async_session)
+    session: AsyncSession = Depends(get_db)
 ):
     """Get MIDI file for an exercise
 
@@ -164,7 +164,7 @@ async def get_exercise_midi(
 @router.get("/exercises/{exercise_id}/status", response_model=AudioStatusResponse)
 async def get_audio_status(
     exercise_id: str,
-    session: AsyncSession = Depends(get_async_session)
+    session: AsyncSession = Depends(get_db)
 ):
     """Get audio generation status for an exercise
 
@@ -212,7 +212,7 @@ async def get_audio_status(
 async def generate_audio(
     exercise_id: str,
     request: AudioGenerationRequest = AudioGenerationRequest(),
-    session: AsyncSession = Depends(get_async_session)
+    session: AsyncSession = Depends(get_db)
 ):
     """Queue audio generation for an exercise
 
@@ -272,7 +272,7 @@ async def generate_audio(
 async def regenerate_audio(
     exercise_id: str,
     request: AudioGenerationRequest = AudioGenerationRequest(),
-    session: AsyncSession = Depends(get_async_session)
+    session: AsyncSession = Depends(get_db)
 ):
     """Regenerate audio for an exercise (overwrite existing)
 

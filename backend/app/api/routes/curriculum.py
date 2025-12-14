@@ -10,7 +10,7 @@ from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.database.session import get_async_session
+from app.database.session import get_db
 from app.database.curriculum_models import (
     UserSkillProfile,
     Curriculum,
@@ -43,7 +43,7 @@ router = APIRouter(prefix="/curriculum", tags=["Curriculum"])
 
 # Dependency to get curriculum service
 async def get_curriculum_service(
-    db: AsyncSession = Depends(get_async_session)
+    db: AsyncSession = Depends(get_db)
 ) -> CurriculumService:
     return CurriculumService(db)
 
@@ -377,7 +377,7 @@ async def get_daily_practice(
 async def get_lesson_tutorial(
     lesson_id: str,
     force_regenerate: bool = False,
-    session: AsyncSession = Depends(get_async_session)
+    session: AsyncSession = Depends(get_db)
 ):
     """Get or generate tutorial for a lesson
 
@@ -427,7 +427,7 @@ async def get_lesson_tutorial(
 async def get_performance_analysis(
     lookback_days: int = 7,
     current_user: User = Depends(get_current_active_user),
-    session: AsyncSession = Depends(get_async_session)
+    session: AsyncSession = Depends(get_db)
 ):
     """Get performance analysis for current user
 
@@ -468,7 +468,7 @@ async def get_performance_analysis(
 @router.post("/apply-adaptations")
 async def apply_curriculum_adaptations(
     current_user: User = Depends(get_current_active_user),
-    session: AsyncSession = Depends(get_async_session)
+    session: AsyncSession = Depends(get_db)
 ):
     """Apply recommended adaptations to user's active curriculum
 
@@ -528,7 +528,7 @@ async def apply_curriculum_adaptations(
 @router.get("/assessments/current")
 async def get_current_assessment(
     current_user: User = Depends(get_current_active_user),
-    session: AsyncSession = Depends(get_async_session)
+    session: AsyncSession = Depends(get_db)
 ):
     """Get current active assessment for user
 
@@ -578,7 +578,7 @@ async def submit_assessment(
     assessment_id: str,
     responses: dict,
     current_user: User = Depends(get_current_active_user),
-    session: AsyncSession = Depends(get_async_session)
+    session: AsyncSession = Depends(get_db)
 ):
     """Submit assessment responses and trigger evaluation + feedback loop
 
@@ -649,7 +649,7 @@ async def submit_assessment(
 @router.post("/generate-diagnostic-assessment")
 async def generate_diagnostic_assessment(
     current_user: User = Depends(get_current_active_user),
-    session: AsyncSession = Depends(get_async_session)
+    session: AsyncSession = Depends(get_db)
 ):
     """Generate initial diagnostic assessment for user
 
@@ -686,7 +686,7 @@ async def generate_diagnostic_assessment(
 async def check_milestone_assessments(
     curriculum_id: str,
     current_user: User = Depends(get_current_active_user),
-    session: AsyncSession = Depends(get_async_session)
+    session: AsyncSession = Depends(get_db)
 ):
     """Check and trigger milestone assessments for a curriculum
 

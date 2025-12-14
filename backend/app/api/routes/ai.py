@@ -19,7 +19,7 @@ from app.schemas.ai import (
     UsageStatsResponse, ModelUsageStats, TaskTypeStats,
 )
 from app.services.ai_generator import ai_generator_service
-from app.database.session import get_async_session
+from app.database.session import get_db
 from app.database.models import ModelUsageLog
 
 
@@ -89,7 +89,7 @@ async def get_substitutions(request: SubstitutionRequest):
 @router.get("/usage/stats", response_model=UsageStatsResponse)
 async def get_usage_stats(
     days: int = 7,
-    session: AsyncSession = Depends(get_async_session)
+    session: AsyncSession = Depends(get_db)
 ):
     """Get AI usage statistics for the last N days
 
