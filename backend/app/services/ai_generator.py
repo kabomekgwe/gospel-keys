@@ -218,45 +218,185 @@ Make sure:
         )
     
     async def generate_reharmonization(self, request: ReharmonizationRequest) -> ReharmonizationResponse:
-        """Generate reharmonization suggestions"""
-        original = " - ".join(request.original_progression)
-        
-        prompt = f"""You are an expert jazz arranger and reharmonization specialist.
-Reharmonize this chord progression in {request.style.value} style:
+        """Generate reharmonization suggestions using hybrid local+AI approach
 
-Original progression: {original}
+        Strategy:
+        1. Use local Phase 6 orchestrator for rule-based reharmonization
+        2. For simple tasks (complexity ≤ 7): Return local results
+        3. For complex tasks (complexity 8+): Enhance with AI explanations
+        """
+        from app.pipeline.reharmonization_orchestrator import get_all_reharmonizations_for_chord
+        from app.theory.chord_parser import parse_chord_symbol
+
+        # Parse original progression
+        parsed_chords = []
+        for chord_symbol in request.original_progression:
+            try:
+                parsed = parse_chord_symbol(chord_symbol)
+                parsed_chords.append(parsed)
+            except Exception:
+                # If parsing fails, use fallback format
+                parsed_chords.append({'root': chord_symbol, 'quality': ''})
+
+        # Determine complexity based on request characteristics
+        complexity = self._calculate_reharmonization_complexity(request)
+
+        # Get local rule-based reharmonization options
+        reharmonized_chords = []
+        techniques_used = set()
+
+        for i, chord_dict in enumerate(parsed_chords):
+            # Get context (previous/next chords)
+            previous = None
+            if i > 0:
+                prev_chord = parsed_chords[i-1]
+                previous = (prev_chord.get('root', ''), prev_chord.get('quality', ''))
+
+            next_chord = None
+            if i < len(parsed_chords) - 1:
+                next_c = parsed_chords[i+1]
+                next_chord = (next_c.get('root', ''), next_c.get('quality', ''))
+
+            # Get reharmonization options from Phase 6 orchestrator
+            options = get_all_reharmonizations_for_chord(
+                chord_dict=chord_dict,
+                key=request.key,
+                previous_chord=previous,
+                next_chord=next_chord,
+                genre=request.style.value.lower(),
+                max_options=3,  # Get top 3 options per chord
+                min_score=0.6   # Only high-quality options
+            )
+
+            # Use best option (highest score)
+            if options:
+                best = options[0]
+                techniques_used.add(best['technique'])
+
+                # Convert to ChordInfo format
+                chord_info = self._convert_to_chord_info(
+                    root=best['new_root'],
+                    quality=best['new_quality'],
+                    original=chord_dict
+                )
+                reharmonized_chords.append(chord_info)
+            else:
+                # No good options, keep original
+                chord_info = self._convert_to_chord_info(
+                    root=chord_dict.get('root', ''),
+                    quality=chord_dict.get('quality', ''),
+                    original=chord_dict
+                )
+                reharmonized_chords.append(chord_info)
+
+        # Generate explanation
+        if complexity <= 7:
+            # Simple case: Use local rule-based explanation
+            explanation = self._generate_local_explanation(
+                techniques=list(techniques_used),
+                style=request.style.value
+            )
+            source = "local_rules"
+        else:
+            # Complex case: Enhance with AI explanation
+            original = " - ".join(request.original_progression)
+            reharmonized_symbols = [c.symbol for c in reharmonized_chords]
+            reharmonized = " - ".join(reharmonized_symbols)
+
+            prompt = f"""Explain this reharmonization in {request.style.value} style:
+
+Original: {original}
+Reharmonized: {reharmonized}
+Techniques used: {', '.join(techniques_used)}
 Key: {request.key}
 
-Return a JSON object with this exact structure:
-{{
-    "reharmonized": [
-        {{
-            "symbol": "Cmaj9",
-            "notes": ["C", "E", "G", "B", "D"],
-            "midi_notes": [48, 52, 55, 59, 62],
-            "function": "I",
-            "comment": "Extended from Cmaj7"
-        }}
-    ],
-    "explanation": "Detailed explanation of the reharmonization approach",
-    "techniques_used": ["tritone substitution", "secondary dominants", "etc."]
-}}
+Provide a clear, educational explanation (2-3 sentences) of why these reharmonization choices work well for this style."""
 
-Apply appropriate reharmonization techniques for {request.style.value} style:
-- Jazz: tritone subs, passing diminished, ii-V chains
-- Gospel: chromatic mediants, extended gospel moves, plagal cadences
-- Neo-soul: minor 11ths, altered dominants, modal interchange
-
-Return ONLY the JSON, no other text"""
-
-        data = await self._generate_with_fallback(prompt, "reharmonization")
+            explanation = await self._generate_with_fallback(prompt, "reharmonization_explanation")
+            if isinstance(explanation, dict):
+                explanation = explanation.get('explanation', str(explanation))
+            source = "hybrid"
 
         return ReharmonizationResponse(
             original=request.original_progression,
-            reharmonized=[ChordInfo(**chord) for chord in data["reharmonized"]],
-            explanation=data["explanation"],
-            techniques_used=data["techniques_used"]
+            reharmonized=reharmonized_chords,
+            explanation=explanation,
+            techniques_used=list(techniques_used),
+            source=source,  # Track whether local or hybrid was used
+            complexity=complexity
         )
+
+    def _calculate_reharmonization_complexity(self, request: ReharmonizationRequest) -> int:
+        """Calculate task complexity (1-10) for reharmonization request"""
+        complexity = 5  # Base complexity
+
+        # More chords = higher complexity
+        num_chords = len(request.original_progression)
+        if num_chords <= 4:
+            complexity += 0
+        elif num_chords <= 8:
+            complexity += 1
+        else:
+            complexity += 2
+
+        # Style impacts complexity
+        style_complexity = {
+            'jazz': 1,
+            'gospel': 1,
+            'neosoul': 2,
+            'classical': 1,
+            'blues': 0
+        }
+        complexity += style_complexity.get(request.style.value.lower(), 1)
+
+        return min(10, max(1, complexity))
+
+    def _convert_to_chord_info(self, root: str, quality: str, original: dict) -> ChordInfo:
+        """Convert Phase 6 chord data to ChordInfo schema"""
+        from app.theory.chord_builder import get_chord_notes, chord_to_midi
+
+        # Build chord symbol
+        symbol = f"{root}{quality}"
+
+        # Get notes and MIDI
+        try:
+            notes = get_chord_notes(root, quality)
+            midi_notes = chord_to_midi(root, quality, octave=4)
+        except Exception:
+            # Fallback
+            notes = [root]
+            midi_notes = [60]  # Middle C
+
+        # Determine function (simplified)
+        function = original.get('function', '?')
+
+        return ChordInfo(
+            symbol=symbol,
+            notes=notes,
+            midi_notes=midi_notes,
+            function=function,
+            comment=f"Reharmonization of {original.get('root', '')}{original.get('quality', '')}"
+        )
+
+    def _generate_local_explanation(self, techniques: list, style: str) -> str:
+        """Generate rule-based explanation for reharmonization"""
+        if not techniques:
+            return f"Applied standard {style} harmonic practices."
+
+        technique_explanations = {
+            'diatonic_substitution': 'diatonic chord substitutions',
+            'modal_interchange': 'modal interchange borrowing',
+            'tritone_substitution': 'tritone substitutions',
+            'negative_harmony': 'negative harmony',
+            'coltrane_changes': 'Coltrane changes',
+            'common_tone_diminished': 'common tone diminished chords',
+            'passing_chords': 'chromatic passing chords'
+        }
+
+        technique_names = [technique_explanations.get(t, t) for t in techniques]
+        techniques_str = ', '.join(technique_names)
+
+        return f"This reharmonization uses {techniques_str} to enhance the harmonic interest while maintaining {style} style characteristics and smooth voice leading."
     
     async def generate_voicings(self, request: VoicingRequest) -> VoicingResponse:
         """Generate chord voicing options"""

@@ -212,6 +212,8 @@ class ReharmonizationResponse(BaseModel):
     reharmonized: list[ChordInfo] = Field(..., description="Reharmonized version")
     explanation: str = Field(..., description="Explanation of changes")
     techniques_used: list[str] = Field(..., description="Reharmonization techniques applied")
+    source: Optional[str] = Field(None, description="Source: 'local_rules' or 'hybrid' (local + AI)")
+    complexity: Optional[int] = Field(None, description="Task complexity (1-10)")
 
 
 class VoicingResponse(BaseModel):
