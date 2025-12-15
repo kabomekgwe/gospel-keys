@@ -574,3 +574,36 @@ Week 5-6:  [                            ] STORY-3.5 (Deployment)
 **Last Updated**: December 15, 2025
 **Owner**: Full-Stack Team
 **Next Review**: Week 2 (database schema completion)
+
+---
+
+## Deferred Stories (User Decision)
+
+### STORY-3.4 & STORY-3.5 - Deferred to Later Phase
+
+**Decision Date**: December 15, 2025
+**Rationale**: Focus on core functionality completion first
+
+The following stories have been deferred per user request:
+- **STORY-3.4: Authentication & User Management** (3 points)
+- **STORY-3.5: Production Deployment & CI/CD** (2 points)
+
+**Current Priority**: 
+Phase 3 core functionality (Stories 3.1-3.3) is 100% complete, providing:
+- Real-time audio analysis via WebSocket
+- Database persistence and progress tracking
+- Complete frontend visualization suite
+
+**Future Implementation**:
+Authentication and deployment will be implemented when needed for:
+- Multi-user production deployment
+- User data isolation and security
+- Production infrastructure requirements
+
+**Phase 3 Core Status**: ✅ **COMPLETE** (29/29 core points - 100%)
+**Phase 3 Total Status**: 🎯 **85% Complete** (29/34 total points)
+
+---
+
+**Last Updated**: December 15, 2025, 14:56
+**Next Review**: When authentication or deployment is required
