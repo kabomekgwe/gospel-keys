@@ -17,45 +17,8 @@ import time
 import base64
 import logging
 
-# Temporarily mock Rust functions for WebSocket protocol testing
-# TODO: Replace with actual rust_audio_engine imports once build is fixed
-# from rust_audio_engine import detect_pitch, detect_onsets_python, analyze_dynamics_python
-
-def detect_pitch(samples, sample_rate):
-    """Mock pitch detection - returns middle C (261.63 Hz)"""
-    return {
-        "frequency": 261.63,
-        "note_name": "C4",
-        "confidence": 0.85,
-        "is_voiced": True
-    }
-
-def detect_onsets_python(samples, sample_rate, hop_size=256, threshold=0.15):
-    """Mock onset detection - returns synthetic onsets"""
-    # Return one onset per second of audio
-    num_onsets = len(samples) // sample_rate
-    return [
-        {
-            "timestamp": i * 1.0,
-            "sample_index": i * sample_rate,
-            "strength": 0.75,
-            "confidence": 0.80
-        }
-        for i in range(num_onsets)
-    ]
-
-def analyze_dynamics_python(samples, onsets, sample_rate):
-    """Mock dynamics analysis - returns synthetic dynamics"""
-    return [
-        {
-            "timestamp": onset["timestamp"],
-            "rms_level": 0.5,
-            "peak_level": 0.7,
-            "db_level": -6.0,
-            "midi_velocity": 80
-        }
-        for onset in onsets
-    ]
+# Real Rust audio analysis functions
+from rust_audio_engine import detect_pitch, detect_onsets_python, analyze_dynamics_python
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
