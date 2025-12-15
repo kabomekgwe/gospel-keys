@@ -1085,6 +1085,252 @@ export const curriculumApi = {
     },
 };
 
+// ============================================================================
+// Real-Time Analysis API (Phase 3 - STORY-3.2/3.3)
+// ============================================================================
+
+export interface RealtimeSessionCreate {
+    user_id: number;
+    piece_name?: string;
+    genre?: string;
+    target_tempo?: number;
+    difficulty_level?: 'beginner' | 'intermediate' | 'advanced';
+    websocket_session_id?: string;
+}
+
+export interface RealtimeSession {
+    id: string; // UUID
+    user_id: number;
+    piece_name?: string;
+    genre?: string;
+    target_tempo?: number;
+    difficulty_level?: string;
+    started_at: string; // ISO datetime
+    ended_at?: string;
+    duration_seconds?: number;
+    websocket_session_id?: string;
+    chunks_processed: number;
+    status: 'active' | 'completed' | 'abandoned';
+    created_at: string;
+    updated_at: string;
+}
+
+export interface PerformanceCreate {
+    session_id: string; // UUID
+    audio_path?: string;
+    midi_path?: string;
+    sample_rate?: number;
+    audio_format?: string;
+    notes?: string;
+}
+
+export interface Performance {
+    id: string; // UUID
+    session_id: string;
+    recording_started_at: string;
+    recording_duration?: number;
+    audio_path?: string;
+    midi_path?: string;
+    sample_rate: number;
+    audio_format?: string;
+    notes?: string;
+    created_at: string;
+}
+
+export interface AnalysisResultCreate {
+    performance_id: string; // UUID
+    pitch_accuracy?: number; // 0.0-1.0
+    rhythm_accuracy?: number; // 0.0-1.0
+    dynamics_range?: number; // 0.0-1.0
+    overall_score?: number; // 0.0-1.0
+    avg_pitch_deviation_cents?: number;
+    timing_consistency?: number;
+    tempo_stability?: number;
+    note_accuracy_rate?: number;
+    total_notes_detected?: number;
+    total_onsets_detected?: number;
+    total_dynamics_events?: number;
+    feedback_json?: string; // JSON string
+    difficulty_estimate?: string;
+    genre_match_score?: number;
+    analysis_engine_version?: string;
+    processing_time_ms?: number;
+}
+
+export interface AnalysisResult {
+    id: string; // UUID
+    performance_id: string;
+    pitch_accuracy?: number;
+    rhythm_accuracy?: number;
+    dynamics_range?: number;
+    overall_score?: number;
+    avg_pitch_deviation_cents?: number;
+    timing_consistency?: number;
+    tempo_stability?: number;
+    note_accuracy_rate?: number;
+    total_notes_detected?: number;
+    total_onsets_detected?: number;
+    total_dynamics_events?: number;
+    feedback_json?: string;
+    difficulty_estimate?: string;
+    genre_match_score?: number;
+    analysis_engine_version?: string;
+    processing_time_ms?: number;
+    created_at: string;
+}
+
+export interface ProgressMetric {
+    id: string; // UUID
+    user_id: number;
+    metric_date: string;
+    period_type: 'daily' | 'weekly' | 'monthly';
+    total_sessions: number;
+    total_practice_time_seconds: number;
+    avg_pitch_accuracy?: number;
+    avg_rhythm_accuracy?: number;
+    avg_dynamics_range?: number;
+    avg_overall_score?: number;
+    improvement_rate?: number;
+    consistency_score?: number;
+    genre_breakdown_json?: string;
+    milestones_json?: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface UserStats {
+    total_sessions: number;
+    total_practice_hours: number;
+    total_analyses: number;
+    avg_pitch_accuracy: number;
+    avg_rhythm_accuracy: number;
+    avg_overall_score: number;
+    period_days: number;
+}
+
+export const realtimeAnalysisApi = {
+    // Session Management
+    createSession: async (data: RealtimeSessionCreate): Promise<RealtimeSession> => {
+        const response = await fetch(`${API_BASE_URL}/api/v1/realtime/sessions`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+        return handleResponse<RealtimeSession>(response);
+    },
+
+    endSession: async (sessionId: string): Promise<RealtimeSession> => {
+        const response = await fetch(`${API_BASE_URL}/api/v1/realtime/sessions/${sessionId}/end`, {
+            method: 'PATCH',
+        });
+        return handleResponse<RealtimeSession>(response);
+    },
+
+    getSession: async (sessionId: string): Promise<RealtimeSession> => {
+        const response = await fetch(`${API_BASE_URL}/api/v1/realtime/sessions/${sessionId}`);
+        return handleResponse<RealtimeSession>(response);
+    },
+
+    getUserSessions: async (params: {
+        userId: number;
+        limit?: number;
+        offset?: number;
+        status?: 'active' | 'completed' | 'abandoned';
+    }): Promise<RealtimeSession[]> => {
+        const searchParams = new URLSearchParams();
+        if (params.limit) searchParams.set('limit', String(params.limit));
+        if (params.offset) searchParams.set('offset', String(params.offset));
+        if (params.status) searchParams.set('status', params.status);
+
+        const response = await fetch(
+            `${API_BASE_URL}/api/v1/realtime/users/${params.userId}/sessions?${searchParams}`
+        );
+        return handleResponse<RealtimeSession[]>(response);
+    },
+
+    updateChunksProcessed: async (sessionId: string, chunks: number): Promise<{ status: string; chunks_added: number }> => {
+        const response = await fetch(
+            `${API_BASE_URL}/api/v1/realtime/sessions/${sessionId}/chunks?chunks=${chunks}`,
+            { method: 'PATCH' }
+        );
+        return handleResponse<{ status: string; chunks_added: number }>(response);
+    },
+
+    // Performance Management
+    createPerformance: async (data: PerformanceCreate): Promise<Performance> => {
+        const response = await fetch(`${API_BASE_URL}/api/v1/realtime/performances`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+        return handleResponse<Performance>(response);
+    },
+
+    getSessionPerformances: async (sessionId: string): Promise<Performance[]> => {
+        const response = await fetch(`${API_BASE_URL}/api/v1/realtime/sessions/${sessionId}/performances`);
+        return handleResponse<Performance[]>(response);
+    },
+
+    // Analysis Results
+    createAnalysisResult: async (data: AnalysisResultCreate): Promise<AnalysisResult> => {
+        const response = await fetch(`${API_BASE_URL}/api/v1/realtime/analysis-results`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+        return handleResponse<AnalysisResult>(response);
+    },
+
+    getPerformanceAnalysis: async (performanceId: string): Promise<AnalysisResult[]> => {
+        const response = await fetch(`${API_BASE_URL}/api/v1/realtime/performances/${performanceId}/analysis`);
+        return handleResponse<AnalysisResult[]>(response);
+    },
+
+    getLatestAnalysis: async (performanceId: string): Promise<AnalysisResult> => {
+        const response = await fetch(`${API_BASE_URL}/api/v1/realtime/performances/${performanceId}/analysis/latest`);
+        return handleResponse<AnalysisResult>(response);
+    },
+
+    // Progress & Analytics
+    getUserProgress: async (params: {
+        userId: number;
+        periodType?: 'daily' | 'weekly' | 'monthly';
+        startDate?: string;
+        endDate?: string;
+        limit?: number;
+    }): Promise<ProgressMetric[]> => {
+        const searchParams = new URLSearchParams();
+        if (params.periodType) searchParams.set('period_type', params.periodType);
+        if (params.startDate) searchParams.set('start_date', params.startDate);
+        if (params.endDate) searchParams.set('end_date', params.endDate);
+        if (params.limit) searchParams.set('limit', String(params.limit));
+
+        const response = await fetch(
+            `${API_BASE_URL}/api/v1/realtime/users/${params.userId}/progress?${searchParams}`
+        );
+        return handleResponse<ProgressMetric[]>(response);
+    },
+
+    getUserStats: async (userId: number, days = 30): Promise<UserStats> => {
+        const response = await fetch(`${API_BASE_URL}/api/v1/realtime/users/${userId}/stats?days=${days}`);
+        return handleResponse<UserStats>(response);
+    },
+
+    // Complete Session Data
+    getSessionCompleteData: async (sessionId: string): Promise<{
+        session: RealtimeSession;
+        performances: Array<{
+            performance: Performance;
+            analysis_results: AnalysisResult[];
+        }>;
+        total_performances: number;
+        total_analyses: number;
+    }> => {
+        const response = await fetch(`${API_BASE_URL}/api/v1/realtime/sessions/${sessionId}/complete-data`);
+        return handleResponse(response);
+    },
+};
+
 // Combined API export for convenience
 export const api = {
     ...transcriptionApi,
@@ -1096,4 +1342,5 @@ export const api = {
     ...healthApi,
     ...aiApi,
     ...curriculumApi,
+    ...realtimeAnalysisApi,
 };
