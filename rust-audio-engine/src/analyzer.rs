@@ -1,9 +1,9 @@
 //! Audio analysis module for real-time performance evaluation
 //!
 //! Implements:
-//! - YIN pitch detection algorithm
-//! - Onset detection (spectral flux + energy)
-//! - Dynamic range analysis (RMS, peak, dB)
+//! - YIN pitch detection algorithm (STORY-2.1)
+//! - Onset detection (spectral flux + energy) (STORY-2.2)
+//! - Dynamic range analysis (RMS, peak, dB) (STORY-2.3)
 //!
 //! Phase 2: Real-Time Performance Analysis
 
@@ -603,5 +603,218 @@ mod onset_tests {
 
         assert!(!onsets.is_empty());
         assert!(onsets[0].confidence > 0.0 && onsets[0].confidence <= 1.0);
+    }
+}
+
+// ============================================================================
+// STORY-2.3: Dynamic Expression Analysis
+// ============================================================================
+
+/// Dynamic expression analysis event
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct DynamicsEvent {
+    pub timestamp: f64,        // Time in seconds
+    pub rms_level: f32,        // RMS amplitude (0.0-1.0)
+    pub peak_level: f32,       // Peak amplitude (0.0-1.0)
+    pub db_level: f32,         // Decibels (-60 to 0 dB)
+    pub midi_velocity: u8,     // Velocity (0-127)
+}
+
+/// Analyze dynamics for each note segment based on onset times
+///
+/// # Arguments
+/// * `audio` - Audio samples (mono, normalized ±1.0)
+/// * `onsets` - Detected onset events from onset detection
+/// * `sample_rate` - Sample rate in Hz
+///
+/// # Returns
+/// Vector of DynamicsEvent, one per note segment
+pub fn analyze_dynamics(
+    audio: &[f32],
+    onsets: &[OnsetEvent],
+    sample_rate: u32,
+) -> Vec<DynamicsEvent> {
+    let mut results = Vec::with_capacity(onsets.len());
+
+    for i in 0..onsets.len() {
+        // Extract note segment
+        let start = onsets[i].sample_index;
+        let end = if i + 1 < onsets.len() {
+            onsets[i + 1].sample_index
+        } else {
+            audio.len()
+        };
+
+        let segment = &audio[start..end];
+
+        // Calculate RMS and peak
+        let rms = calculate_rms(segment);
+        let peak = find_peak(segment);
+        let db = amplitude_to_db(rms);
+        let velocity = db_to_velocity(db);
+
+        results.push(DynamicsEvent {
+            timestamp: onsets[i].timestamp,
+            rms_level: rms,
+            peak_level: peak,
+            db_level: db,
+            midi_velocity: velocity,
+        });
+    }
+
+    results
+}
+
+/// Find peak amplitude in audio segment
+fn find_peak(samples: &[f32]) -> f32 {
+    samples.iter()
+        .map(|&s| s.abs())
+        .fold(0.0f32, f32::max)
+}
+
+/// Convert amplitude to decibels (dB)
+///
+/// Uses -60dB as silence floor (below 1e-6 amplitude)
+fn amplitude_to_db(amplitude: f32) -> f32 {
+    if amplitude < 1e-6 {
+        -60.0  // Silence floor
+    } else {
+        20.0 * amplitude.log10()
+    }
+}
+
+/// Convert dB level to MIDI velocity (0-127)
+///
+/// Maps -60dB to 0dB → 0 to 127 velocity
+fn db_to_velocity(db: f32) -> u8 {
+    // Map -60dB to 0dB → 0.0 to 1.0
+    let normalized = (db + 60.0) / 60.0;
+    (normalized.clamp(0.0, 1.0) * 127.0) as u8
+}
+
+#[cfg(test)]
+mod dynamics_tests {
+    use super::*;
+
+    #[test]
+    fn test_rms_sine_wave() {
+        // RMS of sine wave = amplitude / sqrt(2)
+        let amplitude = 0.5;
+        let samples: Vec<f32> = (0..1000)
+            .map(|i| amplitude * (2.0 * std::f32::consts::PI * i as f32 / 100.0).sin())
+            .collect();
+
+        let rms = calculate_rms(&samples);
+        let expected = amplitude / 2.0f32.sqrt();
+
+        assert!((rms - expected).abs() < 0.01, "RMS calculation incorrect: expected {}, got {}", expected, rms);
+    }
+
+    #[test]
+    fn test_rms_dc_signal() {
+        // RMS of constant signal = absolute value
+        let samples = vec![0.5; 1000];
+        let rms = calculate_rms(&samples);
+
+        assert!((rms - 0.5).abs() < 0.01, "RMS of DC signal should equal amplitude");
+    }
+
+    #[test]
+    fn test_rms_silence() {
+        let samples = vec![0.0; 1000];
+        let rms = calculate_rms(&samples);
+
+        assert_eq!(rms, 0.0, "RMS of silence should be 0");
+    }
+
+    #[test]
+    fn test_peak_detection() {
+        let samples = vec![0.1, -0.3, 0.7, -0.5, 0.2];
+        let peak = find_peak(&samples);
+
+        assert_eq!(peak, 0.7, "Peak should be 0.7");
+    }
+
+    #[test]
+    fn test_db_conversion() {
+        // 0dB = full scale (amplitude 1.0)
+        assert_eq!(amplitude_to_db(1.0), 0.0);
+
+        // -6dB ≈ 0.5 amplitude (half power)
+        let db_half = amplitude_to_db(0.5);
+        assert!((db_half - (-6.02)).abs() < 0.1, "0.5 amplitude should be ~-6dB");
+
+        // Silence floor
+        assert_eq!(amplitude_to_db(0.0), -60.0);
+        assert_eq!(amplitude_to_db(1e-7), -60.0);
+    }
+
+    #[test]
+    fn test_velocity_mapping() {
+        // 0dB = max velocity
+        assert_eq!(db_to_velocity(0.0), 127);
+
+        // -60dB = min velocity
+        assert_eq!(db_to_velocity(-60.0), 0);
+
+        // -30dB = mid velocity
+        let mid_vel = db_to_velocity(-30.0);
+        assert!((mid_vel as i32 - 63).abs() <= 1, "Mid velocity should be ~63, got {}", mid_vel);
+    }
+
+    #[test]
+    fn test_velocity_clamping() {
+        // Beyond range should clamp
+        assert_eq!(db_to_velocity(10.0), 127);  // Above 0dB
+        assert_eq!(db_to_velocity(-100.0), 0);  // Below -60dB
+    }
+
+    #[test]
+    fn test_analyze_dynamics_basic() {
+        // Create simple test audio with 3 notes at different levels
+        let mut audio = Vec::new();
+
+        // Note 1: soft (0.1 amplitude)
+        audio.extend(vec![0.1; 4410]); // 100ms at 44.1kHz
+
+        // Note 2: medium (0.5 amplitude)
+        audio.extend(vec![0.5; 4410]);
+
+        // Note 3: loud (0.9 amplitude)
+        audio.extend(vec![0.9; 4410]);
+
+        // Create fake onset events
+        let onsets = vec![
+            OnsetEvent {
+                timestamp: 0.0,
+                sample_index: 0,
+                strength: 1.0,
+                confidence: 1.0,
+            },
+            OnsetEvent {
+                timestamp: 0.1,
+                sample_index: 4410,
+                strength: 1.0,
+                confidence: 1.0,
+            },
+            OnsetEvent {
+                timestamp: 0.2,
+                sample_index: 8820,
+                strength: 1.0,
+                confidence: 1.0,
+            },
+        ];
+
+        let dynamics = analyze_dynamics(&audio, &onsets, 44100);
+
+        assert_eq!(dynamics.len(), 3);
+
+        // Verify increasing RMS levels
+        assert!(dynamics[0].rms_level < dynamics[1].rms_level);
+        assert!(dynamics[1].rms_level < dynamics[2].rms_level);
+
+        // Verify increasing velocities
+        assert!(dynamics[0].midi_velocity < dynamics[1].midi_velocity);
+        assert!(dynamics[1].midi_velocity < dynamics[2].midi_velocity);
     }
 }

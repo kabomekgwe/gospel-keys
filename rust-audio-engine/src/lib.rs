@@ -18,7 +18,11 @@ mod analyzer;
 use synthesizer::MidiSynthesizer;
 use metal_effects::MetalEffectsProcessor;
 use waveform::WaveformGenerator;
-use analyzer::{detect_pitch_yin, YinParams, PitchResult, detect_onsets, OnsetParams, OnsetEvent};
+use analyzer::{
+    detect_pitch_yin, YinParams, PitchResult,
+    detect_onsets, OnsetParams, OnsetEvent,
+    analyze_dynamics, DynamicsEvent
+};
 
 /// Synthesize a MIDI file to WAV audio with optional GPU effects
 ///
@@ -203,6 +207,63 @@ fn detect_onsets_python(
     Ok(result)
 }
 
+/// Analyze dynamic expression in audio segments
+///
+/// Args:
+///     audio_samples: Audio samples as Vec<f32> (mono, normalized ±1.0)
+///     onsets: List of onset dictionaries from detect_onsets_python
+///     sample_rate: Sample rate in Hz (default: 44100)
+///
+/// Returns:
+///     List of dictionaries with dynamics analysis results
+///     [
+///         {
+///             "timestamp": float,      // seconds
+///             "rms_level": float,      // 0.0-1.0
+///             "peak_level": float,     // 0.0-1.0
+///             "db_level": float,       // -60 to 0 dB
+///             "midi_velocity": int     // 0-127
+///         },
+///         ...
+///     ]
+#[pyfunction]
+#[pyo3(signature = (audio_samples, onsets, sample_rate=44100))]
+fn analyze_dynamics_python(
+    py: pyo3::Python,
+    audio_samples: Vec<f32>,
+    onsets: Vec<pyo3::Py<pyo3::types::PyDict>>,
+    sample_rate: u32,
+) -> PyResult<Vec<pyo3::Py<pyo3::types::PyDict>>> {
+    // Convert Python onset dicts to Rust OnsetEvent structs
+    let mut onset_events: Vec<OnsetEvent> = Vec::with_capacity(onsets.len());
+    for dict in onsets.iter() {
+        let bound = dict.bind(py);
+        onset_events.push(OnsetEvent {
+            timestamp: bound.get_item("timestamp")?.unwrap().extract::<f64>()?,
+            sample_index: bound.get_item("sample_index")?.unwrap().extract::<usize>()?,
+            strength: bound.get_item("strength")?.unwrap().extract::<f32>()?,
+            confidence: bound.get_item("confidence")?.unwrap().extract::<f32>()?,
+        });
+    }
+
+    // Analyze dynamics
+    let dynamics = analyze_dynamics(&audio_samples, &onset_events, sample_rate);
+
+    // Convert to Python list of dicts
+    let mut result = Vec::new();
+    for event in dynamics {
+        let dict = pyo3::types::PyDict::new_bound(py);
+        dict.set_item("timestamp", event.timestamp)?;
+        dict.set_item("rms_level", event.rms_level)?;
+        dict.set_item("peak_level", event.peak_level)?;
+        dict.set_item("db_level", event.db_level)?;
+        dict.set_item("midi_velocity", event.midi_velocity)?;
+        result.push(dict.unbind());
+    }
+
+    Ok(result)
+}
+
 /// Analyze audio performance against expected MIDI
 ///
 /// Args:
@@ -219,7 +280,7 @@ fn analyze_performance(
     _expected_midi_path: String,
     _use_gpu: bool,
 ) -> PyResult<String> {
-    // TODO: Implement in future phase (STORY-2.3, 2.4)
+    // TODO: Implement in future phase (full integration)
     Ok(r#"{"pitch_accuracy": 0.95, "rhythm_accuracy": 0.88}"#.to_string())
 }
 
@@ -251,6 +312,7 @@ fn rust_audio_engine(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(generate_waveform, m)?)?;
     m.add_function(wrap_pyfunction!(detect_pitch, m)?)?;
     m.add_function(wrap_pyfunction!(detect_onsets_python, m)?)?;
+    m.add_function(wrap_pyfunction!(analyze_dynamics_python, m)?)?;
     m.add_function(wrap_pyfunction!(analyze_performance, m)?)?;
     Ok(())
 }
