@@ -201,7 +201,7 @@ export function FeedbackPanel({
           iconColor: isDark ? 'text-green-400' : 'text-green-600',
           textColor: isDark ? 'text-green-100' : 'text-green-900',
         };
-      case: 'improvement':
+      case 'improvement':
         return {
           icon: '!',
           bgColor: isDark ? 'bg-yellow-900/20' : 'bg-yellow-50',
