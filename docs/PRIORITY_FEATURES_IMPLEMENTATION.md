@@ -2217,7 +2217,7 @@ SCALE_LIBRARY = {
 
 ---
 
-## Chord Library (36 Types Total)
+## Chord Library (56 Types Total - EXPANDED 2025)
 
 ### Implementation
 
@@ -2238,19 +2238,27 @@ CHORD_LIBRARY = {
         "quality": "consonant",
         "function": "tonic/subdominant"
     },
-    # ... (continues for all 36 chord types)
+    # ... (continues for all 56 chord types)
 }
 ```
 
-### Complete Chord Catalog
+### Complete Chord Catalog (Updated December 2025)
 
 | Category | Chord Types | Count |
 |----------|-------------|-------|
 | **Triads** | Major, Minor, Diminished, Augmented, Sus2, Sus4 | 6 |
-| **Seventh Chords** | Maj7, m7, Dom7, mMaj7, m7b5 (half-dim), dim7, augMaj7, aug7, 7b5 | 9 |
-| **Extended Chords** | Maj9, m9, Dom9, Maj11, m11, Dom11, Maj13, m13, Dom13 | 9 |
-| **Altered Chords** | 7b9, 7#9, 7b5, 7#5, 7#11, 7alt, 13b9, 13#11 | 8 |
-| **Add Chords** | add9 (add2), add11 (add4), madd9, 6/9 | 4 |
+| **Seventh Chords** | Maj7, m7, Dom7, mMaj7, m7b5 (half-dim), dim7, augMaj7, aug7 | 8 |
+| **Extended Chords** | Maj9, m9, Dom9, Maj11, m11, Dom11, Maj13, m13, Dom13, m11b5 | 10 |
+| **Altered Chords** | 7b9, 7#9, 7b5, 7#5, 7#11, 7alt, 13b9, 13#11, 7b9#9, 7b9#5, 7#9#5, aug9 | 12 |
+| **Add Chords** | add9 (add2), add11 (add4), madd9, madd13, add13, 6/9 | 6 |
+| **Sixth Chords** | 6, m6 | 2 |
+| **Suspended 7th** | 7sus4, 9sus | 2 |
+| **Lydian Chords** | maj7#11, maj9#11 | 2 |
+| **Quartal/Quintal** | Quartal, Quintal | 2 |
+| **Cluster Chords** | Minor 2nd Cluster | 1 |
+| **Special** | Power Chord (5) | 1 |
+
+**Total: 56 chord types** (up from 36 - 55% increase)
 
 ### Chord Type Details
 
@@ -2349,12 +2357,18 @@ class GospelRhythmPatterns:
     }
 ```
 
-**Gospel Patterns:**
+**Gospel Patterns (11 total - EXPANDED 2025):**
 - **Gospel Shuffle:** 12/8 feel in 4/4 time (0.6 intensity default) - rolling triplet groove
 - **Gospel Swing:** 2:3 ratio swing feel (0.55 intensity) - moderate worship swing
 - **Backbeat Emphasis:** Emphasize beats 2 and 4 (velocity multiplier 1.3) - driving rhythm
 - **Offbeat Syncopation:** Off-beat emphasis creating rhythmic tension
-- **Straight Feel:** No rhythmic transformation - for learning/practice
+- **Cross Rhythm:** Polyrhythm patterns (3-over-4, 5-over-4)
+- **Rhythmic Displacement:** Humanization with subtle timing variations
+- **Quantize to Grid:** Strict rhythmic quantization for practice
+- **Tempo Rubato:** Expressive timing variations (ritardando, accelerando, agogic)
+- **Funk Pocket** (NEW): 16th-note grid with ghost notes and "the one" emphasis
+- **Hammond Organ Pattern** (NEW): Sustained chord comping with rhythmic variation
+- **Call-Response Timing** (NEW): Alternating phrases with laid-back response
 
 ### Jazz Rhythm Patterns
 
@@ -2436,11 +2450,102 @@ NEOSOUL_RHYTHM_PATTERNS = {
 - **Laid-back Timing:** Behind-the-beat feel (0.03-0.08 beat delay, D'Angelo/Questlove style)
 - **Syncopation Emphasis:** Off-beat emphasis creating groove
 
-### Classical Rhythm Patterns
+### Latin Rhythm Patterns (NEW - 7 patterns)
+
+```python
+# File: backend/app/latin/patterns/rhythm.py
+
+LATIN_RHYTHM_PATTERNS = {
+    "Son Clave (3-2)": {
+        "hits": [0, 2.5, 3.5, 6.5, 7.0],  # 2-bar pattern
+        "description": "Most common Cuban clave pattern"
+    },
+    "Rumba Clave (3-2)": {
+        "hits": [0, 2.5, 4.5, 6.5, 7.0],  # Different third hit
+        "description": "Rumba variation of clave"
+    },
+    "Bossa Nova": {
+        "emphasis": [0, 2.5, 3.0],
+        "description": "Brazilian syncopated bass pattern"
+    },
+    "Samba": {
+        "grid": "16th_notes",
+        "description": "Fast Brazilian 16th-note groove"
+    },
+    "Cascara": {
+        "pattern": "timbale",
+        "description": "Salsa/Cuban timbale rhythm"
+    },
+    "Montuno": {
+        "emphasis": [0.5, 1.5, 2.5, 3.0],
+        "description": "Syncopated piano comp in salsa"
+    },
+    "Afro-Cuban 6/8": {
+        "meter": "compound",
+        "description": "6/8 feel for rumba, bembe"
+    }
+}
+```
+
+**Latin Patterns:**
+- **Son Clave (3-2):** Most common Cuban clave (3 hits + 2 hits pattern)
+- **Rumba Clave (3-2):** Rumba variation with delayed third hit
+- **Bossa Nova:** Brazilian syncopated bass pattern
+- **Samba:** Fast Brazilian 16th-note continuous groove
+- **Cascara:** Salsa/Cuban timbale pattern
+- **Montuno:** Syncopated piano comping pattern
+- **Afro-Cuban 6/8:** Compound meter for rumba and bembe
+
+### Classical Rhythm Patterns (EXPANDED - 8 patterns)
+
+```python
+# File: backend/app/classical/patterns/rhythm.py
+
+CLASSICAL_RHYTHM_PATTERNS = {
+    "Baroque Articulation": {
+        "duration": 0.7,  # Shortened notes
+        "description": "Detached, precise Baroque style"
+    },
+    "Classical Phrasing": {
+        "metric_emphasis": "strong_beats",
+        "description": "Balanced Classical period phrasing"
+    },
+    "Romantic Rubato": {
+        "intensity": 0.15,
+        "description": "Expressive timing variations"
+    },
+    "Waltz Feel": {
+        "meter": "3/4",
+        "description": "Strong beat 1, light beats 2-3"
+    },
+    "Agogic Accent": {
+        "type": "duration_emphasis",
+        "description": "Emphasis through note lengthening"
+    },
+    "Staccato": {
+        "ratio": 0.5,
+        "description": "Short, detached notes"
+    },
+    "Legato": {
+        "connection": "smooth",
+        "description": "Connected, flowing notes"
+    },
+    "Tenuto": {
+        "emphasis": "full_duration",
+        "description": "Full-length, emphasized notes"
+    }
+}
+```
 
 **Classical Patterns:**
-- **Straight Rhythms:** Precise classical timing (no swing/shuffle)
-- **Period-appropriate feels:** Baroque (ornate), Classical (balanced), Romantic (expressive)
+- **Baroque Articulation:** Detached, precise notes (0.7 duration ratio)
+- **Classical Phrasing:** Balanced metric structure with strong/weak beat emphasis
+- **Romantic Rubato:** Expressive timing (0.15 intensity, stolen time)
+- **Waltz Feel:** 3/4 time with "oom-pah-pah" pattern
+- **Agogic Accent:** Emphasis through duration (lengthening important beats)
+- **Staccato:** Short, detached notes (0.5 duration ratio)
+- **Legato:** Smooth, connected notes touching next note
+- **Tenuto:** Full-length notes with slight emphasis
 
 ---
 

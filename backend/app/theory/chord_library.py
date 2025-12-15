@@ -356,6 +356,182 @@ SIX_NINE = ChordType(
 )
 
 # ============================================================================
+# SIXTH CHORDS
+# ============================================================================
+
+MAJOR_6 = ChordType(
+    name="Major 6th",
+    intervals=(0, 4, 7, 9),
+    symbol="6",
+    category="sixth",
+    aliases=("M6",),
+    description="Major triad + major 6th. Common jazz ending chord."
+)
+
+MINOR_6 = ChordType(
+    name="Minor 6th",
+    intervals=(0, 3, 7, 9),
+    symbol="m6",
+    category="sixth",
+    aliases=("min6", "-6"),
+    description="Minor triad + major 6th. Jazz minor tonic chord."
+)
+
+# ============================================================================
+# SUSPENDED SEVENTH CHORDS
+# ============================================================================
+
+DOMINANT_7_SUS4 = ChordType(
+    name="Dominant 7 sus4",
+    intervals=(0, 5, 7, 10),
+    symbol="7sus4",
+    category="suspended",
+    aliases=("7sus",),
+    description="Sus4 + minor 7th. Resolves to dominant 7."
+)
+
+DOMINANT_9_SUS4 = ChordType(
+    name="Dominant 9 sus4",
+    intervals=(0, 5, 7, 10, 14),
+    symbol="9sus",
+    category="suspended",
+    aliases=("9sus4",),
+    description="7sus4 + 9th. Extended suspended sound."
+)
+
+# ============================================================================
+# LYDIAN CHORDS (with #11)
+# ============================================================================
+
+MAJOR_7_SHARP_11 = ChordType(
+    name="Major 7 sharp 11",
+    intervals=(0, 4, 7, 11, 18),
+    symbol="maj7#11",
+    category="lydian",
+    aliases=("Δ7#11", "Maj7#11"),
+    description="Maj7 + #11. Lydian color, modern jazz sound."
+)
+
+MAJOR_9_SHARP_11 = ChordType(
+    name="Major 9 sharp 11",
+    intervals=(0, 4, 7, 11, 14, 18),
+    symbol="maj9#11",
+    category="lydian",
+    aliases=("Δ9#11",),
+    description="Maj9 + #11. Extended Lydian voicing."
+)
+
+# ============================================================================
+# ADD 13 CHORDS
+# ============================================================================
+
+ADD_13 = ChordType(
+    name="Add 13",
+    intervals=(0, 4, 7, 21),
+    symbol="add13",
+    category="add",
+    aliases=("add6",),
+    description="Major triad + 13th (no 7th, 9th, or 11th)"
+)
+
+MINOR_ADD_13 = ChordType(
+    name="Minor Add 13",
+    intervals=(0, 3, 7, 21),
+    symbol="madd13",
+    category="add",
+    aliases=(),
+    description="Minor triad + 13th"
+)
+
+# ============================================================================
+# COMPLEX ALTERED CHORDS
+# ============================================================================
+
+DOMINANT_7_FLAT_9_SHARP_9 = ChordType(
+    name="Dominant 7 flat 9 sharp 9",
+    intervals=(0, 4, 7, 10, 13, 15),
+    symbol="7b9#9",
+    category="altered",
+    aliases=("7alt2",),
+    description="Dominant with both b9 and #9. Ultimate tension chord."
+)
+
+DOMINANT_7_FLAT_9_SHARP_5 = ChordType(
+    name="Dominant 7 flat 9 sharp 5",
+    intervals=(0, 4, 8, 10, 13),
+    symbol="7b9#5",
+    category="altered",
+    aliases=(),
+    description="Dominant with b9 and #5 alterations"
+)
+
+DOMINANT_7_SHARP_9_SHARP_5 = ChordType(
+    name="Dominant 7 sharp 9 sharp 5",
+    intervals=(0, 4, 8, 10, 15),
+    symbol="7#9#5",
+    category="altered",
+    aliases=(),
+    description="Dominant with #9 and #5 alterations"
+)
+
+AUGMENTED_9 = ChordType(
+    name="Augmented 9th",
+    intervals=(0, 4, 8, 14),
+    symbol="aug9",
+    category="altered",
+    aliases=("+9",),
+    description="Augmented triad + 9th"
+)
+
+# ============================================================================
+# MINOR 11 VARIATIONS
+# ============================================================================
+
+MINOR_11_FLAT_5 = ChordType(
+    name="Minor 11 flat 5",
+    intervals=(0, 3, 6, 10, 14, 17),
+    symbol="m11b5",
+    category="extended",
+    aliases=("ø11",),
+    description="Half-diminished + 11th. Extended ii chord in minor."
+)
+
+# ============================================================================
+# QUARTAL/QUINTAL CHORDS
+# ============================================================================
+
+QUARTAL_CHORD = ChordType(
+    name="Quartal Chord",
+    intervals=(0, 5, 10),
+    symbol="quartal",
+    category="quartal",
+    aliases=(),
+    description="Built from perfect 4ths. Modern/modal sound."
+)
+
+QUINTAL_CHORD = ChordType(
+    name="Quintal Chord",
+    intervals=(0, 7, 14),
+    symbol="quintal",
+    category="quintal",
+    aliases=("5stacked",),
+    description="Stacked perfect 5ths. Open, hollow sound."
+)
+
+# ============================================================================
+# CLUSTER CHORDS
+# ============================================================================
+
+MINOR_CLUSTER = ChordType(
+    name="Minor 2nd Cluster",
+    intervals=(0, 1, 7),
+    symbol="cluster",
+    category="cluster",
+    aliases=(),
+    description="Root + minor 2nd + 5th. Dissonant, modern jazz."
+)
+
+# ============================================================================
 # SPECIAL CHORDS
 # ============================================================================
 
@@ -415,8 +591,38 @@ CHORD_LIBRARY: Dict[str, ChordType] = {
     "add9": ADD_9, "add2": ADD_9,
     "add11": ADD_11, "add4": ADD_11,
     "madd9": MINOR_ADD_9,
+    "add13": ADD_13, "add6": ADD_13,
+    "madd13": MINOR_ADD_13,
     "6/9": SIX_NINE, "69": SIX_NINE,
-    
+
+    # Sixth
+    "6": MAJOR_6, "M6": MAJOR_6,
+    "m6": MINOR_6, "min6": MINOR_6, "-6": MINOR_6,
+
+    # Suspended Seventh
+    "7sus4": DOMINANT_7_SUS4, "7sus": DOMINANT_7_SUS4,
+    "9sus": DOMINANT_9_SUS4, "9sus4": DOMINANT_9_SUS4,
+
+    # Lydian
+    "maj7#11": MAJOR_7_SHARP_11, "Δ7#11": MAJOR_7_SHARP_11, "Maj7#11": MAJOR_7_SHARP_11,
+    "maj9#11": MAJOR_9_SHARP_11, "Δ9#11": MAJOR_9_SHARP_11,
+
+    # Complex Altered
+    "7b9#9": DOMINANT_7_FLAT_9_SHARP_9, "7alt2": DOMINANT_7_FLAT_9_SHARP_9,
+    "7b9#5": DOMINANT_7_FLAT_9_SHARP_5,
+    "7#9#5": DOMINANT_7_SHARP_9_SHARP_5,
+    "aug9": AUGMENTED_9, "+9": AUGMENTED_9,
+
+    # Extended Variations
+    "m11b5": MINOR_11_FLAT_5, "ø11": MINOR_11_FLAT_5,
+
+    # Quartal/Quintal
+    "quartal": QUARTAL_CHORD,
+    "quintal": QUINTAL_CHORD, "5stacked": QUINTAL_CHORD,
+
+    # Cluster
+    "cluster": MINOR_CLUSTER,
+
     # Special
     "5": POWER_CHORD, "no3": POWER_CHORD,
 }

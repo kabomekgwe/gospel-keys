@@ -290,6 +290,116 @@ def apply_tempo_rubato(notes: List[Note], rubato_curve: str = "ritardando") -> L
     return rubato_notes
 
 
+def apply_funk_pocket(notes: List[Note]) -> List[Note]:
+    """Apply funk pocket rhythm (16th-note grid with ghost notes).
+
+    Funk: Tight 16th-note grid with emphasis on "the one"
+    Creates pocket/groove feel
+
+    Args:
+        notes: List of notes to transform
+
+    Returns:
+        New list of notes with funk pocket
+    """
+    import random
+
+    funk_notes = []
+
+    for note in notes:
+        # Quantize to 16th-note grid
+        sixteenth_grid = round(note.time * 4) / 4
+
+        beat_number = int(sixteenth_grid) % 4
+        sixteenth_position = (sixteenth_grid * 4) % 4
+
+        # Emphasize "the one" (downbeat)
+        if beat_number == 0 and sixteenth_position == 0:
+            velocity_adjustment = 20
+        # Ghost notes (softer 16th notes between hits)
+        elif random.random() < 0.3:  # 30% chance of ghost note
+            velocity_adjustment = -25
+        else:
+            velocity_adjustment = 0
+
+        funk_note = copy.deepcopy(note)
+        funk_note.time = sixteenth_grid
+        funk_note.duration = note.duration * 0.75  # Shorter for funk articulation
+        funk_note.velocity = max(10, min(127, note.velocity + velocity_adjustment))
+
+        funk_notes.append(funk_note)
+
+    return funk_notes
+
+
+def apply_hammond_organ_pattern(notes: List[Note]) -> List[Note]:
+    """Apply Hammond B3 organ comping pattern.
+
+    Hammond organ style: Sustained chords with rhythmic variation
+    Common in gospel and soul music
+
+    Args:
+        notes: List of notes to transform
+
+    Returns:
+        New list of notes with Hammond organ feel
+    """
+    organ_notes = []
+
+    for note in notes:
+        new_note = copy.deepcopy(note)
+
+        # Organ notes typically sustain longer
+        new_note.duration = note.duration * 1.5
+
+        # Slight variation in attack to simulate key click
+        beat_position = note.time % 1.0
+        is_on_beat = beat_position < 0.1
+
+        if is_on_beat:
+            new_note.velocity = min(note.velocity + 8, 127)
+        else:
+            new_note.velocity = note.velocity
+
+        organ_notes.append(new_note)
+
+    return organ_notes
+
+
+def apply_call_response_timing(notes: List[Note]) -> List[Note]:
+    """Apply call-and-response timing pattern.
+
+    Call-response: Alternating phrases with slight delay
+    Common in gospel and spiritual music
+
+    Args:
+        notes: List of notes to transform
+
+    Returns:
+        New list of notes with call-response timing
+    """
+    if not notes:
+        return notes
+
+    response_notes = []
+
+    # Split into phrases (every 2 beats = 1 phrase)
+    for note in notes:
+        new_note = copy.deepcopy(note)
+
+        phrase_number = int(note.time / 2) % 2
+
+        if phrase_number == 1:  # Response phrase
+            # Delay response slightly (laid-back feel)
+            new_note.time = note.time + 0.05
+            # Slightly softer
+            new_note.velocity = max(note.velocity - 5, 30)
+
+        response_notes.append(new_note)
+
+    return response_notes
+
+
 # Rhythm transformation registry
 RHYTHM_TRANSFORMATIONS: dict[str, Callable[[List[Note]], List[Note]]] = {
     "gospel_shuffle": apply_gospel_shuffle,
@@ -300,6 +410,9 @@ RHYTHM_TRANSFORMATIONS: dict[str, Callable[[List[Note]], List[Note]]] = {
     "rhythmic_displacement": apply_rhythmic_displacement,
     "quantize": quantize_to_grid,
     "rubato": apply_tempo_rubato,
+    "funk_pocket": apply_funk_pocket,
+    "hammond_organ": apply_hammond_organ_pattern,
+    "call_response": apply_call_response_timing,
 }
 
 
@@ -345,6 +458,9 @@ __all__ = [
     "apply_rhythmic_displacement",
     "quantize_to_grid",
     "apply_tempo_rubato",
+    "apply_funk_pocket",
+    "apply_hammond_organ_pattern",
+    "apply_call_response_timing",
     "apply_rhythm_pattern",
     "RHYTHM_TRANSFORMATIONS",
 ]
