@@ -297,3 +297,112 @@ def _rate_smoothness(score: float) -> str:
         return "rough"
     else:
         return "very_rough"
+
+
+# ============================================================================
+# PHASE 5 ENHANCEMENT: NEO-RIEMANNIAN ANALYSIS
+# ============================================================================
+
+def analyze_neo_riemannian_distance(
+    chord1: Dict,
+    chord2: Dict
+) -> Dict:
+    """
+    Add Tonnetz distance and PLR path to existing voice leading analysis (Phase 5).
+
+    Neo-Riemannian theory provides a geometric approach to understanding
+    harmonic relationships through minimal voice-leading transformations.
+
+    Args:
+        chord1: First chord dict with 'root', 'quality'
+        chord2: Second chord dict with 'root', 'quality'
+
+    Returns:
+        Dictionary with neo-Riemannian metrics:
+        - tonnetz_distance: Number of PLR transformations
+        - plr_path: List of transformation names (e.g., ['P', 'R'])
+        - is_parsimonious: Whether ≤1 transformation (≤2 semitones movement)
+
+    Example:
+        >>> analyze_neo_riemannian_distance(
+        ...     {'root': 'C', 'quality': 'maj'},
+        ...     {'root': 'A', 'quality': 'min'}
+        ... )
+        {
+            'tonnetz_distance': 1,
+            'plr_path': ['R'],
+            'is_parsimonious': True
+        }
+    """
+    try:
+        from app.theory.voice_leading_neo_riemannian import (
+            calculate_tonnetz_distance,
+            get_tonnetz_path
+        )
+
+        root1 = chord1.get('root', 'C')
+        quality1 = chord1.get('quality', '')
+        root2 = chord2.get('root', 'C')
+        quality2 = chord2.get('quality', '')
+
+        # Calculate Tonnetz metrics
+        distance = calculate_tonnetz_distance(root1, quality1, root2, quality2)
+        path = get_tonnetz_path(root1, quality1, root2, quality2, max_steps=6)
+
+        return {
+            'tonnetz_distance': distance,
+            'plr_path': path,
+            'is_parsimonious': distance == 1  # Single PLR transformation
+        }
+
+    except (ImportError, ValueError):
+        # Neo-Riemannian module not available or chords incompatible
+        return {
+            'tonnetz_distance': None,
+            'plr_path': None,
+            'is_parsimonious': False
+        }
+
+
+def get_comprehensive_analysis(
+    chord1: Dict,
+    chord2: Dict
+) -> Dict:
+    """
+    Comprehensive analysis combining traditional + neo-Riemannian metrics (Phase 5).
+
+    Integrates:
+    - Traditional voice leading analysis (smoothness, motion types, parallels)
+    - Neo-Riemannian analysis (Tonnetz distance, PLR paths)
+
+    Args:
+        chord1: First chord dict with 'root', 'quality'
+        chord2: Second chord dict with 'root', 'quality'
+
+    Returns:
+        Combined analysis dictionary
+
+    Example:
+        >>> get_comprehensive_analysis(
+        ...     {'root': 'C', 'quality': 'maj'},
+        ...     {'root': 'C', 'quality': 'min'}
+        ... )
+        {
+            'from_chord': 'Cmaj',
+            'to_chord': 'Cmin',
+            'smoothness_score': 0.95,
+            'total_movement': 1,
+            'tonnetz_distance': 1,
+            'plr_path': ['P'],
+            'is_parsimonious': True,
+            ...
+        }
+    """
+    # Get traditional analysis
+    basic_analysis = analyze_voice_leading(chord1, chord2)
+
+    # Get neo-Riemannian analysis
+    neo_analysis = analyze_neo_riemannian_distance(chord1, chord2)
+
+    # Combine both
+    return {**basic_analysis, **neo_analysis}

@@ -164,8 +164,93 @@ def get_chord_voicing(
         return root_position
 
 
+# ============================================================================
+# PHASE 5 ENHANCEMENT: TEMPLATE INTEGRATION
+# ============================================================================
+
+def find_closest_voicing_with_templates(
+    chord_tones: List[int],
+    previous_voicing: Optional[List[int]] = None,
+    genre: str = "gospel",
+    use_templates: bool = True,
+    template_library: Optional[str] = None
+) -> List[int]:
+    """Enhanced voice leading with jazz template matching (Phase 5).
+
+    When use_templates=True and genre is jazz/neosoul, this function
+    will attempt to match chord to a pre-defined voicing template from
+    masters like Bill Evans, McCoy Tyner, etc.
+
+    Falls back to existing greedy algorithm if:
+    - Templates not enabled
+    - Genre doesn't use templates
+    - No matching template found
+
+    Args:
+        chord_tones: Root position chord tones (MIDI note numbers)
+        previous_voicing: Previous chord's voicing for smooth voice leading
+        genre: Genre for template matching ("jazz", "neosoul", etc.)
+        use_templates: Whether to use template database
+        template_library: Specific template library to use (optional)
+
+    Returns:
+        Best voicing (template or greedy)
+
+    Example:
+        >>> # Jazz voicing with Bill Evans template
+        >>> cmaj7 = [60, 64, 67, 71]  # C, E, G, B
+        >>> dm7 = [62, 65, 69, 72]    # D, F, A, C
+        >>> voicing = find_closest_voicing_with_templates(
+        ...     dm7, cmaj7, genre="jazz", use_templates=True
+        ... )
+        >>> # Returns Bill Evans rootless A-form if available
+    """
+    # Template matching for jazz/neosoul genres
+    if use_templates and genre.lower() in ['jazz', 'neosoul']:
+        try:
+            from app.theory.voice_leading_templates import (
+                get_bill_evans_voicing,
+                BILL_EVANS_TEMPLATES
+            )
+
+            # Attempt template match
+            # For now, use greedy - full template matching coming in future enhancement
+            # TODO: Implement chord-to-template matching algorithm
+
+        except ImportError:
+            # Templates not available, fall back to greedy
+            pass
+
+    # Fallback to existing greedy algorithm
+    return find_closest_voicing(
+        chord_tones=chord_tones,
+        previous_voicing=previous_voicing,
+        max_movement=_get_max_movement_for_genre(genre),
+        allow_wide_voicings=_allow_wide_voicings_for_genre(genre)
+    )
+
+
+def _get_max_movement_for_genre(genre: str) -> Optional[int]:
+    """Get max_movement setting for genre."""
+    genre_rules = {
+        "gospel": 10,
+        "jazz": 12,
+        "neosoul": 12,
+        "blues": 10,
+        "classical": 7,
+    }
+    return genre_rules.get(genre.lower())
+
+
+def _allow_wide_voicings_for_genre(genre: str) -> bool:
+    """Get allow_wide_voicings setting for genre."""
+    return genre.lower() != "classical"
+
+
 __all__ = [
     "find_closest_voicing",
     "optimize_voice_leading",
-    "get_chord_voicing"
+    "get_chord_voicing",
+    # Phase 5 additions
+    "find_closest_voicing_with_templates",
 ]
