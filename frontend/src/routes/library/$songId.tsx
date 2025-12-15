@@ -31,7 +31,6 @@ import { PianoRoll } from '../../components/PianoRoll';
 import { Piano, MiniPiano } from '../../components/Piano';
 import { PlaybackControls } from '../../components/PlaybackControls';
 import { useNewMidiPlayer, type MidiNote } from '../../hooks/useNewMidiPlayer';
-import { SheetMusicRenderer } from '../../components/sheet-music';
 import { VerovioRenderer } from '../../components/sheet-music/VerovioRenderer';
 import { AnalysisTab } from '../../components/AnalysisTab';
 import { PracticeTab } from '../../components/PracticeTab';
@@ -92,10 +91,10 @@ function SongDetailPage() {
             return [];
         }
         return notesData.map((note) => ({
-            id: note.id,
+            id: String(note.id),
             pitch: note.pitch,
-            startTime: note.startTime,
-            duration: note.duration,
+            start_time: note.start_time,
+            end_time: note.end_time,
             velocity: note.velocity,
             hand: note.hand || 'right',
         }));
@@ -247,21 +246,14 @@ function SongDetailPage() {
                     <div className="h-full flex flex-col">
                         <div className="flex-1 p-4 overflow-hidden">
                             <PianoRoll
-                                notes={songNotes.map((n: MidiNote) => ({
-                                    id: n.id,
-                                    pitch: n.pitch,
-                                    startTime: n.startTime,
-                                    duration: n.duration,
-                                    velocity: n.velocity,
-                                    hand: n.hand,
-                                }))}
+                                notes={songNotes}
                                 duration={song.duration}
                                 currentTime={playerState.currentTime}
                                 isPlaying={playerState.isPlaying}
                                 highlightedNotes={playerState.activeNotes.map(p =>
                                     songNotes.find((n: MidiNote) => n.pitch === p &&
-                                        n.startTime <= playerState.currentTime &&
-                                        n.startTime + n.duration > playerState.currentTime
+                                        n.start_time <= playerState.currentTime &&
+                                        n.end_time > playerState.currentTime
                                     )?.id || ''
                                 ).filter(Boolean)}
                                 onSeek={playerControls.seek}
@@ -338,6 +330,7 @@ function SongDetailPage() {
                         playerState={playerState}
                         notes={songNotes}
                         snippetId={searchParams.snippetId}
+                        audioUrl={song.audio_file_path || undefined}
                     />
                 )}
             </div>

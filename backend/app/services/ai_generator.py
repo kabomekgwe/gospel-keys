@@ -10,6 +10,11 @@ from typing import Optional
 
 import google.generativeai as genai
 from anthropic import Anthropic
+try:
+    from mlx_lm import load, generate
+    MLX_AVAILABLE = True
+except ImportError:
+    MLX_AVAILABLE = False
 
 from app.schemas.ai import (
     ProgressionRequest, ProgressionResponse, ChordInfo,
@@ -103,7 +108,7 @@ class AIGeneratorService:
         if settings.google_api_key:
             try:
                 genai.configure(api_key=settings.google_api_key)
-                self.model = genai.GenerativeModel('gemini-1.5-flash')
+                self.model = genai.GenerativeModel('gemini-2.0-flash')
                 self.gemini_available = True
             except Exception as e:
                 print(f"Warning: Gemini initialization failed: {e}")
@@ -122,9 +127,15 @@ class AIGeneratorService:
         if self.claude_cli_available:
             print("✅ Claude CLI detected - will use your existing Claude Code subscription")
 
+        # Initialize MLX (Local Mac GPU)
+        self.mlx_available = MLX_AVAILABLE
+        self.mlx_model = None
+        self.mlx_tokenizer = None
+        self.mlx_model_path = "mlx-community/Qwen2.5-14B-Instruct-4bit"
+
         # Ensure at least one AI provider is available
-        if not self.gemini_available and not self.claude_api_available and not self.claude_cli_available:
-            raise ValueError("No AI provider available. Please set GOOGLE_API_KEY, ANTHROPIC_API_KEY, or ensure 'claude' CLI is installed")
+        if not self.gemini_available and not self.claude_api_available and not self.claude_cli_available and not self.mlx_available:
+            raise ValueError("No AI provider available. Please set GOOGLE_API_KEY, ANTHROPIC_API_KEY, install 'mlx-lm', or ensure 'claude' CLI is installed")
     
     def get_available_generators(self) -> GeneratorsListResponse:
         """Get list of all available generators by category"""
@@ -618,6 +629,39 @@ Return ONLY the JSON, no other text"""
         else:
             raise ValueError("Claude is not available")
 
+    def _load_mlx_model(self):
+        """Lazy load MLX model"""
+        if not self.mlx_model and self.mlx_available:
+            print(f"Loading local MLX model: {self.mlx_model_path}...")
+            self.mlx_model, self.mlx_tokenizer = load(self.mlx_model_path)
+            print("✅ MLX model loaded")
+
+    def _generate_with_mlx(self, prompt: str) -> dict:
+        """Generate content using local MLX model"""
+        if not self.mlx_available:
+            raise ValueError("MLX is not available (install mlx-lm)")
+        
+        # Ensure model is loaded
+        self._load_mlx_model()
+        
+        # Format prompt using the tokenizer's chat template
+        messages = [{"role": "user", "content": prompt}]
+        formatted_prompt = self.mlx_tokenizer.apply_chat_template(
+            messages, 
+            tokenize=False, 
+            add_generation_prompt=True
+        )
+        
+        response = generate(
+            self.mlx_model, 
+            self.mlx_tokenizer, 
+            prompt=formatted_prompt, 
+            max_tokens=2048, 
+            verbose=True
+        )
+        
+        return parse_json_from_response(response)
+
     async def _generate_with_fallback(self, prompt: str, operation_name: str = "generation") -> dict:
         """
         Generate content with automatic Gemini → Claude fallback
@@ -651,7 +695,18 @@ Return ONLY the JSON, no other text"""
 
         # Use Claude if Gemini not available or quota exceeded
         if self.claude_api_available or self.claude_cli_available:
-            return self._generate_with_claude(prompt)
+            try:
+                return self._generate_with_claude(prompt)
+            except Exception as e:
+                print(f"⚠️  Claude failed for {operation_name}: {e}")
+                if not self.mlx_available:
+                     raise
+            
+        # Fallback to Local MLX (Mac GPU)
+        if self.mlx_available:
+            print(f"⚠️  Cloud providers unavailable/limited for {operation_name}, falling back to Local MLX...")
+            return self._generate_with_mlx(prompt)
+            
         else:
             raise ValueError(f"No AI provider available for {operation_name}")
 

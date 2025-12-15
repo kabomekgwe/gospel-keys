@@ -23,6 +23,7 @@ import { Route as LibrarySongIdRouteImport } from './routes/library/$songId'
 import { Route as CurriculumPerformanceRouteImport } from './routes/curriculum/performance'
 import { Route as CurriculumDailyRouteImport } from './routes/curriculum/daily'
 import { Route as CurriculumAssessmentRouteImport } from './routes/curriculum/assessment'
+import { Route as LibraryCollectionsIndexRouteImport } from './routes/library/collections/index'
 import { Route as LibrarySongIdPracticeRouteImport } from './routes/library/$songId/practice'
 import { Route as LibrarySongIdAnalyzeRouteImport } from './routes/library/$songId/analyze'
 import { Route as CurriculumLessonsLessonIdRouteImport } from './routes/curriculum/lessons/$lessonId'
@@ -97,6 +98,11 @@ const CurriculumAssessmentRoute = CurriculumAssessmentRouteImport.update({
   path: '/curriculum/assessment',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LibraryCollectionsIndexRoute = LibraryCollectionsIndexRouteImport.update({
+  id: '/library/collections/',
+  path: '/library/collections/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LibrarySongIdPracticeRoute = LibrarySongIdPracticeRouteImport.update({
   id: '/practice',
   path: '/practice',
@@ -132,6 +138,7 @@ export interface FileRoutesByFullPath {
   '/curriculum/lessons/$lessonId': typeof CurriculumLessonsLessonIdRoute
   '/library/$songId/analyze': typeof LibrarySongIdAnalyzeRoute
   '/library/$songId/practice': typeof LibrarySongIdPracticeRoute
+  '/library/collections': typeof LibraryCollectionsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -151,6 +158,7 @@ export interface FileRoutesByTo {
   '/curriculum/lessons/$lessonId': typeof CurriculumLessonsLessonIdRoute
   '/library/$songId/analyze': typeof LibrarySongIdAnalyzeRoute
   '/library/$songId/practice': typeof LibrarySongIdPracticeRoute
+  '/library/collections': typeof LibraryCollectionsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -171,6 +179,7 @@ export interface FileRoutesById {
   '/curriculum/lessons/$lessonId': typeof CurriculumLessonsLessonIdRoute
   '/library/$songId/analyze': typeof LibrarySongIdAnalyzeRoute
   '/library/$songId/practice': typeof LibrarySongIdPracticeRoute
+  '/library/collections/': typeof LibraryCollectionsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -192,6 +201,7 @@ export interface FileRouteTypes {
     | '/curriculum/lessons/$lessonId'
     | '/library/$songId/analyze'
     | '/library/$songId/practice'
+    | '/library/collections'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -211,6 +221,7 @@ export interface FileRouteTypes {
     | '/curriculum/lessons/$lessonId'
     | '/library/$songId/analyze'
     | '/library/$songId/practice'
+    | '/library/collections'
   id:
     | '__root__'
     | '/'
@@ -230,6 +241,7 @@ export interface FileRouteTypes {
     | '/curriculum/lessons/$lessonId'
     | '/library/$songId/analyze'
     | '/library/$songId/practice'
+    | '/library/collections/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -248,6 +260,7 @@ export interface RootRouteChildren {
   PracticeIndexRoute: typeof PracticeIndexRoute
   TheoryIndexRoute: typeof TheoryIndexRoute
   CurriculumLessonsLessonIdRoute: typeof CurriculumLessonsLessonIdRoute
+  LibraryCollectionsIndexRoute: typeof LibraryCollectionsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -350,6 +363,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CurriculumAssessmentRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/library/collections/': {
+      id: '/library/collections/'
+      path: '/library/collections'
+      fullPath: '/library/collections'
+      preLoaderRoute: typeof LibraryCollectionsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/library/$songId/practice': {
       id: '/library/$songId/practice'
       path: '/practice'
@@ -404,6 +424,7 @@ const rootRouteChildren: RootRouteChildren = {
   PracticeIndexRoute: PracticeIndexRoute,
   TheoryIndexRoute: TheoryIndexRoute,
   CurriculumLessonsLessonIdRoute: CurriculumLessonsLessonIdRoute,
+  LibraryCollectionsIndexRoute: LibraryCollectionsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

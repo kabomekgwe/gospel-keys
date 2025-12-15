@@ -11,6 +11,7 @@ import { ExerciseTool } from './tools/ExerciseTool';
 import { LicksTool } from './tools/LicksTool';
 import { ArrangerTool } from './tools/ArrangerTool';
 import { AnalysisTool } from './tools/AnalysisTool';
+import { TutorTool } from './tools/TutorTool';
 
 // Placeholder tools
 // Removed placeholders
@@ -34,18 +35,19 @@ export function MusicAIStudio() {
             case 'licks': return <LicksTool />;
             case 'analysis': return <AnalysisTool onPlayChord={handlePlayChord} />;
             case 'arranger': return <ArrangerTool />;
+            case 'tutor': return <TutorTool onPlayChord={handlePlayChord} />;
             case 'reharmonizer': return <ReharmonizerTool onPlayChord={handlePlayChord} />;
             default: return <ProgressionTool onPlayChord={handlePlayChord} />;
         }
     };
 
     return (
-        <div className="flex h-[calc(100vh-64px)] overflow-hidden bg-slate-950">
+        <div className="flex h-[calc(100vh-64px)] overflow-hidden bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black">
             {/* Sidebar */}
             <StudioSidebar activeTool={activeTool} onSelectTool={setActiveTool} />
 
             {/* Main Content */}
-            <div className="flex-1 flex flex-col min-w-0 bg-slate-950 relative overflow-hidden">
+            <div className="flex-1 flex flex-col min-w-0 bg-transparent relative overflow-hidden">
                 <header className="flex items-center justify-between px-6 py-4 bg-slate-900/50 border-b border-slate-800">
                     <h1 className="text-xl font-bold text-white capitalize">{activeTool.replace('_', ' ')} Tool</h1>
                     <button

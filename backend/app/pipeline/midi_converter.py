@@ -18,9 +18,12 @@ logger = logging.getLogger(__name__)
 try:
     import torchcrepe
     TORCHCREPE_AVAILABLE = True
-except ImportError:
+except ImportError as e:
     TORCHCREPE_AVAILABLE = False
-    logger.warning("torchcrepe not available. GPU transcription disabled.")
+    logger.warning(f"torchcrepe not available: {e}. GPU transcription disabled.")
+except Exception as e:
+    TORCHCREPE_AVAILABLE = False
+    logger.warning(f"Error importing torchcrepe: {e}. GPU transcription disabled.")
 
 # Optional import - basic-pitch requires TensorFlow which doesn't support Python 3.13 yet
 try:

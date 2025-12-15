@@ -121,6 +121,7 @@ export interface SongDetail extends Song {
     source_url?: string;
     source_file?: string;
     midi_file_path?: string;
+    audio_file_path?: string;
     annotation_count?: number;
     snippet_count?: number;
 }
@@ -798,6 +799,85 @@ export interface CurriculumExercise {
     last_reviewed_at?: string;
     created_at: string;
 }
+
+// ============================================================================
+// Collections API
+// ============================================================================
+
+export interface CollectionItem {
+    song_id: string;
+    order_index: number;
+    notes?: string;
+    added_at: string;
+    song_title: string;
+    song_artist?: string;
+    song_duration?: number;
+}
+
+export interface Collection {
+    id: string;
+    user_id: number;
+    title: string;
+    description?: string;
+    is_public: boolean;
+    created_at: string;
+    updated_at: string;
+    item_count: number;
+    items?: CollectionItem[];
+}
+
+export const collectionsApi = {
+    list: async (): Promise<Collection[]> => {
+        const response = await fetch(`${API_BASE_URL}/api/v1/collections/`);
+        return handleResponse<Collection[]>(response);
+    },
+
+    get: async (id: string): Promise<Collection> => {
+        const response = await fetch(`${API_BASE_URL}/api/v1/collections/${id}`);
+        return handleResponse<Collection>(response);
+    },
+
+    create: async (data: { title: string; description?: string; is_public?: boolean }): Promise<Collection> => {
+        const response = await fetch(`${API_BASE_URL}/api/v1/collections/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+        return handleResponse<Collection>(response);
+    },
+
+    update: async (id: string, data: { title?: string; description?: string; is_public?: boolean }): Promise<Collection> => {
+        const response = await fetch(`${API_BASE_URL}/api/v1/collections/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+        return handleResponse<Collection>(response);
+    },
+
+    delete: async (id: string): Promise<void> => {
+        const response = await fetch(`${API_BASE_URL}/api/v1/collections/${id}`, {
+            method: 'DELETE',
+        });
+        return handleResponse<void>(response);
+    },
+
+    addItem: async (collectionId: string, songId: string, notes?: string): Promise<void> => {
+        const response = await fetch(`${API_BASE_URL}/api/v1/collections/${collectionId}/items`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ song_id: songId, notes }),
+        });
+        return handleResponse<void>(response);
+    },
+
+    removeItem: async (collectionId: string, songId: string): Promise<void> => {
+        const response = await fetch(`${API_BASE_URL}/api/v1/collections/${collectionId}/items/${songId}`, {
+            method: 'DELETE',
+        });
+        return handleResponse<void>(response);
+    },
+};
 
 export interface LessonSummary {
     id: string;

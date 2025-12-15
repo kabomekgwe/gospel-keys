@@ -284,32 +284,33 @@ export function AnalysisOverview({ songId, detectedChords = [] }: AnalysisOvervi
                                         </div>
 
                                     </div>
-                                    ) : (
-                                    <div className="text-center py-12 bg-slate-800/30 rounded-xl border border-dashed border-slate-700">
-                                        <p className="text-slate-400">
-                                            No chords detected. Try uploading a song with chord progression.
-                                        </p>
-                                    </div>
+                                </div>
+                            ) : (
+                                <div className="text-center py-12 bg-slate-800/30 rounded-xl border border-dashed border-slate-700">
+                                    <p className="text-slate-400">
+                                        No chords detected. Try uploading a song with chord progression.
+                                    </p>
+                                </div>
                             )}
-                                </motion.div>
-                            )}
+                        </motion.div>
+                    )}
 
-                            {/* VOICINGS VIEW */}
-                            {selectedView === 'voicings' && (
-                                <motion.div
-                                    key="voicings"
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: -10 }}
-                                >
-                                    <VoicingsDisplay
-                                        chords={detectedChords}
-                                        songId={songId}
-                                        maxVisible={6}
-                                    />
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
+                    {/* VOICINGS VIEW */}
+                    {selectedView === 'voicings' && (
+                        <motion.div
+                            key="voicings"
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                        >
+                            <VoicingsDisplay
+                                chords={detectedChords}
+                                songId={songId}
+                                maxVisible={6}
+                            />
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
         </div>
     );

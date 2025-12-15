@@ -1,14 +1,15 @@
-
-import { Dumbbell, Repeat, Play, Pause, CheckCircle, Hand, Timer } from 'lucide-react';
+import { Dumbbell, Repeat, Play, Pause, CheckCircle, Hand, Timer, FileAudio } from 'lucide-react';
 import { useState } from 'react';
 import { type MidiNote } from '../hooks/useNewMidiPlayer';
 import { motion } from 'framer-motion';
 import { PracticeFeedback } from './practice/PracticeFeedback';
 import { practiceApi } from '../lib/api';
+import { WaveformPlayer } from './audio/WaveformPlayer';
 
 interface PracticeTabProps {
     notes: MidiNote[];
     snippetId?: string; // Optional, if practicing a specific snippet
+    audioUrl?: string; // Optional real audio backing track
     playerControls: {
         play: () => void;
         pause: () => void;
@@ -45,7 +46,7 @@ const ControlButton = ({ onClick, children, active = false, variant = 'default',
     </motion.button>
 );
 
-export function PracticeTab({ playerControls, playerState, snippetId }: PracticeTabProps) {
+export function PracticeTab({ playerControls, playerState, snippetId, audioUrl }: PracticeTabProps) {
     const [loop, setLoop] = useState<{ start: number, end: number } | null>(null);
     const [isLooping, setIsLooping] = useState(false);
     const [showFeedback, setShowFeedback] = useState(false);
@@ -97,8 +98,19 @@ export function PracticeTab({ playerControls, playerState, snippetId }: Practice
                     </p>
                 </header>
 
+                {/* Audio Player Section */}
+                {audioUrl && (
+                    <div className="card p-6 border-cyan-500/20 shadow-lg shadow-cyan-900/10">
+                        <div className="flex items-center gap-2 mb-4">
+                            <FileAudio className="w-5 h-5 text-cyan-400" />
+                            <h3 className="text-lg font-semibold text-white">Backing Track</h3>
+                        </div>
+                        <WaveformPlayer audioUrl={audioUrl} />
+                    </div>
+                )}
+
                 <div className="card p-6">
-                    <h3 className="text-lg font-semibold text-white mb-4">Practice Tools</h3>
+                    <h3 className="text-lg font-semibold text-white mb-4">MIDI Practice Tools</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
                         {/* Tempo Control */}

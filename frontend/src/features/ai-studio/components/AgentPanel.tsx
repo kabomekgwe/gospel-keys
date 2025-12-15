@@ -48,8 +48,8 @@ export function AgentPanel() {
     // For now, just a static list.
 
     return (
-        <div className="w-80 bg-slate-900 border-l border-slate-800 h-full flex flex-col">
-            <div className="p-4 border-b border-slate-800 flex items-center justify-between">
+        <div className="w-80 bg-slate-900/50 backdrop-blur-xl border-l border-white/10 h-full flex flex-col">
+            <div className="p-4 border-b border-white/10 flex items-center justify-between">
                 <div>
                     <h2 className="text-lg font-bold text-white flex items-center gap-2">
                         <User className="w-5 h-5 text-indigo-400" />
@@ -59,8 +59,11 @@ export function AgentPanel() {
                 </div>
                 <div className="flex -space-x-2">
                     {AGENTS.map((agent) => (
-                        <div key={agent.name} className="w-8 h-8 rounded-full bg-slate-800 border-2 border-slate-900 flex items-center justify-center text-sm" title={agent.name}>
-                            {agent.avatar}
+                        <div key={agent.name} className="relative group">
+                            <div className="w-8 h-8 rounded-full bg-slate-800 border-2 border-slate-900 flex items-center justify-center text-sm relative z-10" title={agent.name}>
+                                {agent.avatar}
+                            </div>
+                            <div className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-slate-900 z-20 ${agent.color.replace('text-', 'bg-')} animate-pulse`} />
                         </div>
                     ))}
                 </div>
@@ -71,9 +74,9 @@ export function AgentPanel() {
                     {messages.map((msg) => (
                         <motion.div
                             key={msg.id}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="bg-slate-800/50 rounded-xl p-3 border border-slate-700/50"
+                            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            className="bg-slate-800/40 backdrop-blur-md rounded-2xl p-4 border border-white/5 shadow-lg"
                         >
                             <div className="flex items-center gap-2 mb-2">
                                 <span className="text-lg bg-slate-800 rounded-full w-8 h-8 flex items-center justify-center">
@@ -103,7 +106,7 @@ export function AgentPanel() {
                 </AnimatePresence>
             </div>
 
-            <div className="p-4 border-t border-slate-800">
+            <div className="p-4 border-t border-white/10">
                 <button className="w-full py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-sm transition-colors flex items-center justify-center gap-2">
                     <MessageSquare className="w-4 h-4" />
                     Ask the Team

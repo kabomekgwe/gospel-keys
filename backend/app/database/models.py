@@ -32,6 +32,7 @@ class User(Base):
     
     # Relationships
     songs: Mapped[List["Song"]] = relationship(back_populates="user", cascade="all, delete-orphan")
+    collections: Mapped[List["Collection"]] = relationship(back_populates="user", cascade="all, delete-orphan")
     practice_sessions: Mapped[List["PracticeSession"]] = relationship(back_populates="user", cascade="all, delete-orphan")
     
     # Curriculum relationships
@@ -81,6 +82,42 @@ class Song(Base):
 
     # User Relationship
     user: Mapped[Optional["User"]] = relationship(back_populates="songs")
+
+
+class Collection(Base):
+    """User-created collection of songs (playlist/setlist)"""
+    __tablename__ = "collections"
+
+    id: Mapped[str] = mapped_column(String, primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    title: Mapped[str] = mapped_column(String, nullable=False)
+    description: Mapped[Optional[str]] = mapped_column(String)
+    is_public: Mapped[bool] = mapped_column(Boolean, default=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now, onupdate=datetime.now)
+
+    # Relationships
+    user: Mapped["User"] = relationship(back_populates="collections")
+    items: Mapped[List["CollectionSong"]] = relationship(
+        back_populates="collection", 
+        cascade="all, delete-orphan",
+        order_by="CollectionSong.order_index"
+    )
+
+class CollectionSong(Base):
+    """Link table for songs in a collection with ordering"""
+    __tablename__ = "collection_songs"
+
+    collection_id: Mapped[str] = mapped_column(ForeignKey("collections.id", ondelete="CASCADE"), primary_key=True)
+    song_id: Mapped[str] = mapped_column(ForeignKey("songs.id", ondelete="CASCADE"), primary_key=True)
+    order_index: Mapped[int] = mapped_column(Integer, default=0)
+    notes: Mapped[Optional[str]] = mapped_column(String)  # User notes for this song in this collection
+    added_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
+
+    # Relationships
+    collection: Mapped["Collection"] = relationship(back_populates="items")
+    song: Mapped["Song"] = relationship()
+
 
 
 class SongNote(Base):

@@ -6,11 +6,12 @@ import {
     Zap,
     Mic2,
     Sparkles,
-    Piano
+    Piano,
+    BookOpen
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-export type ToolId = 'progression' | 'voicing' | 'exercise' | 'analysis' | 'licks' | 'arranger' | 'reharmonizer';
+export type ToolId = 'progression' | 'voicing' | 'exercise' | 'analysis' | 'licks' | 'arranger' | 'reharmonizer' | 'tutor';
 
 interface StudioSidebarProps {
     activeTool: ToolId;
@@ -73,13 +74,21 @@ const TOOLS = [
         color: 'text-emerald-400',
         bg: 'bg-emerald-500/10',
         border: 'border-emerald-500/30'
+    },
+    {
+        id: 'tutor',
+        name: 'AI Tutor',
+        icon: <BookOpen className="w-5 h-5" />,
+        color: 'text-indigo-400',
+        bg: 'bg-indigo-500/10',
+        border: 'border-indigo-500/30'
     }
 ] as const;
 
 export function StudioSidebar({ activeTool, onSelectTool }: StudioSidebarProps) {
     return (
-        <div className="w-64 bg-slate-900 border-r border-slate-800 h-full flex flex-col">
-            <div className="p-4 border-b border-slate-800">
+        <div className="w-64 bg-slate-900/50 backdrop-blur-xl border-r border-white/10 h-full flex flex-col">
+            <div className="p-4 border-b border-white/10">
                 <h2 className="text-xl font-bold text-white flex items-center gap-2">
                     <Mic2 className="w-6 h-6 text-cyan-400" />
                     AI Studio
@@ -94,17 +103,21 @@ export function StudioSidebar({ activeTool, onSelectTool }: StudioSidebarProps) 
                         <button
                             key={tool.id}
                             onClick={() => onSelectTool(tool.id as ToolId)}
-                            className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all duration-200 group text-left
+                            className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all duration-300 group text-left relative overflow-hidden
                                 ${isActive
-                                    ? `bg-slate-800 border ${tool.border}`
-                                    : 'hover:bg-slate-800/50 border border-transparent'
+                                    ? `bg-slate-800/80 border ${tool.border} shadow-[0_0_15px_rgba(0,0,0,0.3)]`
+                                    : 'hover:bg-white/5 border border-transparent'
                                 }`}
                         >
-                            <div className={`p-2 rounded-lg ${isActive ? tool.bg : 'bg-slate-800'} ${tool.color} transition-colors`}>
+                            {isActive && (
+                                <div className={`absolute inset-0 opacity-20 ${tool.bg.replace('/10', '/30')} blur-xl`} />
+                            )}
+                            <div className={`p-2 rounded-lg ${isActive ? tool.bg : 'bg-slate-800/50 group-hover:bg-slate-800'} ${tool.color} transition-colors relative z-10`}>
                                 {tool.icon}
                             </div>
-                            <div className="flex-1">
-                                <span className={`block font-medium ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-white'}`}>
+
+                            <div className="flex-1 relative z-10">
+                                <span className={`block font-medium ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-white'} transition-colors`}>
                                     {tool.name}
                                 </span>
                             </div>
@@ -119,11 +132,11 @@ export function StudioSidebar({ activeTool, onSelectTool }: StudioSidebarProps) 
                 })}
             </div>
 
-            <div className="p-4 border-t border-slate-800">
+            <div className="p-4 border-t border-white/10">
                 <div className="p-3 bg-slate-800/50 rounded-lg text-xs text-slate-400 text-center">
                     v2.0.0 • AI Powered
                 </div>
             </div>
-        </div>
+        </div >
     );
 }
