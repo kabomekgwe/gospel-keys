@@ -32,12 +32,12 @@ else:
         logger.error(f"Failed to configure Gemini API: {e}")
         _gemini_api_key = None
 
-# Import local LLM service (M4 Neural Engine)
+# Import multi-model local LLM service (M4 Neural Engine)
 try:
-    from app.services.local_llm_service import local_llm_service, MLX_AVAILABLE
-    LOCAL_LLM_ENABLED = MLX_AVAILABLE and local_llm_service and local_llm_service.is_available()
+    from app.services.multi_model_service import multi_model_service, MLX_AVAILABLE
+    LOCAL_LLM_ENABLED = MLX_AVAILABLE and multi_model_service and multi_model_service.is_available()
 except ImportError:
-    local_llm_service = None
+    multi_model_service = None
     LOCAL_LLM_ENABLED = False
 
 
@@ -142,11 +142,10 @@ class AIOrchestrator:
         TaskType.CONTENT_VALIDATION: 3,
     }
 
-    # Complexity thresholds for model selection
-    COMPLEXITY_LOCAL = 4      # 1-4: Use local LLM (M4 Neural Engine) - FREE!
-    COMPLEXITY_FLASH = 5      # 5: Use Flash
-    COMPLEXITY_PRO = 7        # 6-7: Use Pro
-    # 8-10: Use Ultra
+    # Complexity thresholds for model selection (3-tier strategy)
+    COMPLEXITY_SMALL = 4      # 1-4: Phi-3.5 Mini (local, fast, FREE!)
+    COMPLEXITY_MEDIUM = 7     # 5-7: Qwen2.5-7B (local, quality, FREE!)
+    # 8-10: Gemini Pro (cloud, complex tasks)
 
     def __init__(self, budget_mode: BudgetMode = BudgetMode.BALANCED):
         self.budget_mode = budget_mode
@@ -180,7 +179,7 @@ class AIOrchestrator:
                 self.initialization_errors.append(error_msg)
                 logger.error(error_msg, exc_info=True)
 
-        self.local_llm = local_llm_service
+        self.multi_llm = multi_model_service
         # Claude client would be initialized here when API key is available
         # self.claude_client = Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
 
@@ -192,7 +191,7 @@ class AIOrchestrator:
 
     def get_status(self) -> Dict[str, Any]:
         """Get detailed status of AI models for diagnostics"""
-        return {
+        status = {
             "gemini_available": len(self.gemini_models) > 0,
             "gemini_models_loaded": [m.value for m in self.gemini_models.keys()],
             "local_llm_available": LOCAL_LLM_ENABLED,
@@ -200,9 +199,20 @@ class AIOrchestrator:
             "budget_mode": self.budget_mode.value,
         }
 
+        # Add multi-model service info if available
+        if LOCAL_LLM_ENABLED and self.multi_llm:
+            status["multi_model_info"] = self.multi_llm.get_model_info()
+
+        return status
+
     def route_task(self, task_type: TaskType, complexity: int = None) -> ModelType:
         """
         Determine which model type to use based on task type and complexity.
+
+        3-Tier Routing Strategy:
+        - Complexity 1-4: Phi-3.5 Mini (local, fast)
+        - Complexity 5-7: Qwen2.5-7B (local, quality)
+        - Complexity 8-10: Gemini Pro (cloud, complex)
 
         Args:
             task_type: Type of AI task
@@ -219,7 +229,8 @@ class AIOrchestrator:
         if complexity is None:
             complexity = self.TASK_COMPLEXITY.get(task_type, 5)
 
-        if complexity <= self.COMPLEXITY_LOCAL:
+        # Use local models for complexity 1-7 (90% of tasks!)
+        if complexity <= self.COMPLEXITY_MEDIUM and LOCAL_LLM_ENABLED:
             return ModelType.LOCAL
 
         return self.ROUTING_MAP.get(task_type, ModelType.GEMINI)
@@ -283,28 +294,32 @@ class AIOrchestrator:
 
         # Get complexity
         complexity = self.TASK_COMPLEXITY.get(task_type, 5)
-        
+
         # Check if we should use local LLM (either logical preference or forced)
+        # NEW: Multi-model strategy now handles complexity 1-7 (90% of tasks!)
         use_local = LOCAL_LLM_ENABLED and (
-            complexity <= self.COMPLEXITY_LOCAL or settings.force_local_llm
+            complexity <= self.COMPLEXITY_MEDIUM or settings.force_local_llm
         )
 
-        # Try local LLM first
+        # Try local multi-model LLM first (Phi-3.5 or Qwen2.5)
         if use_local:
             try:
                 # Use local M4 Neural Engine (FREE and FAST!)
-                # Note: Schema is not strictly enforced by Phi-3 but prompt helps
-                result = self.local_llm.generate_structured(
+                # Automatically selects Phi-3.5 (1-4) or Qwen2.5 (5-7) based on complexity
+                logger.info(f"🤖 Using local multi-model LLM for {task_type.value} (complexity {complexity})")
+                result = self.multi_llm.generate_structured(
                     prompt=prompt,
                     schema={},  # Let LLM infer structure
+                    complexity=complexity,  # NEW: Pass complexity for model selection
                     max_tokens=generation_config.get("max_output_tokens", 1024),
                     temperature=generation_config.get("temperature", 0.7),
                 )
+                logger.info(f"✅ Local LLM succeeded for {task_type.value}")
                 _cache_set(cache_key, result, ttl_hours=cache_ttl_hours)
                 return result
             except Exception as local_error:
                 # Fallback to Gemini if local LLM fails
-                print(f"⚠️ Local LLM failed for {task_type.value}, falling back to Gemini: {local_error}")
+                logger.warning(f"⚠️ Local LLM failed for {task_type.value}, falling back to Gemini: {local_error}")
         
         # Select Gemini model for complex tasks (or fallback)
 

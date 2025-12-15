@@ -1,0 +1,167 @@
+# Security Engineer - Role Configuration
+# Exponentially detailed implementation guide for security hardening
+
+role_name: "Security Engineer"
+role_description: "Responsible for security audits, vulnerability fixes, authentication, authorization, and OWASP compliance"
+
+primary_phases:
+  - phase: 1
+    name: "Security & Foundation"
+    weeks: "1-2"
+    focus_areas:
+      - "Fix authentication bypass (CRITICAL)"
+      - "Replace hardcoded secrets (CRITICAL)"
+      - "Add rate limiting (5 req/min auth, 10 req/hour uploads)"
+      - "Implement security headers (HSTS, CSP, X-Frame-Options)"
+      - "Add file upload security (MIME validation, virus scanning)"
+      - "Implement secrets management and rotation"
+
+  - phase: 6
+    name: "Production Hardening"
+    week: "12"
+    focus_areas:
+      - "Run OWASP ZAP automated scan"
+      - "Check OWASP Top 10 vulnerabilities"
+      - "Fix identified security issues"
+      - "Document security policy"
+
+critical_files:
+  - path: "/backend/app/api/deps.py"
+    lines: "30-48"
+    priority: "CRITICAL"
+    task: "Fix authentication bypass - IMMEDIATE"
+    vulnerability: "Authentication Bypass (OWASP A01:2021 Broken Access Control)"
+
+  - path: "/backend/app/core/security.py"
+    line: "17"
+    priority: "CRITICAL"
+    task: "Replace hardcoded SECRET_KEY - IMMEDIATE"
+    vulnerability: "Hardcoded Secrets (OWASP A02:2021 Cryptographic Failures)"
+
+  - path: "/backend/app/core/config.py"
+    priority: "CRITICAL"
+    task: "Add environment variable validation"
+
+  - path: "/backend/app/api/middleware/rate_limit.py"
+    priority: "HIGH"
+    task: "Implement rate limiting (NEW FILE)"
+
+  - path: "/backend/app/api/middleware/security_headers.py"
+    priority: "HIGH"
+    task: "Implement security headers (NEW FILE)"
+
+  - path: "/backend/app/core/secrets_manager.py"
+    priority: "HIGH"
+    task: "Implement secrets management (NEW FILE)"
+
+security_vulnerabilities:
+  critical:
+    - name: "Authentication Bypass"
+      owasp: "A01:2021 - Broken Access Control"
+      file: "/backend/app/api/deps.py"
+      lines: "30-48"
+      impact: "Any user can access admin endpoints"
+      fix: "Implement proper JWT token validation"
+
+    - name: "Hardcoded Secrets"
+      owasp: "A02:2021 - Cryptographic Failures"
+      file: "/backend/app/core/security.py"
+      line: "17"
+      impact: "Production secrets exposed in code"
+      fix: "Use environment variables with validation"
+
+  high:
+    - name: "Missing Rate Limiting"
+      owasp: "A04:2021 - Insecure Design"
+      impact: "Vulnerable to brute force and DoS attacks"
+      fix: "Implement slowapi rate limiting"
+
+    - name: "Missing Security Headers"
+      owasp: "A05:2021 - Security Misconfiguration"
+      impact: "Vulnerable to XSS, clickjacking"
+      fix: "Add HSTS, CSP, X-Frame-Options headers"
+
+technology_stack:
+  - "better-auth / OAuth2"
+  - "slowapi (rate limiting)"
+  - "python-jose (JWT)"
+  - "passlib (password hashing)"
+  - "OWASP ZAP (security scanner)"
+  - "Bandit (Python security linter)"
+  - "Safety (dependency scanner)"
+
+dependencies:
+  blocks:
+    - role: "All roles"
+      reason: "Security vulnerabilities block production deployment"
+
+  blocked_by: []
+
+owasp_top_10_checklist:
+  - id: "A01:2021"
+    name: "Broken Access Control"
+    status: "CRITICAL"
+    tasks:
+      - "Fix authentication bypass in deps.py"
+      - "Implement proper authorization checks"
+
+  - id: "A02:2021"
+    name: "Cryptographic Failures"
+    status: "CRITICAL"
+    tasks:
+      - "Replace hardcoded secrets"
+      - "Implement secrets rotation"
+
+  - id: "A03:2021"
+    name: "Injection"
+    status: "LOW"
+    tasks:
+      - "Verify SQLAlchemy parameterization"
+      - "Validate all user inputs with Pydantic"
+
+  - id: "A04:2021"
+    name: "Insecure Design"
+    status: "HIGH"
+    tasks:
+      - "Implement rate limiting"
+      - "Add file upload validation"
+
+  - id: "A05:2021"
+    name: "Security Misconfiguration"
+    status: "HIGH"
+    tasks:
+      - "Add security headers"
+      - "Disable debug mode in production"
+
+success_metrics:
+  - metric: "Critical vulnerabilities"
+    target: "0"
+
+  - metric: "Authentication bypass"
+    target: "Fixed"
+
+  - metric: "Hardcoded secrets"
+    target: "0"
+
+  - metric: "Rate limiting coverage"
+    target: "100% endpoints"
+
+  - metric: "OWASP ZAP scan"
+    target: "0 high/critical findings"
+
+time_estimates:
+  phase_1: "80 hours (2 weeks)"
+  phase_6: "40 hours (1 week)"
+  total: "120 hours"
+
+document_sections:
+  - "Role Overview & Responsibilities"
+  - "Phase 1: Critical Security Fixes"
+  - "Phase 6: Security Audit & Hardening"
+  - "OWASP Top 10 Compliance Guide"
+  - "Vulnerability-by-Vulnerability Fix Guide"
+  - "Security Testing Procedures"
+  - "Secrets Management Implementation"
+  - "Security Best Practices"
+  - "Incident Response Plan"
+  - "Appendix: Security Code Examples"

@@ -1,0 +1,138 @@
+# DevOps Engineer - Role Configuration
+# Exponentially detailed implementation guide for infrastructure and deployment
+
+role_name: "DevOps/SRE Engineer"
+role_description: "Responsible for CI/CD pipelines, infrastructure automation, monitoring, and deployment orchestration"
+
+primary_phases:
+  - phase: 2
+    name: "Infrastructure Migration"
+    weeks: "3-4"
+    focus_areas:
+      - "Set up PostgreSQL 15+ with connection pooling"
+      - "Configure MinIO (self-hosted S3)"
+      - "Test horizontal scaling with 2+ instances"
+
+  - phase: 5
+    name: "CI/CD & Monitoring"
+    weeks: "10-11"
+    focus_areas:
+      - "Create GitHub Actions workflows"
+      - "Build deployment automation (staging, production)"
+      - "Implement blue-green deployment"
+      - "Set up staging environment"
+      - "Implement Prometheus /metrics endpoint"
+      - "Configure Grafana dashboards"
+      - "Integrate Sentry error tracking"
+      - "Create operational runbooks"
+
+  - phase: 6
+    name: "Production Hardening"
+    week: "12"
+    focus_areas:
+      - "Load testing with 100+ concurrent users"
+      - "Implement automated backups"
+      - "Test restoration procedures"
+      - "Configure SSL/TLS"
+
+critical_files:
+  - path: "/.github/workflows/ci.yml"
+    priority: "HIGH"
+    task: "Create CI pipeline (NEW FILE)"
+
+  - path: "/.github/workflows/deploy.yml"
+    priority: "HIGH"
+    task: "Create deployment pipeline (NEW FILE)"
+
+  - path: "/docker-compose.yml"
+    priority: "HIGH"
+    task: "Update for production stack"
+
+  - path: "/docker-compose.prod.yml"
+    priority: "HIGH"
+    task: "Production configuration (NEW FILE)"
+
+  - path: "/backend/app/core/monitoring.py"
+    priority: "MEDIUM"
+    task: "Prometheus metrics (NEW FILE)"
+
+technology_stack:
+  - "GitHub Actions"
+  - "Docker & Docker Compose"
+  - "PostgreSQL 15+"
+  - "Redis"
+  - "MinIO (S3-compatible)"
+  - "Prometheus"
+  - "Grafana"
+  - "Sentry"
+  - "nginx (reverse proxy)"
+  - "Locust/k6 (load testing)"
+
+dependencies:
+  blocks:
+    - role: "All roles"
+      reason: "CI/CD pipeline blocks all deployments"
+
+  blocked_by:
+    - role: "Backend Engineer"
+      reason: "Application must be containerized and ready"
+    - role: "QA Engineer"
+      reason: "Tests must pass in CI pipeline"
+
+infrastructure_components:
+  - component: "PostgreSQL"
+    version: "15+"
+    configuration: "Connection pooling, read replicas"
+
+  - component: "Redis"
+    version: "7+"
+    configuration: "Caching layer, session storage"
+
+  - component: "MinIO"
+    version: "Latest"
+    configuration: "S3-compatible object storage"
+
+  - component: "Prometheus"
+    version: "Latest"
+    configuration: "Metrics collection and alerting"
+
+  - component: "Grafana"
+    version: "Latest"
+    configuration: "Dashboards and visualization"
+
+success_metrics:
+  - metric: "CI pipeline runtime"
+    target: "< 15 minutes"
+
+  - metric: "Deployment time"
+    target: "< 5 minutes"
+
+  - metric: "Application uptime"
+    target: "> 99.9%"
+
+  - metric: "Load testing capacity"
+    target: "100+ concurrent users"
+
+  - metric: "Backup frequency"
+    target: "Daily automated backups"
+
+  - metric: "Recovery time objective (RTO)"
+    target: "< 1 hour"
+
+time_estimates:
+  phase_2: "40 hours (1 week)"
+  phase_5: "80 hours (2 weeks)"
+  phase_6: "40 hours (1 week)"
+  total: "160 hours"
+
+document_sections:
+  - "Role Overview & Responsibilities"
+  - "Phase 2: Infrastructure Setup"
+  - "Phase 5: CI/CD Pipeline Implementation"
+  - "Phase 6: Production Hardening"
+  - "Infrastructure as Code"
+  - "Monitoring & Observability"
+  - "Disaster Recovery Procedures"
+  - "Deployment Runbooks"
+  - "Troubleshooting Guide"
+  - "Appendix: Configuration Files"

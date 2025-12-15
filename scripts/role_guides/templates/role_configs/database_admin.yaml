@@ -1,0 +1,179 @@
+# Database Administrator - Role Configuration
+# Exponentially detailed implementation guide for database migration and optimization
+
+role_name: "Database Administrator"
+role_description: "Responsible for PostgreSQL migration, database optimization, indexing, and data integrity"
+
+primary_phases:
+  - phase: 2
+    name: "Infrastructure Migration"
+    weeks: "3-4"
+    focus_areas:
+      - "Plan SQLite to PostgreSQL migration"
+      - "Set up PostgreSQL 15+ with connection pooling"
+      - "Configure Alembic migrations"
+      - "Migrate SQLAlchemy from SQLite to PostgreSQL"
+      - "Add database indexes for performance"
+      - "Implement Redis caching layer (60%+ hit rate target)"
+      - "Database backup and recovery procedures"
+
+  - phase: 3
+    name: "Testing & Quality"
+    weeks: "5-7"
+    focus_areas:
+      - "Database integration tests"
+      - "Migration rollback testing"
+      - "Performance benchmarking"
+
+critical_files:
+  - path: "/backend/app/database/session.py"
+    priority: "CRITICAL"
+    task: "Migrate to PostgreSQL from SQLite"
+
+  - path: "/backend/app/database/models.py"
+    priority: "HIGH"
+    task: "Add PostgreSQL-specific optimizations and indexes"
+
+  - path: "/backend/alembic/"
+    priority: "HIGH"
+    task: "Configure Alembic migrations (NEW DIRECTORY)"
+
+  - path: "/backend/alembic/versions/"
+    priority: "HIGH"
+    task: "Migration scripts (NEW DIRECTORY)"
+
+  - path: "/backend/app/core/cache.py"
+    priority: "HIGH"
+    task: "Implement Redis caching layer (NEW FILE)"
+
+  - path: "/backend/scripts/migrate_sqlite_to_postgres.py"
+    priority: "CRITICAL"
+    task: "Data migration script (NEW FILE)"
+
+technology_stack:
+  - "PostgreSQL 15+"
+  - "SQLAlchemy (async)"
+  - "Alembic (migrations)"
+  - "Redis (caching)"
+  - "asyncpg (PostgreSQL driver)"
+  - "pgAdmin (administration)"
+  - "pg_dump / pg_restore (backup)"
+
+dependencies:
+  blocks:
+    - role: "Backend Engineer"
+      reason: "Database changes affect all backend services"
+
+  blocked_by:
+    - role: "DevOps Engineer"
+      reason: "PostgreSQL infrastructure must be provisioned"
+
+database_models:
+  - model: "User"
+    table: "users"
+    indexes: ["email (unique)", "created_at"]
+
+  - model: "MidiFile"
+    table: "midi_files"
+    indexes: ["user_id", "created_at", "status"]
+
+  - model: "Curriculum"
+    table: "curriculums"
+    indexes: ["user_id", "genre", "difficulty_level"]
+
+  - model: "PracticeSession"
+    table: "practice_sessions"
+    indexes: ["user_id", "curriculum_id", "started_at"]
+
+  - model: "Arrangement"
+    table: "arrangements"
+    indexes: ["midi_file_id", "created_at"]
+
+migration_strategy:
+  preparation:
+    - "Backup SQLite database"
+    - "Analyze schema and data types"
+    - "Create PostgreSQL schema"
+    - "Test migration on copy"
+
+  migration:
+    - "Stop write operations"
+    - "Export SQLite data"
+    - "Import to PostgreSQL"
+    - "Verify data integrity"
+    - "Create indexes"
+    - "Update application config"
+
+  validation:
+    - "Compare row counts"
+    - "Verify foreign keys"
+    - "Test all queries"
+    - "Benchmark performance"
+
+  rollback:
+    - "Revert to SQLite backup"
+    - "RTO: < 1 hour"
+
+performance_optimizations:
+  - optimization: "Add indexes for frequently queried columns"
+    impact: "50-90% faster query times"
+
+  - optimization: "Implement connection pooling"
+    impact: "Reduced connection overhead"
+
+  - optimization: "Redis caching for read-heavy queries"
+    impact: "60%+ cache hit rate, 70% reduced DB load"
+
+  - optimization: "Use PostgreSQL-specific features (JSONB, arrays)"
+    impact: "Better data modeling"
+
+redis_caching_strategy:
+  cache_keys:
+    - "user:{user_id}:profile"
+    - "curriculum:{curriculum_id}"
+    - "practice_session:{session_id}"
+
+  ttl_settings:
+    - "User profiles: 1 hour"
+    - "Curriculums: 30 minutes"
+    - "Practice sessions: 15 minutes"
+
+  invalidation:
+    - "On user update: clear user:{user_id}:*"
+    - "On curriculum update: clear curriculum:{curriculum_id}"
+
+success_metrics:
+  - metric: "PostgreSQL migration"
+    target: "0 data loss"
+
+  - metric: "Migration downtime"
+    target: "< 1 hour"
+
+  - metric: "Redis cache hit rate"
+    target: "> 60%"
+
+  - metric: "Query performance"
+    target: "p95 < 50ms"
+
+  - metric: "Database backups"
+    target: "Daily automated backups"
+
+  - metric: "Connection pool efficiency"
+    target: "< 10% connection wait time"
+
+time_estimates:
+  week_3: "40 hours (planning + PostgreSQL setup)"
+  week_4: "40 hours (migration + optimization)"
+  total: "80 hours"
+
+document_sections:
+  - "Role Overview & Responsibilities"
+  - "Phase 2: Database Migration Strategy"
+  - "SQLite to PostgreSQL Migration Guide"
+  - "Schema Design & Optimization"
+  - "Indexing Strategy"
+  - "Redis Caching Implementation"
+  - "Backup & Recovery Procedures"
+  - "Performance Benchmarking"
+  - "Troubleshooting Database Issues"
+  - "Appendix: Migration Scripts"

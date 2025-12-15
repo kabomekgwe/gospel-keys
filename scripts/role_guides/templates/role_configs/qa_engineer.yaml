@@ -1,0 +1,165 @@
+# QA Engineer - Role Configuration
+# Exponentially detailed implementation guide for testing and quality assurance
+
+role_name: "QA/Test Engineer"
+role_description: "Responsible for test strategy, test automation, quality gates, and ensuring 80%+ test coverage"
+
+primary_phases:
+  - phase: 3
+    name: "Testing & Quality"
+    weeks: "5-7"
+    focus_areas:
+      - "Configure pytest infrastructure with fixtures"
+      - "Write 215+ backend tests (services, API routes, database)"
+      - "Set up Vitest + React Testing Library + MSW"
+      - "Write 150+ frontend tests (components, routes, hooks)"
+      - "Write 20+ Playwright E2E tests for critical user journeys"
+      - "Configure code quality tools (Ruff, ESLint, Prettier)"
+      - "Set up mypy for type checking"
+      - "Add pre-commit hooks"
+
+critical_files:
+  - path: "/backend/tests/conftest.py"
+    priority: "HIGH"
+    task: "Configure pytest infrastructure (NEW FILE)"
+
+  - path: "/backend/tests/test_services/"
+    priority: "HIGH"
+    task: "Service layer tests (NEW DIRECTORY)"
+
+  - path: "/backend/tests/test_api/"
+    priority: "HIGH"
+    task: "API route tests (NEW DIRECTORY)"
+
+  - path: "/frontend/src/test/utils.tsx"
+    priority: "HIGH"
+    task: "Frontend test utilities (NEW FILE)"
+
+  - path: "/frontend/src/test/setup.ts"
+    priority: "HIGH"
+    task: "Vitest configuration (NEW FILE)"
+
+  - path: "/e2e/tests/"
+    priority: "HIGH"
+    task: "Playwright E2E tests (NEW DIRECTORY)"
+
+  - path: "/.pre-commit-config.yaml"
+    priority: "MEDIUM"
+    task: "Pre-commit hooks (NEW FILE)"
+
+  - path: "/pyproject.toml"
+    priority: "MEDIUM"
+    task: "Add Ruff and mypy configuration"
+
+technology_stack:
+  backend_testing:
+    - "pytest"
+    - "pytest-asyncio"
+    - "pytest-cov (coverage)"
+    - "Faker (test data)"
+    - "Factory Boy (fixtures)"
+    - "mypy (type checking)"
+    - "Ruff (linting)"
+
+  frontend_testing:
+    - "Vitest"
+    - "React Testing Library"
+    - "MSW (API mocking)"
+    - "@testing-library/user-event"
+    - "ESLint"
+    - "Prettier"
+
+  e2e_testing:
+    - "Playwright"
+    - "@playwright/test"
+
+dependencies:
+  blocks:
+    - role: "DevOps Engineer"
+      reason: "Tests must pass in CI pipeline before deployment"
+
+  blocked_by:
+    - role: "Backend Engineer"
+      reason: "Code must exist before testing"
+    - role: "Frontend Engineer"
+      reason: "Components must exist before testing"
+
+test_coverage_targets:
+  - component: "Backend Services"
+    current: "12-15%"
+    target: "> 80%"
+    tests_needed: "215+"
+
+  - component: "Frontend Components"
+    current: "0%"
+    target: "> 80%"
+    tests_needed: "150+"
+
+  - component: "E2E Critical Paths"
+    current: "0"
+    target: "20+"
+    tests_needed: "20+"
+
+test_pyramid:
+  unit_tests: "70% of tests (fast, isolated)"
+  integration_tests: "20% of tests (API, DB)"
+  e2e_tests: "10% of tests (user journeys)"
+
+critical_test_scenarios:
+  backend:
+    - "Authentication and authorization flows"
+    - "MIDI file upload and processing"
+    - "Curriculum generation and management"
+    - "Practice session tracking"
+    - "Error handling and validation"
+
+  frontend:
+    - "Component rendering and interaction"
+    - "Form validation and submission"
+    - "State management (Zustand stores)"
+    - "API integration (TanStack Query)"
+    - "Error boundary behavior"
+
+  e2e:
+    - "User registration and login"
+    - "MIDI file upload workflow"
+    - "Practice session completion"
+    - "Curriculum creation and editing"
+    - "Error recovery scenarios"
+
+success_metrics:
+  - metric: "Backend test coverage"
+    target: "> 80%"
+
+  - metric: "Frontend test coverage"
+    target: "> 80%"
+
+  - metric: "E2E tests passing"
+    target: "20+ tests, 100% pass rate"
+
+  - metric: "Linting errors"
+    target: "0"
+
+  - metric: "Type errors"
+    target: "0"
+
+  - metric: "Pre-commit hooks"
+    target: "Enforced on all commits"
+
+time_estimates:
+  week_5: "40 hours (backend infrastructure + tests)"
+  week_6: "40 hours (frontend tests)"
+  week_7: "40 hours (E2E tests + code quality)"
+  total: "120 hours"
+
+document_sections:
+  - "Role Overview & Responsibilities"
+  - "Phase 3: Testing Strategy"
+  - "Backend Testing Implementation"
+  - "Frontend Testing Implementation"
+  - "E2E Testing Implementation"
+  - "Test Coverage Analysis"
+  - "Code Quality Tools Setup"
+  - "Testing Best Practices"
+  - "Troubleshooting Test Failures"
+  - "Appendix: Complete Test Code Examples"

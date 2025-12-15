@@ -30,11 +30,16 @@ impl MetalEffectsProcessor {
         println!("  Max threads per threadgroup: {:?}",
                  device.max_threads_per_threadgroup());
 
-        Ok(Self {
+        let mut processor = Self {
             device,
             command_queue,
             reverb_pipeline: None,
-        })
+        };
+
+        // Compile reverb shader on initialization
+        processor.compile_reverb_shader()?;
+
+        Ok(processor)
     }
 
     /// Process audio samples with GPU effects
@@ -50,9 +55,86 @@ impl MetalEffectsProcessor {
 
     /// Apply convolution reverb using Metal GPU
     fn apply_reverb_gpu(&mut self, samples: &[f32]) -> Result<Vec<f32>> {
-        // For now, use simple CPU-based reverb
-        // TODO: Implement Metal compute shader for convolution reverb
-        self.apply_reverb_cpu(samples)
+        // Try GPU processing first, fallback to CPU if needed
+        if let Some(pipeline) = &self.reverb_pipeline {
+            self.apply_reverb_gpu_impl(samples, pipeline)
+                .or_else(|e| {
+                    eprintln!("GPU reverb failed, falling back to CPU: {}", e);
+                    self.apply_reverb_cpu(samples)
+                })
+        } else {
+            // No pipeline available, use CPU
+            self.apply_reverb_cpu(samples)
+        }
+    }
+
+    /// GPU implementation of algorithmic reverb
+    fn apply_reverb_gpu_impl(&self, samples: &[f32], pipeline: &ComputePipelineState) -> Result<Vec<f32>> {
+        // Create a simple impulse response for convolution
+        // This simulates a small room reverb
+        let impulse_length = 4410; // 100ms at 44.1kHz
+        let mut impulse = vec![0.0f32; impulse_length];
+
+        // Generate exponentially decaying impulse response
+        for i in 0..impulse_length {
+            let t = i as f32 / impulse_length as f32;
+            impulse[i] = (-t * 5.0).exp() * (1.0 - t) * 0.3; // 30% wet mix
+        }
+
+        // Create Metal buffers
+        let input_buffer = create_buffer_from_slice(&self.device, samples);
+        let impulse_buffer = create_buffer_from_slice(&self.device, &impulse);
+
+        let output_length = samples.len();
+        let output_buffer = self.device.new_buffer(
+            (output_length * mem::size_of::<f32>()) as u64,
+            MTLResourceOptions::StorageModeShared
+        );
+
+        let input_len = samples.len() as u32;
+        let impulse_len = impulse.len() as u32;
+        let input_len_buffer = create_buffer_from_slice(&self.device, &[input_len]);
+        let impulse_len_buffer = create_buffer_from_slice(&self.device, &[impulse_len]);
+
+        // Create command buffer and encoder
+        let command_buffer = self.command_queue.new_command_buffer();
+        let encoder = command_buffer.new_compute_command_encoder();
+
+        encoder.set_compute_pipeline_state(pipeline);
+        encoder.set_buffer(0, Some(&input_buffer), 0);
+        encoder.set_buffer(1, Some(&impulse_buffer), 0);
+        encoder.set_buffer(2, Some(&output_buffer), 0);
+        encoder.set_buffer(3, Some(&input_len_buffer), 0);
+        encoder.set_buffer(4, Some(&impulse_len_buffer), 0);
+
+        // Calculate thread groups
+        let thread_group_size = MTLSize {
+            width: pipeline.max_total_threads_per_threadgroup().min(256),
+            height: 1,
+            depth: 1,
+        };
+
+        let thread_groups = MTLSize {
+            width: (output_length + thread_group_size.width - 1) / thread_group_size.width,
+            height: 1,
+            depth: 1,
+        };
+
+        encoder.dispatch_thread_groups(thread_groups, thread_group_size);
+        encoder.end_encoding();
+
+        // Execute and wait
+        command_buffer.commit();
+        command_buffer.wait_until_completed();
+
+        // Read results
+        let mut output = vec![0.0f32; output_length];
+        unsafe {
+            let ptr = output_buffer.contents() as *const f32;
+            std::ptr::copy_nonoverlapping(ptr, output.as_mut_ptr(), output_length);
+        }
+
+        Ok(output)
     }
 
     /// Simple CPU-based reverb (fallback)
@@ -104,8 +186,7 @@ impl MetalEffectsProcessor {
         Ok(output)
     }
 
-    /// Compile Metal shader (for future use)
-    #[allow(dead_code)]
+    /// Compile Metal shader for GPU reverb
     fn compile_reverb_shader(&mut self) -> Result<()> {
         let shader_source = r#"
             #include <metal_stdlib>
@@ -151,7 +232,6 @@ impl MetalEffectsProcessor {
 }
 
 /// Helper to create Metal buffer from slice
-#[allow(dead_code)]
 fn create_buffer_from_slice<T>(device: &Device, data: &[T]) -> Buffer {
     let byte_length = (data.len() * mem::size_of::<T>()) as u64;
     let buffer = device.new_buffer(byte_length, MTLResourceOptions::StorageModeShared);

@@ -1,0 +1,234 @@
+# Technical Writer - Role Configuration
+# Exponentially detailed implementation guide for documentation and guides
+
+role_name: "Technical Writer / Documentation Engineer"
+role_description: "Responsible for API documentation, user guides, deployment guides, and developer documentation"
+
+primary_phases:
+  - phase: 1
+    name: "Security & Foundation"
+    weeks: "1-2"
+    focus_areas:
+      - "Document security policy and procedures"
+
+  - phase: 2
+    name: "Infrastructure Migration"
+    weeks: "3-4"
+    focus_areas:
+      - "Document database migration procedures"
+      - "Create infrastructure setup guides"
+
+  - phase: 4
+    name: "User Experience"
+    weeks: "8-9"
+    focus_areas:
+      - "Create end-user documentation"
+      - "Write onboarding guides"
+      - "Document help system"
+
+  - phase: 5
+    name: "CI/CD & Monitoring"
+    weeks: "10-11"
+    focus_areas:
+      - "Create operational runbooks"
+      - "Document deployment procedures"
+      - "Write troubleshooting guides"
+
+  - phase: 6
+    name: "Production Hardening"
+    week: "12"
+    focus_areas:
+      - "Finalize all documentation"
+      - "Create launch checklist"
+      - "Document disaster recovery procedures"
+
+critical_files:
+  - path: "/docs/api/"
+    priority: "HIGH"
+    task: "API documentation (NEW DIRECTORY)"
+
+  - path: "/docs/guides/"
+    priority: "HIGH"
+    task: "User and developer guides (NEW DIRECTORY)"
+
+  - path: "/docs/runbooks/"
+    priority: "HIGH"
+    task: "Operational runbooks (NEW DIRECTORY)"
+
+  - path: "/README.md"
+    priority: "HIGH"
+    task: "Update main README with comprehensive info"
+
+  - path: "/docs/ARCHITECTURE.md"
+    priority: "MEDIUM"
+    task: "System architecture documentation (NEW FILE)"
+
+  - path: "/docs/DEPLOYMENT.md"
+    priority: "HIGH"
+    task: "Deployment guide (NEW FILE)"
+
+  - path: "/docs/SECURITY.md"
+    priority: "HIGH"
+    task: "Security policy and procedures (NEW FILE)"
+
+  - path: "/docs/TROUBLESHOOTING.md"
+    priority: "MEDIUM"
+    task: "Troubleshooting guide (NEW FILE)"
+
+technology_stack:
+  - "Markdown (documentation format)"
+  - "Swagger/OpenAPI (API docs)"
+  - "Docusaurus / VitePress (doc site)"
+  - "Mermaid (diagrams)"
+  - "PlantUML (architecture diagrams)"
+
+dependencies:
+  blocks:
+    - role: "All roles"
+      reason: "Documentation required for knowledge transfer"
+
+  blocked_by:
+    - role: "Backend Engineer"
+      reason: "API must be implemented before documenting"
+    - role: "DevOps Engineer"
+      reason: "Infrastructure must exist before documenting"
+
+documentation_deliverables:
+  api_documentation:
+    - "OpenAPI/Swagger specification"
+    - "Endpoint documentation with examples"
+    - "Authentication guide"
+    - "Error codes and responses"
+    - "Rate limiting documentation"
+
+  user_guides:
+    - "Getting started guide"
+    - "User onboarding tutorial"
+    - "Feature guides (MIDI upload, practice sessions, curriculums)"
+    - "Keyboard shortcuts reference"
+    - "FAQ and troubleshooting"
+
+  developer_guides:
+    - "Development environment setup"
+    - "Architecture overview"
+    - "Database schema documentation"
+    - "Contribution guidelines"
+    - "Testing guide"
+
+  operational_runbooks:
+    - "Deployment procedures (staging, production)"
+    - "Database migration runbook"
+    - "Incident response procedures"
+    - "Backup and recovery procedures"
+    - "Monitoring and alerting guide"
+
+documentation_structure:
+  - section: "README.md"
+    content:
+      - "Project overview and features"
+      - "Quick start guide"
+      - "Installation instructions"
+      - "Technology stack"
+      - "Contributing guidelines"
+
+  - section: "docs/api/"
+    content:
+      - "API reference (OpenAPI spec)"
+      - "Authentication guide"
+      - "Endpoint examples"
+      - "Webhooks documentation"
+
+  - section: "docs/guides/"
+    content:
+      - "User onboarding guide"
+      - "Developer setup guide"
+      - "Feature guides"
+      - "Best practices"
+
+  - section: "docs/runbooks/"
+    content:
+      - "Deployment runbook"
+      - "Database migration runbook"
+      - "Incident response runbook"
+      - "Disaster recovery runbook"
+
+documentation_standards:
+  - standard: "Use Markdown for all documentation"
+    rationale: "Version control friendly, widely supported"
+
+  - standard: "Include code examples for all procedures"
+    rationale: "Easier for developers to follow"
+
+  - standard: "Add diagrams for architecture and flows"
+    rationale: "Visual aids improve understanding"
+
+  - standard: "Keep documentation up-to-date with code"
+    rationale: "Outdated docs are worse than no docs"
+
+  - standard: "Use consistent terminology"
+    rationale: "Reduces confusion"
+
+api_documentation_example:
+  endpoint: "POST /api/v1/midi/upload"
+  description: "Upload a MIDI file for transcription"
+  authentication: "Bearer token required"
+  request_body:
+    - "file: multipart/form-data (MIDI file)"
+    - "genre: string (optional)"
+  response:
+    - "200 OK: {midi_id, status, created_at}"
+    - "400 Bad Request: {error, details}"
+    - "401 Unauthorized: {error}"
+  example: |
+    ```bash
+    curl -X POST https://api.pianokeys.com/api/v1/midi/upload \
+      -H "Authorization: Bearer YOUR_TOKEN" \
+      -F "file=@song.mid" \
+      -F "genre=classical"
+    ```
+
+runbook_template:
+  title: "Deployment Runbook - Production"
+  sections:
+    - "Prerequisites"
+    - "Pre-deployment checklist"
+    - "Deployment steps"
+    - "Verification steps"
+    - "Rollback procedures"
+    - "Common issues and solutions"
+
+success_metrics:
+  - metric: "API documentation coverage"
+    target: "100% endpoints documented"
+
+  - metric: "User guides completeness"
+    target: "All features documented"
+
+  - metric: "Runbooks coverage"
+    target: "All critical procedures documented"
+
+  - metric: "Documentation accuracy"
+    target: "> 95% (verified against code)"
+
+  - metric: "Developer onboarding time"
+    target: "< 1 day with documentation"
+
+time_estimates:
+  phase_1: "8 hours"
+  phase_2: "16 hours"
+  phase_4: "16 hours"
+  phase_5: "24 hours"
+  phase_6: "16 hours"
+  total: "80 hours"
+
+document_sections:
+  - "Role Overview & Responsibilities"
+  - "Documentation Strategy"
+  - "API Documentation Guide"
+  - "User Guide Creation"
+  - "Operational Runbook Templates"
+  - "Documentation Standards & Style Guide"
+  - "Diagramming Best Practices"
+  - "Documentation Maintenance Procedures"
+  - "Tools and Workflows"
+  - "Appendix: Documentation Templates"

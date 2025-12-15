@@ -1,0 +1,132 @@
+# Frontend Engineer - Role Configuration
+# Exponentially detailed implementation guide for frontend development tasks
+
+role_name: "Frontend Engineer"
+role_description: "Responsible for React components, UI/UX implementation, client-side state management, and accessibility"
+
+primary_phases:
+  - phase: 1
+    name: "Security & Foundation"
+    weeks: "1-2"
+    focus_areas:
+      - "Add React Error Boundaries"
+      - "Remove console.log statements (24 total)"
+      - "Implement client-side error handling"
+
+  - phase: 3
+    name: "Testing & Quality"
+    weeks: "5-7"
+    focus_areas:
+      - "Write 150+ frontend tests"
+      - "Set up Vitest + React Testing Library + MSW"
+      - "Achieve 80% frontend coverage"
+      - "Configure ESLint and Prettier"
+
+  - phase: 4
+    name: "User Experience & Accessibility"
+    weeks: "8-9"
+    focus_areas:
+      - "Create authentication UI (login, signup, profile)"
+      - "Build onboarding wizard"
+      - "Implement help system and keyboard shortcuts"
+      - "Make light/dark mode functional"
+      - "Accessibility audit with axe-core"
+      - "Add ARIA labels and keyboard navigation"
+      - "Implement notification system"
+
+critical_files:
+  - path: "/frontend/src/routes/__root.tsx"
+    priority: "HIGH"
+    task: "Add Error Boundary"
+
+  - path: "/frontend/src/components/Piano.tsx"
+    priority: "MEDIUM"
+    task: "Accessibility improvements"
+
+  - path: "/frontend/src/components/onboarding/OnboardingWizard.tsx"
+    priority: "MEDIUM"
+    task: "Create onboarding flow (NEW FILE)"
+
+  - path: "/frontend/src/test/utils.tsx"
+    priority: "MEDIUM"
+    task: "Frontend test utilities"
+
+  - path: "/frontend/src/lib/practiceStore.ts"
+    priority: "LOW"
+    task: "State management optimization"
+
+  - path: "/frontend/src/lib/api.ts"
+    priority: "MEDIUM"
+    task: "API client error handling"
+
+technology_stack:
+  - "React 19"
+  - "TanStack Router v7"
+  - "TanStack Query"
+  - "Zustand (state management)"
+  - "Tailwind CSS 4"
+  - "shadcn/ui components"
+  - "Vitest (testing)"
+  - "React Testing Library"
+  - "MSW (API mocking)"
+  - "Playwright (E2E)"
+  - "axe-core (accessibility)"
+
+dependencies:
+  blocks:
+    - role: "UI/UX Designer"
+      reason: "Design system must be defined before component implementation"
+
+  blocked_by:
+    - role: "Backend Engineer"
+      reason: "API endpoints required for integration"
+
+code_patterns:
+  - pattern: "Component Composition"
+    files: ["/frontend/src/components/**/*.tsx"]
+
+  - pattern: "Custom Hooks"
+    files: ["/frontend/src/hooks/*.ts"]
+
+  - pattern: "TanStack Query"
+    files: ["/frontend/src/lib/api.ts"]
+
+  - pattern: "Zustand Store"
+    files: ["/frontend/src/lib/*Store.ts"]
+
+success_metrics:
+  - metric: "Frontend test coverage"
+    target: "> 80%"
+
+  - metric: "WCAG AA compliance"
+    target: "100%"
+
+  - metric: "Onboarding completion rate"
+    target: "> 80%"
+
+  - metric: "Frontend FCP"
+    target: "< 1.5s"
+
+  - metric: "Console log statements"
+    target: "0 in production"
+
+  - metric: "Keyboard navigation"
+    target: "100% features accessible"
+
+time_estimates:
+  phase_1: "16 hours (2 days)"
+  phase_3: "80 hours (2 weeks)"
+  phase_4: "80 hours (2 weeks)"
+  total: "176 hours"
+
+document_sections:
+  - "Role Overview & Responsibilities"
+  - "Phase 1: Foundation & Error Handling"
+  - "Phase 3: Testing & Quality"
+  - "Phase 4: User Experience & Accessibility"
+  - "Component-by-Component Implementation Guide"
+  - "Accessibility Checklist"
+  - "Testing Procedures"
+  - "Performance Optimization"
+  - "Troubleshooting Guide"
+  - "Appendix: Complete Code Listings"

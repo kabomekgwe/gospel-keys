@@ -1,0 +1,133 @@
+# Backend Engineer - Role Configuration
+# Exponentially detailed implementation guide for backend development tasks
+
+role_name: "Backend Engineer"
+role_description: "Responsible for API development, service layer, database interactions, and backend security"
+
+primary_phases:
+  - phase: 1
+    name: "Security & Foundation"
+    weeks: "1-2"
+    focus_areas:
+      - "Fix authentication bypass in deps.py"
+      - "Replace hardcoded secrets in security.py"
+      - "Implement rate limiting with slowapi"
+      - "Add security headers middleware"
+      - "Implement structured logging with structlog"
+
+  - phase: 2
+    name: "Infrastructure Migration"
+    weeks: "3-4"
+    focus_areas:
+      - "PostgreSQL migration from SQLite"
+      - "Configure Alembic migrations"
+      - "Implement Redis caching layer"
+      - "Create storage abstraction for S3/MinIO"
+      - "Database indexing and optimization"
+
+  - phase: 3
+    name: "Testing & Quality"
+    weeks: "5-7"
+    focus_areas:
+      - "Write 215+ backend tests"
+      - "Configure pytest infrastructure"
+      - "Achieve 80% backend coverage"
+      - "Set up mypy type checking"
+
+critical_files:
+  - path: "/backend/app/api/deps.py"
+    lines: "30-48"
+    priority: "CRITICAL"
+    task: "Fix authentication bypass"
+
+  - path: "/backend/app/core/security.py"
+    line: "17"
+    priority: "CRITICAL"
+    task: "Replace hardcoded SECRET_KEY"
+
+  - path: "/backend/app/core/config.py"
+    priority: "HIGH"
+    task: "Add environment variable validation"
+
+  - path: "/backend/app/main.py"
+    priority: "HIGH"
+    task: "Add middleware (rate limiting, security headers, error handling)"
+
+  - path: "/backend/app/database/session.py"
+    priority: "HIGH"
+    task: "Migrate to PostgreSQL"
+
+  - path: "/backend/app/services/storage_service.py"
+    priority: "HIGH"
+    task: "Create S3 abstraction (NEW FILE)"
+
+  - path: "/backend/tests/conftest.py"
+    priority: "MEDIUM"
+    task: "Test infrastructure setup"
+
+technology_stack:
+  - "FastAPI (Python 3.13)"
+  - "SQLAlchemy (async)"
+  - "PostgreSQL 15+"
+  - "Redis (caching)"
+  - "Alembic (migrations)"
+  - "Celery (async tasks)"
+  - "pytest (testing)"
+  - "slowapi (rate limiting)"
+  - "structlog (logging)"
+  - "mypy (type checking)"
+
+dependencies:
+  blocks:
+    - role: "Security Engineer"
+      reason: "Security audit must validate all backend changes"
+    - role: "Database Administrator"
+      reason: "Database schema changes require DBA review"
+
+  blocked_by:
+    - role: "DevOps Engineer"
+      reason: "Environment setup required before deployment testing"
+
+code_patterns:
+  - pattern: "Service Layer Pattern"
+    files: ["/backend/app/services/*.py"]
+
+  - pattern: "Repository Pattern"
+    files: ["/backend/app/database/models.py"]
+
+  - pattern: "Dependency Injection"
+    files: ["/backend/app/api/deps.py"]
+
+success_metrics:
+  - metric: "Authentication bypass fixed"
+    target: "0 bypasses"
+
+  - metric: "Backend test coverage"
+    target: "> 80%"
+
+  - metric: "API response time"
+    target: "p95 < 200ms"
+
+  - metric: "Database migration"
+    target: "0 data loss"
+
+  - metric: "Redis cache hit rate"
+    target: "> 60%"
+
+time_estimates:
+  phase_1: "80 hours (2 weeks)"
+  phase_2: "80 hours (2 weeks)"
+  phase_3: "120 hours (3 weeks)"
+  total: "280 hours"
+
+document_sections:
+  - "Role Overview & Responsibilities"
+  - "Phase 1: Security & Foundation (CRITICAL)"
+  - "Phase 2: Infrastructure Migration"
+  - "Phase 3: Testing & Quality"
+  - "File-by-File Implementation Guide"
+  - "Code Patterns & Best Practices"
+  - "Testing Procedures"
+  - "Deployment Checklist"
+  - "Troubleshooting Guide"
+  - "Appendix: Complete Code Listings"

@@ -1,0 +1,203 @@
+# UI/UX Designer - Role Configuration
+# Exponentially detailed implementation guide for user experience and accessibility
+
+role_name: "UI/UX Designer"
+role_description: "Responsible for user interface design, accessibility, onboarding flows, and WCAG AA compliance"
+
+primary_phases:
+  - phase: 4
+    name: "User Experience & Accessibility"
+    weeks: "8-9"
+    focus_areas:
+      - "Design authentication UI (login, signup, profile)"
+      - "Create onboarding wizard design"
+      - "Implement help system and keyboard shortcuts modal"
+      - "Design user preferences with cross-device sync"
+      - "Make light/dark mode functional"
+      - "Accessibility audit with axe-core"
+      - "Add ARIA labels, keyboard navigation, screen reader support"
+      - "Fix color contrast issues"
+      - "Implement notification system design"
+      - "Create accessible toast components"
+
+critical_files:
+  - path: "/frontend/src/components/onboarding/OnboardingWizard.tsx"
+    priority: "HIGH"
+    task: "Design and implement onboarding flow (NEW FILE)"
+
+  - path: "/frontend/src/components/auth/LoginForm.tsx"
+    priority: "HIGH"
+    task: "Authentication UI (NEW FILE)"
+
+  - path: "/frontend/src/components/auth/SignupForm.tsx"
+    priority: "HIGH"
+    task: "Registration UI (NEW FILE)"
+
+  - path: "/frontend/src/components/help/KeyboardShortcutsModal.tsx"
+    priority: "MEDIUM"
+    task: "Keyboard shortcuts help (NEW FILE)"
+
+  - path: "/frontend/src/components/notifications/ToastProvider.tsx"
+    priority: "MEDIUM"
+    task: "Accessible toast notifications (NEW FILE)"
+
+  - path: "/frontend/src/components/Piano.tsx"
+    priority: "HIGH"
+    task: "Add accessibility improvements"
+
+  - path: "/frontend/src/styles/themes.ts"
+    priority: "MEDIUM"
+    task: "Light/dark mode themes (NEW FILE)"
+
+technology_stack:
+  - "Figma (design tool)"
+  - "shadcn/ui components"
+  - "Tailwind CSS 4"
+  - "Radix UI (accessible primitives)"
+  - "axe-core (accessibility testing)"
+  - "react-aria (accessibility hooks)"
+  - "Storybook (component documentation)"
+
+dependencies:
+  blocks:
+    - role: "Frontend Engineer"
+      reason: "Design system defines component implementation"
+
+  blocked_by:
+    - role: "Backend Engineer"
+      reason: "User account APIs required for auth UI"
+
+design_deliverables:
+  - deliverable: "Onboarding Flow (3-step wizard)"
+    components:
+      - "Welcome screen (skill level selection)"
+      - "Genre preferences"
+      - "Learning goals and schedule"
+
+  - deliverable: "Authentication UI"
+    components:
+      - "Login form with email/password"
+      - "Signup form with validation"
+      - "Profile page with preferences"
+
+  - deliverable: "Help System"
+    components:
+      - "Keyboard shortcuts modal"
+      - "Contextual help tooltips"
+      - "Tutorial overlays"
+
+  - deliverable: "Theme System"
+    components:
+      - "Light mode color palette"
+      - "Dark mode color palette"
+      - "Theme switcher component"
+
+  - deliverable: "Notification System"
+    components:
+      - "Toast notifications (success, error, info)"
+      - "Practice reminders"
+      - "Job completion alerts"
+
+accessibility_requirements:
+  wcag_aa_checklist:
+    - standard: "1.4.3 Contrast (Minimum)"
+      requirement: "Text contrast ratio ≥ 4.5:1"
+      status: "REQUIRED"
+
+    - standard: "2.1.1 Keyboard"
+      requirement: "All functionality keyboard accessible"
+      status: "REQUIRED"
+
+    - standard: "2.4.7 Focus Visible"
+      requirement: "Visible focus indicator on all interactive elements"
+      status: "REQUIRED"
+
+    - standard: "4.1.2 Name, Role, Value"
+      requirement: "ARIA labels on all custom components"
+      status: "REQUIRED"
+
+  keyboard_navigation:
+    - component: "Piano component"
+      keys: ["Tab", "Enter", "Arrow keys", "Escape"]
+
+    - component: "Onboarding wizard"
+      keys: ["Tab", "Enter", "Arrow left/right", "Escape"]
+
+    - component: "Modals and dialogs"
+      keys: ["Escape", "Tab", "Enter"]
+
+  screen_reader_support:
+    - "ARIA labels on all interactive elements"
+    - "Live regions for dynamic content"
+    - "Skip navigation links"
+    - "Semantic HTML structure"
+
+user_flows:
+  - flow: "First-Time User Onboarding"
+    steps:
+      - "Land on welcome page"
+      - "Select skill level (beginner/intermediate/advanced)"
+      - "Choose genre preferences (Classical, Jazz, Blues, etc.)"
+      - "Set learning goals and practice schedule"
+      - "Complete onboarding, land on dashboard"
+
+  - flow: "Authenticated User Practice Session"
+    steps:
+      - "Login with credentials"
+      - "Upload MIDI file or select curriculum"
+      - "Start practice session"
+      - "Complete practice, view progress"
+      - "Receive completion notification"
+
+color_palette:
+  light_mode:
+    - "Background: #FFFFFF"
+    - "Text: #1A1A1A"
+    - "Primary: #1F4788"
+    - "Secondary: #00A9E0"
+    - "Success: #28A745"
+    - "Error: #DC3545"
+
+  dark_mode:
+    - "Background: #1A1A1A"
+    - "Text: #FFFFFF"
+    - "Primary: #4A90E2"
+    - "Secondary: #00D4FF"
+    - "Success: #34C759"
+    - "Error: #FF3B30"
+
+success_metrics:
+  - metric: "WCAG AA compliance"
+    target: "100%"
+
+  - metric: "Onboarding completion rate"
+    target: "> 80%"
+
+  - metric: "Keyboard navigation coverage"
+    target: "100% features accessible"
+
+  - metric: "Screen reader compatibility"
+    target: "Tested with NVDA, JAWS, VoiceOver"
+
+  - metric: "Color contrast ratio"
+    target: "All text ≥ 4.5:1"
+
+  - metric: "User satisfaction (post-onboarding)"
+    target: "> 4.0/5.0"
+
+time_estimates:
+  week_8: "40 hours (design + authentication UI + onboarding)"
+  week_9: "40 hours (accessibility audit + fixes + notifications)"
+  total: "80 hours"
+
+document_sections:
+  - "Role Overview & Responsibilities"
+  - "Phase 4: User Experience Design"
+  - "Onboarding Flow Design"
+  - "Authentication UI Design"
+  - "Accessibility Implementation Guide"
+  - "WCAG AA Compliance Checklist"
+  - "Theme System Implementation"
+  - "Component Design Specifications"
+  - "User Testing Procedures"
+  - "Appendix: Design Mockups & Wireframes"
