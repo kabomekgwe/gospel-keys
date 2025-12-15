@@ -115,7 +115,7 @@ impl MetalEffectsProcessor {
         };
 
         let thread_groups = MTLSize {
-            width: (output_length + thread_group_size.width - 1) / thread_group_size.width,
+            width: (output_length as u64 + thread_group_size.width - 1) / thread_group_size.width,
             height: 1,
             depth: 1,
         };
