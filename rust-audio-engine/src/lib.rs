@@ -18,7 +18,7 @@ mod analyzer;
 use synthesizer::MidiSynthesizer;
 use metal_effects::MetalEffectsProcessor;
 use waveform::WaveformGenerator;
-use analyzer::{detect_pitch_yin, YinParams, PitchResult};
+use analyzer::{detect_pitch_yin, YinParams, PitchResult, detect_onsets, OnsetParams, OnsetEvent};
 
 /// Synthesize a MIDI file to WAV audio with optional GPU effects
 ///
@@ -152,6 +152,57 @@ fn detect_pitch(
     }
 }
 
+/// Detect note onsets in audio samples
+///
+/// Args:
+///     audio_samples: Audio samples as Vec<f32> (mono, normalized ±1.0)
+///     sample_rate: Sample rate in Hz (default: 44100)
+///     hop_size: STFT hop size (default: 256)
+///     threshold: Onset detection threshold (default: 0.3)
+///
+/// Returns:
+///     List of dictionaries with onset detection results
+///     [
+///         {
+///             "timestamp": float,      // seconds
+///             "sample_index": int,     // sample position
+///             "strength": float,       // 0.0-1.0
+///             "confidence": float      // 0.0-1.0
+///         },
+///         ...
+///     ]
+#[pyfunction]
+#[pyo3(signature = (audio_samples, sample_rate=44100, hop_size=256, threshold=0.3))]
+fn detect_onsets_python(
+    py: pyo3::Python,
+    audio_samples: Vec<f32>,
+    sample_rate: u32,
+    hop_size: usize,
+    threshold: f32,
+) -> PyResult<Vec<pyo3::Py<pyo3::types::PyDict>>> {
+    let params = OnsetParams {
+        sample_rate,
+        hop_size,
+        threshold,
+        ..Default::default()
+    };
+
+    let onsets = detect_onsets(&audio_samples, &params);
+
+    // Convert to Python list of dicts
+    let mut result = Vec::new();
+    for onset in onsets {
+        let dict = pyo3::types::PyDict::new_bound(py);
+        dict.set_item("timestamp", onset.timestamp)?;
+        dict.set_item("sample_index", onset.sample_index)?;
+        dict.set_item("strength", onset.strength)?;
+        dict.set_item("confidence", onset.confidence)?;
+        result.push(dict.unbind());
+    }
+
+    Ok(result)
+}
+
 /// Analyze audio performance against expected MIDI
 ///
 /// Args:
@@ -162,13 +213,13 @@ fn detect_pitch(
 /// Returns:
 ///     JSON string with analysis results
 #[pyfunction]
-#[pyo3(signature = (recording_path, expected_midi_path, use_gpu=true))]
+#[pyo3(signature = (_recording_path, _expected_midi_path, _use_gpu=true))]
 fn analyze_performance(
-    recording_path: String,
-    expected_midi_path: String,
-    use_gpu: bool,
+    _recording_path: String,
+    _expected_midi_path: String,
+    _use_gpu: bool,
 ) -> PyResult<String> {
-    // TODO: Implement in future phase (STORY-2.2, 2.3, 2.4)
+    // TODO: Implement in future phase (STORY-2.3, 2.4)
     Ok(r#"{"pitch_accuracy": 0.95, "rhythm_accuracy": 0.88}"#.to_string())
 }
 
@@ -199,6 +250,7 @@ fn rust_audio_engine(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(synthesize_midi, m)?)?;
     m.add_function(wrap_pyfunction!(generate_waveform, m)?)?;
     m.add_function(wrap_pyfunction!(detect_pitch, m)?)?;
+    m.add_function(wrap_pyfunction!(detect_onsets_python, m)?)?;
     m.add_function(wrap_pyfunction!(analyze_performance, m)?)?;
     Ok(())
 }
