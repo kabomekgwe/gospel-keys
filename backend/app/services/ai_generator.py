@@ -28,9 +28,24 @@ from app.schemas.ai import (
     GeneratorInfo, GeneratorsListResponse, GeneratorCategory,
     ArrangeRequest, ArrangeResponse,
     SplitVoicingRequest, SplitVoicingResponse,
+    # New enhanced types
+    CreativityLevel, EducationalContent, CreativeVariation,
+    VoiceLeadingAnalysis, PhrasePosition, Emotion,
 )
 from app.core.config import settings
 from app.jazz.lick_patterns import lick_pattern_service
+
+# Import genre DNA and style reference services
+from app.services.genre_dna import (
+    get_genre_prompt_context,
+    get_creativity_instruction,
+    get_genre_avoid_list,
+    get_genre_reference_artists,
+)
+from app.services.style_reference import (
+    get_style_reference_prompt,
+    get_artist_style,
+)
 
 # Import genre arrangers
 from app.gospel.arrangement.arranger import GospelArranger
@@ -188,45 +203,139 @@ class AIGeneratorService:
         return GeneratorsListResponse(generators=generators)
     
     async def generate_progression(self, request: ProgressionRequest) -> ProgressionResponse:
-        """Generate a chord progression using Gemini"""
-        prompt = f"""You are an expert music theory teacher and jazz piano player.
+        """Generate a chord progression using Gemini with enhanced context.
+        
+        Enhanced with:
+        - Genre-specific DNA for authentic style generation
+        - Artist style references for targeted creativity
+        - Creativity level instructions
+        - Optional educational content
+        - Optional variation generation
+        """
+        # Build enhanced prompt with genre DNA
+        genre_context = get_genre_prompt_context(request.style.value)
+        creativity_instruction = get_creativity_instruction(request.creativity.value)
+        
+        # Add artist style reference if provided
+        style_reference_prompt = ""
+        if request.style_reference:
+            style_reference_prompt = get_style_reference_prompt(request.style_reference)
+        
+        prompt = f"""You are an expert music producer and composer specializing in {request.style.value} music.
 Generate a {request.length}-chord progression in the key of {request.key} {request.mode}.
 
-Style: {request.style.value}
-{'Mood: ' + request.mood.value if request.mood else ''}
-{'Include extended chords (7ths, 9ths, 11ths, 13ths)' if request.include_extensions else 'Use basic triads only'}
+{genre_context}
+
+{creativity_instruction}
+
+{style_reference_prompt}
+
+Additional Parameters:
+- Mood: {request.mood.value if request.mood else 'Not specified'}
+- Extensions: {'Include rich extensions (7ths, 9ths, 11ths, 13ths)' if request.include_extensions else 'Use basic triads'}
 
 Return a JSON object with this exact structure:
 {{
     "progression": [
         {{
-            "symbol": "Cmaj7",
-            "notes": ["C", "E", "G", "B"],
-            "midi_notes": [60, 64, 67, 71],
-            "function": "I",
-            "comment": "Tonic chord, establishes the key"
+            "symbol": "Cmaj9",
+            "notes": ["C", "E", "G", "B", "D"],
+            "midi_notes": [48, 52, 55, 59, 62],
+            "function": "Imaj9",
+            "comment": "Rich tonic with added 9th for color"
         }}
     ],
-    "analysis": "Brief analysis of why this progression works",
-    "tips": ["Tip 1 for playing this progression", "Tip 2"]
+    "analysis": "Detailed analysis explaining the harmonic choices and why they work for this style",
+    "tips": ["Performance tip 1", "Voicing suggestion", "Interpretation advice"],
+    "education": {{
+        "why_it_works": "Theory explanation of what makes this progression effective",
+        "alternatives": ["Alternative chord that could work at position 2", "Another option"],
+        "theory_concepts": ["Concept 1 used", "Concept 2 used"]
+    }}
 }}
 
-Make sure:
-1. The progression sounds authentic to the {request.style.value} style
-2. Each chord has correct notes and MIDI numbers
-3. Include roman numeral analysis for each chord function
-4. MIDI notes should be in a playable piano range (C3-C6, MIDI 48-84)
-5. Return ONLY the JSON, no other text"""
+CRITICAL REQUIREMENTS:
+1. Make it sound AUTHENTICALLY {request.style.value} - avoid generic progressions
+2. Each chord must have correct notes and MIDI numbers
+3. MIDI notes in playable piano range (C3-C6, MIDI 48-84)
+4. Include insightful roman numeral analysis
+5. Provide genuinely helpful tips, not generic advice
+6. Return ONLY the JSON, no other text"""
 
         data = await self._generate_with_fallback(prompt, "progression")
+        
+        # Build educational content if requested
+        education = None
+        if request.include_education and "education" in data:
+            edu_data = data["education"]
+            education = EducationalContent(
+                why_it_works=edu_data.get("why_it_works", ""),
+                alternatives=edu_data.get("alternatives", []),
+                theory_concepts=edu_data.get("theory_concepts", []),
+                listen_to=[artist["name"] for artist in get_genre_reference_artists(request.style.value)[:3]]
+            )
+        
+        # Generate variations if requested
+        variations = None
+        variations_data = None
+        if request.generate_variations:
+            variations, variations_data = await self._generate_progression_variations(request, data)
 
         return ProgressionResponse(
             progression=[ChordInfo(**chord) for chord in data["progression"]],
             key=request.key,
             style=request.style.value,
             analysis=data.get("analysis"),
-            tips=data.get("tips")
+            tips=data.get("tips"),
+            education=education,
+            variations=variations,
+            variations_data=variations_data,
         )
+    
+    async def _generate_progression_variations(
+        self, 
+        request: ProgressionRequest, 
+        original_data: dict
+    ) -> tuple[list[CreativeVariation], list[list[ChordInfo]]]:
+        """Generate alternative progression variations."""
+        variations = []
+        variations_data = []
+        
+        # Conservative variation
+        conservative_prompt = f"""Generate a more CONSERVATIVE version of this {request.style.value} progression.
+Stay within established patterns. Make it sound like a textbook example.
+Key: {request.key} {request.mode}, Length: {request.length} chords.
+Return JSON with "progression" array only."""
+        
+        try:
+            conservative_data = await self._generate_with_fallback(conservative_prompt, "progression_conservative")
+            variations.append(CreativeVariation(
+                label="Safe Bet",
+                creativity_score=0.3,
+                description="Classic, proven progression that stays within the idiom"
+            ))
+            variations_data.append([ChordInfo(**c) for c in conservative_data.get("progression", [])])
+        except Exception:
+            pass  # Skip if generation fails
+        
+        # Adventurous variation
+        adventurous_prompt = f"""Generate a BOLD, SURPRISING version of a {request.style.value} progression.
+Push boundaries with unexpected but beautiful harmonic choices.
+Key: {request.key} {request.mode}, Length: {request.length} chords.
+Return JSON with "progression" array only."""
+        
+        try:
+            adventurous_data = await self._generate_with_fallback(adventurous_prompt, "progression_adventurous")
+            variations.append(CreativeVariation(
+                label="Bold Move",
+                creativity_score=0.8,
+                description="Adventurous progression with unexpected harmonic turns"
+            ))
+            variations_data.append([ChordInfo(**c) for c in adventurous_data.get("progression", [])])
+        except Exception:
+            pass
+        
+        return variations, variations_data
     
     async def generate_reharmonization(self, request: ReharmonizationRequest) -> ReharmonizationResponse:
         """Generate reharmonization suggestions using hybrid local+AI approach

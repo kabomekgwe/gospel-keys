@@ -80,6 +80,62 @@ class ContextType(str, Enum):
     PROGRESSION = "progression"
 
 
+class CreativityLevel(str, Enum):
+    """Creativity levels for AI generation"""
+    CONSERVATIVE = "conservative"  # Stay within established patterns
+    BALANCED = "balanced"          # Mix familiar with fresh ideas
+    ADVENTUROUS = "adventurous"    # Push boundaries while staying musical
+    EXPERIMENTAL = "experimental"  # Think outside the box
+
+
+class PhrasePosition(str, Enum):
+    """Position within a musical phrase (for contextual lick generation)"""
+    START = "start"        # Beginning of phrase - establish motif
+    MIDDLE = "middle"      # Middle of phrase - develop ideas
+    END = "end"            # End of phrase - resolve
+    TURNAROUND = "turnaround"  # Transition back to beginning
+
+
+class Emotion(str, Enum):
+    """Emotional color for voicings and arrangements"""
+    NEUTRAL = "neutral"
+    WARM = "warm"
+    BRIGHT = "bright"
+    DARK = "dark"
+    TENSE = "tense"
+    ETHEREAL = "ethereal"
+    POWERFUL = "powerful"
+    INTIMATE = "intimate"
+
+
+# === Educational & Creative Response Models ===
+
+class EducationalContent(BaseModel):
+    """Educational context for any generated musical content"""
+    why_it_works: str = Field(..., description="Theory explanation of why this works")
+    alternatives: list[str] = Field(default_factory=list, description="Other valid options that could work")
+    common_mistakes: list[str] = Field(default_factory=list, description="What to avoid / common pitfalls")
+    practice_suggestions: list[str] = Field(default_factory=list, description="How to practice this effectively")
+    listen_to: list[str] = Field(default_factory=list, description="Reference tracks to study")
+    theory_concepts: list[str] = Field(default_factory=list, description="Music theory concepts involved")
+
+
+class CreativeVariation(BaseModel):
+    """A single creative variation with metadata"""
+    label: str = Field(..., description="Variation label (e.g., 'Safe Bet', 'Bold Move', 'Wow Factor')")
+    creativity_score: float = Field(..., ge=0.0, le=1.0, description="How adventurous this option is")
+    description: str = Field(..., description="Why someone might choose this variation")
+    # The actual data is stored in the parent response
+
+
+class VoiceLeadingAnalysis(BaseModel):
+    """Analysis of voice leading between chords"""
+    common_tones: list[str] = Field(default_factory=list, description="Notes held between chords")
+    voice_movements: list[str] = Field(default_factory=list, description="Description of each voice's movement")
+    smoothness_score: float = Field(..., ge=0.0, le=1.0, description="How smooth the voice leading is")
+    parallel_motion_warnings: list[str] = Field(default_factory=list, description="Any parallel 5ths/8ves detected")
+
+
 # === Request Models ===
 
 class ProgressionRequest(BaseModel):
@@ -90,11 +146,16 @@ class ProgressionRequest(BaseModel):
     mood: Optional[Mood] = Field(None, description="Emotional mood")
     length: int = Field(4, ge=2, le=16, description="Number of chords in progression")
     include_extensions: bool = Field(True, description="Include 7ths, 9ths, etc.")
-    # NEW: Arrangement generation support
+    # Arrangement generation support
     arrange_as_midi: bool = Field(False, description="Generate full two-hand piano arrangement")
     application: Optional[str] = Field(None, description="Application type (ballad, uptempo, shuffle, etc.)")
     tempo: Optional[int] = Field(None, ge=40, le=300, description="Tempo in BPM (for MIDI arrangement)")
     ai_percentage: float = Field(0.0, ge=0.0, le=1.0, description="AI hybrid percentage (0.0 = pure rules, 1.0 = pure AI)")
+    # Enhanced generation options
+    creativity: CreativityLevel = Field(CreativityLevel.BALANCED, description="Creativity level for generation")
+    style_reference: Optional[str] = Field(None, description="Artist/track reference (e.g., 'Kirk Franklin', 'Bill Evans')")
+    generate_variations: bool = Field(False, description="Generate multiple creative variations")
+    include_education: bool = Field(True, description="Include educational content with response")
 
 
 class ReharmonizationRequest(BaseModel):
@@ -102,6 +163,11 @@ class ReharmonizationRequest(BaseModel):
     original_progression: list[str] = Field(..., description="Original chord symbols")
     key: str = Field("C", description="Musical key")
     style: ProgressionStyle = Field(ProgressionStyle.JAZZ, description="Target style")
+    # Enhanced generation options
+    creativity: CreativityLevel = Field(CreativityLevel.BALANCED, description="How bold the reharmonization should be")
+    style_reference: Optional[str] = Field(None, description="Artist reference for style guidance")
+    generate_variations: bool = Field(False, description="Generate multiple reharmonization options")
+    include_education: bool = Field(True, description="Include educational explanations")
 
 
 class VoicingRequest(BaseModel):
@@ -110,6 +176,13 @@ class VoicingRequest(BaseModel):
     style: VoicingStyle = Field(VoicingStyle.OPEN, description="Voicing style")
     hand: str = Field("both", description="'left', 'right', or 'both'")
     include_fingering: bool = Field(True, description="Include fingering suggestions")
+    # Context for voice leading
+    previous_chord: Optional[str] = Field(None, description="Previous chord for voice leading context")
+    next_chord: Optional[str] = Field(None, description="Following chord for preparation")
+    emotion: Emotion = Field(Emotion.NEUTRAL, description="Emotional color for voicing")
+    # Enhanced generation options
+    style_reference: Optional[str] = Field(None, description="Artist reference (e.g., 'Bill Evans')")
+    include_education: bool = Field(True, description="Include voice leading analysis")
 
 
 class VoiceLeadingRequest(BaseModel):
@@ -143,6 +216,15 @@ class LicksRequest(BaseModel):
     length_bars: int = Field(2, ge=1, le=4, description="Length in bars")
     starting_note: Optional[str] = Field(None, description="Suggested starting note")
     direction: Optional[str] = Field("mixed", description="Melodic direction")
+    # Phrase context (for contextual lick generation)
+    preceding_chords: Optional[list[str]] = Field(None, description="Chords before current context")
+    following_chord: Optional[str] = Field(None, description="Chord after the lick")
+    phrase_position: PhrasePosition = Field(PhrasePosition.MIDDLE, description="Position in musical phrase")
+    target_note: Optional[str] = Field(None, description="Target note to land on (e.g., 'G4')")
+    # Enhanced generation options
+    creativity: CreativityLevel = Field(CreativityLevel.BALANCED, description="Creativity level")
+    style_reference: Optional[str] = Field(None, description="Artist reference (e.g., 'Charlie Parker')")
+    generate_variations: bool = Field(False, description="Generate multiple lick variations")
     include_chromatics: bool = Field(True, description="Include chromatic approaches")
 
 
@@ -200,10 +282,14 @@ class ProgressionResponse(BaseModel):
     style: str = Field(..., description="Style applied")
     analysis: Optional[str] = Field(None, description="Brief analysis of the progression")
     tips: Optional[list[str]] = Field(None, description="Performance tips")
-    # NEW: Arrangement data (when arrange_as_midi=True)
+    # Arrangement data (when arrange_as_midi=True)
     midi_file_path: Optional[str] = Field(None, description="Path to generated MIDI file")
     midi_base64: Optional[str] = Field(None, description="Base64-encoded MIDI data")
     arrangement_info: Optional[dict] = Field(None, description="Arrangement metadata (tempo, bars, notes, etc.)")
+    # Enhanced response data
+    education: Optional[EducationalContent] = Field(None, description="Educational context for learning")
+    variations: Optional[list[CreativeVariation]] = Field(None, description="Alternative creative options")
+    variations_data: Optional[list[list[ChordInfo]]] = Field(None, description="Chord data for each variation")
 
 
 class ReharmonizationResponse(BaseModel):
@@ -214,6 +300,10 @@ class ReharmonizationResponse(BaseModel):
     techniques_used: list[str] = Field(..., description="Reharmonization techniques applied")
     source: Optional[str] = Field(None, description="Source: 'local_rules' or 'hybrid' (local + AI)")
     complexity: Optional[int] = Field(None, description="Task complexity (1-10)")
+    # Enhanced response data
+    education: Optional[EducationalContent] = Field(None, description="Educational content")
+    variations: Optional[list[CreativeVariation]] = Field(None, description="Alternative reharmonization options")
+    variations_data: Optional[list[list[ChordInfo]]] = Field(None, description="Chord data for each variation")
 
 
 class VoicingResponse(BaseModel):
@@ -221,6 +311,9 @@ class VoicingResponse(BaseModel):
     chord: str = Field(..., description="Original chord symbol")
     voicings: list[VoicingInfo] = Field(..., description="Voicing options")
     tips: Optional[list[str]] = Field(None, description="Performance tips")
+    # Enhanced response data
+    voice_leading_analysis: Optional[VoiceLeadingAnalysis] = Field(None, description="Voice leading analysis from previous chord")
+    education: Optional[EducationalContent] = Field(None, description="Educational content about voicing choices")
 
 
 class VoiceLeadingResponse(BaseModel):
@@ -230,6 +323,9 @@ class VoiceLeadingResponse(BaseModel):
     common_tones: list[str] = Field(..., description="Common tones held")
     movement: str = Field(..., description="Description of voice movement")
     tips: Optional[list[str]] = Field(None, description="Performance tips")
+    # Enhanced response data
+    analysis: Optional[VoiceLeadingAnalysis] = Field(None, description="Detailed voice leading analysis")
+    education: Optional[EducationalContent] = Field(None, description="Educational explanation of voice leading")
 
 
 class ExerciseResponse(BaseModel):

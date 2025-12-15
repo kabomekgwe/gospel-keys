@@ -468,6 +468,28 @@ export type GeneratorCategory = 'progressions' | 'voicings' | 'exercises' | 'ana
 export type LickStyle = 'bebop' | 'blues' | 'modern' | 'gospel' | 'swing' | 'bossa';
 export type ContextType = 'chord' | 'progression';
 
+// NEW: Creative generation types
+export type CreativityLevel = 'conservative' | 'balanced' | 'adventurous' | 'experimental';
+export type PhrasePosition = 'start' | 'middle' | 'end' | 'turnaround';
+export type Emotion = 'neutral' | 'warm' | 'bright' | 'dark' | 'tense' | 'ethereal' | 'powerful' | 'intimate';
+
+// NEW: Educational content
+export interface EducationalContent {
+    why_it_works: string;
+    alternatives: string[];
+    common_mistakes: string[];
+    practice_suggestions: string[];
+    listen_to: string[];
+    theory_concepts: string[];
+}
+
+// NEW: Creative variation
+export interface CreativeVariation {
+    label: string;
+    creativity_score: number;
+    description: string;
+}
+
 // Request types
 export interface ProgressionRequest {
     key: string;
@@ -476,12 +498,22 @@ export interface ProgressionRequest {
     mood?: Mood;
     length: number;
     include_extensions: boolean;
+    // Enhanced generation options
+    creativity?: CreativityLevel;
+    style_reference?: string;
+    generate_variations?: boolean;
+    include_education?: boolean;
 }
 
 export interface ReharmonizationRequest {
     original_progression: string[];
     key: string;
     style: ProgressionStyle;
+    // Enhanced generation options
+    creativity?: CreativityLevel;
+    style_reference?: string;
+    generate_variations?: boolean;
+    include_education?: boolean;
 }
 
 export interface VoicingRequest {
@@ -489,6 +521,13 @@ export interface VoicingRequest {
     style: VoicingStyle;
     hand: 'left' | 'right' | 'both';
     include_fingering: boolean;
+    // Context for voice leading
+    previous_chord?: string;
+    next_chord?: string;
+    emotion?: Emotion;
+    // Enhanced generation options
+    style_reference?: string;
+    include_education?: boolean;
 }
 
 export interface VoiceLeadingRequest {
@@ -519,6 +558,15 @@ export interface LicksRequest {
     starting_note?: string;
     direction?: 'ascending' | 'descending' | 'both' | 'mixed';
     include_chromatics?: boolean;
+    // Phrase context
+    preceding_chords?: string[];
+    following_chord?: string;
+    phrase_position?: PhrasePosition;
+    target_note?: string;
+    // Enhanced generation options
+    creativity?: CreativityLevel;
+    style_reference?: string;
+    generate_variations?: boolean;
 }
 
 // Response types
@@ -551,6 +599,10 @@ export interface ProgressionResponse {
     style: string;
     analysis?: string;
     tips?: string[];
+    // Enhanced response data
+    education?: EducationalContent;
+    variations?: CreativeVariation[];
+    variations_data?: ChordInfo[][];
 }
 
 export interface ReharmonizationResponse {
@@ -558,6 +610,10 @@ export interface ReharmonizationResponse {
     reharmonized: ChordInfo[];
     explanation: string;
     techniques_used: string[];
+    // Enhanced response data
+    education?: EducationalContent;
+    variations?: CreativeVariation[];
+    variations_data?: ChordInfo[][];
 }
 
 export interface VoicingResponse {
