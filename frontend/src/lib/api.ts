@@ -607,6 +607,21 @@ export interface LickInfo {
     theory_analysis?: TheoryAnalysis;
 }
 
+export interface ArrangeRequest {
+    progression: string[];
+    style: string;
+    key?: string;
+    tempo?: number;
+    time_signature?: string;
+}
+
+export interface ArrangeResponse {
+    midi_data: string; // Base64 encoded
+    visualization: NoteData[];
+    style: string;
+    description: string;
+}
+
 export interface LicksResponse {
     context: string;
     style: string;
@@ -694,6 +709,15 @@ export const aiApi = {
             body: JSON.stringify(request),
         });
         return handleResponse<LicksResponse>(response);
+    },
+
+    arrangeProgression: async (request: ArrangeRequest): Promise<ArrangeResponse> => {
+        const response = await fetch(`${API_BASE_URL}/api/v1/ai/arrange`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(request),
+        });
+        return handleResponse<ArrangeResponse>(response);
     },
 };
 
