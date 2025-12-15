@@ -7,11 +7,12 @@ import {
     Mic2,
     Sparkles,
     Piano,
-    BookOpen
+    BookOpen,
+    FlaskConical
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-export type ToolId = 'progression' | 'voicing' | 'exercise' | 'analysis' | 'licks' | 'arranger' | 'reharmonizer' | 'tutor';
+export type ToolId = 'progression' | 'voicing' | 'exercise' | 'analysis' | 'licks' | 'arranger' | 'reharmonizer' | 'tutor' | 'theory-lab';
 
 interface StudioSidebarProps {
     activeTool: ToolId;
@@ -82,6 +83,14 @@ const TOOLS = [
         color: 'text-indigo-400',
         bg: 'bg-indigo-500/10',
         border: 'border-indigo-500/30'
+    },
+    {
+        id: 'theory-lab',
+        name: 'Theory Lab',
+        icon: <FlaskConical className="w-5 h-5" />,
+        color: 'text-fuchsia-400',
+        bg: 'bg-fuchsia-500/10',
+        border: 'border-fuchsia-500/30'
     }
 ] as const;
 

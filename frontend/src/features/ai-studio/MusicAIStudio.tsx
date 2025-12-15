@@ -12,6 +12,7 @@ import { LicksTool } from './tools/LicksTool';
 import { ArrangerTool } from './tools/ArrangerTool';
 import { AnalysisTool } from './tools/AnalysisTool';
 import { TutorTool } from './tools/TutorTool';
+import { TheoryLabTool } from './tools/TheoryLabTool';
 
 // Placeholder tools
 // Removed placeholders
@@ -37,6 +38,7 @@ export function MusicAIStudio() {
             case 'arranger': return <ArrangerTool />;
             case 'tutor': return <TutorTool onPlayChord={handlePlayChord} />;
             case 'reharmonizer': return <ReharmonizerTool onPlayChord={handlePlayChord} />;
+            case 'theory-lab': return <TheoryLabTool onPlayChord={handlePlayChord} />;
             default: return <ProgressionTool onPlayChord={handlePlayChord} />;
         }
     };

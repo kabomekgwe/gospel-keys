@@ -180,19 +180,26 @@ Context:
 - Length: {num_bars} bars
 
 Instructions:
-1. **Right Hand**: Play sophisticated voicings (extensions: 9ths, 11ths, 13ths), inversions, melody lines, and fills. Avoid simple root position chords.
-2. **Left Hand**: Play independent bass lines, stride patterns, or shell voicings (root + 7th/10th) distinct from the right hand.
-3. **Realism**: Use varying velocities (dynamics) and proper durations.
+1. **Right Hand (Pitch Range: C3 to C6)**: Play sophisticated voicings (9ths, 11ths, 13ths), inversions, and melodic fills.
+   - **CRITICAL**: Do NOT play too high (above C6). Keep the voicings centered in the middle register (C4).
+   - Use smooth voice leading between chords (minimize jumping).
+2. **Left Hand (Pitch Range: A0 to C3)**: Play independent bass lines, stride patterns (tenths), or shell voicings.
+3. **Musicality**:
+   - create a "Conversation" between hands.
+   - **Phrasing**: Ensure the arrangement has a musical arc (start simpler, build intensity, resolve at the end).
+   - **Velocity**: Use dynamic expression (Ghost notes: 30-50, Normal: 60-80, Accents: 90-110).
 4. **Output**: Return ONLY a valid JSON array of Note objects.
 
 Note Object Format:
 {{ "p": MIDI_PITCH (int), "t": START_BEAT (float, 0.0=start), "d": DURATION (float), "v": VELOCITY (int), "h": "right" or "left" }}
 
-Example Output:
+Example (showing expected register):
 [
-  {{ "p": 36, "t": 0.0, "d": 2.0, "v": 95, "h": "left" }},
+  {{ "p": 36, "t": 0.0, "d": 2.0, "v": 95, "h": "left" }}, 
+  {{ "p": 48, "t": 0.5, "d": 1.0, "v": 70, "h": "left" }},
   {{ "p": 60, "t": 0.0, "d": 1.0, "v": 80, "h": "right" }},
-  {{ "p": 64, "t": 0.0, "d": 1.0, "v": 80, "h": "right" }}
+  {{ "p": 64, "t": 0.0, "d": 1.0, "v": 80, "h": "right" }},
+  {{ "p": 67, "t": 0.0, "d": 1.0, "v": 85, "h": "right" }}
 ]
 
 Generate the JSON array for the entire {num_bars} bars:

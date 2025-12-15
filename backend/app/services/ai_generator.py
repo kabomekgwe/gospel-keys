@@ -999,27 +999,44 @@ Return ONLY the JSON, no other text."""
     async def arrange_progression(self, request: ArrangeRequest) -> ArrangeResponse:
         """Convert chord progression to full MIDI arrangement"""
         try:
-            # Get arranger for style
-            arranger = self._get_arranger_for_style(request.style.value)
+            # Determine style-specific arranger
+            if request.style.value.lower() == "gospel" and MLX_AVAILABLE:
+                # Use Advanced MLX Generator for Gospel
+                if not hasattr(self, 'gospel_generator') or self.gospel_generator is None:
+                    from app.gospel.ai.mlx_music_generator import MLXGospelGenerator
+                    print("🎹 Initializing Advanced MLX Gospel Generator...")
+                    self.gospel_generator = MLXGospelGenerator()
+                
+                print(f"🤖 Generating gospel arrangement with Qwen2.5-14B (Style: {request.style.value})...")
+                arrangement = self.gospel_generator.generate_arrangement(
+                    chord_progression=request.chords,
+                    key=request.key,
+                    tempo=request.tempo,
+                    application=request.application or "worship",
+                    num_bars=32 # Better defaulting for full songs
+                )
+            else:
+                # Use standard rule-based arrangers
+                arranger = self._get_arranger_for_style(request.style.value)
 
-            # Determine default application if not provided
-            default_apps = {
-                "jazz": "standard",
-                "gospel": "uptempo",
-                "neo_soul": "smooth",
-                "blues": "shuffle",
-                "classical": "classical",
-            }
-            application = request.application or default_apps.get(request.style.value, "standard")
+                # Determine default application if not provided
+                default_apps = {
+                    "jazz": "standard",
+                    "gospel": "uptempo", # Fallback if MLX not available
+                    "neo_soul": "smooth",
+                    "blues": "shuffle",
+                    "classical": "classical",
+                }
+                application = request.application or default_apps.get(request.style.value, "standard")
 
-            # Generate arrangement
-            arrangement = arranger.arrange_progression(
-                chords=request.chords,
-                key=request.key,
-                bpm=request.tempo,
-                application=application,
-                time_signature=request.time_signature
-            )
+                # Generate arrangement
+                arrangement = arranger.arrange_progression(
+                    chords=request.chords,
+                    key=request.key,
+                    bpm=request.tempo,
+                    application=application,
+                    time_signature=request.time_signature
+                )
 
             # Export to MIDI
             output_dir = settings.OUTPUTS_DIR / "ai_generated"
