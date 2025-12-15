@@ -8,7 +8,7 @@ from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 
 from app.core.config import settings
-from app.api.routes import health, auth, transcribe, jobs, library, practice, snippets, export, analysis, ai, gospel, jazz, neosoul, blues, classical, curriculum, voicing  # audio
+from app.api.routes import health, auth, transcribe, jobs, library, practice, snippets, export, analysis, ai, gospel, jazz, neosoul, blues, classical, curriculum, voicing, websocket  # audio
 from app.services.transcription import TranscriptionService
 
 
@@ -96,6 +96,7 @@ app.include_router(neosoul.router, prefix=settings.api_v1_prefix)
 app.include_router(blues.router, prefix=settings.api_v1_prefix)
 app.include_router(classical.router, prefix=settings.api_v1_prefix)
 app.include_router(voicing.router, prefix=settings.api_v1_prefix)
+app.include_router(websocket.router, tags=["websocket"])  # WebSocket doesn't use prefix
 
 
 # File serving endpoint
