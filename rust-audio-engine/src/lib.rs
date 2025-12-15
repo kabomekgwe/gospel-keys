@@ -13,10 +13,12 @@ use anyhow::Result;
 mod synthesizer;
 mod metal_effects;
 mod waveform;
+mod analyzer;
 
 use synthesizer::MidiSynthesizer;
 use metal_effects::MetalEffectsProcessor;
 use waveform::WaveformGenerator;
+use analyzer::{detect_pitch_yin, YinParams, PitchResult};
 
 /// Synthesize a MIDI file to WAV audio with optional GPU effects
 ///
@@ -102,6 +104,54 @@ fn generate_waveform(
         .map_err(|e| PyRuntimeError::new_err(format!("Waveform generation failed: {}", e)))
 }
 
+/// Detect pitch in audio samples using YIN algorithm
+///
+/// Args:
+///     audio_samples: Audio samples as Vec<f32> (mono, normalized ±1.0)
+///     sample_rate: Sample rate in Hz (default: 44100)
+///     use_gpu: Reserved for future GPU implementation (currently unused)
+///
+/// Returns:
+///     Dictionary with pitch detection results or None if no pitch detected
+///     {
+///         "frequency": float,      // Hz
+///         "confidence": float,     // 0.0-1.0
+///         "midi_note": int,        // 21-108
+///         "cents_offset": float,   // -50 to +50
+///         "rms_level": float,      // 0.0-1.0
+///         "note_name": str         // e.g., "A4"
+///     }
+#[pyfunction]
+#[pyo3(signature = (audio_samples, sample_rate=44100, use_gpu=false))]
+fn detect_pitch(
+    py: pyo3::Python,
+    audio_samples: Vec<f32>,
+    sample_rate: u32,
+    use_gpu: bool,
+) -> PyResult<Option<pyo3::Py<pyo3::types::PyDict>>> {
+    // Note: use_gpu parameter reserved for future Metal GPU implementation
+    // Currently uses CPU-based YIN algorithm
+
+    let params = YinParams {
+        sample_rate,
+        ..Default::default()
+    };
+
+    match detect_pitch_yin(&audio_samples, &params) {
+        Some(result) => {
+            let dict = pyo3::types::PyDict::new_bound(py);
+            dict.set_item("frequency", result.frequency)?;
+            dict.set_item("confidence", result.confidence)?;
+            dict.set_item("midi_note", result.midi_note)?;
+            dict.set_item("cents_offset", result.cents_offset)?;
+            dict.set_item("rms_level", result.rms_level)?;
+            dict.set_item("note_name", analyzer::midi_to_note_name(result.midi_note))?;
+            Ok(Some(dict.unbind()))
+        }
+        None => Ok(None),
+    }
+}
+
 /// Analyze audio performance against expected MIDI
 ///
 /// Args:
@@ -118,7 +168,7 @@ fn analyze_performance(
     expected_midi_path: String,
     use_gpu: bool,
 ) -> PyResult<String> {
-    // TODO: Implement in future phase
+    // TODO: Implement in future phase (STORY-2.2, 2.3, 2.4)
     Ok(r#"{"pitch_accuracy": 0.95, "rhythm_accuracy": 0.88}"#.to_string())
 }
 
@@ -148,6 +198,7 @@ fn write_wav(path: &str, samples: &[f32], sample_rate: u32) -> Result<()> {
 fn rust_audio_engine(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(synthesize_midi, m)?)?;
     m.add_function(wrap_pyfunction!(generate_waveform, m)?)?;
+    m.add_function(wrap_pyfunction!(detect_pitch, m)?)?;
     m.add_function(wrap_pyfunction!(analyze_performance, m)?)?;
     Ok(())
 }

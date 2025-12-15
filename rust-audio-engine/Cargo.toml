@@ -28,6 +28,10 @@ anyhow = "1.0"          # Error handling
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 
+# Audio analysis (Phase 2)
+rustfft = "6.2"         # Fast Fourier Transform for pitch detection
+realfft = "3.3"         # Real-valued FFT (more efficient for audio)
+
 [profile.release]
 opt-level = 3           # Maximum optimization
 lto = true             # Link-time optimization
