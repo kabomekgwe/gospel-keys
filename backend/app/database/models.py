@@ -301,3 +301,181 @@ class ModelUsageLog(Base):
     success: Mapped[bool] = mapped_column(Boolean, default=True)
     error_message: Mapped[Optional[str]] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, index=True)
+
+
+# =============================================================================
+# Phase 3: Real-Time Performance Analysis Tables
+# =============================================================================
+
+class RealtimeSession(Base):
+    """
+    Real-time practice session with WebSocket analysis.
+    Tracks a complete practice session from start to finish.
+    """
+    __tablename__ = "realtime_sessions"
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True, nullable=False)
+
+    # Session metadata
+    piece_name: Mapped[Optional[str]] = mapped_column(String(255))
+    genre: Mapped[Optional[str]] = mapped_column(String(50))
+    target_tempo: Mapped[Optional[int]] = mapped_column(Integer)
+    difficulty_level: Mapped[Optional[str]] = mapped_column(String(20))
+
+    # Session timing
+    started_at: Mapped[datetime] = mapped_column(DateTime, nullable=False, index=True)
+    ended_at: Mapped[Optional[datetime]] = mapped_column(DateTime)
+    duration_seconds: Mapped[Optional[int]] = mapped_column(Integer)
+
+    # WebSocket session tracking
+    websocket_session_id: Mapped[Optional[str]] = mapped_column(String(255))
+    chunks_processed: Mapped[int] = mapped_column(Integer, default=0)
+
+    # Session status
+    status: Mapped[str] = mapped_column(String(20), default="active")  # active, completed, abandoned
+
+    # Relationships
+    user: Mapped["User"] = relationship()
+    performances: Mapped[List["Performance"]] = relationship(
+        back_populates="session",
+        cascade="all, delete-orphan"
+    )
+
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+
+class Performance(Base):
+    """
+    Individual performance recording within a real-time session.
+    Stores audio/MIDI data and links to analysis results.
+    """
+    __tablename__ = "performances"
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    session_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("realtime_sessions.id", ondelete="CASCADE"),
+        index=True,
+        nullable=False
+    )
+
+    # Recording metadata
+    recording_started_at: Mapped[datetime] = mapped_column(DateTime, nullable=False)
+    recording_duration: Mapped[float] = mapped_column(Float)  # seconds
+
+    # File paths
+    audio_path: Mapped[Optional[str]] = mapped_column(String(500))
+    midi_path: Mapped[Optional[str]] = mapped_column(String(500))
+
+    # Recording format/quality
+    sample_rate: Mapped[int] = mapped_column(Integer, default=44100)
+    audio_format: Mapped[Optional[str]] = mapped_column(String(20))  # wav, mp3, etc.
+
+    # Performance context
+    notes: Mapped[Optional[str]] = mapped_column(Text)
+
+    # Relationships
+    session: Mapped["RealtimeSession"] = relationship(back_populates="performances")
+    analysis_results: Mapped[List["AnalysisResult"]] = relationship(
+        back_populates="performance",
+        cascade="all, delete-orphan"
+    )
+
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+
+class AnalysisResult(Base):
+    """
+    Real-time analysis results for a performance.
+    Stores pitch accuracy, rhythm accuracy, dynamics, and AI feedback.
+    """
+    __tablename__ = "analysis_results"
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    performance_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("performances.id", ondelete="CASCADE"),
+        index=True,
+        nullable=False
+    )
+
+    # Analysis scores (0.0 - 1.0)
+    pitch_accuracy: Mapped[Optional[float]] = mapped_column(Float)
+    rhythm_accuracy: Mapped[Optional[float]] = mapped_column(Float)
+    dynamics_range: Mapped[Optional[float]] = mapped_column(Float)
+    overall_score: Mapped[Optional[float]] = mapped_column(Float)
+
+    # Detailed metrics
+    avg_pitch_deviation_cents: Mapped[Optional[float]] = mapped_column(Float)
+    timing_consistency: Mapped[Optional[float]] = mapped_column(Float)
+    tempo_stability: Mapped[Optional[float]] = mapped_column(Float)
+    note_accuracy_rate: Mapped[Optional[float]] = mapped_column(Float)  # Correct notes / total notes
+
+    # Detected events counts
+    total_notes_detected: Mapped[Optional[int]] = mapped_column(Integer)
+    total_onsets_detected: Mapped[Optional[int]] = mapped_column(Integer)
+    total_dynamics_events: Mapped[Optional[int]] = mapped_column(Integer)
+
+    # AI-generated feedback (JSONB for structured data)
+    feedback_json: Mapped[Optional[str]] = mapped_column(Text)  # JSON string
+    # Example structure: {
+    #   "strengths": ["Good pitch accuracy", "Consistent tempo"],
+    #   "areas_for_improvement": ["Work on dynamics", "Practice transitions"],
+    #   "specific_tips": ["Focus on measures 4-8", "Try slower tempo first"],
+    #   "practice_recommendations": [...]
+    # }
+
+    # Performance characteristics
+    difficulty_estimate: Mapped[Optional[str]] = mapped_column(String(20))  # beginner, intermediate, advanced
+    genre_match_score: Mapped[Optional[float]] = mapped_column(Float)  # How well it matches expected genre
+
+    # Analysis metadata
+    analysis_engine_version: Mapped[Optional[str]] = mapped_column(String(50))
+    processing_time_ms: Mapped[Optional[int]] = mapped_column(Integer)
+
+    # Relationships
+    performance: Mapped["Performance"] = relationship(back_populates="analysis_results")
+
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, index=True)
+
+
+class ProgressMetric(Base):
+    """
+    Aggregated progress metrics over time for a user.
+    Used for dashboard visualization and trend analysis.
+    """
+    __tablename__ = "progress_metrics"
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True, nullable=False)
+
+    # Time period
+    metric_date: Mapped[datetime] = mapped_column(DateTime, nullable=False, index=True)
+    period_type: Mapped[str] = mapped_column(String(20), nullable=False)  # daily, weekly, monthly
+
+    # Practice volume
+    total_sessions: Mapped[int] = mapped_column(Integer, default=0)
+    total_practice_time_seconds: Mapped[int] = mapped_column(Integer, default=0)
+
+    # Performance averages (0.0 - 1.0)
+    avg_pitch_accuracy: Mapped[Optional[float]] = mapped_column(Float)
+    avg_rhythm_accuracy: Mapped[Optional[float]] = mapped_column(Float)
+    avg_dynamics_range: Mapped[Optional[float]] = mapped_column(Float)
+    avg_overall_score: Mapped[Optional[float]] = mapped_column(Float)
+
+    # Progress indicators
+    improvement_rate: Mapped[Optional[float]] = mapped_column(Float)  # Rate of improvement over previous period
+    consistency_score: Mapped[Optional[float]] = mapped_column(Float)  # How consistent practice is
+
+    # Genre distribution (JSON string)
+    genre_breakdown_json: Mapped[Optional[str]] = mapped_column(Text)
+    # Example: {"gospel": 45, "jazz": 30, "classical": 25}
+
+    # Achievements/milestones (JSON string)
+    milestones_json: Mapped[Optional[str]] = mapped_column(Text)
+
+    # Relationships
+    user: Mapped["User"] = relationship()
+
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
