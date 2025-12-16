@@ -17,7 +17,9 @@ import {
     Compass,
     Sparkles,
     GraduationCap,
-    Plus
+    Plus,
+    Atom,
+    Layers
 } from 'lucide-react';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -38,6 +40,8 @@ const navItems: NavItem[] = [
     { to: '/curriculum', icon: <GraduationCap className="w-5 h-5" />, label: 'Curriculum' },
     { to: '/generator', icon: <Sparkles className="w-5 h-5" />, label: 'Generator' },
     { to: '/theory', icon: <BookOpen className="w-5 h-5" />, label: 'Theory' },
+    { to: '/theory/lab', icon: <Atom className="w-5 h-5" />, label: 'Theory Lab' },
+    { to: '/genres/theory', icon: <Layers className="w-5 h-5" />, label: 'Genre Theory' },
 ];
 
 const bottomItems: NavItem[] = [

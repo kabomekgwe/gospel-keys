@@ -13,50 +13,6 @@ export interface MidiNote {
     hand: 'left' | 'right';
 }
 
-// ... 
-
-// Schedule MIDI notes
-useEffect(() => {
-    if (!sampler.current || notes.length === 0) return;
-
-    clearScheduledEvents();
-
-    // Sort notes just in case
-    const sortedNotes = [...notes].sort((a, b) => a.start_time - b.start_time);
-
-    sortedNotes.forEach((note) => {
-        const duration = note.end_time - note.start_time;
-
-        const eventId = Tone.Transport.schedule((time: number) => {
-            // Check hand muting
-            if ((note.hand === 'left' && mutedHands.left) ||
-                (note.hand === 'right' && mutedHands.right)) {
-                return;
-            }
-
-            sampler.current?.triggerAttackRelease(
-                Tone.Frequency(note.pitch, 'midi').toNote(),
-                duration,
-                time,
-                note.velocity / 127
-            );
-
-            // Visual feedback
-            Tone.Draw.schedule(() => {
-                setActiveNotes((prev) => [...prev, note.pitch]);
-            }, time);
-
-            Tone.Draw.schedule(() => {
-                setActiveNotes((prev) => prev.filter((p) => p !== note.pitch));
-            }, time + duration);
-
-        }, note.start_time);
-
-        scheduledEvents.current.push(eventId);
-    });
-
-}, [notes, mutedHands, clearScheduledEvents]); // Re-schedule if hands are muted/unmuted
-
 // Player state
 export interface PlayerState {
     isPlaying: boolean;
@@ -190,9 +146,10 @@ export function useNewMidiPlayer(
         clearScheduledEvents();
 
         // Sort notes just in case
-        const sortedNotes = [...notes].sort((a, b) => a.startTime - b.startTime);
+        const sortedNotes = [...notes].sort((a, b) => a.start_time - b.start_time);
 
         sortedNotes.forEach((note) => {
+            const duration = note.end_time - note.start_time;
             const eventId = Tone.Transport.schedule((time: number) => {
                 // Check hand muting
                 if ((note.hand === 'left' && mutedHands.left) ||
@@ -202,7 +159,7 @@ export function useNewMidiPlayer(
 
                 sampler.current?.triggerAttackRelease(
                     Tone.Frequency(note.pitch, 'midi').toNote(),
-                    note.duration,
+                    duration,
                     time,
                     note.velocity / 127
                 );
@@ -214,9 +171,9 @@ export function useNewMidiPlayer(
 
                 Tone.Draw.schedule(() => {
                     setActiveNotes((prev) => prev.filter((p) => p !== note.pitch));
-                }, time + note.duration);
+                }, time + duration);
 
-            }, note.startTime);
+            }, note.start_time);
 
             scheduledEvents.current.push(eventId);
         });

@@ -24,6 +24,11 @@ from typing import Optional
 import json
 
 try:
+    from ...services.humanizer import ArrangementHumanizer
+except ImportError:
+    ArrangementHumanizer = None
+
+try:
     from .. import Note, ChordContext, Arrangement
 except ImportError:
     # Fallback for direct execution
@@ -47,7 +52,8 @@ class MLXGospelGenerator:
         self,
         model_path: str = "mlx-community/Qwen2.5-14B-Instruct-4bit",
         tokenizer_type: str = "REMI",
-        checkpoint_dir: Optional[Path] = None
+        checkpoint_dir: Optional[Path] = None,
+        enable_humanization: bool = True
     ):
         """
         Initialize MLX gospel generator.
@@ -73,6 +79,15 @@ Word, MIDILike)
         # If gospel checkpoint exists, load fine-tuned weights
         if checkpoint_dir and checkpoint_dir.exists():
             self._load_gospel_checkpoint(checkpoint_dir)
+
+        # Initialize humanizer for post-processing
+        self.humanizer = None
+        self.enable_humanization = enable_humanization
+        if enable_humanization and ArrangementHumanizer:
+            self.humanizer = ArrangementHumanizer("gospel")
+            print("✅ Humanizer enabled: gospel groove profile")
+        elif enable_humanization:
+            print("⚠️  Humanizer not available (import failed)")
 
         print(f"✅ Model loaded: {model_path}")
         print(f"✅ MIDI tokenizer: {tokenizer_type}")
@@ -100,7 +115,9 @@ Word, MIDILike)
         tempo: int,
         application: str,
         num_bars: int = 16,
-        creativity: float = 0.8
+        creativity: float = 0.8,
+        humanize: bool = True,
+        humanize_intensity: float = 0.7
     ) -> Arrangement:
         """
         Generate gospel piano arrangement using MLX.
@@ -149,6 +166,13 @@ Word, MIDILike)
                     note_data, tempo, key, application, num_bars
                 )
                 print(f"✨ Generated {len(arrangement.get_all_notes())} notes")
+                
+                # Apply humanization if enabled
+                if humanize and self.humanizer and self.enable_humanization:
+                    print(f"🎵 Applying gospel humanization (intensity: {humanize_intensity})...")
+                    arrangement = self._humanize_arrangement(arrangement, humanize_intensity)
+                    print("✅ Humanization applied: micro-timing, velocity curves, ghost notes")
+                
                 return arrangement
             else:
                 print("⚠️ No valid JSON found in model output")
@@ -256,6 +280,68 @@ Generate the JSON array for the entire {num_bars} bars:
 
     def _create_empty_arrangement(self, tempo, key, application, bars) -> Arrangement:
         return Arrangement([], [], tempo, (4,4), key, bars, application)
+
+    def _humanize_arrangement(self, arrangement: Arrangement, intensity: float = 0.7) -> Arrangement:
+        """
+        Apply humanization post-processing to make the arrangement sound more natural.
+        
+        Args:
+            arrangement: The AI-generated arrangement
+            intensity: How much humanization to apply (0.0-1.0)
+        
+        Returns:
+            Humanized arrangement with micro-timing, velocity curves, and ghost notes
+        """
+        if not self.humanizer:
+            return arrangement
+        
+        # Convert arrangement notes to humanizer format
+        all_notes = []
+        for note in arrangement.left_hand_notes:
+            all_notes.append({
+                "pitch": note.pitch,
+                "time": note.time,
+                "duration": note.duration,
+                "velocity": note.velocity,
+                "hand": "left"
+            })
+        for note in arrangement.right_hand_notes:
+            all_notes.append({
+                "pitch": note.pitch,
+                "time": note.time,
+                "duration": note.duration,
+                "velocity": note.velocity,
+                "hand": "right"
+            })
+        
+        # Apply humanization
+        humanized_notes = self.humanizer.humanize(all_notes, intensity)
+        
+        # Separate back into hands
+        left_hand = []
+        right_hand = []
+        for n in humanized_notes:
+            note = Note(
+                pitch=n["pitch"],
+                time=n["time"],
+                duration=n["duration"],
+                velocity=n["velocity"],
+                hand=n.get("hand", "right")
+            )
+            if n.get("hand") == "left":
+                left_hand.append(note)
+            else:
+                right_hand.append(note)
+        
+        return Arrangement(
+            left_hand_notes=left_hand,
+            right_hand_notes=right_hand,
+            tempo=arrangement.tempo,
+            time_signature=arrangement.time_signature,
+            key=arrangement.key,
+            total_bars=arrangement.total_bars,
+            application=arrangement.application
+        )
 
     # Legacy methods removed/simplified
     def _chords_to_primer_tokens(self, *args): return []

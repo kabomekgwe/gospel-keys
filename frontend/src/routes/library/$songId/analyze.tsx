@@ -56,7 +56,6 @@ function generateDemoChords(duration: number): ChordData[] {
             quality: prog.quality,
             romanNumeral: prog.roman,
             function: prog.fn,
-            function: prog.fn,
             time: time,
             duration: chordDuration,
         });
@@ -104,7 +103,6 @@ function generateDemoPatterns(): ProgressionPattern[] {
             pattern: ['I', 'V', 'vi', 'IV'],
             chords: ['C', 'G', 'Am', 'F'],
             genre: 'Pop',
-            confidence: 0.95,
             confidence: 0.95,
             start_time: 0,
             end_time: 32,
@@ -317,7 +315,7 @@ function AnalyzePage() {
                 <div className="p-6">
                     <div className="flex items-center gap-4 mb-4">
                         <Link
-                            to={`/library/${songId}`}
+                            to={`/library/${songId}` as any}
                             className="p-2 rounded-lg bg-slate-800/50 text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
                         >
                             <ArrowLeft className="w-5 h-5" />
@@ -400,7 +398,7 @@ function AnalyzePage() {
 
                             {/* Characteristics */}
                             <div className="grid grid-cols-3 gap-4 mt-4 pt-4 border-t border-slate-700/50">
-                                {Object.entries(genreData.characteristics).map(([key, value]) => (
+                                {genreData.characteristics && Object.entries(genreData.characteristics).map(([key, value]) => (
                                     <div key={key} className="text-center">
                                         <div className="text-sm text-white capitalize">{value as string}</div>
                                         <div className="text-xs text-slate-400 capitalize">{key.replace('_', ' ')}</div>

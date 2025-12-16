@@ -315,7 +315,7 @@ export function PitchVisualization({
           </div>
           <div className="flex items-center gap-1">
             <div className="w-3 h-3 rounded-full bg-red-500" />
-            <span className={mutedColor}>>25¢</span>
+            <span className={mutedColor}>&gt;25¢</span>
           </div>
         </div>
       </div>

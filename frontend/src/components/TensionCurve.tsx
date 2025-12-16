@@ -10,7 +10,6 @@
 import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
-    LineChart,
     Line,
     XAxis,
     YAxis,
@@ -41,7 +40,7 @@ export interface TensionCurveProps {
 }
 
 // Custom tooltip component
-function CustomTooltip({ active, payload, label }: any) {
+function CustomTooltip({ active, payload, label: _label }: any) {
     if (active && payload && payload.length) {
         const point = payload[0].payload as TensionPoint;
         return (
@@ -80,13 +79,16 @@ const EVENT_COLORS = {
 
 export function TensionCurve({
     data,
-    duration,
+    duration: _duration,
     currentTime = 0,
     onSeek,
     showEvents = true,
     arcType = 'unknown',
 }: TensionCurveProps) {
     const [hoveredPoint, setHoveredPoint] = useState<TensionPoint | null>(null);
+    // Suppress unused variable warning - these will be used for hover interactions
+    void hoveredPoint;
+    void setHoveredPoint;
 
     // Find events for markers
     const events = useMemo(() => {

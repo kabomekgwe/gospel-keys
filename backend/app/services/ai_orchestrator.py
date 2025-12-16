@@ -52,6 +52,11 @@ class TaskType(Enum):
     EXERCISE_GENERATION = "exercise_generation"
     PROGRESSION_GENERATION = "progression_generation"
     VOICING_GENERATION = "voicing_generation"
+    # Theory-specific task types (Phase 2)
+    THEORY_EXPLANATION = "theory_explanation"              # Neo-Riemannian, substitutions, etc.
+    THEORY_EXERCISE_GEN = "theory_exercise_generation"     # Generate theory-focused exercises
+    SUBSTITUTION_ANALYSIS = "substitution_analysis"        # Analyze chord substitutions
+    VOICE_LEADING_ANALYSIS = "voice_leading_analysis"      # Analyze voice leading quality
 
 
 class GeminiModel(Enum):
@@ -127,6 +132,11 @@ class AIOrchestrator:
         TaskType.EXERCISE_GENERATION: ModelType.GEMINI,
         TaskType.PROGRESSION_GENERATION: ModelType.GEMINI,
         TaskType.VOICING_GENERATION: ModelType.GEMINI,
+        # Theory-specific tasks (prefer local LLM for cost savings)
+        TaskType.THEORY_EXPLANATION: ModelType.LOCAL,
+        TaskType.THEORY_EXERCISE_GEN: ModelType.LOCAL,
+        TaskType.SUBSTITUTION_ANALYSIS: ModelType.LOCAL,
+        TaskType.VOICE_LEADING_ANALYSIS: ModelType.LOCAL,
     }
 
     # Task complexity scores (1-10 scale)
@@ -140,6 +150,11 @@ class AIOrchestrator:
         TaskType.CREATIVE_GENERATION: 6,
         TaskType.STYLE_ANALYSIS: 4,
         TaskType.CONTENT_VALIDATION: 3,
+        # Theory-specific task complexities
+        TaskType.THEORY_EXPLANATION: 6,           # Qwen2.5-7B (local)
+        TaskType.THEORY_EXERCISE_GEN: 4,          # Phi-3.5 Mini (local)
+        TaskType.SUBSTITUTION_ANALYSIS: 6,        # Qwen2.5-7B (local)
+        TaskType.VOICE_LEADING_ANALYSIS: 5,       # Qwen2.5-7B (local)
     }
 
     # Complexity thresholds for model selection (3-tier strategy)

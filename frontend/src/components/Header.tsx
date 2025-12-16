@@ -2,21 +2,13 @@ import { Link } from '@tanstack/react-router'
 
 import { useState } from 'react'
 import {
-  ChevronDown,
-  ChevronRight,
   Home,
   Menu,
-  Network,
-  SquareFunction,
-  StickyNote,
   X,
 } from 'lucide-react'
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false)
-  const [groupedExpanded, setGroupedExpanded] = useState<
-    Record<string, boolean>
-  >({})
 
   return (
     <>
@@ -69,9 +61,9 @@ export default function Header() {
             <span className="font-medium">Home</span>
           </Link>
 
-          {/* Demo Links Start */}
+          {/* Demo Links Start - Commented out as these routes don't exist yet */}
 
-          <Link
+          {/* <Link
             to="/demo/start/server-funcs"
             onClick={() => setIsOpen(false)}
             className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
@@ -82,9 +74,9 @@ export default function Header() {
           >
             <SquareFunction size={20} />
             <span className="font-medium">Start - Server Functions</span>
-          </Link>
+          </Link> */}
 
-          <Link
+          {/* <Link
             to="/demo/start/api-request"
             onClick={() => setIsOpen(false)}
             className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
@@ -95,9 +87,9 @@ export default function Header() {
           >
             <Network size={20} />
             <span className="font-medium">Start - API Request</span>
-          </Link>
+          </Link> */}
 
-          <div className="flex flex-row justify-between">
+          {/* <div className="flex flex-row justify-between">
             <Link
               to="/demo/start/ssr"
               onClick={() => setIsOpen(false)}
@@ -167,7 +159,7 @@ export default function Header() {
                 <span className="font-medium">Data Only</span>
               </Link>
             </div>
-          )}
+          )} */}
 
           {/* Demo Links End */}
         </nav>

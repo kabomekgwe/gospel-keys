@@ -1,0 +1,3089 @@
+[
+  {
+    "title": "Gospel Seventh Chords in C",
+    "description": "Play all diatonic 7th chords in C major",
+    "exercise_type": "voicing",
+    "content": {
+      "key": "C",
+      "scale": "C Major",
+      "pattern": "Diatonic 7ths"
+    },
+    "difficulty": "beginner",
+    "genre": "gospel",
+    "estimated_duration_minutes": 10,
+    "target_bpm": 80,
+    "concepts": [
+      "7th Chords",
+      "Diatonic Harmony",
+      "Voicing"
+    ],
+    "prerequisites": [
+      "Major Scale",
+      "Triads"
+    ]
+  },
+  {
+    "title": "Gospel Seventh Chords in F",
+    "description": "Play all diatonic 7th chords in F major",
+    "exercise_type": "voicing",
+    "content": {
+      "key": "F",
+      "scale": "F Major",
+      "pattern": "Diatonic 7ths"
+    },
+    "difficulty": "beginner",
+    "genre": "gospel",
+    "estimated_duration_minutes": 10,
+    "target_bpm": 80,
+    "concepts": [
+      "7th Chords",
+      "Diatonic Harmony",
+      "Voicing"
+    ],
+    "prerequisites": [
+      "Major Scale",
+      "Triads"
+    ]
+  },
+  {
+    "title": "Gospel Seventh Chords in Bb",
+    "description": "Play all diatonic 7th chords in Bb major",
+    "exercise_type": "voicing",
+    "content": {
+      "key": "Bb",
+      "scale": "Bb Major",
+      "pattern": "Diatonic 7ths"
+    },
+    "difficulty": "beginner",
+    "genre": "gospel",
+    "estimated_duration_minutes": 10,
+    "target_bpm": 80,
+    "concepts": [
+      "7th Chords",
+      "Diatonic Harmony",
+      "Voicing"
+    ],
+    "prerequisites": [
+      "Major Scale",
+      "Triads"
+    ]
+  },
+  {
+    "title": "Gospel Seventh Chords in Eb",
+    "description": "Play all diatonic 7th chords in Eb major",
+    "exercise_type": "voicing",
+    "content": {
+      "key": "Eb",
+      "scale": "Eb Major",
+      "pattern": "Diatonic 7ths"
+    },
+    "difficulty": "beginner",
+    "genre": "gospel",
+    "estimated_duration_minutes": 10,
+    "target_bpm": 80,
+    "concepts": [
+      "7th Chords",
+      "Diatonic Harmony",
+      "Voicing"
+    ],
+    "prerequisites": [
+      "Major Scale",
+      "Triads"
+    ]
+  },
+  {
+    "title": "Gospel Seventh Chords in Ab",
+    "description": "Play all diatonic 7th chords in Ab major",
+    "exercise_type": "voicing",
+    "content": {
+      "key": "Ab",
+      "scale": "Ab Major",
+      "pattern": "Diatonic 7ths"
+    },
+    "difficulty": "beginner",
+    "genre": "gospel",
+    "estimated_duration_minutes": 10,
+    "target_bpm": 80,
+    "concepts": [
+      "7th Chords",
+      "Diatonic Harmony",
+      "Voicing"
+    ],
+    "prerequisites": [
+      "Major Scale",
+      "Triads"
+    ]
+  },
+  {
+    "title": "Gospel Seventh Chords in Db",
+    "description": "Play all diatonic 7th chords in Db major",
+    "exercise_type": "voicing",
+    "content": {
+      "key": "Db",
+      "scale": "Db Major",
+      "pattern": "Diatonic 7ths"
+    },
+    "difficulty": "beginner",
+    "genre": "gospel",
+    "estimated_duration_minutes": 10,
+    "target_bpm": 80,
+    "concepts": [
+      "7th Chords",
+      "Diatonic Harmony",
+      "Voicing"
+    ],
+    "prerequisites": [
+      "Major Scale",
+      "Triads"
+    ]
+  },
+  {
+    "title": "Gospel Seventh Chords in Gb",
+    "description": "Play all diatonic 7th chords in Gb major",
+    "exercise_type": "voicing",
+    "content": {
+      "key": "Gb",
+      "scale": "Gb Major",
+      "pattern": "Diatonic 7ths"
+    },
+    "difficulty": "beginner",
+    "genre": "gospel",
+    "estimated_duration_minutes": 10,
+    "target_bpm": 80,
+    "concepts": [
+      "7th Chords",
+      "Diatonic Harmony",
+      "Voicing"
+    ],
+    "prerequisites": [
+      "Major Scale",
+      "Triads"
+    ]
+  },
+  {
+    "title": "Gospel Seventh Chords in B",
+    "description": "Play all diatonic 7th chords in B major",
+    "exercise_type": "voicing",
+    "content": {
+      "key": "B",
+      "scale": "B Major",
+      "pattern": "Diatonic 7ths"
+    },
+    "difficulty": "beginner",
+    "genre": "gospel",
+    "estimated_duration_minutes": 10,
+    "target_bpm": 80,
+    "concepts": [
+      "7th Chords",
+      "Diatonic Harmony",
+      "Voicing"
+    ],
+    "prerequisites": [
+      "Major Scale",
+      "Triads"
+    ]
+  },
+  {
+    "title": "Gospel Seventh Chords in E",
+    "description": "Play all diatonic 7th chords in E major",
+    "exercise_type": "voicing",
+    "content": {
+      "key": "E",
+      "scale": "E Major",
+      "pattern": "Diatonic 7ths"
+    },
+    "difficulty": "beginner",
+    "genre": "gospel",
+    "estimated_duration_minutes": 10,
+    "target_bpm": 80,
+    "concepts": [
+      "7th Chords",
+      "Diatonic Harmony",
+      "Voicing"
+    ],
+    "prerequisites": [
+      "Major Scale",
+      "Triads"
+    ]
+  },
+  {
+    "title": "Gospel Seventh Chords in A",
+    "description": "Play all diatonic 7th chords in A major",
+    "exercise_type": "voicing",
+    "content": {
+      "key": "A",
+      "scale": "A Major",
+      "pattern": "Diatonic 7ths"
+    },
+    "difficulty": "beginner",
+    "genre": "gospel",
+    "estimated_duration_minutes": 10,
+    "target_bpm": 80,
+    "concepts": [
+      "7th Chords",
+      "Diatonic Harmony",
+      "Voicing"
+    ],
+    "prerequisites": [
+      "Major Scale",
+      "Triads"
+    ]
+  },
+  {
+    "title": "Gospel Seventh Chords in D",
+    "description": "Play all diatonic 7th chords in D major",
+    "exercise_type": "voicing",
+    "content": {
+      "key": "D",
+      "scale": "D Major",
+      "pattern": "Diatonic 7ths"
+    },
+    "difficulty": "beginner",
+    "genre": "gospel",
+    "estimated_duration_minutes": 10,
+    "target_bpm": 80,
+    "concepts": [
+      "7th Chords",
+      "Diatonic Harmony",
+      "Voicing"
+    ],
+    "prerequisites": [
+      "Major Scale",
+      "Triads"
+    ]
+  },
+  {
+    "title": "Gospel Seventh Chords in G",
+    "description": "Play all diatonic 7th chords in G major",
+    "exercise_type": "voicing",
+    "content": {
+      "key": "G",
+      "scale": "G Major",
+      "pattern": "Diatonic 7ths"
+    },
+    "difficulty": "beginner",
+    "genre": "gospel",
+    "estimated_duration_minutes": 10,
+    "target_bpm": 80,
+    "concepts": [
+      "7th Chords",
+      "Diatonic Harmony",
+      "Voicing"
+    ],
+    "prerequisites": [
+      "Major Scale",
+      "Triads"
+    ]
+  },
+  {
+    "title": "Preacher Chord (7#9) in C",
+    "description": "Master the dominant 7#9 chord, the 'Preacher' chord",
+    "exercise_type": "voicing",
+    "content": {
+      "key": "C",
+      "chord": "C7#9",
+      "notes": "Root-3rd-5th-b7-#9"
+    },
+    "difficulty": "intermediate",
+    "genre": "gospel",
+    "estimated_duration_minutes": 8,
+    "target_bpm": 100,
+    "concepts": [
+      "Dominant 7#9",
+      "Tritone",
+      "Gospel Shouts"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Preacher Chord (7#9) in F",
+    "description": "Master the dominant 7#9 chord, the 'Preacher' chord",
+    "exercise_type": "voicing",
+    "content": {
+      "key": "F",
+      "chord": "F7#9",
+      "notes": "Root-3rd-5th-b7-#9"
+    },
+    "difficulty": "intermediate",
+    "genre": "gospel",
+    "estimated_duration_minutes": 8,
+    "target_bpm": 100,
+    "concepts": [
+      "Dominant 7#9",
+      "Tritone",
+      "Gospel Shouts"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Preacher Chord (7#9) in Bb",
+    "description": "Master the dominant 7#9 chord, the 'Preacher' chord",
+    "exercise_type": "voicing",
+    "content": {
+      "key": "Bb",
+      "chord": "Bb7#9",
+      "notes": "Root-3rd-5th-b7-#9"
+    },
+    "difficulty": "intermediate",
+    "genre": "gospel",
+    "estimated_duration_minutes": 8,
+    "target_bpm": 100,
+    "concepts": [
+      "Dominant 7#9",
+      "Tritone",
+      "Gospel Shouts"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Preacher Chord (7#9) in Eb",
+    "description": "Master the dominant 7#9 chord, the 'Preacher' chord",
+    "exercise_type": "voicing",
+    "content": {
+      "key": "Eb",
+      "chord": "Eb7#9",
+      "notes": "Root-3rd-5th-b7-#9"
+    },
+    "difficulty": "intermediate",
+    "genre": "gospel",
+    "estimated_duration_minutes": 8,
+    "target_bpm": 100,
+    "concepts": [
+      "Dominant 7#9",
+      "Tritone",
+      "Gospel Shouts"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Preacher Chord (7#9) in Ab",
+    "description": "Master the dominant 7#9 chord, the 'Preacher' chord",
+    "exercise_type": "voicing",
+    "content": {
+      "key": "Ab",
+      "chord": "Ab7#9",
+      "notes": "Root-3rd-5th-b7-#9"
+    },
+    "difficulty": "intermediate",
+    "genre": "gospel",
+    "estimated_duration_minutes": 8,
+    "target_bpm": 100,
+    "concepts": [
+      "Dominant 7#9",
+      "Tritone",
+      "Gospel Shouts"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Preacher Chord (7#9) in Db",
+    "description": "Master the dominant 7#9 chord, the 'Preacher' chord",
+    "exercise_type": "voicing",
+    "content": {
+      "key": "Db",
+      "chord": "Db7#9",
+      "notes": "Root-3rd-5th-b7-#9"
+    },
+    "difficulty": "intermediate",
+    "genre": "gospel",
+    "estimated_duration_minutes": 8,
+    "target_bpm": 100,
+    "concepts": [
+      "Dominant 7#9",
+      "Tritone",
+      "Gospel Shouts"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Preacher Chord (7#9) in Gb",
+    "description": "Master the dominant 7#9 chord, the 'Preacher' chord",
+    "exercise_type": "voicing",
+    "content": {
+      "key": "Gb",
+      "chord": "Gb7#9",
+      "notes": "Root-3rd-5th-b7-#9"
+    },
+    "difficulty": "intermediate",
+    "genre": "gospel",
+    "estimated_duration_minutes": 8,
+    "target_bpm": 100,
+    "concepts": [
+      "Dominant 7#9",
+      "Tritone",
+      "Gospel Shouts"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Preacher Chord (7#9) in B",
+    "description": "Master the dominant 7#9 chord, the 'Preacher' chord",
+    "exercise_type": "voicing",
+    "content": {
+      "key": "B",
+      "chord": "B7#9",
+      "notes": "Root-3rd-5th-b7-#9"
+    },
+    "difficulty": "intermediate",
+    "genre": "gospel",
+    "estimated_duration_minutes": 8,
+    "target_bpm": 100,
+    "concepts": [
+      "Dominant 7#9",
+      "Tritone",
+      "Gospel Shouts"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Preacher Chord (7#9) in E",
+    "description": "Master the dominant 7#9 chord, the 'Preacher' chord",
+    "exercise_type": "voicing",
+    "content": {
+      "key": "E",
+      "chord": "E7#9",
+      "notes": "Root-3rd-5th-b7-#9"
+    },
+    "difficulty": "intermediate",
+    "genre": "gospel",
+    "estimated_duration_minutes": 8,
+    "target_bpm": 100,
+    "concepts": [
+      "Dominant 7#9",
+      "Tritone",
+      "Gospel Shouts"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Preacher Chord (7#9) in A",
+    "description": "Master the dominant 7#9 chord, the 'Preacher' chord",
+    "exercise_type": "voicing",
+    "content": {
+      "key": "A",
+      "chord": "A7#9",
+      "notes": "Root-3rd-5th-b7-#9"
+    },
+    "difficulty": "intermediate",
+    "genre": "gospel",
+    "estimated_duration_minutes": 8,
+    "target_bpm": 100,
+    "concepts": [
+      "Dominant 7#9",
+      "Tritone",
+      "Gospel Shouts"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Preacher Chord (7#9) in D",
+    "description": "Master the dominant 7#9 chord, the 'Preacher' chord",
+    "exercise_type": "voicing",
+    "content": {
+      "key": "D",
+      "chord": "D7#9",
+      "notes": "Root-3rd-5th-b7-#9"
+    },
+    "difficulty": "intermediate",
+    "genre": "gospel",
+    "estimated_duration_minutes": 8,
+    "target_bpm": 100,
+    "concepts": [
+      "Dominant 7#9",
+      "Tritone",
+      "Gospel Shouts"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Preacher Chord (7#9) in G",
+    "description": "Master the dominant 7#9 chord, the 'Preacher' chord",
+    "exercise_type": "voicing",
+    "content": {
+      "key": "G",
+      "chord": "G7#9",
+      "notes": "Root-3rd-5th-b7-#9"
+    },
+    "difficulty": "intermediate",
+    "genre": "gospel",
+    "estimated_duration_minutes": 8,
+    "target_bpm": 100,
+    "concepts": [
+      "Dominant 7#9",
+      "Tritone",
+      "Gospel Shouts"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Gospel 2-5-1 in C",
+    "description": "Practice Gospel 2-5-1 progression",
+    "exercise_type": "progression",
+    "content": {
+      "key": "C",
+      "chords": [
+        "ii7",
+        "V7",
+        "Imaj7"
+      ],
+      "name": "Gospel 2-5-1"
+    },
+    "difficulty": "intermediate",
+    "genre": "gospel",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 90,
+    "concepts": [
+      "Gospel Progressions",
+      "Functional Harmony"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Gospel 2-5-1 in F",
+    "description": "Practice Gospel 2-5-1 progression",
+    "exercise_type": "progression",
+    "content": {
+      "key": "F",
+      "chords": [
+        "ii7",
+        "V7",
+        "Imaj7"
+      ],
+      "name": "Gospel 2-5-1"
+    },
+    "difficulty": "intermediate",
+    "genre": "gospel",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 90,
+    "concepts": [
+      "Gospel Progressions",
+      "Functional Harmony"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Gospel 2-5-1 in Bb",
+    "description": "Practice Gospel 2-5-1 progression",
+    "exercise_type": "progression",
+    "content": {
+      "key": "Bb",
+      "chords": [
+        "ii7",
+        "V7",
+        "Imaj7"
+      ],
+      "name": "Gospel 2-5-1"
+    },
+    "difficulty": "intermediate",
+    "genre": "gospel",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 90,
+    "concepts": [
+      "Gospel Progressions",
+      "Functional Harmony"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Gospel 2-5-1 in Eb",
+    "description": "Practice Gospel 2-5-1 progression",
+    "exercise_type": "progression",
+    "content": {
+      "key": "Eb",
+      "chords": [
+        "ii7",
+        "V7",
+        "Imaj7"
+      ],
+      "name": "Gospel 2-5-1"
+    },
+    "difficulty": "intermediate",
+    "genre": "gospel",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 90,
+    "concepts": [
+      "Gospel Progressions",
+      "Functional Harmony"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Gospel 2-5-1 in Ab",
+    "description": "Practice Gospel 2-5-1 progression",
+    "exercise_type": "progression",
+    "content": {
+      "key": "Ab",
+      "chords": [
+        "ii7",
+        "V7",
+        "Imaj7"
+      ],
+      "name": "Gospel 2-5-1"
+    },
+    "difficulty": "intermediate",
+    "genre": "gospel",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 90,
+    "concepts": [
+      "Gospel Progressions",
+      "Functional Harmony"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Gospel 2-5-1 in Db",
+    "description": "Practice Gospel 2-5-1 progression",
+    "exercise_type": "progression",
+    "content": {
+      "key": "Db",
+      "chords": [
+        "ii7",
+        "V7",
+        "Imaj7"
+      ],
+      "name": "Gospel 2-5-1"
+    },
+    "difficulty": "intermediate",
+    "genre": "gospel",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 90,
+    "concepts": [
+      "Gospel Progressions",
+      "Functional Harmony"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Gospel 7-3-6 in C",
+    "description": "Practice Gospel 7-3-6 progression",
+    "exercise_type": "progression",
+    "content": {
+      "key": "C",
+      "chords": [
+        "viidim7",
+        "V7/vi",
+        "vi7"
+      ],
+      "name": "Gospel 7-3-6"
+    },
+    "difficulty": "intermediate",
+    "genre": "gospel",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 90,
+    "concepts": [
+      "Gospel Progressions",
+      "Functional Harmony"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Gospel 7-3-6 in F",
+    "description": "Practice Gospel 7-3-6 progression",
+    "exercise_type": "progression",
+    "content": {
+      "key": "F",
+      "chords": [
+        "viidim7",
+        "V7/vi",
+        "vi7"
+      ],
+      "name": "Gospel 7-3-6"
+    },
+    "difficulty": "intermediate",
+    "genre": "gospel",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 90,
+    "concepts": [
+      "Gospel Progressions",
+      "Functional Harmony"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Gospel 7-3-6 in Bb",
+    "description": "Practice Gospel 7-3-6 progression",
+    "exercise_type": "progression",
+    "content": {
+      "key": "Bb",
+      "chords": [
+        "viidim7",
+        "V7/vi",
+        "vi7"
+      ],
+      "name": "Gospel 7-3-6"
+    },
+    "difficulty": "intermediate",
+    "genre": "gospel",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 90,
+    "concepts": [
+      "Gospel Progressions",
+      "Functional Harmony"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Gospel 7-3-6 in Eb",
+    "description": "Practice Gospel 7-3-6 progression",
+    "exercise_type": "progression",
+    "content": {
+      "key": "Eb",
+      "chords": [
+        "viidim7",
+        "V7/vi",
+        "vi7"
+      ],
+      "name": "Gospel 7-3-6"
+    },
+    "difficulty": "intermediate",
+    "genre": "gospel",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 90,
+    "concepts": [
+      "Gospel Progressions",
+      "Functional Harmony"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Gospel 7-3-6 in Ab",
+    "description": "Practice Gospel 7-3-6 progression",
+    "exercise_type": "progression",
+    "content": {
+      "key": "Ab",
+      "chords": [
+        "viidim7",
+        "V7/vi",
+        "vi7"
+      ],
+      "name": "Gospel 7-3-6"
+    },
+    "difficulty": "intermediate",
+    "genre": "gospel",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 90,
+    "concepts": [
+      "Gospel Progressions",
+      "Functional Harmony"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Gospel 7-3-6 in Db",
+    "description": "Practice Gospel 7-3-6 progression",
+    "exercise_type": "progression",
+    "content": {
+      "key": "Db",
+      "chords": [
+        "viidim7",
+        "V7/vi",
+        "vi7"
+      ],
+      "name": "Gospel 7-3-6"
+    },
+    "difficulty": "intermediate",
+    "genre": "gospel",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 90,
+    "concepts": [
+      "Gospel Progressions",
+      "Functional Harmony"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Gospel Walkup in C",
+    "description": "Practice Gospel Walkup progression",
+    "exercise_type": "progression",
+    "content": {
+      "key": "C",
+      "chords": [
+        "I",
+        "I/E",
+        "IV",
+        "IV#dim"
+      ],
+      "name": "Gospel Walkup"
+    },
+    "difficulty": "intermediate",
+    "genre": "gospel",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 90,
+    "concepts": [
+      "Gospel Progressions",
+      "Functional Harmony"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Gospel Walkup in F",
+    "description": "Practice Gospel Walkup progression",
+    "exercise_type": "progression",
+    "content": {
+      "key": "F",
+      "chords": [
+        "I",
+        "I/E",
+        "IV",
+        "IV#dim"
+      ],
+      "name": "Gospel Walkup"
+    },
+    "difficulty": "intermediate",
+    "genre": "gospel",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 90,
+    "concepts": [
+      "Gospel Progressions",
+      "Functional Harmony"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Gospel Walkup in Bb",
+    "description": "Practice Gospel Walkup progression",
+    "exercise_type": "progression",
+    "content": {
+      "key": "Bb",
+      "chords": [
+        "I",
+        "I/E",
+        "IV",
+        "IV#dim"
+      ],
+      "name": "Gospel Walkup"
+    },
+    "difficulty": "intermediate",
+    "genre": "gospel",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 90,
+    "concepts": [
+      "Gospel Progressions",
+      "Functional Harmony"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Gospel Walkup in Eb",
+    "description": "Practice Gospel Walkup progression",
+    "exercise_type": "progression",
+    "content": {
+      "key": "Eb",
+      "chords": [
+        "I",
+        "I/E",
+        "IV",
+        "IV#dim"
+      ],
+      "name": "Gospel Walkup"
+    },
+    "difficulty": "intermediate",
+    "genre": "gospel",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 90,
+    "concepts": [
+      "Gospel Progressions",
+      "Functional Harmony"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Gospel Walkup in Ab",
+    "description": "Practice Gospel Walkup progression",
+    "exercise_type": "progression",
+    "content": {
+      "key": "Ab",
+      "chords": [
+        "I",
+        "I/E",
+        "IV",
+        "IV#dim"
+      ],
+      "name": "Gospel Walkup"
+    },
+    "difficulty": "intermediate",
+    "genre": "gospel",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 90,
+    "concepts": [
+      "Gospel Progressions",
+      "Functional Harmony"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Gospel Walkup in Db",
+    "description": "Practice Gospel Walkup progression",
+    "exercise_type": "progression",
+    "content": {
+      "key": "Db",
+      "chords": [
+        "I",
+        "I/E",
+        "IV",
+        "IV#dim"
+      ],
+      "name": "Gospel Walkup"
+    },
+    "difficulty": "intermediate",
+    "genre": "gospel",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 90,
+    "concepts": [
+      "Gospel Progressions",
+      "Functional Harmony"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Gospel Tritone Sub in C",
+    "description": "Practice Gospel Tritone Sub progression",
+    "exercise_type": "progression",
+    "content": {
+      "key": "C",
+      "chords": [
+        "Cmaj7",
+        "bII7",
+        "Imaj7"
+      ],
+      "name": "Gospel Tritone Sub"
+    },
+    "difficulty": "intermediate",
+    "genre": "gospel",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 90,
+    "concepts": [
+      "Gospel Progressions",
+      "Functional Harmony"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Gospel Tritone Sub in F",
+    "description": "Practice Gospel Tritone Sub progression",
+    "exercise_type": "progression",
+    "content": {
+      "key": "F",
+      "chords": [
+        "Cmaj7",
+        "bII7",
+        "Imaj7"
+      ],
+      "name": "Gospel Tritone Sub"
+    },
+    "difficulty": "intermediate",
+    "genre": "gospel",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 90,
+    "concepts": [
+      "Gospel Progressions",
+      "Functional Harmony"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Gospel Tritone Sub in Bb",
+    "description": "Practice Gospel Tritone Sub progression",
+    "exercise_type": "progression",
+    "content": {
+      "key": "Bb",
+      "chords": [
+        "Cmaj7",
+        "bII7",
+        "Imaj7"
+      ],
+      "name": "Gospel Tritone Sub"
+    },
+    "difficulty": "intermediate",
+    "genre": "gospel",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 90,
+    "concepts": [
+      "Gospel Progressions",
+      "Functional Harmony"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Gospel Tritone Sub in Eb",
+    "description": "Practice Gospel Tritone Sub progression",
+    "exercise_type": "progression",
+    "content": {
+      "key": "Eb",
+      "chords": [
+        "Cmaj7",
+        "bII7",
+        "Imaj7"
+      ],
+      "name": "Gospel Tritone Sub"
+    },
+    "difficulty": "intermediate",
+    "genre": "gospel",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 90,
+    "concepts": [
+      "Gospel Progressions",
+      "Functional Harmony"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Gospel Tritone Sub in Ab",
+    "description": "Practice Gospel Tritone Sub progression",
+    "exercise_type": "progression",
+    "content": {
+      "key": "Ab",
+      "chords": [
+        "Cmaj7",
+        "bII7",
+        "Imaj7"
+      ],
+      "name": "Gospel Tritone Sub"
+    },
+    "difficulty": "intermediate",
+    "genre": "gospel",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 90,
+    "concepts": [
+      "Gospel Progressions",
+      "Functional Harmony"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Gospel Tritone Sub in Db",
+    "description": "Practice Gospel Tritone Sub progression",
+    "exercise_type": "progression",
+    "content": {
+      "key": "Db",
+      "chords": [
+        "Cmaj7",
+        "bII7",
+        "Imaj7"
+      ],
+      "name": "Gospel Tritone Sub"
+    },
+    "difficulty": "intermediate",
+    "genre": "gospel",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 90,
+    "concepts": [
+      "Gospel Progressions",
+      "Functional Harmony"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Shell Voicings Around Cycle in C",
+    "description": "ii-V-I shell voicings in C",
+    "exercise_type": "voicing",
+    "content": {
+      "key": "C",
+      "pattern": "ii-V-I",
+      "voicing_type": "shell"
+    },
+    "difficulty": "beginner",
+    "genre": "jazz",
+    "estimated_duration_minutes": 15,
+    "target_bpm": 120,
+    "concepts": [
+      "Shell Voicings",
+      "ii-V-I",
+      "Jazz Fundamentals"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Shell Voicings Around Cycle in F",
+    "description": "ii-V-I shell voicings in F",
+    "exercise_type": "voicing",
+    "content": {
+      "key": "F",
+      "pattern": "ii-V-I",
+      "voicing_type": "shell"
+    },
+    "difficulty": "beginner",
+    "genre": "jazz",
+    "estimated_duration_minutes": 15,
+    "target_bpm": 120,
+    "concepts": [
+      "Shell Voicings",
+      "ii-V-I",
+      "Jazz Fundamentals"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Shell Voicings Around Cycle in Bb",
+    "description": "ii-V-I shell voicings in Bb",
+    "exercise_type": "voicing",
+    "content": {
+      "key": "Bb",
+      "pattern": "ii-V-I",
+      "voicing_type": "shell"
+    },
+    "difficulty": "beginner",
+    "genre": "jazz",
+    "estimated_duration_minutes": 15,
+    "target_bpm": 120,
+    "concepts": [
+      "Shell Voicings",
+      "ii-V-I",
+      "Jazz Fundamentals"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Shell Voicings Around Cycle in Eb",
+    "description": "ii-V-I shell voicings in Eb",
+    "exercise_type": "voicing",
+    "content": {
+      "key": "Eb",
+      "pattern": "ii-V-I",
+      "voicing_type": "shell"
+    },
+    "difficulty": "beginner",
+    "genre": "jazz",
+    "estimated_duration_minutes": 15,
+    "target_bpm": 120,
+    "concepts": [
+      "Shell Voicings",
+      "ii-V-I",
+      "Jazz Fundamentals"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Shell Voicings Around Cycle in Ab",
+    "description": "ii-V-I shell voicings in Ab",
+    "exercise_type": "voicing",
+    "content": {
+      "key": "Ab",
+      "pattern": "ii-V-I",
+      "voicing_type": "shell"
+    },
+    "difficulty": "beginner",
+    "genre": "jazz",
+    "estimated_duration_minutes": 15,
+    "target_bpm": 120,
+    "concepts": [
+      "Shell Voicings",
+      "ii-V-I",
+      "Jazz Fundamentals"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Shell Voicings Around Cycle in Db",
+    "description": "ii-V-I shell voicings in Db",
+    "exercise_type": "voicing",
+    "content": {
+      "key": "Db",
+      "pattern": "ii-V-I",
+      "voicing_type": "shell"
+    },
+    "difficulty": "beginner",
+    "genre": "jazz",
+    "estimated_duration_minutes": 15,
+    "target_bpm": 120,
+    "concepts": [
+      "Shell Voicings",
+      "ii-V-I",
+      "Jazz Fundamentals"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Shell Voicings Around Cycle in Gb",
+    "description": "ii-V-I shell voicings in Gb",
+    "exercise_type": "voicing",
+    "content": {
+      "key": "Gb",
+      "pattern": "ii-V-I",
+      "voicing_type": "shell"
+    },
+    "difficulty": "beginner",
+    "genre": "jazz",
+    "estimated_duration_minutes": 15,
+    "target_bpm": 120,
+    "concepts": [
+      "Shell Voicings",
+      "ii-V-I",
+      "Jazz Fundamentals"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Shell Voicings Around Cycle in B",
+    "description": "ii-V-I shell voicings in B",
+    "exercise_type": "voicing",
+    "content": {
+      "key": "B",
+      "pattern": "ii-V-I",
+      "voicing_type": "shell"
+    },
+    "difficulty": "beginner",
+    "genre": "jazz",
+    "estimated_duration_minutes": 15,
+    "target_bpm": 120,
+    "concepts": [
+      "Shell Voicings",
+      "ii-V-I",
+      "Jazz Fundamentals"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Shell Voicings Around Cycle in E",
+    "description": "ii-V-I shell voicings in E",
+    "exercise_type": "voicing",
+    "content": {
+      "key": "E",
+      "pattern": "ii-V-I",
+      "voicing_type": "shell"
+    },
+    "difficulty": "beginner",
+    "genre": "jazz",
+    "estimated_duration_minutes": 15,
+    "target_bpm": 120,
+    "concepts": [
+      "Shell Voicings",
+      "ii-V-I",
+      "Jazz Fundamentals"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Shell Voicings Around Cycle in A",
+    "description": "ii-V-I shell voicings in A",
+    "exercise_type": "voicing",
+    "content": {
+      "key": "A",
+      "pattern": "ii-V-I",
+      "voicing_type": "shell"
+    },
+    "difficulty": "beginner",
+    "genre": "jazz",
+    "estimated_duration_minutes": 15,
+    "target_bpm": 120,
+    "concepts": [
+      "Shell Voicings",
+      "ii-V-I",
+      "Jazz Fundamentals"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Shell Voicings Around Cycle in D",
+    "description": "ii-V-I shell voicings in D",
+    "exercise_type": "voicing",
+    "content": {
+      "key": "D",
+      "pattern": "ii-V-I",
+      "voicing_type": "shell"
+    },
+    "difficulty": "beginner",
+    "genre": "jazz",
+    "estimated_duration_minutes": 15,
+    "target_bpm": 120,
+    "concepts": [
+      "Shell Voicings",
+      "ii-V-I",
+      "Jazz Fundamentals"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Shell Voicings Around Cycle in G",
+    "description": "ii-V-I shell voicings in G",
+    "exercise_type": "voicing",
+    "content": {
+      "key": "G",
+      "pattern": "ii-V-I",
+      "voicing_type": "shell"
+    },
+    "difficulty": "beginner",
+    "genre": "jazz",
+    "estimated_duration_minutes": 15,
+    "target_bpm": 120,
+    "concepts": [
+      "Shell Voicings",
+      "ii-V-I",
+      "Jazz Fundamentals"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Guide Tone Lines in C",
+    "description": "3rds and 7ths over ii-V-I in C",
+    "exercise_type": "progression",
+    "content": {
+      "key": "C",
+      "pattern": "ii-V-I",
+      "focus": "3rds and 7ths"
+    },
+    "difficulty": "intermediate",
+    "genre": "jazz",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 100,
+    "concepts": [
+      "Guide Tones",
+      "Voice Leading",
+      "Jazz Standards"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Guide Tone Lines in F",
+    "description": "3rds and 7ths over ii-V-I in F",
+    "exercise_type": "progression",
+    "content": {
+      "key": "F",
+      "pattern": "ii-V-I",
+      "focus": "3rds and 7ths"
+    },
+    "difficulty": "intermediate",
+    "genre": "jazz",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 100,
+    "concepts": [
+      "Guide Tones",
+      "Voice Leading",
+      "Jazz Standards"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Guide Tone Lines in Bb",
+    "description": "3rds and 7ths over ii-V-I in Bb",
+    "exercise_type": "progression",
+    "content": {
+      "key": "Bb",
+      "pattern": "ii-V-I",
+      "focus": "3rds and 7ths"
+    },
+    "difficulty": "intermediate",
+    "genre": "jazz",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 100,
+    "concepts": [
+      "Guide Tones",
+      "Voice Leading",
+      "Jazz Standards"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Guide Tone Lines in Eb",
+    "description": "3rds and 7ths over ii-V-I in Eb",
+    "exercise_type": "progression",
+    "content": {
+      "key": "Eb",
+      "pattern": "ii-V-I",
+      "focus": "3rds and 7ths"
+    },
+    "difficulty": "intermediate",
+    "genre": "jazz",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 100,
+    "concepts": [
+      "Guide Tones",
+      "Voice Leading",
+      "Jazz Standards"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Guide Tone Lines in Ab",
+    "description": "3rds and 7ths over ii-V-I in Ab",
+    "exercise_type": "progression",
+    "content": {
+      "key": "Ab",
+      "pattern": "ii-V-I",
+      "focus": "3rds and 7ths"
+    },
+    "difficulty": "intermediate",
+    "genre": "jazz",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 100,
+    "concepts": [
+      "Guide Tones",
+      "Voice Leading",
+      "Jazz Standards"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Guide Tone Lines in Db",
+    "description": "3rds and 7ths over ii-V-I in Db",
+    "exercise_type": "progression",
+    "content": {
+      "key": "Db",
+      "pattern": "ii-V-I",
+      "focus": "3rds and 7ths"
+    },
+    "difficulty": "intermediate",
+    "genre": "jazz",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 100,
+    "concepts": [
+      "Guide Tones",
+      "Voice Leading",
+      "Jazz Standards"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Guide Tone Lines in Gb",
+    "description": "3rds and 7ths over ii-V-I in Gb",
+    "exercise_type": "progression",
+    "content": {
+      "key": "Gb",
+      "pattern": "ii-V-I",
+      "focus": "3rds and 7ths"
+    },
+    "difficulty": "intermediate",
+    "genre": "jazz",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 100,
+    "concepts": [
+      "Guide Tones",
+      "Voice Leading",
+      "Jazz Standards"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Guide Tone Lines in B",
+    "description": "3rds and 7ths over ii-V-I in B",
+    "exercise_type": "progression",
+    "content": {
+      "key": "B",
+      "pattern": "ii-V-I",
+      "focus": "3rds and 7ths"
+    },
+    "difficulty": "intermediate",
+    "genre": "jazz",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 100,
+    "concepts": [
+      "Guide Tones",
+      "Voice Leading",
+      "Jazz Standards"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Guide Tone Lines in E",
+    "description": "3rds and 7ths over ii-V-I in E",
+    "exercise_type": "progression",
+    "content": {
+      "key": "E",
+      "pattern": "ii-V-I",
+      "focus": "3rds and 7ths"
+    },
+    "difficulty": "intermediate",
+    "genre": "jazz",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 100,
+    "concepts": [
+      "Guide Tones",
+      "Voice Leading",
+      "Jazz Standards"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Guide Tone Lines in A",
+    "description": "3rds and 7ths over ii-V-I in A",
+    "exercise_type": "progression",
+    "content": {
+      "key": "A",
+      "pattern": "ii-V-I",
+      "focus": "3rds and 7ths"
+    },
+    "difficulty": "intermediate",
+    "genre": "jazz",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 100,
+    "concepts": [
+      "Guide Tones",
+      "Voice Leading",
+      "Jazz Standards"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Guide Tone Lines in D",
+    "description": "3rds and 7ths over ii-V-I in D",
+    "exercise_type": "progression",
+    "content": {
+      "key": "D",
+      "pattern": "ii-V-I",
+      "focus": "3rds and 7ths"
+    },
+    "difficulty": "intermediate",
+    "genre": "jazz",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 100,
+    "concepts": [
+      "Guide Tones",
+      "Voice Leading",
+      "Jazz Standards"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Guide Tone Lines in G",
+    "description": "3rds and 7ths over ii-V-I in G",
+    "exercise_type": "progression",
+    "content": {
+      "key": "G",
+      "pattern": "ii-V-I",
+      "focus": "3rds and 7ths"
+    },
+    "difficulty": "intermediate",
+    "genre": "jazz",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 100,
+    "concepts": [
+      "Guide Tones",
+      "Voice Leading",
+      "Jazz Standards"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Chord Tone Soloing: Blue Bossa",
+    "description": "Outline chords soloing over Blue Bossa",
+    "exercise_type": "lick",
+    "content": {
+      "standard": "Blue Bossa",
+      "approach": "Chord Tones"
+    },
+    "difficulty": "intermediate",
+    "genre": "jazz",
+    "estimated_duration_minutes": 15,
+    "target_bpm": 140,
+    "concepts": [
+      "Chord Tones",
+      "Soloing",
+      "Jazz Standards"
+    ],
+    "prerequisites": [
+      "Shell Voicings",
+      "ii-V-I"
+    ]
+  },
+  {
+    "title": "Chord Tone Soloing: Fly Me to the Moon",
+    "description": "Outline chords soloing over Fly Me to the Moon",
+    "exercise_type": "lick",
+    "content": {
+      "standard": "Fly Me to the Moon",
+      "approach": "Chord Tones"
+    },
+    "difficulty": "intermediate",
+    "genre": "jazz",
+    "estimated_duration_minutes": 15,
+    "target_bpm": 140,
+    "concepts": [
+      "Chord Tones",
+      "Soloing",
+      "Jazz Standards"
+    ],
+    "prerequisites": [
+      "Shell Voicings",
+      "ii-V-I"
+    ]
+  },
+  {
+    "title": "Chord Tone Soloing: So What",
+    "description": "Outline chords soloing over So What",
+    "exercise_type": "lick",
+    "content": {
+      "standard": "So What",
+      "approach": "Chord Tones"
+    },
+    "difficulty": "intermediate",
+    "genre": "jazz",
+    "estimated_duration_minutes": 15,
+    "target_bpm": 140,
+    "concepts": [
+      "Chord Tones",
+      "Soloing",
+      "Jazz Standards"
+    ],
+    "prerequisites": [
+      "Shell Voicings",
+      "ii-V-I"
+    ]
+  },
+  {
+    "title": "Chord Tone Soloing: All the Things You Are",
+    "description": "Outline chords soloing over All the Things You Are",
+    "exercise_type": "lick",
+    "content": {
+      "standard": "All the Things You Are",
+      "approach": "Chord Tones"
+    },
+    "difficulty": "intermediate",
+    "genre": "jazz",
+    "estimated_duration_minutes": 15,
+    "target_bpm": 140,
+    "concepts": [
+      "Chord Tones",
+      "Soloing",
+      "Jazz Standards"
+    ],
+    "prerequisites": [
+      "Shell Voicings",
+      "ii-V-I"
+    ]
+  },
+  {
+    "title": "Jazz Blues in C",
+    "description": "Play jazz blues changes in C",
+    "exercise_type": "progression",
+    "content": {
+      "key": "C",
+      "form": "12-bar Jazz Blues",
+      "extensions": true
+    },
+    "difficulty": "intermediate",
+    "genre": "jazz",
+    "estimated_duration_minutes": 15,
+    "target_bpm": 120,
+    "concepts": [
+      "Jazz Blues",
+      "12-bar Form",
+      "Extended Harmony"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Jazz Blues in F",
+    "description": "Play jazz blues changes in F",
+    "exercise_type": "progression",
+    "content": {
+      "key": "F",
+      "form": "12-bar Jazz Blues",
+      "extensions": true
+    },
+    "difficulty": "intermediate",
+    "genre": "jazz",
+    "estimated_duration_minutes": 15,
+    "target_bpm": 120,
+    "concepts": [
+      "Jazz Blues",
+      "12-bar Form",
+      "Extended Harmony"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Jazz Blues in Bb",
+    "description": "Play jazz blues changes in Bb",
+    "exercise_type": "progression",
+    "content": {
+      "key": "Bb",
+      "form": "12-bar Jazz Blues",
+      "extensions": true
+    },
+    "difficulty": "intermediate",
+    "genre": "jazz",
+    "estimated_duration_minutes": 15,
+    "target_bpm": 120,
+    "concepts": [
+      "Jazz Blues",
+      "12-bar Form",
+      "Extended Harmony"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Jazz Blues in Eb",
+    "description": "Play jazz blues changes in Eb",
+    "exercise_type": "progression",
+    "content": {
+      "key": "Eb",
+      "form": "12-bar Jazz Blues",
+      "extensions": true
+    },
+    "difficulty": "intermediate",
+    "genre": "jazz",
+    "estimated_duration_minutes": 15,
+    "target_bpm": 120,
+    "concepts": [
+      "Jazz Blues",
+      "12-bar Form",
+      "Extended Harmony"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Jazz Blues in Ab",
+    "description": "Play jazz blues changes in Ab",
+    "exercise_type": "progression",
+    "content": {
+      "key": "Ab",
+      "form": "12-bar Jazz Blues",
+      "extensions": true
+    },
+    "difficulty": "intermediate",
+    "genre": "jazz",
+    "estimated_duration_minutes": 15,
+    "target_bpm": 120,
+    "concepts": [
+      "Jazz Blues",
+      "12-bar Form",
+      "Extended Harmony"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Jazz Blues in Db",
+    "description": "Play jazz blues changes in Db",
+    "exercise_type": "progression",
+    "content": {
+      "key": "Db",
+      "form": "12-bar Jazz Blues",
+      "extensions": true
+    },
+    "difficulty": "intermediate",
+    "genre": "jazz",
+    "estimated_duration_minutes": 15,
+    "target_bpm": 120,
+    "concepts": [
+      "Jazz Blues",
+      "12-bar Form",
+      "Extended Harmony"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Jazz Comping on ii-V-I",
+    "description": "Practice responsive comping on jazz standards",
+    "exercise_type": "pattern",
+    "content": {
+      "pattern": "Comping on ii-V-I",
+      "focus": "Responsiveness and Space"
+    },
+    "difficulty": "advanced",
+    "genre": "jazz",
+    "estimated_duration_minutes": 20,
+    "target_bpm": 140,
+    "concepts": [
+      "Comping",
+      "Jazz Rhythm",
+      "Musical Conversation"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "12-Bar Blues in C",
+    "description": "Play the classic 12-bar blues in C",
+    "exercise_type": "progression",
+    "content": {
+      "key": "C",
+      "form": "12-Bar Blues",
+      "chords": [
+        "I7",
+        "IV7",
+        "V7"
+      ]
+    },
+    "difficulty": "beginner",
+    "genre": "blues",
+    "estimated_duration_minutes": 10,
+    "target_bpm": 100,
+    "concepts": [
+      "12-Bar Blues",
+      "Blues Form",
+      "Shuffle Feel"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "12-Bar Blues in F",
+    "description": "Play the classic 12-bar blues in F",
+    "exercise_type": "progression",
+    "content": {
+      "key": "F",
+      "form": "12-Bar Blues",
+      "chords": [
+        "I7",
+        "IV7",
+        "V7"
+      ]
+    },
+    "difficulty": "beginner",
+    "genre": "blues",
+    "estimated_duration_minutes": 10,
+    "target_bpm": 100,
+    "concepts": [
+      "12-Bar Blues",
+      "Blues Form",
+      "Shuffle Feel"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "12-Bar Blues in Bb",
+    "description": "Play the classic 12-bar blues in Bb",
+    "exercise_type": "progression",
+    "content": {
+      "key": "Bb",
+      "form": "12-Bar Blues",
+      "chords": [
+        "I7",
+        "IV7",
+        "V7"
+      ]
+    },
+    "difficulty": "beginner",
+    "genre": "blues",
+    "estimated_duration_minutes": 10,
+    "target_bpm": 100,
+    "concepts": [
+      "12-Bar Blues",
+      "Blues Form",
+      "Shuffle Feel"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "12-Bar Blues in Eb",
+    "description": "Play the classic 12-bar blues in Eb",
+    "exercise_type": "progression",
+    "content": {
+      "key": "Eb",
+      "form": "12-Bar Blues",
+      "chords": [
+        "I7",
+        "IV7",
+        "V7"
+      ]
+    },
+    "difficulty": "beginner",
+    "genre": "blues",
+    "estimated_duration_minutes": 10,
+    "target_bpm": 100,
+    "concepts": [
+      "12-Bar Blues",
+      "Blues Form",
+      "Shuffle Feel"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "12-Bar Blues in Ab",
+    "description": "Play the classic 12-bar blues in Ab",
+    "exercise_type": "progression",
+    "content": {
+      "key": "Ab",
+      "form": "12-Bar Blues",
+      "chords": [
+        "I7",
+        "IV7",
+        "V7"
+      ]
+    },
+    "difficulty": "beginner",
+    "genre": "blues",
+    "estimated_duration_minutes": 10,
+    "target_bpm": 100,
+    "concepts": [
+      "12-Bar Blues",
+      "Blues Form",
+      "Shuffle Feel"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "12-Bar Blues in Db",
+    "description": "Play the classic 12-bar blues in Db",
+    "exercise_type": "progression",
+    "content": {
+      "key": "Db",
+      "form": "12-Bar Blues",
+      "chords": [
+        "I7",
+        "IV7",
+        "V7"
+      ]
+    },
+    "difficulty": "beginner",
+    "genre": "blues",
+    "estimated_duration_minutes": 10,
+    "target_bpm": 100,
+    "concepts": [
+      "12-Bar Blues",
+      "Blues Form",
+      "Shuffle Feel"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "12-Bar Blues in G",
+    "description": "Play the classic 12-bar blues in G",
+    "exercise_type": "progression",
+    "content": {
+      "key": "G",
+      "form": "12-Bar Blues",
+      "chords": [
+        "I7",
+        "IV7",
+        "V7"
+      ]
+    },
+    "difficulty": "beginner",
+    "genre": "blues",
+    "estimated_duration_minutes": 10,
+    "target_bpm": 100,
+    "concepts": [
+      "12-Bar Blues",
+      "Blues Form",
+      "Shuffle Feel"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "12-Bar Blues in D",
+    "description": "Play the classic 12-bar blues in D",
+    "exercise_type": "progression",
+    "content": {
+      "key": "D",
+      "form": "12-Bar Blues",
+      "chords": [
+        "I7",
+        "IV7",
+        "V7"
+      ]
+    },
+    "difficulty": "beginner",
+    "genre": "blues",
+    "estimated_duration_minutes": 10,
+    "target_bpm": 100,
+    "concepts": [
+      "12-Bar Blues",
+      "Blues Form",
+      "Shuffle Feel"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "12-Bar Blues in A",
+    "description": "Play the classic 12-bar blues in A",
+    "exercise_type": "progression",
+    "content": {
+      "key": "A",
+      "form": "12-Bar Blues",
+      "chords": [
+        "I7",
+        "IV7",
+        "V7"
+      ]
+    },
+    "difficulty": "beginner",
+    "genre": "blues",
+    "estimated_duration_minutes": 10,
+    "target_bpm": 100,
+    "concepts": [
+      "12-Bar Blues",
+      "Blues Form",
+      "Shuffle Feel"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "12-Bar Blues in E",
+    "description": "Play the classic 12-bar blues in E",
+    "exercise_type": "progression",
+    "content": {
+      "key": "E",
+      "form": "12-Bar Blues",
+      "chords": [
+        "I7",
+        "IV7",
+        "V7"
+      ]
+    },
+    "difficulty": "beginner",
+    "genre": "blues",
+    "estimated_duration_minutes": 10,
+    "target_bpm": 100,
+    "concepts": [
+      "12-Bar Blues",
+      "Blues Form",
+      "Shuffle Feel"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Blues Scale in C",
+    "description": "Master the blues scale in C",
+    "exercise_type": "scale",
+    "content": {
+      "key": "C",
+      "scale": "Blues (Minor Pentatonic + b5)",
+      "octaves": 2
+    },
+    "difficulty": "beginner",
+    "genre": "blues",
+    "estimated_duration_minutes": 8,
+    "target_bpm": 80,
+    "concepts": [
+      "Blues Scale",
+      "Pentatonic",
+      "Blue Notes"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Blues Scale in F",
+    "description": "Master the blues scale in F",
+    "exercise_type": "scale",
+    "content": {
+      "key": "F",
+      "scale": "Blues (Minor Pentatonic + b5)",
+      "octaves": 2
+    },
+    "difficulty": "beginner",
+    "genre": "blues",
+    "estimated_duration_minutes": 8,
+    "target_bpm": 80,
+    "concepts": [
+      "Blues Scale",
+      "Pentatonic",
+      "Blue Notes"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Blues Scale in Bb",
+    "description": "Master the blues scale in Bb",
+    "exercise_type": "scale",
+    "content": {
+      "key": "Bb",
+      "scale": "Blues (Minor Pentatonic + b5)",
+      "octaves": 2
+    },
+    "difficulty": "beginner",
+    "genre": "blues",
+    "estimated_duration_minutes": 8,
+    "target_bpm": 80,
+    "concepts": [
+      "Blues Scale",
+      "Pentatonic",
+      "Blue Notes"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Blues Scale in Eb",
+    "description": "Master the blues scale in Eb",
+    "exercise_type": "scale",
+    "content": {
+      "key": "Eb",
+      "scale": "Blues (Minor Pentatonic + b5)",
+      "octaves": 2
+    },
+    "difficulty": "beginner",
+    "genre": "blues",
+    "estimated_duration_minutes": 8,
+    "target_bpm": 80,
+    "concepts": [
+      "Blues Scale",
+      "Pentatonic",
+      "Blue Notes"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Blues Scale in Ab",
+    "description": "Master the blues scale in Ab",
+    "exercise_type": "scale",
+    "content": {
+      "key": "Ab",
+      "scale": "Blues (Minor Pentatonic + b5)",
+      "octaves": 2
+    },
+    "difficulty": "beginner",
+    "genre": "blues",
+    "estimated_duration_minutes": 8,
+    "target_bpm": 80,
+    "concepts": [
+      "Blues Scale",
+      "Pentatonic",
+      "Blue Notes"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Blues Scale in Db",
+    "description": "Master the blues scale in Db",
+    "exercise_type": "scale",
+    "content": {
+      "key": "Db",
+      "scale": "Blues (Minor Pentatonic + b5)",
+      "octaves": 2
+    },
+    "difficulty": "beginner",
+    "genre": "blues",
+    "estimated_duration_minutes": 8,
+    "target_bpm": 80,
+    "concepts": [
+      "Blues Scale",
+      "Pentatonic",
+      "Blue Notes"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Blues Scale in G",
+    "description": "Master the blues scale in G",
+    "exercise_type": "scale",
+    "content": {
+      "key": "G",
+      "scale": "Blues (Minor Pentatonic + b5)",
+      "octaves": 2
+    },
+    "difficulty": "beginner",
+    "genre": "blues",
+    "estimated_duration_minutes": 8,
+    "target_bpm": 80,
+    "concepts": [
+      "Blues Scale",
+      "Pentatonic",
+      "Blue Notes"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Blues Scale in D",
+    "description": "Master the blues scale in D",
+    "exercise_type": "scale",
+    "content": {
+      "key": "D",
+      "scale": "Blues (Minor Pentatonic + b5)",
+      "octaves": 2
+    },
+    "difficulty": "beginner",
+    "genre": "blues",
+    "estimated_duration_minutes": 8,
+    "target_bpm": 80,
+    "concepts": [
+      "Blues Scale",
+      "Pentatonic",
+      "Blue Notes"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Blues Scale in A",
+    "description": "Master the blues scale in A",
+    "exercise_type": "scale",
+    "content": {
+      "key": "A",
+      "scale": "Blues (Minor Pentatonic + b5)",
+      "octaves": 2
+    },
+    "difficulty": "beginner",
+    "genre": "blues",
+    "estimated_duration_minutes": 8,
+    "target_bpm": 80,
+    "concepts": [
+      "Blues Scale",
+      "Pentatonic",
+      "Blue Notes"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Blues Scale in E",
+    "description": "Master the blues scale in E",
+    "exercise_type": "scale",
+    "content": {
+      "key": "E",
+      "scale": "Blues (Minor Pentatonic + b5)",
+      "octaves": 2
+    },
+    "difficulty": "beginner",
+    "genre": "blues",
+    "estimated_duration_minutes": 8,
+    "target_bpm": 80,
+    "concepts": [
+      "Blues Scale",
+      "Pentatonic",
+      "Blue Notes"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Boogie Woogie in C",
+    "description": "Hypnotic left-hand boogie pattern in C",
+    "exercise_type": "pattern",
+    "content": {
+      "key": "C",
+      "pattern": "Boogie Woogie",
+      "hand": "Left Hand"
+    },
+    "difficulty": "intermediate",
+    "genre": "blues",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 120,
+    "concepts": [
+      "Boogie Woogie",
+      "Walking Bass",
+      "Blues Piano"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Boogie Woogie in F",
+    "description": "Hypnotic left-hand boogie pattern in F",
+    "exercise_type": "pattern",
+    "content": {
+      "key": "F",
+      "pattern": "Boogie Woogie",
+      "hand": "Left Hand"
+    },
+    "difficulty": "intermediate",
+    "genre": "blues",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 120,
+    "concepts": [
+      "Boogie Woogie",
+      "Walking Bass",
+      "Blues Piano"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Boogie Woogie in Bb",
+    "description": "Hypnotic left-hand boogie pattern in Bb",
+    "exercise_type": "pattern",
+    "content": {
+      "key": "Bb",
+      "pattern": "Boogie Woogie",
+      "hand": "Left Hand"
+    },
+    "difficulty": "intermediate",
+    "genre": "blues",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 120,
+    "concepts": [
+      "Boogie Woogie",
+      "Walking Bass",
+      "Blues Piano"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Boogie Woogie in Eb",
+    "description": "Hypnotic left-hand boogie pattern in Eb",
+    "exercise_type": "pattern",
+    "content": {
+      "key": "Eb",
+      "pattern": "Boogie Woogie",
+      "hand": "Left Hand"
+    },
+    "difficulty": "intermediate",
+    "genre": "blues",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 120,
+    "concepts": [
+      "Boogie Woogie",
+      "Walking Bass",
+      "Blues Piano"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Boogie Woogie in Ab",
+    "description": "Hypnotic left-hand boogie pattern in Ab",
+    "exercise_type": "pattern",
+    "content": {
+      "key": "Ab",
+      "pattern": "Boogie Woogie",
+      "hand": "Left Hand"
+    },
+    "difficulty": "intermediate",
+    "genre": "blues",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 120,
+    "concepts": [
+      "Boogie Woogie",
+      "Walking Bass",
+      "Blues Piano"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Blues Turnarounds in C",
+    "description": "Classic comeback licks and turnarounds in C",
+    "exercise_type": "lick",
+    "content": {
+      "key": "C",
+      "focus": "Turnarounds",
+      "landmark": "Last 2 bars"
+    },
+    "difficulty": "intermediate",
+    "genre": "blues",
+    "estimated_duration_minutes": 10,
+    "target_bpm": 100,
+    "concepts": [
+      "Turnarounds",
+      "Blues Language",
+      "Licks"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Blues Turnarounds in F",
+    "description": "Classic comeback licks and turnarounds in F",
+    "exercise_type": "lick",
+    "content": {
+      "key": "F",
+      "focus": "Turnarounds",
+      "landmark": "Last 2 bars"
+    },
+    "difficulty": "intermediate",
+    "genre": "blues",
+    "estimated_duration_minutes": 10,
+    "target_bpm": 100,
+    "concepts": [
+      "Turnarounds",
+      "Blues Language",
+      "Licks"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Blues Turnarounds in Bb",
+    "description": "Classic comeback licks and turnarounds in Bb",
+    "exercise_type": "lick",
+    "content": {
+      "key": "Bb",
+      "focus": "Turnarounds",
+      "landmark": "Last 2 bars"
+    },
+    "difficulty": "intermediate",
+    "genre": "blues",
+    "estimated_duration_minutes": 10,
+    "target_bpm": 100,
+    "concepts": [
+      "Turnarounds",
+      "Blues Language",
+      "Licks"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Blues Turnarounds in Eb",
+    "description": "Classic comeback licks and turnarounds in Eb",
+    "exercise_type": "lick",
+    "content": {
+      "key": "Eb",
+      "focus": "Turnarounds",
+      "landmark": "Last 2 bars"
+    },
+    "difficulty": "intermediate",
+    "genre": "blues",
+    "estimated_duration_minutes": 10,
+    "target_bpm": 100,
+    "concepts": [
+      "Turnarounds",
+      "Blues Language",
+      "Licks"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Blues Turnarounds in Ab",
+    "description": "Classic comeback licks and turnarounds in Ab",
+    "exercise_type": "lick",
+    "content": {
+      "key": "Ab",
+      "focus": "Turnarounds",
+      "landmark": "Last 2 bars"
+    },
+    "difficulty": "intermediate",
+    "genre": "blues",
+    "estimated_duration_minutes": 10,
+    "target_bpm": 100,
+    "concepts": [
+      "Turnarounds",
+      "Blues Language",
+      "Licks"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Minor 11th Chord in C",
+    "description": "Master the lush m11 voicing in C",
+    "exercise_type": "voicing",
+    "content": {
+      "key": "C",
+      "chord": "Cm11",
+      "intervals": "R-b3-5-b7-9-11"
+    },
+    "difficulty": "intermediate",
+    "genre": "neosoul",
+    "estimated_duration_minutes": 10,
+    "target_bpm": 90,
+    "concepts": [
+      "Minor 11th",
+      "Extended Chords",
+      "Neo-Soul Harmony"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Minor 11th Chord in Eb",
+    "description": "Master the lush m11 voicing in Eb",
+    "exercise_type": "voicing",
+    "content": {
+      "key": "Eb",
+      "chord": "Ebm11",
+      "intervals": "R-b3-5-b7-9-11"
+    },
+    "difficulty": "intermediate",
+    "genre": "neosoul",
+    "estimated_duration_minutes": 10,
+    "target_bpm": 90,
+    "concepts": [
+      "Minor 11th",
+      "Extended Chords",
+      "Neo-Soul Harmony"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Minor 11th Chord in F#",
+    "description": "Master the lush m11 voicing in F#",
+    "exercise_type": "voicing",
+    "content": {
+      "key": "F#",
+      "chord": "F#m11",
+      "intervals": "R-b3-5-b7-9-11"
+    },
+    "difficulty": "intermediate",
+    "genre": "neosoul",
+    "estimated_duration_minutes": 10,
+    "target_bpm": 90,
+    "concepts": [
+      "Minor 11th",
+      "Extended Chords",
+      "Neo-Soul Harmony"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Minor 11th Chord in A",
+    "description": "Master the lush m11 voicing in A",
+    "exercise_type": "voicing",
+    "content": {
+      "key": "A",
+      "chord": "Am11",
+      "intervals": "R-b3-5-b7-9-11"
+    },
+    "difficulty": "intermediate",
+    "genre": "neosoul",
+    "estimated_duration_minutes": 10,
+    "target_bpm": 90,
+    "concepts": [
+      "Minor 11th",
+      "Extended Chords",
+      "Neo-Soul Harmony"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Minor 11th Chord in D",
+    "description": "Master the lush m11 voicing in D",
+    "exercise_type": "voicing",
+    "content": {
+      "key": "D",
+      "chord": "Dm11",
+      "intervals": "R-b3-5-b7-9-11"
+    },
+    "difficulty": "intermediate",
+    "genre": "neosoul",
+    "estimated_duration_minutes": 10,
+    "target_bpm": 90,
+    "concepts": [
+      "Minor 11th",
+      "Extended Chords",
+      "Neo-Soul Harmony"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Minor 11th Chord in G",
+    "description": "Master the lush m11 voicing in G",
+    "exercise_type": "voicing",
+    "content": {
+      "key": "G",
+      "chord": "Gm11",
+      "intervals": "R-b3-5-b7-9-11"
+    },
+    "difficulty": "intermediate",
+    "genre": "neosoul",
+    "estimated_duration_minutes": 10,
+    "target_bpm": 90,
+    "concepts": [
+      "Minor 11th",
+      "Extended Chords",
+      "Neo-Soul Harmony"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Cluster Voicings in C",
+    "description": "Stacked extended voicings in C",
+    "exercise_type": "voicing",
+    "content": {
+      "key": "C",
+      "technique": "Cluster Voicing",
+      "hand_distribution": "Split LH and RH"
+    },
+    "difficulty": "advanced",
+    "genre": "neosoul",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 85,
+    "concepts": [
+      "Cluster Voicings",
+      "Contemporary Harmony",
+      "Extended Voicings"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Cluster Voicings in Eb",
+    "description": "Stacked extended voicings in Eb",
+    "exercise_type": "voicing",
+    "content": {
+      "key": "Eb",
+      "technique": "Cluster Voicing",
+      "hand_distribution": "Split LH and RH"
+    },
+    "difficulty": "advanced",
+    "genre": "neosoul",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 85,
+    "concepts": [
+      "Cluster Voicings",
+      "Contemporary Harmony",
+      "Extended Voicings"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Cluster Voicings in F#",
+    "description": "Stacked extended voicings in F#",
+    "exercise_type": "voicing",
+    "content": {
+      "key": "F#",
+      "technique": "Cluster Voicing",
+      "hand_distribution": "Split LH and RH"
+    },
+    "difficulty": "advanced",
+    "genre": "neosoul",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 85,
+    "concepts": [
+      "Cluster Voicings",
+      "Contemporary Harmony",
+      "Extended Voicings"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Cluster Voicings in A",
+    "description": "Stacked extended voicings in A",
+    "exercise_type": "voicing",
+    "content": {
+      "key": "A",
+      "technique": "Cluster Voicing",
+      "hand_distribution": "Split LH and RH"
+    },
+    "difficulty": "advanced",
+    "genre": "neosoul",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 85,
+    "concepts": [
+      "Cluster Voicings",
+      "Contemporary Harmony",
+      "Extended Voicings"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Cluster Voicings in D",
+    "description": "Stacked extended voicings in D",
+    "exercise_type": "voicing",
+    "content": {
+      "key": "D",
+      "technique": "Cluster Voicing",
+      "hand_distribution": "Split LH and RH"
+    },
+    "difficulty": "advanced",
+    "genre": "neosoul",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 85,
+    "concepts": [
+      "Cluster Voicings",
+      "Contemporary Harmony",
+      "Extended Voicings"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Cluster Voicings in G",
+    "description": "Stacked extended voicings in G",
+    "exercise_type": "voicing",
+    "content": {
+      "key": "G",
+      "technique": "Cluster Voicing",
+      "hand_distribution": "Split LH and RH"
+    },
+    "difficulty": "advanced",
+    "genre": "neosoul",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 85,
+    "concepts": [
+      "Cluster Voicings",
+      "Contemporary Harmony",
+      "Extended Voicings"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Neo-Soul i-VII Progression in C",
+    "description": "Modern modal progression in C",
+    "exercise_type": "progression",
+    "content": {
+      "key": "C",
+      "progression": "i-VII",
+      "quality": "Modal, dark"
+    },
+    "difficulty": "intermediate",
+    "genre": "neosoul",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 85,
+    "concepts": [
+      "Modal Harmony",
+      "Contemporary Progressions",
+      "Neo-Soul Sound"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Neo-Soul i-VII Progression in Eb",
+    "description": "Modern modal progression in Eb",
+    "exercise_type": "progression",
+    "content": {
+      "key": "Eb",
+      "progression": "i-VII",
+      "quality": "Modal, dark"
+    },
+    "difficulty": "intermediate",
+    "genre": "neosoul",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 85,
+    "concepts": [
+      "Modal Harmony",
+      "Contemporary Progressions",
+      "Neo-Soul Sound"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Neo-Soul i-VII Progression in F#",
+    "description": "Modern modal progression in F#",
+    "exercise_type": "progression",
+    "content": {
+      "key": "F#",
+      "progression": "i-VII",
+      "quality": "Modal, dark"
+    },
+    "difficulty": "intermediate",
+    "genre": "neosoul",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 85,
+    "concepts": [
+      "Modal Harmony",
+      "Contemporary Progressions",
+      "Neo-Soul Sound"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Neo-Soul i-VII Progression in A",
+    "description": "Modern modal progression in A",
+    "exercise_type": "progression",
+    "content": {
+      "key": "A",
+      "progression": "i-VII",
+      "quality": "Modal, dark"
+    },
+    "difficulty": "intermediate",
+    "genre": "neosoul",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 85,
+    "concepts": [
+      "Modal Harmony",
+      "Contemporary Progressions",
+      "Neo-Soul Sound"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Neo-Soul i-VII Progression in D",
+    "description": "Modern modal progression in D",
+    "exercise_type": "progression",
+    "content": {
+      "key": "D",
+      "progression": "i-VII",
+      "quality": "Modal, dark"
+    },
+    "difficulty": "intermediate",
+    "genre": "neosoul",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 85,
+    "concepts": [
+      "Modal Harmony",
+      "Contemporary Progressions",
+      "Neo-Soul Sound"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Neo-Soul i-VII Progression in G",
+    "description": "Modern modal progression in G",
+    "exercise_type": "progression",
+    "content": {
+      "key": "G",
+      "progression": "i-VII",
+      "quality": "Modal, dark"
+    },
+    "difficulty": "intermediate",
+    "genre": "neosoul",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 85,
+    "concepts": [
+      "Modal Harmony",
+      "Contemporary Progressions",
+      "Neo-Soul Sound"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "The Dilla Feel: Behind the Beat",
+    "description": "Practice laying back on the beat with swing and groove",
+    "exercise_type": "rhythm",
+    "content": {
+      "concept": "Dilla Feel",
+      "timing": "Slightly behind beat",
+      "feel": "Laid back, conversational"
+    },
+    "difficulty": "intermediate",
+    "genre": "neosoul",
+    "estimated_duration_minutes": 15,
+    "target_bpm": 90,
+    "concepts": [
+      "Micro-timing",
+      "Groove",
+      "Contemporary R&B Feel"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Neo-Soul Comping with Space",
+    "description": "Accompany singers with spacious, textural voicings",
+    "exercise_type": "pattern",
+    "content": {
+      "focus": "Space and Texture",
+      "approach": "Responsive, minimal"
+    },
+    "difficulty": "advanced",
+    "genre": "neosoul",
+    "estimated_duration_minutes": 15,
+    "target_bpm": 90,
+    "concepts": [
+      "Comping",
+      "Texture",
+      "Accompaniment"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Major Scale in C",
+    "description": "Play C major scale two octaves",
+    "exercise_type": "scale",
+    "content": {
+      "key": "C",
+      "scale": "Major",
+      "octaves": 2
+    },
+    "difficulty": "beginner",
+    "genre": "classical",
+    "estimated_duration_minutes": 8,
+    "target_bpm": 100,
+    "concepts": [
+      "Major Scale",
+      "Fundamental Scale"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Major Scale in G",
+    "description": "Play G major scale two octaves",
+    "exercise_type": "scale",
+    "content": {
+      "key": "G",
+      "scale": "Major",
+      "octaves": 2
+    },
+    "difficulty": "beginner",
+    "genre": "classical",
+    "estimated_duration_minutes": 8,
+    "target_bpm": 100,
+    "concepts": [
+      "Major Scale",
+      "Fundamental Scale"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Major Scale in D",
+    "description": "Play D major scale two octaves",
+    "exercise_type": "scale",
+    "content": {
+      "key": "D",
+      "scale": "Major",
+      "octaves": 2
+    },
+    "difficulty": "beginner",
+    "genre": "classical",
+    "estimated_duration_minutes": 8,
+    "target_bpm": 100,
+    "concepts": [
+      "Major Scale",
+      "Fundamental Scale"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Major Scale in A",
+    "description": "Play A major scale two octaves",
+    "exercise_type": "scale",
+    "content": {
+      "key": "A",
+      "scale": "Major",
+      "octaves": 2
+    },
+    "difficulty": "beginner",
+    "genre": "classical",
+    "estimated_duration_minutes": 8,
+    "target_bpm": 100,
+    "concepts": [
+      "Major Scale",
+      "Fundamental Scale"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Major Scale in E",
+    "description": "Play E major scale two octaves",
+    "exercise_type": "scale",
+    "content": {
+      "key": "E",
+      "scale": "Major",
+      "octaves": 2
+    },
+    "difficulty": "beginner",
+    "genre": "classical",
+    "estimated_duration_minutes": 8,
+    "target_bpm": 100,
+    "concepts": [
+      "Major Scale",
+      "Fundamental Scale"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Major Scale in F",
+    "description": "Play F major scale two octaves",
+    "exercise_type": "scale",
+    "content": {
+      "key": "F",
+      "scale": "Major",
+      "octaves": 2
+    },
+    "difficulty": "beginner",
+    "genre": "classical",
+    "estimated_duration_minutes": 8,
+    "target_bpm": 100,
+    "concepts": [
+      "Major Scale",
+      "Fundamental Scale"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Major Scale in Bb",
+    "description": "Play Bb major scale two octaves",
+    "exercise_type": "scale",
+    "content": {
+      "key": "Bb",
+      "scale": "Major",
+      "octaves": 2
+    },
+    "difficulty": "beginner",
+    "genre": "classical",
+    "estimated_duration_minutes": 8,
+    "target_bpm": 100,
+    "concepts": [
+      "Major Scale",
+      "Fundamental Scale"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Harmonic Analysis: Bach Chorale",
+    "description": "Analyze harmonic progressions in a Bach chorale",
+    "exercise_type": "theory_concept",
+    "content": {
+      "composer": "J.S. Bach",
+      "form": "Chorale",
+      "task": "Roman numeral analysis"
+    },
+    "difficulty": "advanced",
+    "genre": "classical",
+    "estimated_duration_minutes": 20,
+    "target_bpm": null,
+    "concepts": [
+      "Harmonic Analysis",
+      "Roman Numerals",
+      "Bach Chorales"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Four-Part Harmony Writing",
+    "description": "Write four-part harmony using voice leading rules",
+    "exercise_type": "theory_concept",
+    "content": {
+      "task": "Complete a four-part progression",
+      "rules": "Avoid parallel 5ths and octaves"
+    },
+    "difficulty": "advanced",
+    "genre": "classical",
+    "estimated_duration_minutes": 25,
+    "target_bpm": null,
+    "concepts": [
+      "Voice Leading",
+      "Four-Part Harmony",
+      "Classical Rules"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Two-Voice Counterpoint",
+    "description": "Write two independent melodic lines",
+    "exercise_type": "theory_concept",
+    "content": {
+      "species": "Second species",
+      "approach": "Build independent melodies"
+    },
+    "difficulty": "advanced",
+    "genre": "classical",
+    "estimated_duration_minutes": 30,
+    "target_bpm": null,
+    "concepts": [
+      "Counterpoint",
+      "Polyphony",
+      "Melodic Independence"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Authentic Cadence",
+    "description": "Practice Authentic cadences in multiple keys",
+    "exercise_type": "progression",
+    "content": {
+      "cadence_type": "Authentic",
+      "keys": "All major and minor"
+    },
+    "difficulty": "intermediate",
+    "genre": "classical",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 100,
+    "concepts": [
+      "Cadences",
+      "Harmonic Closure",
+      "Phrase Endings"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Plagal Cadence",
+    "description": "Practice Plagal cadences in multiple keys",
+    "exercise_type": "progression",
+    "content": {
+      "cadence_type": "Plagal",
+      "keys": "All major and minor"
+    },
+    "difficulty": "intermediate",
+    "genre": "classical",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 100,
+    "concepts": [
+      "Cadences",
+      "Harmonic Closure",
+      "Phrase Endings"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Half Cadence",
+    "description": "Practice Half cadences in multiple keys",
+    "exercise_type": "progression",
+    "content": {
+      "cadence_type": "Half",
+      "keys": "All major and minor"
+    },
+    "difficulty": "intermediate",
+    "genre": "classical",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 100,
+    "concepts": [
+      "Cadences",
+      "Harmonic Closure",
+      "Phrase Endings"
+    ],
+    "prerequisites": []
+  },
+  {
+    "title": "Deceptive Cadence",
+    "description": "Practice Deceptive cadences in multiple keys",
+    "exercise_type": "progression",
+    "content": {
+      "cadence_type": "Deceptive",
+      "keys": "All major and minor"
+    },
+    "difficulty": "intermediate",
+    "genre": "classical",
+    "estimated_duration_minutes": 12,
+    "target_bpm": 100,
+    "concepts": [
+      "Cadences",
+      "Harmonic Closure",
+      "Phrase Endings"
+    ],
+    "prerequisites": []
+  }
+]

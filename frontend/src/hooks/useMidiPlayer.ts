@@ -20,27 +20,6 @@ export interface MidiNote {
     hand?: 'left' | 'right'; // Hand assignment for visualization
 }
 
-// ... (lines 23-171 skipped)
-
-notes.forEach(note => {
-    const duration = note.end_time - note.start_time;
-    const noteStart = note.start_time / state.tempo;
-    const noteEnd = note.end_time / state.tempo;
-
-    // Check if note is currently active
-    if (currentTime >= noteStart && currentTime < noteEnd) {
-        newActiveNotes.push(note.pitch);
-    }
-
-    // Schedule note if within look-ahead window
-    if (noteStart >= currentTime && noteStart < currentTime + lookAhead) {
-        if (!scheduledNotesRef.current.has(note.id)) {
-            scheduledNotesRef.current.add(note.id);
-            synthRef.current?.playNote(note.pitch, note.velocity, duration / state.tempo);
-        }
-    }
-});
-
 export interface MidiPlayerState {
     isPlaying: boolean;
     currentTime: number;
@@ -191,8 +170,9 @@ export function useMidiPlayer(notes: MidiNote[], duration: number): [MidiPlayerS
         const lookAhead = 0.1; // Schedule notes 100ms ahead
 
         notes.forEach(note => {
-            const noteStart = note.startTime / state.tempo;
-            const noteEnd = (note.startTime + note.duration) / state.tempo;
+            const duration = note.end_time - note.start_time;
+            const noteStart = note.start_time / state.tempo;
+            const noteEnd = note.end_time / state.tempo;
 
             // Check if note is currently active
             if (currentTime >= noteStart && currentTime < noteEnd) {
@@ -203,7 +183,7 @@ export function useMidiPlayer(notes: MidiNote[], duration: number): [MidiPlayerS
             if (noteStart >= currentTime && noteStart < currentTime + lookAhead) {
                 if (!scheduledNotesRef.current.has(note.id)) {
                     scheduledNotesRef.current.add(note.id);
-                    synthRef.current?.playNote(note.pitch, note.velocity, note.duration / state.tempo);
+                    synthRef.current?.playNote(note.pitch, note.velocity, duration / state.tempo);
                 }
             }
         });

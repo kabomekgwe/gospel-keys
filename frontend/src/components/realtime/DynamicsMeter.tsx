@@ -60,32 +60,34 @@ export function DynamicsMeter({
   const [currentRMS, setCurrentRMS] = useState<number>(0);
   const [currentDB, setCurrentDB] = useState<number>(-Infinity);
   const [avgVelocity, setAvgVelocity] = useState<number>(0);
-  const animationFrameRef = useRef<number>();
+  const animationFrameRef = useRef<number>(0);
 
   // Process latest dynamics data
   useEffect(() => {
-    if (!latestResult?.dynamics) return;
+    if (!latestResult?.dynamics || latestResult.dynamics.length === 0) return;
 
     const { dynamics } = latestResult;
+    // Get the most recent dynamics event
+    const latestDynamics = dynamics[dynamics.length - 1];
 
     // Update current values
-    setCurrentVelocity(dynamics.midi_velocity);
-    setCurrentRMS(dynamics.rms);
-    setCurrentDB(dynamics.db);
+    setCurrentVelocity(latestDynamics.midi_velocity);
+    setCurrentRMS(latestDynamics.rms_level);
+    setCurrentDB(latestDynamics.db_level);
 
     // Update running average
     setAvgVelocity((prev) => {
       const alpha = 0.2; // Smoothing factor
-      return prev * (1 - alpha) + dynamics.midi_velocity * alpha;
+      return prev * (1 - alpha) + latestDynamics.midi_velocity * alpha;
     });
 
     // Add to history (keep last 100 points)
     setDynamicsHistory((prev) => {
       const newPoint: DynamicsPoint = {
         timestamp: Date.now(),
-        rms: dynamics.rms,
-        db: dynamics.db,
-        velocity: dynamics.midi_velocity,
+        rms: latestDynamics.rms_level,
+        db: latestDynamics.db_level,
+        velocity: latestDynamics.midi_velocity,
       };
       return [...prev, newPoint].slice(-100);
     });

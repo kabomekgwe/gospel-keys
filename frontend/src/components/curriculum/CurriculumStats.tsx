@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { Target, Calendar, TrendingUp, Star, Award, Clock } from 'lucide-react';
-import { curriculumApi, api, type CurriculumResponse } from '../../lib/api';
+import { curriculumApi, type CurriculumResponse, type PerformanceAnalysis } from '../../lib/api';
 
 interface CurriculumStatsProps {
   curriculum: CurriculumResponse;
@@ -9,9 +9,9 @@ interface CurriculumStatsProps {
 
 export function CurriculumStats({ curriculum }: CurriculumStatsProps) {
   // Fetch real performance data from API
-  const { data: performanceData } = useQuery({
+  const { data: performanceData } = useQuery<PerformanceAnalysis>({
     queryKey: ['performance', 'analysis', 7],
-    queryFn: () => api.getPerformanceAnalysis(7),
+    queryFn: () => curriculumApi.getPerformanceAnalysis(7),
   });
 
   // Fetch daily practice data for today's stats

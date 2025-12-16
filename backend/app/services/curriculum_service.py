@@ -314,7 +314,128 @@ class CurriculumService:
         except Exception as e:
             logger.error(f"Failed to queue audio generation for curriculum {curriculum_id}: {e}")
             # Don't raise - audio generation is non-critical, curriculum should still be created
-    
+
+    async def generate_theory_focused_exercise(
+        self,
+        theory_concept: str,
+        difficulty: str,
+        key: str,
+        genre: str = "any"
+    ) -> Dict[str, Any]:
+        """
+        Generate exercise specifically teaching a theory concept.
+
+        Uses theory library for correct transformations and AI for student-friendly instructions.
+
+        Args:
+            theory_concept: One of "neo_riemannian", "negative_harmony", "substitutions",
+                           "voice_leading", "coltrane_changes"
+            difficulty: "beginner", "intermediate", "advanced"
+            key: Musical key (e.g., "C", "Dm")
+            genre: Genre context for application
+
+        Returns:
+            Dict containing exercise data, MIDI, and instructions
+        """
+        from app.services.ai_orchestrator import ai_orchestrator, TaskType
+        from app.theory import chord_substitutions, voice_leading_neo_riemannian
+
+        # Generate theory-correct content using theory library
+        theory_data = {}
+
+        if theory_concept == "neo_riemannian":
+            # Use PLR transformations from theory library
+            tonnetz = voice_leading_neo_riemannian.TonnetzLattice()
+            start_chord = ("C", "")  # C major
+            transformations = ["P", "L", "R"]
+
+            progression = [start_chord]
+            for trans in transformations:
+                next_chord = tonnetz.apply_transformation(progression[-1], trans)
+                progression.append(next_chord)
+
+            theory_data = {
+                "progression": progression,
+                "transformations": transformations,
+                "concept": "PLR Transformations"
+            }
+
+        elif theory_concept == "negative_harmony":
+            # Use negative harmony from theory library
+            original = [("C", "maj7"), ("A", "m7"), ("D", "m7"), ("G", "7")]
+            negative = chord_substitutions.generate_negative_harmony(original, key, "major")
+
+            theory_data = {
+                "original_progression": original,
+                "negative_progression": negative,
+                "concept": "Negative Harmony Mirror"
+            }
+
+        elif theory_concept == "substitutions":
+            # Use chord substitutions
+            target_chord = (key, "7")
+            subs = chord_substitutions.find_substitutions(
+                target_chord,
+                key,
+                "major",
+                complexity_level="moderate"
+            )
+
+            theory_data = {
+                "original_chord": target_chord,
+                "substitutions": subs,
+                "concept": "Chord Substitutions"
+            }
+
+        # Generate student-friendly instructions using AI
+        prompt = f"""
+        Create practice instructions for a {difficulty} level music student learning {theory_concept}.
+
+        Theory content: {json.dumps(theory_data)}
+        Key: {key}
+        Genre context: {genre}
+
+        Provide:
+        1. Brief explanation (2-3 sentences) of the concept
+        2. Step-by-step practice instructions (numbered list)
+        3. What to listen for when playing
+        4. Common mistakes to avoid
+
+        Keep language accessible for {difficulty} students.
+        """
+
+        ai_response = await ai_orchestrator.generate(
+            task_type=TaskType.THEORY_EXERCISE_GEN,
+            prompt=prompt,
+            complexity=4,  # Use Phi-3.5 Mini (local, fast)
+            max_tokens=800
+        )
+
+        return {
+            "theory_concept": theory_concept,
+            "difficulty": difficulty,
+            "key": key,
+            "genre": genre,
+            "theory_data": theory_data,
+            "instructions": ai_response.get("text", ""),
+            "metadata": {
+                "concept_complexity": difficulty,
+                "estimated_practice_time": "10-15 minutes",
+                "prerequisite_concepts": self._get_prerequisites(theory_concept)
+            }
+        }
+
+    def _get_prerequisites(self, theory_concept: str) -> List[str]:
+        """Get prerequisite concepts for a theory topic"""
+        prerequisites = {
+            "neo_riemannian": ["triads", "chord_inversions", "voice_leading_basics"],
+            "negative_harmony": ["major_minor_scales", "chord_progressions", "functional_harmony"],
+            "substitutions": ["seventh_chords", "chord_functions", "voice_leading_basics"],
+            "voice_leading": ["triads", "chord_inversions"],
+            "coltrane_changes": ["ii_v_i_progressions", "modulation", "extended_chords"]
+        }
+        return prerequisites.get(theory_concept, [])
+
     # =========================================================================
     # Curriculum Retrieval Methods
     # =========================================================================

@@ -1,0 +1,67 @@
+[
+  {
+    "title": "Gospel Keys Essentials",
+    "description": "Master traditional and contemporary gospel piano from the ground up.",
+    "duration_weeks": 12,
+    "target_audience": "Beginner to Intermediate",
+    "learning_outcomes": [
+      "Play 7th chords fluently in all keys",
+      "Understand gospel chord progressions",
+      "Develop gospel keyboard patterns",
+      "Accompany singers with gospel style"
+    ],
+    "modules_count": 1
+  },
+  {
+    "title": "Jazz Improvisation Bootcamp",
+    "description": "Learn jazz fundamentals and begin improvising with confidence.",
+    "duration_weeks": 10,
+    "target_audience": "Beginner to Intermediate",
+    "learning_outcomes": [
+      "Master ii-V-I in all 12 keys",
+      "Improvise chord tone solos",
+      "Understand swing feel and rhythm",
+      "Comp on jazz standards"
+    ],
+    "modules_count": 1
+  },
+  {
+    "title": "Neo-Soul Mastery",
+    "description": "Unlock the sophisticated, contemporary sounds of modern R&B and soul.",
+    "duration_weeks": 8,
+    "target_audience": "Intermediate to Advanced",
+    "learning_outcomes": [
+      "Master extended chord voicings",
+      "Develop Neo-Soul feel and pocket",
+      "Understand contemporary harmony",
+      "Create sophisticated arrangements"
+    ],
+    "modules_count": 0
+  },
+  {
+    "title": "Blues Piano Essentials",
+    "description": "Learn the foundations and language of blues piano.",
+    "duration_weeks": 6,
+    "target_audience": "Beginner",
+    "learning_outcomes": [
+      "Play 12-bar blues in all keys",
+      "Master blues scales and soloing",
+      "Learn blues piano patterns",
+      "Develop blues feel and expression"
+    ],
+    "modules_count": 0
+  },
+  {
+    "title": "Classical Music Theory Foundations",
+    "description": "Build a solid foundation in classical music theory and harmony.",
+    "duration_weeks": 10,
+    "target_audience": "Beginner",
+    "learning_outcomes": [
+      "Understand diatonic harmony",
+      "Master voice leading principles",
+      "Analyze classical forms",
+      "Write basic four-part harmony"
+    ],
+    "modules_count": 0
+  }
+]

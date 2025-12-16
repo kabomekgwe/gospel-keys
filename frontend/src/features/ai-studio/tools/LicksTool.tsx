@@ -1,24 +1,58 @@
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
-import { Zap, Play, Loader2, Search } from 'lucide-react';
-import { aiApi, LickStyle, Difficulty, LicksResponse } from '../../../lib/api';
+import { Zap, Play, Loader2, Search, Target, Sparkles, Music, User, GraduationCap } from 'lucide-react';
+import { aiApi, LickStyle, Difficulty, LicksResponse, PhrasePosition, CreativityLevel } from '../../../lib/api';
 import { usePiano } from '../../../hooks/usePiano';
 
 const LICK_STYLES: LickStyle[] = ['bebop', 'blues', 'modern', 'gospel', 'swing', 'bossa'];
 const DIFFICULTIES: Difficulty[] = ['beginner', 'intermediate', 'advanced'];
 
+// Phrase positions with descriptions
+const PHRASE_POSITIONS: { value: PhrasePosition; label: string; icon: string; description: string }[] = [
+    { value: 'start', label: 'Start', icon: '🎬', description: 'Beginning of phrase - establish a motif' },
+    { value: 'middle', label: 'Middle', icon: '🎵', description: 'Middle of phrase - develop the idea' },
+    { value: 'end', label: 'End', icon: '🎯', description: 'End of phrase - resolve and conclude' },
+    { value: 'turnaround', label: 'Turnaround', icon: '🔄', description: 'Transition back to the beginning' },
+];
+
+// Creativity levels
+const CREATIVITY_LEVELS: { value: CreativityLevel; label: string }[] = [
+    { value: 'conservative', label: 'Classic' },
+    { value: 'balanced', label: 'Balanced' },
+    { value: 'adventurous', label: 'Bold' },
+    { value: 'experimental', label: 'Wild' },
+];
+
+// Artist references by lick style
+const STYLE_ARTISTS: Record<LickStyle, string[]> = {
+    bebop: ['Charlie Parker', 'Dizzy Gillespie', 'Bud Powell'],
+    blues: ['Oscar Peterson', 'Ray Charles'],
+    modern: ['Robert Glasper', 'Brad Mehldau'],
+    gospel: ['Cory Henry', 'Kirk Franklin'],
+    swing: ['Oscar Peterson', 'Count Basie'],
+    bossa: ['Antonio Carlos Jobim', 'João Gilberto'],
+};
+
 export function LicksTool() {
-    // We use local usePiano for playback here since we need finer control for licks (arpeggio/scale)
-    // Or we could use the passed context if it exposes playArpeggio/Scale. 
-    // The context in MusicAIStudio only exposes playChord. 
-    // So we'll use usePiano directly here.
     const piano = usePiano();
 
+    // Basic controls
     const [style, setStyle] = useState<LickStyle>('bebop');
     const [contextType, setContextType] = useState<'chord' | 'progression'>('chord');
     const [context, setContext] = useState('Cm7');
     const [difficulty, setDifficulty] = useState<Difficulty>('intermediate');
     const [length, setLength] = useState(2);
+
+    // Enhanced controls
+    const [phrasePosition, setPhrasePosition] = useState<PhrasePosition>('middle');
+    const [creativity, setCreativity] = useState<CreativityLevel>('balanced');
+    const [styleReference, setStyleReference] = useState<string>('');
+    const [generateVariations, setGenerateVariations] = useState(false);
+
+    // Context inputs
+    const [precedingChords, setPrecedingChords] = useState<string>('');
+    const [followingChord, setFollowingChord] = useState<string>('');
+    const [targetNote, setTargetNote] = useState<string>('');
 
     const [result, setResult] = useState<LicksResponse | null>(null);
     const [error, setError] = useState<string | null>(null);
@@ -40,15 +74,21 @@ export function LicksTool() {
             difficulty,
             length_bars: length,
             direction: 'mixed',
+            phrase_position: phrasePosition,
+            creativity,
+            style_reference: styleReference || undefined,
+            generate_variations: generateVariations,
+            preceding_chords: precedingChords ? precedingChords.split(' ').filter(Boolean) : undefined,
+            following_chord: followingChord || undefined,
+            target_note: targetNote || undefined,
         });
     };
 
     const handlePlayLick = async (midiNotes: number[]) => {
-        // Play as a fast melodic line (lick)
-        // 8th notes at 120bpm = 0.25s per note roughly. 
-        // Licks usually played faster, say 0.2s or 0.15s
         await piano.playScale(midiNotes, 0.2, 0.0, 0.7);
     };
+
+    const availableArtists = STYLE_ARTISTS[style] || [];
 
     return (
         <div className="h-full flex flex-col p-6">
@@ -58,20 +98,24 @@ export function LicksTool() {
                         <Zap className="w-8 h-8 text-pink-400" />
                         Lick Generator
                     </h2>
-                    <p className="text-slate-400">Generate idiomatic phrases for improvisation</p>
+                    <p className="text-slate-400">Context-aware phrases for authentic improvisation</p>
                 </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full min-h-0">
                 {/* Controls */}
-                <div className="lg:col-span-1 bg-slate-900/50 p-4 rounded-xl border border-slate-800 h-fit space-y-4">
+                <div className="lg:col-span-1 bg-slate-900/50 p-4 rounded-xl border border-slate-800 h-fit space-y-4 overflow-y-auto max-h-[calc(100vh-200px)]">
                     <div className="space-y-4">
+                        {/* Style & Difficulty */}
                         <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-xs text-slate-400 mb-1">Style</label>
                                 <select
                                     value={style}
-                                    onChange={(e) => setStyle(e.target.value as LickStyle)}
+                                    onChange={(e) => {
+                                        setStyle(e.target.value as LickStyle);
+                                        setStyleReference('');
+                                    }}
                                     className="w-full bg-slate-800 text-white rounded-lg border border-slate-700 px-3 py-2 text-sm focus:border-pink-500 outline-none capitalize"
                                 >
                                     {LICK_STYLES.map(s => <option key={s} value={s}>{s}</option>)}
@@ -89,6 +133,27 @@ export function LicksTool() {
                             </div>
                         </div>
 
+                        {/* Artist Reference */}
+                        {availableArtists.length > 0 && (
+                            <div>
+                                <label className="block text-xs text-slate-400 mb-1 flex items-center gap-1">
+                                    <User className="w-3 h-3" />
+                                    Style Reference
+                                </label>
+                                <select
+                                    value={styleReference}
+                                    onChange={(e) => setStyleReference(e.target.value)}
+                                    className="w-full bg-slate-800 text-white rounded-lg border border-slate-700 px-3 py-2 text-sm focus:border-pink-500 outline-none"
+                                >
+                                    <option value="">None</option>
+                                    {availableArtists.map(artist => (
+                                        <option key={artist} value={artist}>Channel {artist}</option>
+                                    ))}
+                                </select>
+                            </div>
+                        )}
+
+                        {/* Context Type & Input */}
                         <div>
                             <label className="block text-xs text-slate-400 mb-1">Context Type</label>
                             <div className="flex bg-slate-800 rounded-lg p-1">
@@ -120,6 +185,97 @@ export function LicksTool() {
                             />
                         </div>
 
+                        {/* Phrase Position */}
+                        <div className="pt-2 border-t border-slate-800">
+                            <label className="block text-xs text-slate-400 mb-2 flex items-center gap-1">
+                                <Music className="w-3 h-3 text-pink-400" />
+                                Phrase Position
+                            </label>
+                            <div className="grid grid-cols-4 gap-1">
+                                {PHRASE_POSITIONS.map((pos) => (
+                                    <button
+                                        key={pos.value}
+                                        onClick={() => setPhrasePosition(pos.value)}
+                                        className={`px-2 py-1.5 rounded-lg text-xs transition-all ${phrasePosition === pos.value
+                                                ? 'bg-gradient-to-r from-pink-500 to-rose-500 text-white'
+                                                : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                                            }`}
+                                        title={pos.description}
+                                    >
+                                        {pos.icon}
+                                    </button>
+                                ))}
+                            </div>
+                            <p className="text-[10px] text-slate-500 mt-1">
+                                {PHRASE_POSITIONS.find(p => p.value === phrasePosition)?.description}
+                            </p>
+                        </div>
+
+                        {/* Creativity Level */}
+                        <div>
+                            <label className="block text-xs text-slate-400 mb-2 flex items-center gap-1">
+                                <Sparkles className="w-3 h-3 text-amber-400" />
+                                Creativity
+                            </label>
+                            <div className="grid grid-cols-4 gap-1">
+                                {CREATIVITY_LEVELS.map((level) => (
+                                    <button
+                                        key={level.value}
+                                        onClick={() => setCreativity(level.value)}
+                                        className={`px-2 py-1.5 rounded-lg text-xs font-medium transition-all ${creativity === level.value
+                                                ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white'
+                                                : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                                            }`}
+                                    >
+                                        {level.label}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Phrase Context */}
+                        <div className="pt-2 border-t border-slate-800">
+                            <label className="block text-xs text-slate-400 mb-2 flex items-center gap-1">
+                                <Target className="w-3 h-3 text-cyan-400" />
+                                Phrase Context (Optional)
+                            </label>
+                            <div className="space-y-2">
+                                <div>
+                                    <label className="block text-[10px] text-slate-500 mb-1">Preceding Chords</label>
+                                    <input
+                                        type="text"
+                                        value={precedingChords}
+                                        onChange={(e) => setPrecedingChords(e.target.value)}
+                                        placeholder="Dm7 G7"
+                                        className="w-full bg-slate-800 text-white rounded-lg border border-slate-700 px-2 py-1.5 text-xs focus:border-pink-500 outline-none"
+                                    />
+                                </div>
+                                <div className="grid grid-cols-2 gap-2">
+                                    <div>
+                                        <label className="block text-[10px] text-slate-500 mb-1">Next Chord</label>
+                                        <input
+                                            type="text"
+                                            value={followingChord}
+                                            onChange={(e) => setFollowingChord(e.target.value)}
+                                            placeholder="Cmaj7"
+                                            className="w-full bg-slate-800 text-white rounded-lg border border-slate-700 px-2 py-1.5 text-xs focus:border-pink-500 outline-none"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-[10px] text-slate-500 mb-1">Target Note</label>
+                                        <input
+                                            type="text"
+                                            value={targetNote}
+                                            onChange={(e) => setTargetNote(e.target.value)}
+                                            placeholder="C4"
+                                            className="w-full bg-slate-800 text-white rounded-lg border border-slate-700 px-2 py-1.5 text-xs focus:border-pink-500 outline-none"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Length */}
                         <div>
                             <label className="block text-xs text-slate-400 mb-1">Length (Bars)</label>
                             <input
@@ -135,6 +291,22 @@ export function LicksTool() {
                                 <span>{length} bars</span>
                                 <span>4</span>
                             </div>
+                        </div>
+
+                        {/* Options */}
+                        <div className="pt-2 border-t border-slate-800">
+                            <label className="flex items-center gap-2 text-sm text-slate-300 cursor-pointer p-2 hover:bg-slate-800/50 rounded-lg transition-colors">
+                                <input
+                                    type="checkbox"
+                                    checked={generateVariations}
+                                    onChange={(e) => setGenerateVariations(e.target.checked)}
+                                    className="rounded border-slate-600 text-amber-500 focus:ring-offset-slate-900 focus:ring-amber-500"
+                                />
+                                <span className="flex items-center gap-1">
+                                    Generate Variations
+                                    <span className="text-[10px] text-amber-400 bg-amber-500/10 px-1 rounded">NEW</span>
+                                </span>
+                            </label>
                         </div>
                     </div>
 
@@ -167,17 +339,32 @@ export function LicksTool() {
                 <div className="lg:col-span-2 space-y-6 overflow-y-auto pr-2 custom-scrollbar">
                     {result ? (
                         <div className="space-y-6">
+                            {/* Context Badge */}
+                            {(precedingChords || followingChord || targetNote) && (
+                                <div className="bg-cyan-500/10 border border-cyan-500/20 rounded-lg px-4 py-2 flex items-center gap-2 text-sm flex-wrap">
+                                    <Target className="w-4 h-4 text-cyan-400" />
+                                    <span className="text-cyan-300">Context-aware:</span>
+                                    {precedingChords && <span className="text-slate-400">{precedingChords} →</span>}
+                                    <span className="text-white font-bold">{context}</span>
+                                    {followingChord && <span className="text-slate-400">→ {followingChord}</span>}
+                                    {targetNote && <span className="text-pink-400 ml-2">🎯 {targetNote}</span>}
+                                </div>
+                            )}
+
                             {result.licks.map((lick, idx) => (
                                 <div key={idx} className="bg-slate-800 border border-slate-700 rounded-xl p-4 transition-all hover:border-pink-500/30">
                                     <div className="flex justify-between items-start mb-4">
                                         <div>
                                             <h3 className="font-bold text-white text-lg">{lick.name}</h3>
-                                            <div className="flex gap-2 mt-1">
+                                            <div className="flex gap-2 mt-1 flex-wrap">
                                                 {lick.style_tags.map((tag, i) => (
                                                     <span key={i} className="text-[10px] uppercase tracking-wider bg-slate-900 text-slate-400 px-1.5 py-0.5 rounded">
                                                         {tag}
                                                     </span>
                                                 ))}
+                                                <span className="text-[10px] uppercase tracking-wider bg-pink-500/10 text-pink-400 px-1.5 py-0.5 rounded">
+                                                    {phrasePosition} phrase
+                                                </span>
                                             </div>
                                         </div>
                                         <button
@@ -189,10 +376,9 @@ export function LicksTool() {
                                         </button>
                                     </div>
 
-                                    {/* Visual Representation (Simple bar view) */}
+                                    {/* Visual Representation */}
                                     <div className="h-24 bg-slate-900/50 rounded-lg border border-slate-800 mb-4 relative overflow-hidden flex items-end px-4 pb-4 gap-1">
                                         {lick.midi_notes.map((note, i) => {
-                                            // Normalize height for visualization
                                             const min = Math.min(...lick.midi_notes);
                                             const max = Math.max(...lick.midi_notes);
                                             const range = max - min || 1;
@@ -227,7 +413,7 @@ export function LicksTool() {
 
                             <div className="bg-slate-800/30 border border-slate-700/50 rounded-xl p-6">
                                 <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                                    <Search className="w-5 h-5 text-pink-400" />
+                                    <GraduationCap className="w-5 h-5 text-green-400" />
                                     Deep Dive
                                 </h3>
 
@@ -252,7 +438,7 @@ export function LicksTool() {
                         <div className="h-full flex flex-col items-center justify-center text-slate-500 border-2 border-dashed border-slate-800 rounded-xl p-8">
                             <Zap className="w-16 h-16 mb-4 opacity-20" />
                             <p className="text-lg font-medium">Generate Licks</p>
-                            <p className="text-sm">Create jazz lines and phrases to expand your vocabulary</p>
+                            <p className="text-sm">Create context-aware phrases to expand your vocabulary</p>
                         </div>
                     )}
                 </div>

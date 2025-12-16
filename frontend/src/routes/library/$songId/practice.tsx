@@ -45,11 +45,12 @@ function generateDemoNotes(duration: number): MidiNote[] {
 
     while (time < duration) {
         const pitch = scale[Math.floor(Math.random() * scale.length)];
+        const noteDuration = 0.3 + Math.random() * 0.4;
         notes.push({
             id: `note-${noteId++}`,
             pitch,
-            startTime: time,
-            duration: 0.3 + Math.random() * 0.4,
+            start_time: time,
+            end_time: time + noteDuration,
             velocity: 60 + Math.floor(Math.random() * 40),
         });
         time += 0.4 + Math.random() * 0.4;
@@ -149,7 +150,7 @@ function PracticePage() {
     const loopNotes = useMemo(() => {
         if (!loopEnabled) return demoNotes;
         return demoNotes.filter(
-            note => note.startTime >= loopStart && note.startTime < loopEnd
+            note => note.start_time >= loopStart && note.start_time < loopEnd
         );
     }, [demoNotes, loopEnabled, loopStart, loopEnd]);
 
@@ -211,7 +212,8 @@ function PracticePage() {
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                         <Link
-                            to={`/library/${songId}`}
+                            to="/library/$songId"
+                            params={{ songId }}
                             className="p-2 rounded-lg bg-slate-800/50 text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
                         >
                             <ArrowLeft className="w-5 h-5" />
@@ -392,13 +394,17 @@ function PracticePage() {
                 <div className="h-full flex flex-col gap-4">
                     <div className="flex-1 min-h-0">
                         <PianoRoll
-                            notes={loopNotes.map(n => ({
-                                id: n.id,
-                                pitch: n.pitch,
-                                startTime: loopEnabled ? n.startTime - loopStart : n.startTime,
-                                duration: n.duration,
-                                velocity: n.velocity,
-                            }))}
+                            notes={loopNotes.map(n => {
+                                const adjustedStart = loopEnabled ? n.start_time - loopStart : n.start_time;
+                                const adjustedEnd = loopEnabled ? n.end_time - loopStart : n.end_time;
+                                return {
+                                    id: n.id,
+                                    pitch: n.pitch,
+                                    start_time: adjustedStart,
+                                    end_time: adjustedEnd,
+                                    velocity: n.velocity,
+                                };
+                            })}
                             duration={playerState.duration}
                             currentTime={playerState.currentTime}
                             isPlaying={playerState.isPlaying}

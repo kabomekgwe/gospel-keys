@@ -587,6 +587,83 @@ Be clear and educational (3-4 sentences)."""
 
 
 # ============================================================================
+# AI THEORY COACH
+# ============================================================================
+
+
+class AICoachRequest(BaseModel):
+    """Request for AI Theory Coach Q&A"""
+    question: str = Field(..., description="Theory question from student")
+    student_level: str = Field(default="intermediate", description="Student skill level")
+    conversation_history: List[Dict[str, str]] = Field(
+        default_factory=list,
+        description="Previous conversation messages for context"
+    )
+
+
+@router.post("/ai-coach/ask")
+async def ai_coach_ask(request: AICoachRequest):
+    """
+    Ask the AI Theory Coach a question about music theory.
+
+    The AI adapts its explanation to the student's level and provides:
+    - Clear concept explanations
+    - Musical examples
+    - Practice suggestions
+    - Related concepts to explore
+
+    Uses Qwen2.5-7B (complexity 6) for quality explanations while staying local/free.
+    """
+    try:
+        # Build context-aware prompt
+        context = ""
+        if request.conversation_history:
+            context = "\n\nPrevious conversation:\n"
+            for msg in request.conversation_history[-3:]:  # Last 3 messages
+                role = "Student" if msg["role"] == "user" else "Coach"
+                context += f"{role}: {msg['content']}\n"
+
+        prompt = f"""
+        You are an expert music theory coach teaching a {request.student_level} level student.
+
+        {context}
+
+        Student Question: {request.question}
+
+        Provide a clear, accurate answer that:
+        1. Explains the concept at {request.student_level} level (adjust complexity accordingly)
+        2. Includes a musical example if relevant (chord progression, scale, etc.)
+        3. Suggests one related concept to explore next
+        4. Uses encouraging, educational tone
+
+        Keep the response concise (3-5 paragraphs max).
+        """
+
+        response = await ai_orchestrator.generate(
+            task_type=TaskType.THEORY_EXPLANATION,
+            prompt=prompt,
+            complexity=6,  # Qwen2.5-7B (local, quality explanations)
+            max_tokens=600
+        )
+
+        answer = response.get("text", "")
+
+        # TODO: In future, parse musical examples from response and return structured data
+        # For now, return plain text answer
+
+        return {
+            "answer": answer,
+            "examples": [],  # Placeholder for future structured examples
+            "related_concepts": [],  # Placeholder for future concept suggestions
+            "student_level": request.student_level
+        }
+
+    except Exception as e:
+        logger.error(f"AI Coach query failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ============================================================================
 # HEALTH CHECK
 # ============================================================================
 

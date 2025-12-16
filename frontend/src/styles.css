@@ -1,23 +1,59 @@
 @import 'tailwindcss';
 
-/* Custom CSS Variables */
+/* ============================================================================
+ * Gospel Keys - Global Styles
+ * Using design system tokens from src/design-system/tokens
+ * ========================================================================== */
+
+/* Custom CSS Variables - Aligned with Design Tokens */
 :root {
-  --color-bg-primary: #020617;
-  --color-bg-secondary: #0f172a;
+  /* Background Colors */
+  --color-bg-dark: #0f172a;
   --color-bg-card: #1e293b;
-  --color-accent-primary: #06b6d4;
-  --color-accent-secondary: #8b5cf6;
+  --color-bg-hover: #334155;
+  --color-bg-input: #1e293b;
+
+  /* Primary Brand Colors */
+  --color-primary-cyan: #06b6d4;
+  --color-primary-purple: #8b5cf6;
+
+  /* Text Colors */
   --color-text-primary: #f8fafc;
-  --color-text-secondary: #94a3b8;
+  --color-text-secondary: #cbd5e1;
+  --color-text-muted: #94a3b8;
+
+  /* Status Colors */
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-info: #0ea5e9;
+
+  /* Genre Colors */
+  --color-genre-gospel: #8b5cf6;
+  --color-genre-jazz: #f59e0b;
+  --color-genre-blues: #3b82f6;
+  --color-genre-neosoul: #ec4899;
+  --color-genre-classical: #6366f1;
 }
 
 /* Global Styles */
+* {
+  box-sizing: border-box;
+}
+
 html {
   scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--color-bg-dark);
+  color: var(--color-text-primary);
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
 }
 
 /* Custom Scrollbar */

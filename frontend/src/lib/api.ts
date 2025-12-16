@@ -616,10 +616,20 @@ export interface ReharmonizationResponse {
     variations_data?: ChordInfo[][];
 }
 
+export interface VoiceLeadingAnalysis {
+    common_tones: string[];
+    voice_movements: string[];
+    smoothness_score: number;
+    parallel_motion_warnings: string[];
+}
+
 export interface VoicingResponse {
     chord: string;
     voicings: VoicingInfo[];
     tips?: string[];
+    // Enhanced response data
+    voice_leading_analysis?: VoiceLeadingAnalysis;
+    education?: EducationalContent;
 }
 
 export interface VoiceLeadingResponse {
@@ -628,6 +638,9 @@ export interface VoiceLeadingResponse {
     common_tones: string[];
     movement: string;
     tips?: string[];
+    // Enhanced response data
+    analysis?: VoiceLeadingAnalysis;
+    education?: EducationalContent;
 }
 
 export interface ExerciseResponse {
@@ -1022,6 +1035,7 @@ export type CurriculumResponse = Curriculum;
 
 export interface DailyPracticeItem {
     exercise: CurriculumExercise;
+    lesson_id?: string;
     lesson_title: string;
     module_title: string;
     priority: number;
@@ -1042,6 +1056,16 @@ export interface ExerciseCompleteRequest {
     quality: number;
     score?: number;
     duration_seconds?: number;
+}
+
+export interface PerformanceAnalysis {
+    completion_rate: number;
+    avg_quality_score: number;
+    mastered_exercises: string[];
+    struggling_exercises?: string[];
+    strong_skill_areas?: string[];
+    weak_skill_areas?: string[];
+    recommended_actions: string[];
 }
 
 export const curriculumApi = {
@@ -1196,9 +1220,9 @@ export const curriculumApi = {
         return handleResponse(response);
     },
 
-    getPerformanceAnalysis: async (lookbackDays: number = 7): Promise<any> => {
+    getPerformanceAnalysis: async (lookbackDays: number = 7): Promise<PerformanceAnalysis> => {
         const response = await fetch(`${API_BASE_URL}/api/v1/curriculum/performance-analysis?lookback_days=${lookbackDays}`);
-        return handleResponse(response);
+        return handleResponse<PerformanceAnalysis>(response);
     },
 
     applyCurriculumAdaptations: async (): Promise<any> => {

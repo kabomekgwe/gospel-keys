@@ -43,10 +43,10 @@ function calculateSkillMetrics(metrics: ProgressMetric[]): SkillMetrics {
   const latest = metrics[metrics.length - 1];
 
   return {
-    pitch: latest.pitch_avg,
-    rhythm: latest.rhythm_avg,
-    dynamics: latest.dynamics_avg,
-    overall: latest.overall_avg,
+    pitch: latest.avg_pitch_accuracy ?? 0,
+    rhythm: latest.avg_rhythm_accuracy ?? 0,
+    dynamics: latest.avg_dynamics_range ?? 0,
+    overall: latest.avg_overall_score ?? 0,
   };
 }
 
@@ -207,9 +207,13 @@ export function SkillLevelChart({
 
       try {
         // Get current period (last 30 days)
-        const currentData = await realtimeAnalysisApi.getUserProgressMetrics({
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+        const currentData = await realtimeAnalysisApi.getUserProgress({
           userId,
-          days: 30,
+          startDate: thirtyDaysAgo.toISOString().split('T')[0],
+          endDate: new Date().toISOString().split('T')[0],
         });
 
         if (currentData.length > 0) {
@@ -218,16 +222,17 @@ export function SkillLevelChart({
 
         // Get previous period (30-60 days ago) for comparison
         if (showComparison) {
-          const previousData = await realtimeAnalysisApi.getUserProgressMetrics({
+          const sixtyDaysAgo = new Date();
+          sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 60);
+
+          const previousData = await realtimeAnalysisApi.getUserProgress({
             userId,
-            days: 60,
+            startDate: sixtyDaysAgo.toISOString().split('T')[0],
+            endDate: thirtyDaysAgo.toISOString().split('T')[0],
           });
 
-          // Filter to get 30-60 day range
-          const thirtyDaysAgo = new Date();
-          thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
-          const previousPeriod = previousData.filter((metric) => {
+          // Filter to get 30-60 day range (already filtered by API params)
+          const previousPeriod = previousData.filter((metric: ProgressMetric) => {
             const metricDate = new Date(metric.created_at);
             return metricDate < thirtyDaysAgo;
           });

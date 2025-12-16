@@ -132,7 +132,7 @@ export function useVexFlow(
 
         // 1. Group notes by time (chords)
         // Sort notes by start time
-        const sortedNotes = [...notes].sort((a, b) => a.startTime - b.startTime);
+        const sortedNotes = [...notes].sort((a, b) => a.start_time - b.start_time);
 
         // Group by rough timestamp tolerance
         const chords: { time: number; notes: MidiNote[] }[] = [];
@@ -142,15 +142,15 @@ export function useVexFlow(
         sortedNotes.forEach(note => {
             if (lastTime === -1) {
                 currentChord.push(note);
-                lastTime = note.startTime;
-            } else if (Math.abs(note.startTime - lastTime) < 0.05) {
+                lastTime = note.start_time;
+            } else if (Math.abs(note.start_time - lastTime) < 0.05) {
                 currentChord.push(note);
             } else {
                 if (currentChord.length > 0) {
                     chords.push({ time: lastTime, notes: currentChord });
                 }
                 currentChord = [note];
-                lastTime = note.startTime;
+                lastTime = note.start_time;
             }
         });
         if (currentChord.length > 0) {
@@ -173,7 +173,8 @@ export function useVexFlow(
 
             // Determine Duration
             // We use the first note's duration as the chord duration
-            const durationSec = chord.notes[0]?.duration || 0.5;
+            const firstNote = chord.notes[0];
+            const durationSec = firstNote ? (firstNote.end_time - firstNote.start_time) : 0.5;
             const { duration, dots } = quantizeDuration(durationSec, tempo);
 
             if (trebleNotes.length > 0) {

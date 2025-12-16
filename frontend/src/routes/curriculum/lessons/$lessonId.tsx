@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { curriculumApi } from '../../../lib/api';
 import { useState } from 'react';
 import {
@@ -21,7 +21,7 @@ export const Route = createFileRoute('/curriculum/lessons/$lessonId')({
 
 function LessonDetailPage() {
   const { lessonId } = Route.useParams();
-  const navigate = useNavigate();
+  const _navigate = useNavigate();
   const queryClient = useQueryClient();
   const [showTutorial, setShowTutorial] = useState(false);
   const [expandedExercises, setExpandedExercises] = useState<Set<string>>(new Set());
@@ -222,13 +222,9 @@ function LessonDetailPage() {
           </div>
 
           <div className="space-y-3">
-            {mockLesson.exercises.map((exercise, index) => {
+            {mockLesson.exercises.map((exercise, _index) => {
               const isExpanded = expandedExercises.has(exercise.id);
-              const statusConfig = {
-                completed: { icon: CheckCircle, color: 'text-green-500', bg: 'bg-green-500/10', border: 'border-green-500/30' },
-                due: { icon: Target, color: 'text-purple-500', bg: 'bg-purple-500/20', border: 'border-purple-500/50' },
-                pending: { icon: Clock, color: 'text-gray-500', bg: 'bg-gray-800/50', border: 'border-gray-700' },
-              }[exercise.status];
+              const statusConfig = statusIcons[exercise.status as keyof typeof statusIcons];
 
               const StatusIcon = statusConfig.icon;
 

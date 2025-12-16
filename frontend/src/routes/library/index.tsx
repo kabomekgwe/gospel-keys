@@ -13,8 +13,6 @@ import {
     Music2,
     Clock,
     Loader2,
-    CheckCircle2,
-    AlertCircle,
     Plus
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -261,7 +259,7 @@ function SongCard({ song, index }: { song: Song; index: number }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.05 }}
         >
-            <Link to={`/library/${song.id}`}>
+            <Link to={`/library/${song.id}` as any}>
                 <div className="glass-card rounded-xl p-5 hover:border-cyan-500/30 transition-all cursor-pointer group">
                     <div className="flex items-center justify-between mb-4">
                         <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-slate-700 to-slate-800 flex items-center justify-center">
@@ -300,7 +298,7 @@ function SongRow({ song, index, formatDuration }: { song: Song; index: number; f
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: index * 0.03 }}
         >
-            <Link to={`/library/${song.id}`}>
+            <Link to={`/library/${song.id}` as any}>
                 <div className="glass-card rounded-lg p-4 flex items-center gap-4 hover:border-cyan-500/30 transition-all cursor-pointer group">
                     <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-slate-700 to-slate-800 flex items-center justify-center flex-shrink-0">
                         <Music2 className="w-5 h-5 text-cyan-400" />

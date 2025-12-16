@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { curriculumApi, api, type DailyPracticeItem, type CurriculumExercise } from '../../lib/api';
+import { curriculumApi, type DailyPracticeItem, type CurriculumExercise, type PerformanceAnalysis } from '../../lib/api';
 import { useState } from 'react';
 import { ExerciseAudioPlayer } from '../../components/curriculum/ExerciseAudioPlayer';
 import { TrendingUp, BookOpen, Lightbulb, X } from 'lucide-react';
@@ -23,9 +23,9 @@ function DailyPracticePage() {
     });
 
     // Load performance analysis for insights banner
-    const { data: performanceAnalysis } = useQuery({
+    const { data: performanceAnalysis } = useQuery<PerformanceAnalysis>({
         queryKey: ['performance', 'analysis', 7],
-        queryFn: () => api.getPerformanceAnalysis(7),
+        queryFn: () => curriculumApi.getPerformanceAnalysis(7),
         enabled: !!practiceQueue,
     });
 
@@ -300,8 +300,6 @@ function PriorityBadge({ priority }: { priority: number }) {
 
 function ExerciseCard({ item, onComplete }: { item: DailyPracticeItem; onComplete: () => void }) {
     const { exercise } = item;
-    const navigate = useNavigate();
-    const [showTutorial, setShowTutorial] = useState(false);
 
     return (
         <div className="space-y-4">

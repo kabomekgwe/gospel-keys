@@ -344,6 +344,7 @@ Return JSON with "progression" array only."""
         1. Use local Phase 6 orchestrator for rule-based reharmonization
         2. For simple tasks (complexity ≤ 7): Return local results
         3. For complex tasks (complexity 8+): Enhance with AI explanations
+        4. Apply boldness level to filter/rank reharmonization options
         """
         from app.pipeline.reharmonization_orchestrator import get_all_reharmonizations_for_chord
         from app.theory.chord_parser import parse_chord_symbol
@@ -360,6 +361,18 @@ Return JSON with "progression" array only."""
 
         # Determine complexity based on request characteristics
         complexity = self._calculate_reharmonization_complexity(request)
+        
+        # Map creativity level to boldness factor
+        boldness_map = {
+            CreativityLevel.CONSERVATIVE: 0.3,  # Prefer safe, traditional options
+            CreativityLevel.BALANCED: 0.5,      # Mix of safe and bold
+            CreativityLevel.ADVENTUROUS: 0.7,   # Prefer creative options
+            CreativityLevel.EXPERIMENTAL: 0.9,  # Maximum boldness
+        }
+        boldness = boldness_map.get(request.creativity, 0.5)
+        
+        # Adjust min_score based on boldness (lower = allow bolder options)
+        min_score = max(0.4, 0.8 - boldness * 0.4)  # Range: 0.4 to 0.8
 
         # Get local rule-based reharmonization options
         reharmonized_chords = []
@@ -384,13 +397,15 @@ Return JSON with "progression" array only."""
                 previous_chord=previous,
                 next_chord=next_chord,
                 genre=request.style.value.lower(),
-                max_options=3,  # Get top 3 options per chord
-                min_score=0.6   # Only high-quality options
+                max_options=5,  # Get more options for boldness filtering
+                min_score=min_score
             )
 
-            # Use best option (highest score)
+            # Select option based on boldness
             if options:
-                best = options[0]
+                # Higher boldness = prefer lower-ranking (more adventurous) options
+                option_index = min(int(len(options) * boldness), len(options) - 1)
+                best = options[option_index]
                 techniques_used.add(best['technique'])
 
                 # Convert to ChordInfo format
@@ -429,6 +444,7 @@ Original: {original}
 Reharmonized: {reharmonized}
 Techniques used: {', '.join(techniques_used)}
 Key: {request.key}
+Boldness: {request.creativity.value if request.creativity else 'balanced'}
 
 Provide a clear, educational explanation (2-3 sentences) of why these reharmonization choices work well for this style."""
 
@@ -436,6 +452,27 @@ Provide a clear, educational explanation (2-3 sentences) of why these reharmoniz
             if isinstance(explanation, dict):
                 explanation = explanation.get('explanation', str(explanation))
             source = "hybrid"
+        
+        # Generate educational content if requested
+        education = None
+        if request.include_education:
+            education = EducationalContent(
+                why_it_works=f"This reharmonization uses {', '.join(list(techniques_used)[:3])} to transform the original progression while maintaining harmonic function.",
+                alternatives=[
+                    f"Try tritone substitution on the V chord for more tension",
+                    f"Add passing diminished chords between steps",
+                    f"Use modal interchange to borrow from parallel minor/major",
+                ],
+                theory_concepts=list(techniques_used)[:5],
+            )
+        
+        # Generate variations if requested
+        variations = None
+        variations_data = None
+        if request.generate_variations:
+            variations, variations_data = await self._generate_reharmonization_variations(
+                request, reharmonized_chords
+            )
 
         return ReharmonizationResponse(
             original=request.original_progression,
@@ -443,7 +480,10 @@ Provide a clear, educational explanation (2-3 sentences) of why these reharmoniz
             explanation=explanation,
             techniques_used=list(techniques_used),
             source=source,  # Track whether local or hybrid was used
-            complexity=complexity
+            complexity=complexity,
+            education=education,
+            variations=variations,
+            variations_data=variations_data,
         )
 
     def _calculate_reharmonization_complexity(self, request: ReharmonizationRequest) -> int:
@@ -470,6 +510,55 @@ Provide a clear, educational explanation (2-3 sentences) of why these reharmoniz
         complexity += style_complexity.get(request.style.value.lower(), 1)
 
         return min(10, max(1, complexity))
+
+    async def _generate_reharmonization_variations(
+        self,
+        request: ReharmonizationRequest,
+        original_reharmonization: list[ChordInfo]
+    ) -> tuple[list[CreativeVariation], list[list[ChordInfo]]]:
+        """Generate alternative reharmonization variations."""
+        variations = []
+        variations_data = []
+        
+        original_symbols = " - ".join(request.original_progression)
+        
+        # Conservative variation
+        conservative_prompt = f"""Generate a CONSERVATIVE reharmonization of: {original_symbols}
+Key: {request.key}, Style: {request.style.value}
+Keep changes minimal - just add 7ths and smooth voice leading.
+Return JSON: {{"progression": [{{"symbol": "Cmaj7", "notes": ["C", "E", "G", "B"], "midi_notes": [60, 64, 67, 71]}}]}}"""
+        
+        try:
+            conservative_data = await self._generate_with_fallback(conservative_prompt, "reharm_conservative")
+            if conservative_data and "progression" in conservative_data:
+                variations.append(CreativeVariation(
+                    label="Gentle Touch",
+                    creativity_score=0.2,
+                    description="Subtle enhancements - 7ths and smooth voice leading"
+                ))
+                variations_data.append([ChordInfo(**c) for c in conservative_data["progression"]])
+        except Exception:
+            pass
+        
+        # Bold variation
+        bold_prompt = f"""Generate a BOLD, SURPRISING reharmonization of: {original_symbols}
+Key: {request.key}, Style: {request.style.value}
+Use tritone subs, secondary dominants, modal interchange. Be creative!
+Return JSON: {{"progression": [{{"symbol": "Cmaj7", "notes": ["C", "E", "G", "B"], "midi_notes": [60, 64, 67, 71]}}]}}"""
+        
+        try:
+            bold_data = await self._generate_with_fallback(bold_prompt, "reharm_bold")
+            if bold_data and "progression" in bold_data:
+                variations.append(CreativeVariation(
+                    label="Complete Makeover",
+                    creativity_score=0.9,
+                    description="Dramatic transformation with advanced substitutions"
+                ))
+                variations_data.append([ChordInfo(**c) for c in bold_data["progression"]])
+        except Exception:
+            pass
+        
+        return variations, variations_data
 
     def _convert_to_chord_info(self, root: str, quality: str, original: dict) -> ChordInfo:
         """Convert Phase 6 chord data to ChordInfo schema"""

@@ -20,7 +20,7 @@ import {
   ResponsiveContainer,
   Cell,
 } from 'recharts';
-import { Play, List, BarChart3, Info } from 'lucide-react';
+import { Play, List, BarChart3 } from 'lucide-react';
 import { useChordPlayback } from '../../hooks/useChordPlayback';
 
 export interface ChordEvent {
@@ -148,7 +148,7 @@ function ConfidenceMeter({ confidence }: { confidence: number }) {
  */
 function PatternCard({
   pattern,
-  chords,
+  chords: _chords,
   enableAudio,
   onPlay,
   onClick,
@@ -247,14 +247,14 @@ function TimelineTooltip({ active, payload }: any) {
 
 export function ProgressionPatternDisplay({
   patterns,
-  totalDuration,
+  totalDuration: _totalDuration,
   chords,
   onPatternClick,
   enableAudio = true,
   className = '',
 }: ProgressionPatternDisplayProps) {
   // Audio playback hook
-  const { playSequence, isPlaying } = useChordPlayback({
+  const { playSequence, isPlaying: _isPlaying } = useChordPlayback({
     instrument: 'piano',
     duration: 1.0,
   });
@@ -411,9 +411,11 @@ export function ProgressionPatternDisplay({
               <RechartsTooltip content={<TimelineTooltip />} />
               <Bar
                 dataKey="duration"
-                onClick={(data) => {
-                  setSelectedPattern(data.pattern);
-                  onPatternClick?.(data.pattern);
+                onClick={(data: any) => {
+                  if (data && data.pattern) {
+                    setSelectedPattern(data.pattern);
+                    onPatternClick?.(data.pattern);
+                  }
                 }}
                 cursor="pointer"
               >
