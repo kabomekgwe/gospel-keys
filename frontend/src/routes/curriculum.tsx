@@ -33,6 +33,16 @@ function CurriculumLayout() {
 
   const hasNoCurriculum = !activeCurriculum && (!curriculumList || curriculumList.length === 0);
 
+  // If creating new curriculum, render the outlet without the layout
+  // This must be checked BEFORE hasNoCurriculum to allow access to /curriculum/new
+  if (isCreatingNew) {
+    return (
+      <div className="px-6 py-8">
+        <Outlet />
+      </div>
+    );
+  }
+
   if (hasNoCurriculum) {
     return (
       <div className="px-6 py-8">
@@ -54,15 +64,6 @@ function CurriculumLayout() {
           }}
           size="lg"
         />
-      </div>
-    );
-  }
-
-  // If creating new curriculum, just render the outlet without the layout
-  if (isCreatingNew) {
-    return (
-      <div className="px-6 py-8">
-        <Outlet />
       </div>
     );
   }

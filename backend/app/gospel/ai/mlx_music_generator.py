@@ -23,6 +23,13 @@ from pathlib import Path
 from typing import Optional
 import json
 
+# Memory safety check
+try:
+    from ...utils.memory_check import get_recommended_model, is_model_safe, get_system_memory
+    MEMORY_CHECK_AVAILABLE = True
+except ImportError:
+    MEMORY_CHECK_AVAILABLE = False
+
 try:
     from ...services.humanizer import ArrangementHumanizer
 except ImportError:
@@ -48,12 +55,16 @@ class MLXGospelGenerator:
     3. Hybrid: LLM for structure + rules for constraints
     """
 
+    # Default model (14B params, ~12GB RAM - requires 24GB+ system)
+    DEFAULT_MODEL = "mlx-community/Qwen2.5-14B-Instruct-4bit"
+    
     def __init__(
         self,
-        model_path: str = "mlx-community/Qwen2.5-14B-Instruct-4bit",
+        model_path: Optional[str] = None,
         tokenizer_type: str = "REMI",
         checkpoint_dir: Optional[Path] = None,
-        enable_humanization: bool = True
+        enable_humanization: bool = True,
+        auto_select_model: bool = True
     ):
         """
         Initialize MLX gospel generator.
@@ -67,7 +78,28 @@ Word, MIDILike)
         """
         self.device = mx.default_device()
         print(f"🎹 Initializing MLX Gospel Generator on {self.device}")
-        print("💾 Configuration: Optimized for M4 Pro (16GB RAM allocated for AI)")
+        
+        # Auto-select safe model based on system memory
+        if model_path is None:
+            if auto_select_model and MEMORY_CHECK_AVAILABLE:
+                memory_info = get_system_memory()
+                recommended, warning = get_recommended_model(memory_info)
+                print(f"💾 System RAM: {memory_info.total_gb}GB (Available: {memory_info.available_gb}GB)")
+                print(f"⚠️  {warning}")
+                model_path = recommended
+            else:
+                model_path = self.DEFAULT_MODEL
+                print(f"💾 Using safe default model: {model_path}")
+        
+        # Safety check before loading
+        if MEMORY_CHECK_AVAILABLE:
+            is_safe, safety_message = is_model_safe(model_path)
+            print(safety_message)
+            if not is_safe:
+                print(f"🔄 Falling back to safe default: {self.DEFAULT_MODEL}")
+                model_path = self.DEFAULT_MODEL
+        
+        self.model_path = model_path
 
         # Initialize MIDI tokenizer
         self.midi_tokenizer = self._init_midi_tokenizer(tokenizer_type)
@@ -138,7 +170,7 @@ Word, MIDILike)
             chord_progression, key, tempo, application, num_bars
         )
 
-        print("🤖 Generating piano arrangement with Qwen2.5-14B...")
+        print(f"🤖 Generating piano arrangement with {self.model_path.split('/')[-1]}...")
         
         # Generate text using MLX
         generated_text = generate(

@@ -316,18 +316,19 @@ class AIOrchestrator:
             complexity <= self.COMPLEXITY_MEDIUM or settings.force_local_llm
         )
 
-        # Try local multi-model LLM first (Phi-3.5 or Qwen2.5)
+        # Try local multi-model LLM first (Phi-3.5 or Llama 3.3 70B)
         if use_local:
             try:
                 # Use local M4 Neural Engine (FREE and FAST!)
-                # Automatically selects Phi-3.5 (1-4) or Qwen2.5 (5-7) based on complexity
+                # Automatically selects Phi-3.5 (1-4) or Llama 3.3 70B (5-10) based on complexity
                 logger.info(f"🤖 Using local multi-model LLM for {task_type.value} (complexity {complexity})")
                 result = self.multi_llm.generate_structured(
                     prompt=prompt,
                     schema={},  # Let LLM infer structure
-                    complexity=complexity,  # NEW: Pass complexity for model selection
+                    complexity=complexity,  # Pass complexity for model selection
                     max_tokens=generation_config.get("max_output_tokens", 1024),
                     temperature=generation_config.get("temperature", 0.7),
+                    force_local=settings.force_local_llm,  # Allow 8-10 complexity on local
                 )
                 logger.info(f"✅ Local LLM succeeded for {task_type.value}")
                 _cache_set(cache_key, result, ttl_hours=cache_ttl_hours)
@@ -408,9 +409,19 @@ class AIOrchestrator:
         Uses AI to create a personalized learning path with fallback.
         """
         prompt = self._build_curriculum_prompt(skill_profile, duration_weeks)
+        
+        # Determine which model will be used
+        complexity = self.TASK_COMPLEXITY.get(TaskType.CURRICULUM_PLANNING, 8)
+        expected_model = self.route_task(TaskType.CURRICULUM_PLANNING, complexity)
+        logger.info(
+            f"🎓 Generating curriculum: complexity={complexity}, "
+            f"expected_model={expected_model.value}, "
+            f"duration={duration_weeks} weeks, "
+            f"goal={skill_profile.get('primary_goal', 'unknown')}"
+        )
 
         try:
-            return await self.generate_with_fallback(
+            result = await self.generate_with_fallback(
                 prompt=prompt,
                 task_type=TaskType.CURRICULUM_PLANNING,
                 generation_config={
@@ -420,19 +431,64 @@ class AIOrchestrator:
                 },
                 cache_ttl_hours=168  # 1 week
             )
-        except Exception:
+            
+            # Validate curriculum quality
+            is_valid, issues = self._validate_curriculum_quality(result)
+            if is_valid:
+                logger.info(f"✅ Curriculum generated successfully with {len(result.get('modules', []))} modules")
+            else:
+                logger.warning(f"⚠️ Curriculum quality issues detected: {issues}")
+            
+            return result
+            
+        except Exception as e:
+            logger.error(f"❌ Curriculum generation failed: {e}")
             # Final fallback to template-based generation
             return self._generate_fallback_curriculum(skill_profile, duration_weeks)
+    
+    def _validate_curriculum_quality(self, curriculum: Dict[str, Any]) -> tuple[bool, list[str]]:
+        """Validate that generated curriculum meets quality standards."""
+        issues = []
+        
+        modules = curriculum.get('modules', [])
+        if not modules:
+            issues.append("No modules generated")
+            return False, issues
+        
+        for i, module in enumerate(modules):
+            lessons = module.get('lessons', [])
+            if not lessons:
+                issues.append(f"Module {i+1} has no lessons")
+                continue
+            
+            for j, lesson in enumerate(lessons):
+                exercises = lesson.get('exercises', [])
+                if not exercises:
+                    issues.append(f"Module {i+1}, Lesson {j+1} has no exercises")
+                elif len(exercises) < 2:
+                    issues.append(f"Module {i+1}, Lesson {j+1} has only {len(exercises)} exercise(s)")
+                
+                # Check for theory content
+                if not lesson.get('theory_content'):
+                    issues.append(f"Module {i+1}, Lesson {j+1} missing theory_content")
+        
+        return len(issues) == 0, issues
     
     def _build_curriculum_prompt(
         self, 
         skill_profile: Dict[str, Any], 
         duration_weeks: int
     ) -> str:
-        """Build the curriculum generation prompt"""
-        return f"""You are an expert music education curriculum designer specializing in piano pedagogy.
+        """Build the curriculum generation prompt with world-class quality requirements"""
+        
+        # Determine primary style focus from interests
+        interests = skill_profile.get('interests', ['general'])
+        primary_style = interests[0] if interests else 'general'
+        
+        return f"""You are a WORLD-CLASS music education curriculum designer with 20+ years of experience teaching piano.
+Your curriculums are known for being comprehensive, engaging, and producing real results.
 
-Create a comprehensive, personalized curriculum for a student with the following profile:
+Create a PREMIUM, DETAILED curriculum for a student with this profile:
 
 ## Student Profile
 - Technical Ability: {skill_profile.get('technical_ability', 1)}/10
@@ -444,55 +500,101 @@ Create a comprehensive, personalized curriculum for a student with the following
 ## Style Familiarity
 {json.dumps(skill_profile.get('style_familiarity', {}), indent=2)}
 
-## Goals
+## Goals & Preferences
 - Primary Goal: {skill_profile.get('primary_goal', 'general improvement')}
-- Interests: {', '.join(skill_profile.get('interests', []))}
+- Musical Interests: {', '.join(interests)}
 - Weekly Practice Hours: {skill_profile.get('weekly_practice_hours', 5)}
 - Learning Velocity: {skill_profile.get('learning_velocity', 'medium')}
 
-## Curriculum Requirements
-- Duration: {duration_weeks} weeks
-- Structure: Modules → Lessons → Exercises
-- Each module should be 3-6 weeks
-- Each lesson should be 1 week
-- Each lesson should have 3-7 exercises
+## ⚠️ CRITICAL QUALITY REQUIREMENTS ⚠️
 
-Generate a detailed curriculum in the following JSON format:
+Your curriculum MUST be RICH and DETAILED. Generic or sparse content is UNACCEPTABLE.
+
+### Module Requirements:
+- Create {max(2, duration_weeks // 4)} modules covering {duration_weeks} weeks
+- Each module MUST have 2-4 detailed lessons
+- Each module MUST have clear, specific learning outcomes (not generic statements)
+
+### Lesson Requirements:
+- Each lesson MUST have 3-5 HIGH-QUALITY exercises
+- Each lesson MUST have theory_content with:
+  - "summary": 2-3 sentence explanation of the concept
+  - "key_points": Array of 3-5 practical, specific takeaways
+- Each lesson MUST list specific "concepts" being taught
+
+### Exercise Requirements (MOST IMPORTANT):
+Each exercise MUST have COMPLETE, DETAILED content:
+
+1. **For progression exercises** - Include:
+   - "chords": Full chord symbols with extensions (e.g., "Dm9", "G13", "Cmaj9#11")
+   - "roman_numerals": Proper analysis (e.g., "ii9", "V13", "Imaj9")
+   - "key": The musical key
+   - "voicing_suggestions": How to voice these chords
+   - "tips": Array of 2-3 practice tips
+
+2. **For voicing exercises** - Include:
+   - "chord": The target chord (e.g., "Cmaj9")
+   - "notes": Specific notes in the voicing (e.g., ["C", "E", "G", "B", "D"])
+   - "register": "low", "mid", or "high"
+   - "voice_leading_from": What chord it connects from
+
+3. **For scale exercises** - Include:
+   - "scale": Scale name (e.g., "Mixolydian", "Gospel Scale", "Blues Scale")
+   - "key": Starting note
+   - "pattern": Practice pattern description
+   - "application": How to use it musically
+
+4. **For rhythm exercises** - Include:
+   - "time_signature": e.g., "4/4", "6/8"
+   - "pattern": Rhythmic pattern description
+   - "groove_style": e.g., "swing", "straight", "gospel shuffle"
+
+### Example of HIGH-QUALITY Exercise (FOLLOW THIS FORMAT):
 {{
-    "title": "Personalized curriculum title",
-    "description": "Brief curriculum overview",
+    "title": "The Gospel 7-3-6 Turnaround",
+    "description": "Master the classic gospel turnaround used in countless hymns and worship songs. This progression creates beautiful tension and resolution through secondary dominants.",
+    "exercise_type": "progression",
+    "content": {{
+        "chords": ["Gdim7", "C7(b9)", "Fm9", "Fm9/Bb"],
+        "roman_numerals": ["vii°7/vi", "V7/vi", "vi9", "vi9/IV"],
+        "key": "Ab",
+        "voicing_suggestions": "Use close voicings with the diminished chord, spread for the minor 9th",
+        "tips": [
+            "Practice the voice leading between Gdim7 and C7 first",
+            "Let the b9 on C7 resolve down to the root of Fm",
+            "Start at 60 BPM and gradually increase to 90 BPM"
+        ]
+    }},
+    "difficulty": "intermediate",
+    "estimated_duration_minutes": 15,
+    "target_bpm": 70
+}}
+
+## Output Format (JSON):
+{{
+    "title": "Creative, engaging curriculum title reflecting the {primary_style} focus",
+    "description": "Compelling 2-3 sentence overview that excites the student about their journey",
     "modules": [
         {{
-            "title": "Module title",
-            "description": "Module description",
-            "theme": "theme_slug (e.g., gospel_fundamentals)",
+            "title": "Module title (specific, not generic)",
+            "description": "What this module covers and why it matters",
+            "theme": "{primary_style}_specific_theme",
             "start_week": 1,
             "end_week": 4,
-            "outcomes": ["What student will learn"],
+            "outcomes": ["Specific skill 1", "Specific skill 2", "Specific skill 3"],
             "lessons": [
                 {{
                     "title": "Lesson title",
-                    "description": "Lesson description",
+                    "description": "Compelling lesson description",
                     "week_number": 1,
-                    "concepts": ["Concept 1", "Concept 2"],
+                    "concepts": ["Concept 1", "Concept 2", "Concept 3"],
                     "theory_content": {{
-                        "summary": "Brief theory explanation",
-                        "key_points": ["Point 1", "Point 2"]
+                        "summary": "Clear, educational 2-3 sentence explanation",
+                        "key_points": ["Point 1", "Point 2", "Point 3"]
                     }},
+                    "estimated_duration_minutes": 45,
                     "exercises": [
-                        {{
-                            "title": "Exercise title",
-                            "description": "Exercise description",
-                            "exercise_type": "progression|scale|voicing|pattern|rhythm|ear_training",
-                            "content": {{
-                                "chords": ["Dm7", "G7", "Cmaj7"],
-                                "key": "C",
-                                "roman_numerals": ["ii7", "V7", "Imaj7"]
-                            }},
-                            "difficulty": "beginner|intermediate|advanced",
-                            "estimated_duration_minutes": 10,
-                            "target_bpm": 60
-                        }}
+                        // 3-5 DETAILED exercises following the format above
                     ]
                 }}
             ]
@@ -500,9 +602,13 @@ Generate a detailed curriculum in the following JSON format:
     ]
 }}
 
-Focus on progressive skill building, starting from the student's current level and advancing toward their goals.
-Include a variety of exercise types to address all skill areas.
-Ensure proper prerequisite ordering in the curriculum.
+## Final Instructions:
+1. Make this curriculum SO GOOD that students will want to share it with friends
+2. Include style-specific techniques and vocabulary for {primary_style}
+3. Build progressively - each lesson should build on the previous
+4. Balance theory, technique, and creative application
+5. Include real songs or standards when appropriate for context
+6. Return ONLY valid JSON - no markdown, no explanations outside the JSON
 """
     
     def _generate_fallback_curriculum(

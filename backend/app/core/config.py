@@ -58,9 +58,11 @@ class Settings(BaseSettings):
     # Background job settings
     audio_generation_timeout: int = 300  # 5 minutes per exercise
 
-    # Local LLM Config (MLX)
-    local_llm_model: str = "mlx-community/Phi-3.5-mini-instruct-4bit"
-    force_local_llm: bool = False  # Force local LLM for all compatible tasks
+    # Local LLM Config (MLX on M4 Pro with 24GB RAM)
+    # SAFE for 24GB RAM: Qwen2.5-7B (complexity 1-7)
+    # Complexity 8-10 will use Gemini API (cloud fallback)
+    local_llm_model: str = "mlx-community/Qwen2.5-7B-Instruct-4bit"
+    force_local_llm: bool = False  # Use Gemini for complexity 8-10 (curriculum generation)
 
     model_config = SettingsConfigDict(
         env_file=".env",

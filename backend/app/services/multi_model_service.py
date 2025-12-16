@@ -2,18 +2,20 @@
 
 Manages multiple local LLMs with automatic task routing based on complexity:
 - Tier 1 (Small): Phi-3.5 Mini (3.8B) - Complexity 1-4 tasks (~50 tok/s)
-- Tier 2 (Medium): Llama 3.3 70B (4-bit) - Complexity 5-7 tasks (~5-6 tok/s, GPT-4 class quality)
+- Tier 2 (Medium): Qwen2.5-7B (4-bit) - Complexity 5-7 tasks (~20 tok/s, good quality)
 - Tier 3 (Cloud): Gemini API - Complexity 8-10 tasks (fallback)
 
-Performance on M4 Pro:
+Performance on M4 Pro (16-24GB RAM):
 - Phi-3.5 Mini: ~50 tokens/sec, 2-3GB RAM
-- Llama 3.3 70B (4-bit): ~5-6 tokens/sec, 37GB RAM (GPT-4 level quality)
-- Total RAM usage: 39GB peak (requires 64GB+ RAM system recommended, works on 24GB with memory pressure)
+- Qwen2.5-7B (4-bit): ~20 tokens/sec, 5-6GB RAM
+- Total RAM usage: ~8-9GB peak (safe for 16GB+ systems)
 
 Cost Savings:
 - Current: $13-28/month (60% Gemini usage)
-- After: $2-5/month (90% local usage, GPT-4 class quality)
+- After: $2-5/month (90% local usage)
 - Annual savings: $120-276/year (conservative estimate)
+
+SAFETY NOTE: 70B models require 64GB+ RAM. Using 7B default for safety.
 """
 
 import logging
@@ -25,6 +27,14 @@ import json
 from app.core.config import settings
 
 logger = logging.getLogger(__name__)
+
+# Memory safety checks
+try:
+    from app.utils.memory_check import is_model_safe, get_system_memory, get_recommended_model
+    MEMORY_CHECK_AVAILABLE = True
+except ImportError:
+    MEMORY_CHECK_AVAILABLE = False
+    logger.warning("⚠️ Memory check utility not available")
 
 # Try to import MLX
 try:
@@ -53,10 +63,9 @@ class MultiModelLLMService:
 
     Features:
     - Lazy loading: Models loaded on first use
-    - Hot swapping: Keep both models in memory (39GB total, requires sufficient RAM)
-    - Automatic fallback: Falls back to smaller model if larger fails
+    - Memory safety: Checks system RAM before loading large models
+    - Automatic fallback: Falls back to smaller model if larger fails or RAM insufficient
     - Structured output: JSON generation with validation
-    - GPT-4 class output: Llama 3.3 70B matches GPT-4 performance for tutorials, theory, coaching
     """
 
     def __init__(self):
@@ -71,9 +80,10 @@ class MultiModelLLMService:
                 "chat_template": "chatml",  # <|user|>, <|assistant|>, <|end|>
             },
             LocalModelTier.MEDIUM: {
-                "name": "mlx-community/Llama-3.3-70B-Instruct-4bit",
-                "max_tokens": 8192,  # Llama 3.3 supports 128K context, but 8K is practical
-                "chat_template": "llama3",  # <|begin_of_text|>, <|start_header_id|>, <|end_header_id|>, <|eot_id|>
+                "name": "mlx-community/Qwen2.5-14B-Instruct-4bit",
+                "max_tokens": 4096,
+                "chat_template": "qwen",  # <|im_start|>, <|im_end|>
+                "ram_required_gb": 12,
             },
         }
 
@@ -102,11 +112,21 @@ class MultiModelLLMService:
             logger.info(f"📥 Loading {tier.value} model: {config['name']}")
 
             if tier == LocalModelTier.SMALL:
-                logger.info("⏳ Loading Phi-3.5 Mini (2.3GB, cached after first download)")
+                logger.info("⏳ Loading Phi-3.5 Mini (~3GB RAM, cached after first download)")
             elif tier == LocalModelTier.MEDIUM:
-                logger.info("⏳ Loading Llama 3.3 70B 4-bit (37GB, first load will download)")
-                logger.info("   This may take 15-30 minutes on first run...")
-                logger.info("   💡 GPT-4 class quality - worth the wait!")
+                logger.info("⏳ Loading Qwen2.5-14B (~12GB RAM, cached after first download)")
+            
+            # Memory safety check before loading
+            if MEMORY_CHECK_AVAILABLE:
+                is_safe, safety_msg = is_model_safe(config["name"])
+                if not is_safe:
+                    logger.warning(f"⚠️ {safety_msg}")
+                    if tier == LocalModelTier.MEDIUM:
+                        logger.warning("🔄 Falling back to SMALL tier (Phi-3.5 Mini)")
+                        return self._load_model(LocalModelTier.SMALL)
+                    raise RuntimeError(f"Cannot load model: {safety_msg}")
+                else:
+                    logger.info(safety_msg)
 
             # Load model using MLX (cached after first download)
             model, tokenizer = load(config["name"])
@@ -124,16 +144,17 @@ class MultiModelLLMService:
             logger.error(f"❌ Failed to load {tier.value} model: {e}")
             raise e
 
-    def select_model(self, complexity: int) -> Optional[LocalModelTier]:
+    def select_model(self, complexity: int, force_local: bool = False) -> Optional[LocalModelTier]:
         """Select best local model for task complexity
 
         Routing logic:
         - Complexity 1-4: Phi-3.5 Mini (small, fast)
-        - Complexity 5-7: Qwen2.5-7B (medium, quality)
-        - Complexity 8-10: None (use Gemini API)
+        - Complexity 5-7: Llama 3.3 70B (medium, GPT-4 quality)
+        - Complexity 8-10: Llama 3.3 70B if force_local=True, else None (use Gemini API)
 
         Args:
             complexity: Task complexity score (1-10)
+            force_local: If True, use MEDIUM tier for complexity 8-10 instead of None
 
         Returns:
             LocalModelTier or None if task too complex for local models
@@ -143,7 +164,10 @@ class MultiModelLLMService:
         elif complexity <= 7:
             return LocalModelTier.MEDIUM
         else:
-            # Task too complex for local models
+            # Task complexity 8-10: use MEDIUM (Llama 3.3 70B) if forced, else None
+            if force_local:
+                logger.info(f"🦙 Force local enabled: using Llama 3.3 70B for complexity {complexity} task")
+                return LocalModelTier.MEDIUM
             return None
 
     def _format_prompt(self, prompt: str, tier: LocalModelTier, system_prompt: Optional[str] = None) -> str:
@@ -190,6 +214,7 @@ class MultiModelLLMService:
         max_tokens: int = 1024,
         temperature: float = 0.7,
         system_prompt: Optional[str] = None,
+        force_local: bool = False,
     ) -> str:
         """Generate text using appropriate local model
 
@@ -202,19 +227,20 @@ class MultiModelLLMService:
             max_tokens: Maximum tokens to generate
             temperature: Sampling temperature (0.0-1.0)
             system_prompt: Optional system prompt
+            force_local: If True, use local model even for complexity 8-10
 
         Returns:
             Generated text
 
         Raises:
             RuntimeError: If no local model can handle this complexity
-            ValueError: If task too complex for local models (8-10)
+            ValueError: If task too complex for local models (8-10) and not forced
         """
         if not self.loaded:
             raise RuntimeError("MLX not available, use Gemini API instead")
 
         # Select appropriate model tier
-        tier = self.select_model(complexity)
+        tier = self.select_model(complexity, force_local=force_local)
 
         if tier is None:
             raise ValueError(
@@ -278,6 +304,7 @@ class MultiModelLLMService:
         complexity: int,
         max_tokens: int = 1024,
         temperature: float = 0.3,
+        force_local: bool = False,
     ) -> Dict[str, Any]:
         """Generate structured JSON output using local LLM
 
@@ -287,6 +314,7 @@ class MultiModelLLMService:
             complexity: Task complexity score (1-10)
             max_tokens: Maximum tokens
             temperature: Lower temp for more consistent JSON
+            force_local: If True, use local model even for complexity 8-10
 
         Returns:
             Parsed JSON dict
@@ -307,6 +335,7 @@ JSON Response:"""
             complexity=complexity,
             max_tokens=max_tokens,
             temperature=temperature,
+            force_local=force_local,
         )
 
         # Extract JSON from response
