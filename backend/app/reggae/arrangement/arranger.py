@@ -104,30 +104,30 @@ class ReggaeArranger(BaseArranger):
         """
         return apply_reggae_rhythm_pattern(notes, rhythm_name)
 
-    def _select_left_hand_pattern(self, context: ChordContext, application: str) -> str:
+    def _select_left_pattern(self, context: ChordContext, config: dict, position: int) -> str:
         """Select appropriate left hand pattern based on context.
 
         Args:
             context: Chord context
-            application: Application type
+            config: Application configuration
+            position: Position in progression
 
         Returns:
             Pattern name
         """
-        config = self.application_configs.get(application, self.application_configs["roots"])
         return random.choice(config["left_patterns"])
 
-    def _select_right_hand_pattern(self, context: ChordContext, application: str) -> str:
+    def _select_right_pattern(self, context: ChordContext, config: dict, position: int) -> str:
         """Select appropriate right hand pattern based on context.
 
         Args:
             context: Chord context
-            application: Application type
+            config: Application configuration
+            position: Position in progression
 
         Returns:
             Pattern name
         """
-        config = self.application_configs.get(application, self.application_configs["roots"])
         return random.choice(config["right_patterns"])
 
     def _select_rhythm_pattern(self, application: str) -> str:
@@ -187,3 +187,33 @@ class ReggaeArranger(BaseArranger):
             ))
 
         return adjusted
+
+    def _add_improvisation(self, context: ChordContext, config: dict, position: int) -> List[Note]:
+        """Add reggae-specific improvisation elements.
+
+        Args:
+            context: Chord context
+            config: Application configuration
+            position: Position in progression
+
+        Returns:
+            List of improvisation notes
+        """
+        # Reggae typically doesn't have complex improvisation like jazz
+        # Return empty list as reggae focuses on groove and rhythm
+        return []
+
+    def _apply_rhythm_transformations(self, notes: List[Note], rhythm_patterns: List[str]) -> List[Note]:
+        """Apply reggae rhythm transformations.
+
+        Args:
+            notes: Notes to transform
+            rhythm_patterns: List of rhythm pattern names to apply
+
+        Returns:
+            Transformed notes with reggae rhythm
+        """
+        transformed = notes
+        for rhythm_name in rhythm_patterns:
+            transformed = apply_reggae_rhythm_pattern(transformed, rhythm_name)
+        return transformed

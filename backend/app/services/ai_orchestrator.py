@@ -506,13 +506,13 @@ Ensure proper prerequisite ordering in the curriculum.
 """
     
     def _generate_fallback_curriculum(
-        self, 
-        skill_profile: Dict[str, Any], 
+        self,
+        skill_profile: Dict[str, Any],
         duration_weeks: int
     ) -> Dict[str, Any]:
         """Generate a template-based curriculum when AI fails"""
-        goal = skill_profile.get('primary_goal', 'general')
-        
+        goal = skill_profile.get('primary_goal', 'general_musicianship') or 'general_musicianship'
+
         # Basic template structure
         if 'gospel' in goal.lower():
             modules = [

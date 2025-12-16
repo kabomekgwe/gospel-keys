@@ -6,7 +6,8 @@ import {
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 
-import Header from '../components/Header'
+import { AppShell } from '../components/layout/app-shell'
+import { ToastProvider } from '../components/ui/toast'
 
 import StoreDevtools from '../lib/demo-store-devtools'
 
@@ -33,6 +34,10 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       {
         title: 'Gospel Keys - AI Music Education Platform',
       },
+      {
+        name: 'description',
+        content: 'Master piano and music theory across 8 genres with AI-powered curriculum, GPU-accelerated MIDI synthesis, and real-time performance analysis.',
+      },
     ],
     links: [
       {
@@ -46,27 +51,34 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 })
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+  // Only show devtools in development
+  const isDev = import.meta.env.DEV
+
   return (
     <html lang="en">
       <head>
         <HeadContent />
       </head>
       <body>
-        <Header />
-        {children}
-        <TanStackDevtools
-          config={{
-            position: 'bottom-right',
-          }}
-          plugins={[
-            {
-              name: 'Tanstack Router',
-              render: <TanStackRouterDevtoolsPanel />,
-            },
-            StoreDevtools,
-            TanStackQueryDevtools,
-          ]}
-        />
+        <ToastProvider>
+          <AppShell>{children}</AppShell>
+
+          {isDev && (
+            <TanStackDevtools
+              config={{
+                position: 'bottom-right',
+              }}
+              plugins={[
+                {
+                  name: 'Tanstack Router',
+                  render: <TanStackRouterDevtoolsPanel />,
+                },
+                StoreDevtools,
+                TanStackQueryDevtools,
+              ]}
+            />
+          )}
+        </ToastProvider>
         <Scripts />
       </body>
     </html>

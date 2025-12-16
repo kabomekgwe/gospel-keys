@@ -141,12 +141,10 @@ class RnBArranger(BaseArranger):
 
         return notes
 
-    def _select_left_hand_pattern(self, context: ChordContext, application: str) -> str:
-        config = self.application_configs.get(application, self.application_configs["groove"])
+    def _select_left_pattern(self, context: ChordContext, config: dict, position: int) -> str:
         return random.choice(config["left_patterns"])
 
-    def _select_right_hand_pattern(self, context: ChordContext, application: str) -> str:
-        config = self.application_configs.get(application, self.application_configs["groove"])
+    def _select_right_pattern(self, context: ChordContext, config: dict, position: int) -> str:
         return random.choice(config["right_patterns"])
 
     def _select_rhythm_pattern(self, application: str) -> str:
@@ -167,3 +165,15 @@ class RnBArranger(BaseArranger):
             duration=n.duration,
             velocity=max(min_vel, min(max_vel, n.velocity))
         ) for n in notes]
+
+    def _add_improvisation(self, context: ChordContext, config: dict, position: int) -> List[Note]:
+        """Add R&B-specific improvisation elements."""
+        # R&B focuses on groove and feel rather than complex improvisation
+        return []
+
+    def _apply_rhythm_transformations(self, notes: List[Note], rhythm_patterns: List[str]) -> List[Note]:
+        """Apply rhythm transformations."""
+        transformed = notes
+        for rhythm in rhythm_patterns:
+            transformed = self._apply_rhythm_pattern(transformed, rhythm)
+        return transformed

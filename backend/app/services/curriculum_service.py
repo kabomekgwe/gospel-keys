@@ -56,13 +56,20 @@ class CurriculumService:
             select(UserSkillProfile).where(UserSkillProfile.user_id == user_id)
         )
         profile = result.scalar_one_or_none()
-        
+
         if not profile:
-            profile = UserSkillProfile(user_id=user_id)
+            # Create profile with sensible defaults
+            profile = UserSkillProfile(
+                user_id=user_id,
+                primary_goal="general_musicianship",  # Default goal
+                preferred_style="visual",  # Default learning style
+                style_familiarity_json='{"gospel": 3, "jazz": 2, "blues": 2}',  # Some familiarity
+                interests_json='["gospel", "jazz"]'  # Default interests
+            )
             self.db.add(profile)
             await self.db.commit()
             await self.db.refresh(profile)
-        
+
         return profile
     
     async def update_skill_profile(
@@ -271,7 +278,16 @@ class CurriculumService:
                     self.db.add(exercise)
         
         await self.db.commit()
-        await self.db.refresh(curriculum)
+
+        # Load curriculum with all relationships to avoid lazy loading issues
+        result = await self.db.execute(
+            select(Curriculum)
+            .where(Curriculum.id == curriculum.id)
+            .options(
+                selectinload(Curriculum.modules).selectinload(CurriculumModule.lessons)
+            )
+        )
+        curriculum = result.scalar_one()
 
         # Queue audio generation for all exercises (Phase 1)
         await self._queue_curriculum_audio_generation(curriculum.id)

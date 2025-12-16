@@ -4,7 +4,7 @@ Significantly reduced from 382 lines to ~120 lines by using BaseGenreGenerator.
 All duplicate logic eliminated through inheritance.
 """
 
-from typing import List, Optional
+from typing import Any, List, Optional
 from pathlib import Path
 
 from app.services.base_genre_generator import BaseGenreGenerator

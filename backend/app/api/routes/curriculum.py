@@ -275,14 +275,13 @@ async def get_curriculum(
 
 
 async def _curriculum_to_response(
-    curriculum: Curriculum, 
+    curriculum: Curriculum,
     service: CurriculumService
 ) -> CurriculumResponse:
     """Convert curriculum model to response schema"""
-    # Load full curriculum if modules not loaded
-    if not curriculum.modules:
-        curriculum = await service.get_curriculum_with_details(curriculum.id)
-    
+    # Always load full curriculum with relationships to avoid lazy loading
+    curriculum = await service.get_curriculum_with_details(curriculum.id)
+
     module_summaries = []
     for module in curriculum.modules:
         lesson_count = len(module.lessons) if module.lessons else 0

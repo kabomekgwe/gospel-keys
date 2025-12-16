@@ -12,8 +12,8 @@ from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
 from app.core.config import settings
-from app.models.arrangement import Arrangement
-from app.pipeline.midi_export import export_enhanced_midi
+from app.gospel import Arrangement
+from app.gospel.midi.enhanced_exporter import export_enhanced_midi
 from app.schemas.gospel import MIDINoteInfo
 
 

@@ -1,118 +1,231 @@
-import { createFileRoute } from '@tanstack/react-router'
-import {
-  Zap,
-  Server,
-  Route as RouteIcon,
-  Shield,
-  Waves,
-  Sparkles,
-} from 'lucide-react'
+import { createFileRoute, Link } from '@tanstack/react-router';
+import { useActiveCurriculum } from '../hooks/useCurriculum';
+import { Button } from '@/components/ui/button';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Music2, Sparkles, Zap, BarChart3, Music, DollarSign } from 'lucide-react';
+import { GENRES } from '@/lib/genres';
 
-export const Route = createFileRoute('/')({ component: App })
+export const Route = createFileRoute('/')({ component: HomePage });
 
-function App() {
-  const features = [
-    {
-      icon: <Zap className="w-12 h-12 text-cyan-400" />,
-      title: 'Powerful Server Functions',
-      description:
-        'Write server-side code that seamlessly integrates with your client components. Type-safe, secure, and simple.',
-    },
-    {
-      icon: <Server className="w-12 h-12 text-cyan-400" />,
-      title: 'Flexible Server Side Rendering',
-      description:
-        'Full-document SSR, streaming, and progressive enhancement out of the box. Control exactly what renders where.',
-    },
-    {
-      icon: <RouteIcon className="w-12 h-12 text-cyan-400" />,
-      title: 'API Routes',
-      description:
-        'Build type-safe API endpoints alongside your application. No separate backend needed.',
-    },
-    {
-      icon: <Shield className="w-12 h-12 text-cyan-400" />,
-      title: 'Strongly Typed Everything',
-      description:
-        'End-to-end type safety from server to client. Catch errors before they reach production.',
-    },
-    {
-      icon: <Waves className="w-12 h-12 text-cyan-400" />,
-      title: 'Full Streaming Support',
-      description:
-        'Stream data from server to client progressively. Perfect for AI applications and real-time updates.',
-    },
-    {
-      icon: <Sparkles className="w-12 h-12 text-cyan-400" />,
-      title: 'Next Generation Ready',
-      description:
-        'Built from the ground up for modern web applications. Deploy anywhere JavaScript runs.',
-    },
-  ]
+function HomePage() {
+  const { data: activeCurriculum, isLoading } = useActiveCurriculum();
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900">
-      <section className="relative py-20 px-6 text-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-blue-500/10 to-purple-500/10"></div>
+    <div className="min-h-screen">
+      {/* Hero Section */}
+      <section className="relative bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 py-20 px-6 text-center overflow-hidden">
+        {/* Background Effects */}
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-blue-500/10" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(168,85,247,0.1),transparent_50%)]" />
+
         <div className="relative max-w-5xl mx-auto">
-          <div className="flex items-center justify-center gap-6 mb-6">
-            <img
-              src="/tanstack-circle-logo.png"
-              alt="TanStack Logo"
-              className="w-24 h-24 md:w-32 md:h-32"
-            />
-            <h1 className="text-6xl md:text-7xl font-black text-white [letter-spacing:-0.08em]">
-              <span className="text-gray-300">TANSTACK</span>{' '}
-              <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
-                START
-              </span>
-            </h1>
-          </div>
-          <p className="text-2xl md:text-3xl text-gray-300 mb-4 font-light">
-            The framework for next generation AI applications
+          {/* Badge */}
+          <Badge variant="outline" className="mb-4 border-purple-400/50 text-purple-300">
+            <Sparkles className="size-3 mr-1" />
+            AI-Powered Music Education
+          </Badge>
+
+          {/* Title */}
+          <h1 className="text-5xl md:text-7xl font-black text-white mb-6">
+            <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">
+              Gospel Keys
+            </span>
+          </h1>
+
+          {/* Subtitle */}
+          <p className="text-xl md:text-2xl text-slate-300 mb-4 font-light">
+            Master Piano & Music Theory Across 8 Genres
           </p>
-          <p className="text-lg text-gray-400 max-w-3xl mx-auto mb-8">
-            Full-stack framework powered by TanStack Router for React and Solid.
-            Build modern applications with server functions, streaming, and type
-            safety.
+
+          <p className="text-base text-slate-400 max-w-2xl mx-auto mb-8">
+            Personalized AI curriculum, GPU-accelerated MIDI synthesis, and real-time performance
+            analysis. Learn Gospel, Jazz, Blues, Neo-Soul, and more with cutting-edge technology.
           </p>
-          <div className="flex flex-col items-center gap-4">
-            <a
-              href="https://tanstack.com/start"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-8 py-3 bg-cyan-500 hover:bg-cyan-600 text-white font-semibold rounded-lg transition-colors shadow-lg shadow-cyan-500/50"
-            >
-              Documentation
-            </a>
-            <p className="text-gray-400 text-sm mt-2">
-              Begin your TanStack Start journey by editing{' '}
-              <code className="px-2 py-1 bg-slate-700 rounded text-cyan-400">
-                /src/routes/index.tsx
-              </code>
+
+          {/* CTA Buttons */}
+          {!isLoading && (
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              {activeCurriculum ? (
+                <>
+                  <Button asChild variant="primary" size="xl">
+                    <Link to="/curriculum/daily">
+                      <Music2 className="size-5 mr-2" />
+                      Continue Learning
+                    </Link>
+                  </Button>
+                  <Button asChild variant="outline" size="xl" className="border-purple-400/50 text-white hover:bg-purple-500/10">
+                    <Link to="/curriculum">View Curriculum</Link>
+                  </Button>
+                </>
+              ) : (
+                <Button asChild variant="primary" size="xl">
+                  <Link to="/curriculum/new">
+                    <Sparkles className="size-5 mr-2" />
+                    Get Started Free
+                  </Link>
+                </Button>
+              )}
+            </div>
+          )}
+
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section className="py-20 px-6 bg-white dark:bg-slate-900">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <Badge variant="outline" className="mb-4">
+              <Sparkles className="size-3 mr-1" />
+              Features
+            </Badge>
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">
+              Why Gospel Keys?
+            </h2>
+            <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+              A comprehensive music education platform powered by AI and optimized for Apple Silicon
             </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <FeatureCard
+              icon={<Music className="size-6" />}
+              title="8 Music Genres"
+              description="Master Gospel, Jazz, Blues, Neo-Soul, Classical, Reggae, Latin, and R&B with genre-specific AI generation"
+              variant="gospel"
+            />
+            <FeatureCard
+              icon={<Sparkles className="size-6" />}
+              title="AI-Powered Curriculum"
+              description="Personalized learning paths generated by local LLM models tailored to your skill level and goals"
+              variant="jazz"
+            />
+            <FeatureCard
+              icon={<Zap className="size-6" />}
+              title="GPU-Accelerated Audio"
+              description="Real-time MIDI synthesis using Apple Silicon M4 GPU with convolution reverb effects"
+              variant="blues"
+            />
+            <FeatureCard
+              icon={<BarChart3 className="size-6" />}
+              title="Performance Analytics"
+              description="Track your progress with spaced repetition system and adaptive difficulty adjustments"
+              variant="neosoul"
+            />
+            <FeatureCard
+              icon={<Music2 className="size-6" />}
+              title="Music Theory Tools"
+              description="Interactive chord analysis, scale explorer, voicing generator, and progression builder"
+              variant="default"
+            />
+            <FeatureCard
+              icon={<DollarSign className="size-6" />}
+              title="Cost-Free AI"
+              description="Most features run on local LLMs (Phi-3.5 & Qwen2.5) reducing cloud API costs significantly"
+              variant="default"
+            />
           </div>
         </div>
       </section>
 
-      <section className="py-16 px-6 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {features.map((feature, index) => (
-            <div
-              key={index}
-              className="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl p-6 hover:border-cyan-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/10"
-            >
-              <div className="mb-4">{feature.icon}</div>
-              <h3 className="text-xl font-semibold text-white mb-3">
-                {feature.title}
-              </h3>
-              <p className="text-gray-400 leading-relaxed">
-                {feature.description}
-              </p>
-            </div>
-          ))}
+      {/* Genres Section */}
+      <section className="py-20 px-6 bg-slate-50 dark:bg-slate-950">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <Badge variant="outline" className="mb-4">
+              <Music className="size-3 mr-1" />
+              Genres
+            </Badge>
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">
+              Explore Music Genres
+            </h2>
+            <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+              AI-powered generators for authentic styles across multiple musical traditions
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {GENRES.map((genre) => (
+              <Link key={genre.id} to="/genres/$genreId" params={{ genreId: genre.id }}>
+                <Card
+                  variant="interactive"
+                  className="hover:scale-105 transition-transform duration-200 h-full"
+                >
+                  <CardContent className="p-6 text-center">
+                    <div className="text-4xl mb-3" aria-hidden="true">
+                      {genre.icon}
+                    </div>
+                    <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
+                      {genre.name}
+                    </h3>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+          </div>
+
+          <div className="text-center mt-8">
+            <Button asChild variant="primary" size="lg">
+              <Link to="/genres">
+                View All Genres
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-20 px-6 bg-gradient-to-br from-purple-600 via-pink-600 to-blue-600">
+        <div className="max-w-3xl mx-auto text-center">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            Ready to Master Piano?
+          </h2>
+          <p className="text-purple-100 text-lg mb-8">
+            Join thousands of musicians learning with AI-powered personalized curriculum.
+            Start your musical journey today with Gospel Keys.
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button asChild variant="outline" size="xl" className="bg-white text-purple-600 hover:bg-purple-50 border-0">
+              <Link to="/curriculum/new">
+                <Sparkles className="size-5 mr-2" />
+                Start Learning Free
+              </Link>
+            </Button>
+            <Button asChild variant="ghost" size="xl" className="text-white hover:bg-white/10">
+              <Link to="/genres">Explore Genres</Link>
+            </Button>
+          </div>
+
         </div>
       </section>
     </div>
-  )
+  );
 }
+
+interface FeatureCardProps {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+  variant?: "default" | "gospel" | "jazz" | "blues" | "neosoul";
+}
+
+function FeatureCard({ icon, title, description, variant = "default" }: FeatureCardProps) {
+  return (
+    <Card variant={variant} padding="lg" className="h-full hover:shadow-lg transition-shadow duration-200">
+      <CardHeader>
+        <div className="flex size-12 items-center justify-center rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 text-white mb-4">
+          {icon}
+        </div>
+        <CardTitle as="h3" className="text-xl mb-3">
+          {title}
+        </CardTitle>
+        <CardDescription className="leading-relaxed">
+          {description}
+        </CardDescription>
+      </CardHeader>
+    </Card>
+  );
+}
+
