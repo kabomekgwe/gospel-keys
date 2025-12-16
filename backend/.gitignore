@@ -31,5 +31,13 @@ Thumbs.db
 .coverage
 htmlcov/
 
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+*.log
+
 # Locks
 uv.lock

@@ -1,4 +1,4 @@
-"""Latin music generation module"""
+"""R&B music generation module"""
 
 from app.gospel import Note, ChordContext, HandPattern
 
