@@ -111,6 +111,21 @@ class VoiceLeadingRules(BaseModel):
     smooth_transitions: bool = Field(True, description="Minimize voice movement")
 
 
+class VariationType(str, Enum):
+    """Types of algorithmic variations for unique bar generation"""
+    TRANSPOSE = "transpose"
+    RHYTHM = "rhythm"
+    DENSITY = "density"
+    OCTAVE = "octave"
+    CHORDS = "chords"
+    INVERSION = "inversion"
+    LICK = "lick"
+    VOICING = "voicing"
+    HARMONY = "harmony"
+    SUBSTITUTION = "substitution"
+    ARRANGEMENT = "arrangement"
+
+
 class MusicGenerationRequest(BaseModel):
     """Request for hybrid music generation"""
     genre: MusicGenre = Field(..., description="Musical genre")
@@ -122,6 +137,10 @@ class MusicGenerationRequest(BaseModel):
     # Style options
     style: str = Field("traditional", description="Style variation within genre")
     complexity: int = Field(5, description="Complexity level 1-10", ge=1, le=10)
+    variations: Optional[List[VariationType]] = Field(
+        default=None, 
+        description="List of variations to apply to repeated bars"
+    )
 
     # Generation options
     include_melody: bool = Field(True, description="Generate melody")

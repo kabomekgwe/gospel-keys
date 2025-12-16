@@ -13,7 +13,7 @@ This is the main entry point for Phase 1 music generation.
 import logging
 import time
 from pathlib import Path
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
 import mido
 import random
 
@@ -30,6 +30,7 @@ from app.schemas.music_generation import (
     ChordVoicing,
     MusicGenre,
     MusicKey,
+    VariationType,
 )
 
 logger = logging.getLogger(__name__)
@@ -82,13 +83,39 @@ class HybridMusicGenerator:
 
         try:
             # Step 1 & 2: Generate/Load Chords and Melody
+            # Step 1 & 2: Generate/Load Chords and Melody
+            if not request.template_data and request.genre == MusicGenre.JAZZ:
+                logger.info("ℹ️ No template provided. Auto-loading 'World Class' Jazz Template (grok-1.json)")
+                try:
+                    import json
+                    template_path = Path("templates/generative_output/grok-1.json")
+                    if template_path.exists():
+                        with open(template_path, 'r') as f:
+                            full_json = json.load(f)
+                            # Extract Jazz musicSheetTemplate
+                            genres = full_json.get("genres", [])
+                            found = False
+                            for g in genres:
+                                if g.get("genre") == "Jazz":
+                                    request.template_data = g.get("musicSheetTemplate")
+                                    found = True
+                                    break
+                            
+                            if not found:
+                                # Fallback: try root or simple structure
+                                request.template_data = full_json.get("musicSheetTemplate", full_json)
+                                
+                except Exception as e:
+                    logger.warning(f"⚠️ Failed to auto-load default template: {e}")
+
             if request.template_data:
                 logger.info("📄 Using provided template data (World Class Mode)")
                 chord_progression, melody = self._parse_template(
                     request.template_data,
                     request.genre,
                     request.key,
-                    request.num_bars
+                    request.num_bars,
+                    request.variations
                 )
                 logger.info(f"✓ Loaded {len(chord_progression.chords)} chords and {len(melody.notes)} melody notes from template (extended to {request.num_bars} bars)")
             else:
@@ -101,8 +128,16 @@ class HybridMusicGenerator:
                 melody = None
                 if request.include_melody:
                     logger.info("🎼 Step 2: Generating melody...")
-                    melody = await self._generate_melody(request, chord_progression)
-                    logger.info(f"✓ Generated {len(melody.notes)} melody notes")
+                    try:
+                        melody = await self._generate_melody(request, chord_progression)
+                        if melody:
+                            logger.info(f"✓ Generated {len(melody.notes)} melody notes")
+                        else:
+                            logger.warning("⚠️ Melody generation returned None")
+                    except Exception as e:
+                        logger.error(f"⚠️ Melody generation failed (LLM issue?): {e}")
+                        logger.info("⚠️ Continuing with Chords only...")
+                        melody = None
                 else:
                     logger.info("⏭️  Step 2: Melody generation skipped")
 
@@ -433,19 +468,31 @@ Keep analysis concise (3-4 sentences)."""
         template_data: Dict[str, Any],
         genre: MusicGenre,
         key: MusicKey,
-        target_bars: int = 8
+        target_bars: int = 8,
+        variations: Optional[List[VariationType]] = None
     ) -> tuple[ChordProgression, MelodySequence]:
         """Parse full music template into ChordProgression and MelodySequence"""
+        import copy
         
         raw_measures = template_data.get('measures', [])
         measures = []
+        original_len = len(raw_measures)
         
-        # Loop measures to fill target_bars
+        # Loop measures to fill target_bars with variation
         if raw_measures:
             while len(measures) < target_bars:
-                for m in raw_measures:
+                for i, m in enumerate(raw_measures):
                     if len(measures) < target_bars:
-                        measures.append(m)
+                        # If this is a repeat (index >= original length), apply variation
+                        is_repeat = len(measures) >= original_len
+                        
+                        # Create deep copy to modify
+                        measure_copy = copy.deepcopy(m)
+                        
+                        if is_repeat:
+                            self._apply_variation(measure_copy, len(measures), genre, variations)
+                        
+                        measures.append(measure_copy)
                     else:
                         break
         
@@ -487,11 +534,6 @@ Keep analysis concise (3-4 sentences)."""
                     octave_part = note_str[1:]
                 
                 octave = int(octave_part)
-                # MIDI note C4 is 60. Octave 4 * 12 + C(0) = 48? No.
-                # Standard: C4 = 60.
-                # note_name_map["C"] is 0.
-                # (Octave + 1) * 12 + note_name_map.
-                # (4 + 1) * 12 = 60. Correct.
                 midi = (octave + 1) * 12 + note_name_map.get(pitch_class, 0)
                 return midi
             except:
@@ -563,6 +605,9 @@ Keep analysis concise (3-4 sentences)."""
             
             current_beat_global += 4.0 # Assume 4/4 per measure
 
+
+
+
         # Construct MelodySequence
         # Determine range
         pitches = [n.pitch for n in melody_notes]
@@ -593,6 +638,94 @@ Keep analysis concise (3-4 sentences)."""
         )
         
         return chord_progression, melody_sequence
+
+    def _apply_variation(
+        self, 
+        measure: Dict[str, Any], 
+        bar_index: int, 
+        genre: MusicGenre,
+        allowed_variations: Optional[List[VariationType]] = None
+    ):
+        """Apply algorithmic variation to a measure (unique bars)"""
+        import random
+        
+        melody = measure.get('melody', [])
+        chords = measure.get('chords', [])
+        
+        # Variation Strategy
+        if allowed_variations:
+            options = [v.value for v in allowed_variations]
+        else:
+            options = ['transpose', 'rhythm', 'density', 'octave']
+            
+        variation_type = random.choice(options)
+        
+        # --- Harmonic Variations (Chords) ---
+        if variation_type in ['substitution', 'harmony', 'chords']:
+            # Tritone substitution logic
+            for chord in chords:
+                symbol = chord.get('symbol', 'C')
+                if '7' in symbol and 'maj' not in symbol and 'm' not in symbol: # Dominant 7
+                    # Find root
+                    try:
+                        root = symbol[:-1] if len(symbol) > 1 and symbol[1] in ['#', 'b'] else symbol[0]
+                        notes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
+                        # Normalize flats to sharps for lookup
+                        flat_map = {"Db": "C#", "Eb": "D#", "Gb": "F#", "Ab": "G#", "Bb": "A#"}
+                        lookup_root = flat_map.get(root, root)
+                        
+                        if lookup_root in notes:
+                            idx = notes.index(lookup_root)
+                            tritone_idx = (idx + 6) % 12
+                            tritone_root = notes[tritone_idx]
+                            # Replace with tritone sub
+                            chord['symbol'] = f"{tritone_root}7"
+                    except:
+                        pass
+
+        # --- Melodic Variations (Licks/Notes) ---
+        elif variation_type == 'lick':
+            # Create a simple 16th note run (arpeggio-ish) if chords exist
+            if chords and melody:
+                # Clear existing melody to make room for lick? Or append?
+                # Let's replace the last part of the bar with a lick
+                # Creating a downwards run
+                base_note = melody[0].get('note', 'C4') if melody else 'C4'
+                try:
+                    melody.clear() # Replace measure with lick
+                    # Simple descending run
+                    notes = ["C", "B", "A", "G", "F", "E", "D", "C"] # Scale degrees
+                    # This is very hacked, better to use chord tones
+                    # But for "Variation", a simple density runs works
+                    for i in range(4):
+                        melody.append({"note": f"C{5 if i < 2 else 4}", "duration": "sixteenth"})
+                        melody.append({"note": f"A{4}", "duration": "sixteenth"})
+                        melody.append({"note": f"G{4}", "duration": "sixteenth"})
+                        melody.append({"note": f"E{4}", "duration": "sixteenth"})
+                except:
+                    pass
+
+        # --- Rhythmic/Structural Variations ---
+        elif variation_type in ['transpose', 'octave', 'inversion']:
+            shift = random.choice([-1, 1])
+            for note in melody:
+                n = note.get('note', 'rest')
+                if n != 'rest' and len(n) >= 2:
+                    try:
+                        octave = int(n[-1])
+                        new_octave = max(1, min(7, octave + shift))
+                        note['note'] = n[:-1] + str(new_octave)
+                    except:
+                        pass
+        
+        elif variation_type == 'rhythm':
+            if len(melody) >= 2:
+                idx1, idx2 = random.sample(range(len(melody)), 2)
+                melody[idx1], melody[idx2] = melody[idx2], melody[idx1]
+
+        elif variation_type == 'density' or variation_type == 'arrangement':
+             if len(melody) > 2:
+                 melody.pop(random.randint(0, len(melody)-1))
 
 
 # Global singleton instance

@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from typing import Dict, List, Optional
 from decimal import Decimal
 
-from fastapi import APIRouter, HTTPException, Depends, Query
+from fastapi import APIRouter, HTTPException, Depends, Query, Form
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -25,7 +25,10 @@ from app.schemas.ai import (
     ChordPredictRequest, ChordPredictResponse,
     MidiGenerateRequest, MidiGenerateResponse
 )
+from app.schemas.music_generation import MusicGenerationRequest, MusicGenerationResponse, MusicGenre, MusicKey, VariationType
+from enum import Enum
 from app.services.ai_generator import ai_generator_service
+from app.services.hybrid_music_generator import hybrid_music_generator
 from app.services.template_loader import template_loader
 from app.services.ai.theory_service import theory_service
 from app.services.ai.midi_service import midi_service
@@ -33,6 +36,26 @@ from app.services.ai.chord_service import chord_service
 
 from app.database.session import get_db
 from app.database.models import ModelUsageLog
+
+
+class TimeSignature(str, Enum):
+    TS_4_4 = "4/4"
+    TS_3_4 = "3/4"
+    TS_6_8 = "6/8"
+    TS_12_8 = "12/8"
+    TS_2_4 = "2/4"
+    TS_5_4 = "5/4"
+
+
+class MusicStyle(str, Enum):
+    TRADITIONAL = "traditional"
+    MODERN = "modern"
+    BEBOP = "bebop"
+    BALLAD = "ballad"
+    SWING = "swing"
+    LATIN = "latin"
+    FUSION = "fusion"
+    GOSPEL_CHOPS = "gospel_chops"
 
 
 router = APIRouter(prefix="/ai", tags=["AI Generator"])
@@ -316,3 +339,96 @@ async def generate_midi(request: MidiGenerateRequest):
             )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"MIDI generation failed: {str(e)}")
+
+
+@router.post(
+    "/generate/hybrid",
+    response_model=MusicGenerationResponse,
+    summary="Generate Hybrid Music (World Class Mode)",
+    description="""
+    **Generate professional-quality music using the Hybrid Generator engine.**
+    
+    This endpoint combines template-based generation with AI orchestration to produce high-quality MIDI and Audio.
+    Uses **Form Data** for easy Swagger testing.
+    
+    **Key Features:**
+    *   **World Class Jazz**: Uses sophisticated shell voicings and realistic hand-splitting for piano.
+    *   **Templates**: deterministic structure using industry-standard templates (via `template_data`).
+    *   **Humanization**: automatically injects micro-timing and velocity humanization.
+    
+    **Parameters:**
+    *   `genre`: Target musical style (e.g., 'jazz', 'gospel').
+    *   `complexity` (1-10): Higher values = richer harmony, more extensions, denser arrangement.
+    *   `num_bars`: Length of the piece (templates will loop to fill this).
+    *   `include_melody` / `include_chords`: Toggle tracks for "mixed" or isolated output.
+    *   `prompt`: Optional text description for metadata.
+    """,
+    responses={
+        200: {
+            "description": "Successful generation",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "midi_file": "backend/output/hybrid/jazz_C_12345.mid",
+                        "generation_time_ms": 2500,
+                        "model_info": {"synthesizer": "Rust GPU Engine"}
+                    }
+                }
+            }
+        },
+        500: {"description": "Generation failed (internal error)"}
+    }
+)
+async def generate_hybrid_music(
+    genre: MusicGenre = Form(..., description="Musical genre"),
+    key: MusicKey = Form(MusicKey.C, description="Key signature"),
+    tempo: int = Form(120, description="Tempo in BPM"),
+    num_bars: int = Form(8, description="Number of bars to generate"),
+    time_signature: TimeSignature = Form(TimeSignature.TS_4_4, description="Time signature"),
+    style: MusicStyle = Form(MusicStyle.TRADITIONAL, description="Style variation"),
+    complexity: int = Form(5, description="Complexity level 1-10"),
+    variations: Optional[List[VariationType]] = Form(None, description="Variations to apply to repeated bars"),
+    include_melody: bool = Form(True, description="Generate melody"),
+    include_bass: bool = Form(True, description="Generate bass line"),
+    include_chords: bool = Form(True, description="Include chord voicings"),
+    synthesize_audio: bool = Form(True, description="Generate audio file"),
+    use_gpu_synthesis: bool = Form(True, description="Use GPU-accelerated synthesis"),
+    add_reverb: bool = Form(True, description="Add reverb effect"),
+    prompt: Optional[str] = Form(None, description="Optional prompt override")
+):
+    """
+    Generate music using the Hybrid Generator (Form Data).
+    """
+    try:
+        import json
+        
+        # reconstruct request object
+        request_data = MusicGenerationRequest(
+            genre=genre, 
+            key=key,
+            tempo=tempo,
+            num_bars=num_bars,
+            time_signature=time_signature.value,
+            style=style.value,
+            complexity=complexity,
+            variations=variations,
+            include_melody=include_melody,
+            include_bass=include_bass,
+            include_chords=include_chords,
+            synthesize_audio=synthesize_audio,
+            use_gpu_synthesis=use_gpu_synthesis,
+            add_reverb=add_reverb,
+            template_data=None # defaults for form
+        )
+        
+        # Map "Mixed" concept if needed (already handled by bool flags)
+        
+        response = await hybrid_music_generator.generate(request_data)
+        return response
+    except Exception as e:
+        import traceback
+        print(f"ERROR in generate_hybrid_music: {str(e)}")
+        print(traceback.format_exc())
+        raise HTTPException(status_code=500, detail=f"Hybrid generation failed: {str(e)}")
+
+
