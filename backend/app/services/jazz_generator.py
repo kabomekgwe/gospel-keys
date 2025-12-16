@@ -1,30 +1,20 @@
-"""Jazz Piano Generation Service - Gemini + Rule-Based Arranger"""
+"""Jazz Piano Generation Service - Refactored with Base Class
 
-import base64
-import re
-from pathlib import Path
-from typing import Optional, List, Tuple
-import google.generativeai as genai
+Reduced from 284 lines to ~90 lines by using BaseGenreGenerator.
+"""
 
-from app.core.config import settings
+from typing import List
+
+from app.services.base_genre_generator import BaseGenreGenerator
 from app.schemas.jazz import (
     GenerateJazzRequest,
     GenerateJazzResponse,
-    ChordAnalysis,
-    MIDINoteInfo,
     JazzGeneratorStatus,
 )
 from app.jazz.arrangement.arranger import JazzArranger
-from app.gospel.midi.enhanced_exporter import export_enhanced_midi
-from app.gospel import Arrangement
 
 
-# Configure Gemini
-if settings.google_api_key:
-    genai.configure(api_key=settings.google_api_key)
-
-
-class JazzGeneratorService:
+class JazzGeneratorService(BaseGenreGenerator):
     """
     Jazz piano generation service.
 
@@ -38,32 +28,47 @@ class JazzGeneratorService:
 
     def __init__(self):
         """Initialize jazz generation service."""
-        self.gemini_model = None
-        self.arranger = None
+        super().__init__(
+            genre_name="Jazz",
+            arranger_class=JazzArranger,
+            request_schema=GenerateJazzRequest,
+            response_schema=GenerateJazzResponse,
+            status_schema=JazzGeneratorStatus,
+            default_tempo=120,  # Standard jazz tempo
+            output_subdir="jazz_generated"
+        )
 
-        # Initialize Gemini
-        if settings.google_api_key:
-            try:
-                self.gemini_model = genai.GenerativeModel('gemini-1.5-flash')
-                print("✅ Gemini API initialized for Jazz")
-            except Exception as e:
-                print(f"⚠️  Gemini initialization failed: {e}")
+    # =====================================================================
+    # ABSTRACT METHOD IMPLEMENTATIONS - Jazz-specific behavior
+    # =====================================================================
 
-        # Initialize arranger (rule-based)
-        try:
-            self.arranger = JazzArranger()
-            print("✅ Jazz arranger initialized")
-        except Exception as e:
-            print(f"❌ Jazz arranger failed: {e}")
-            raise
+    def _get_style_context(self) -> str:
+        """Get jazz-specific style context for AI prompts."""
+        return """Requirements:
+- Use jazz harmony with ii-V-I progressions
+- Rootless voicings (drop-2, drop-3)
+- Extensions: 9ths, 11ths, 13ths, altered dominants
+- Walking bass patterns in left hand
+- Syncopated comping rhythms
+- Consider bebop, modal jazz, and swing traditions"""
+
+    def _get_default_progression(self, key: str) -> List[str]:
+        """Get fallback jazz chord progression (ii-V-I in C)."""
+        return ["Dm7", "G7", "Cmaj7", "Am7"]
 
     def get_status(self) -> JazzGeneratorStatus:
         """Get current status of jazz generation system."""
         return JazzGeneratorStatus(
             gemini_available=self.gemini_model is not None,
             rules_available=self.arranger is not None,
-            ready_for_production=(self.gemini_model is not None and self.arranger is not None)
+            ready_for_production=(
+                self.gemini_model is not None and self.arranger is not None
+            )
         )
+
+    # =====================================================================
+    # PUBLIC API - Maintains backward compatibility
+    # =====================================================================
 
     async def generate_jazz_arrangement(
         self,
@@ -78,206 +83,7 @@ class JazzGeneratorService:
         Returns:
             GenerateJazzResponse with MIDI file and metadata
         """
-        try:
-            # Step 1: Generate chord progression using Gemini
-            if self.gemini_model and request.include_progression:
-                print("🎵 Generating jazz chord progression with Gemini...")
-                chords, key, tempo, analysis = await self._generate_progression_with_gemini(
-                    request.description,
-                    request.key,
-                    request.tempo,
-                    request.num_bars
-                )
-            else:
-                # Fallback: parse description for chords
-                print("📝 Parsing description for chords (Gemini unavailable)...")
-                chords, key, tempo = self._parse_description_fallback(
-                    request.description,
-                    request.key,
-                    request.tempo
-                )
-                analysis = []
-
-            # Step 2: Generate MIDI arrangement
-            print(f"🎹 Generating jazz arrangement ({request.application.value})...")
-            arrangement = self.arranger.arrange_progression(
-                chords=chords,
-                key=key,
-                bpm=tempo,
-                application=request.application.value,
-                time_signature=(4, 4)
-            )
-
-            # Step 3: Export to MIDI
-            print("💾 Exporting to MIDI...")
-            midi_path, midi_base64 = self._export_to_midi(arrangement)
-
-            # Step 4: Build response
-            return GenerateJazzResponse(
-                success=True,
-                midi_file_path=str(midi_path),
-                midi_base64=midi_base64,
-                progression=analysis if request.include_progression else None,
-                arrangement_info={
-                    "tempo": arrangement.tempo,
-                    "key": arrangement.key,
-                    "time_signature": f"{arrangement.time_signature[0]}/{arrangement.time_signature[1]}",
-                    "total_bars": arrangement.total_bars,
-                    "total_notes": len(arrangement.left_hand_notes) + len(arrangement.right_hand_notes),
-                    "left_hand_notes": len(arrangement.left_hand_notes),
-                    "right_hand_notes": len(arrangement.right_hand_notes),
-                    "duration_seconds": round(arrangement.total_duration_seconds, 2),
-                    "application": arrangement.application,
-                },
-                notes_preview=self._get_notes_preview(arrangement),
-                generation_method="gemini+rules"
-            )
-
-        except Exception as e:
-            print(f"❌ Jazz generation failed: {e}")
-            import traceback
-            traceback.print_exc()
-            return GenerateJazzResponse(
-                success=False,
-                generation_method="failed",
-                error=str(e)
-            )
-
-    async def _generate_progression_with_gemini(
-        self,
-        description: str,
-        key: Optional[str],
-        tempo: Optional[int],
-        num_bars: int
-    ) -> Tuple[List[str], str, int, List[ChordAnalysis]]:
-        """Generate jazz chord progression using Gemini API."""
-        # Build prompt
-        prompt = f"""You are an expert jazz pianist and music theorist.
-
-Generate a {num_bars}-bar jazz piano chord progression based on this description:
-"{description}"
-
-{"Key: " + key if key else "Choose an appropriate key"}
-{"Tempo: " + str(tempo) + " BPM" if tempo else "Choose an appropriate tempo"}
-
-Requirements:
-- Use authentic jazz harmony (9ths, 11ths, 13ths, altered chords)
-- Include ii-V-I progressions where appropriate
-- Use rootless voicings and extensions
-- Rich harmonic movement typical of jazz standards
-
-Return ONLY valid JSON with this exact structure:
-{{
-  "key": "C",
-  "tempo": 120,
-  "chords": [
-    {{
-      "symbol": "Dm7",
-      "function": "ii7",
-      "notes": ["D", "F", "A", "C"],
-      "comment": "Minor 7th in Dorian mode"
-    }}
-  ]
-}}
-
-Generate {num_bars} chords total. Each chord should have symbol, function, notes, and comment."""
-
-        response = self.gemini_model.generate_content(prompt)
-
-        # Parse JSON from response
-        import json
-        response_text = response.text.strip()
-
-        # Extract JSON (handle code blocks)
-        json_match = re.search(r'```json\s*([\s\S]*?)\s*```', response_text)
-        if json_match:
-            json_text = json_match.group(1)
-        else:
-            # Try direct parse
-            json_match = re.search(r'\{[\s\S]*\}', response_text)
-            json_text = json_match.group(0) if json_match else response_text
-
-        data = json.loads(json_text)
-
-        # Extract data
-        generated_key = data.get("key", key or "C")
-        generated_tempo = data.get("tempo", tempo or 120)
-        chord_data = data.get("chords", [])
-
-        # Build chord list and analysis
-        chords = [c["symbol"] for c in chord_data]
-        analysis = [
-            ChordAnalysis(
-                symbol=c["symbol"],
-                function=c.get("function", ""),
-                notes=c.get("notes", []),
-                comment=c.get("comment")
-            )
-            for c in chord_data
-        ]
-
-        return chords, generated_key, generated_tempo, analysis
-
-    def _parse_description_fallback(
-        self,
-        description: str,
-        key: Optional[str],
-        tempo: Optional[int]
-    ) -> Tuple[List[str], str, int]:
-        """Fallback: parse description without Gemini."""
-        # Extract key if present
-        key_match = re.search(r'\b([A-G][#b]?)\s*(major|minor|m)?\b', description, re.IGNORECASE)
-        parsed_key = key or (key_match.group(1) if key_match else "C")
-
-        # Extract tempo
-        tempo_match = re.search(r'\b(\d{2,3})\s*bpm\b', description, re.IGNORECASE)
-        parsed_tempo = tempo or (int(tempo_match.group(1)) if tempo_match else 120)
-
-        # Default jazz progression (ii-V-I in C)
-        chords = ["Dm7", "G7", "Cmaj7", "Am7"]
-
-        return chords, parsed_key, parsed_tempo
-
-    def _export_to_midi(self, arrangement: Arrangement) -> Tuple[Path, str]:
-        """Export arrangement to MIDI file."""
-        # Create output directory
-        output_dir = settings.OUTPUTS_DIR / "jazz_generated"
-        output_dir.mkdir(parents=True, exist_ok=True)
-
-        # Generate filename
-        import time
-        timestamp = int(time.time())
-        filename = f"jazz_{arrangement.key}_{arrangement.tempo}bpm_{timestamp}.mid"
-        midi_path = output_dir / filename
-
-        # Export
-        export_enhanced_midi(arrangement, midi_path)
-
-        # Read and encode as base64
-        with open(midi_path, 'rb') as f:
-            midi_bytes = f.read()
-            midi_base64 = base64.b64encode(midi_bytes).decode('utf-8')
-
-        return midi_path, midi_base64
-
-    def _get_notes_preview(self, arrangement: Arrangement, bars: int = 4) -> List[MIDINoteInfo]:
-        """Get preview of first N bars for visualization."""
-        beats_per_bar = arrangement.time_signature[0]
-        max_time = bars * beats_per_bar
-
-        all_notes = arrangement.get_all_notes()
-        preview_notes = [n for n in all_notes if n.time < max_time]
-
-        return [
-            MIDINoteInfo(
-                pitch=note.pitch,
-                time=note.time,
-                duration=note.duration,
-                velocity=note.velocity,
-                hand=note.hand
-            )
-            for note in preview_notes[:100]  # Limit to 100 notes for preview
-        ]
+        return await self.generate_arrangement(request)
 
 
 # Global service instance
