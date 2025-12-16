@@ -6,6 +6,9 @@ Provides R&B-specific style context and default progressions.
 
 from typing import List
 from app.services.base_genre_generator import BaseGenreGenerator
+from app.services.local_llm_generator_mixin import LocalLLMGeneratorMixin
+from app.services.ml_progression_predictor_mixin import MLProgressionPredictorMixin
+from app.services.user_preference_learning_mixin import UserPreferenceLearningMixin
 from app.rnb.arrangement.arranger import RnBArranger
 from app.schemas.rnb import (
     GenerateRnBRequest,
@@ -14,7 +17,12 @@ from app.schemas.rnb import (
 )
 
 
-class RnBGeneratorService(BaseGenreGenerator):
+class RnBGeneratorService(
+    LocalLLMGeneratorMixin,
+    MLProgressionPredictorMixin,
+    UserPreferenceLearningMixin,
+    BaseGenreGenerator
+):
     """
     R&B music generator.
 

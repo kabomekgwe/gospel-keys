@@ -8,6 +8,9 @@ from typing import List, Optional
 from pathlib import Path
 
 from app.services.base_genre_generator import BaseGenreGenerator
+from app.services.local_llm_generator_mixin import LocalLLMGeneratorMixin
+from app.services.ml_progression_predictor_mixin import MLProgressionPredictorMixin
+from app.services.user_preference_learning_mixin import UserPreferenceLearningMixin
 from app.schemas.gospel import (
     GenerateGospelRequest,
     GenerateGospelResponse,
@@ -17,7 +20,12 @@ from app.gospel.arrangement.hybrid_arranger import HybridGospelArranger
 from app.gospel.arrangement.arranger import GospelArranger
 
 
-class GospelGeneratorService(BaseGenreGenerator):
+class GospelGeneratorService(
+    LocalLLMGeneratorMixin,
+    MLProgressionPredictorMixin,
+    UserPreferenceLearningMixin,
+    BaseGenreGenerator
+):
     """
     Gospel piano generation service using hybrid AI+rules approach.
 

@@ -6,6 +6,9 @@ Reduced from 284 lines to ~95 lines by using BaseGenreGenerator.
 from typing import List
 
 from app.services.base_genre_generator import BaseGenreGenerator
+from app.services.local_llm_generator_mixin import LocalLLMGeneratorMixin
+from app.services.ml_progression_predictor_mixin import MLProgressionPredictorMixin
+from app.services.user_preference_learning_mixin import UserPreferenceLearningMixin
 from app.schemas.neosoul import (
     GenerateNeosoulRequest,
     GenerateNeosoulResponse,
@@ -14,7 +17,12 @@ from app.schemas.neosoul import (
 from app.neosoul.arrangement.arranger import NeosoulArranger
 
 
-class NeosoulGeneratorService(BaseGenreGenerator):
+class NeosoulGeneratorService(
+    LocalLLMGeneratorMixin,
+    MLProgressionPredictorMixin,
+    UserPreferenceLearningMixin,
+    BaseGenreGenerator
+):
     """
     Neo-soul piano generation service.
 

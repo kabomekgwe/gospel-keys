@@ -6,6 +6,9 @@ Reduced from 115 lines to ~85 lines by using BaseGenreGenerator.
 from typing import List
 
 from app.services.base_genre_generator import BaseGenreGenerator
+from app.services.local_llm_generator_mixin import LocalLLMGeneratorMixin
+from app.services.ml_progression_predictor_mixin import MLProgressionPredictorMixin
+from app.services.user_preference_learning_mixin import UserPreferenceLearningMixin
 from app.schemas.blues import (
     GenerateBluesRequest,
     GenerateBluesResponse,
@@ -14,7 +17,12 @@ from app.schemas.blues import (
 from app.blues.arrangement.arranger import BluesArranger
 
 
-class BluesGeneratorService(BaseGenreGenerator):
+class BluesGeneratorService(
+    LocalLLMGeneratorMixin,
+    MLProgressionPredictorMixin,
+    UserPreferenceLearningMixin,
+    BaseGenreGenerator
+):
     """Blues piano generation service."""
 
     def __init__(self):

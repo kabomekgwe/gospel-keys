@@ -6,6 +6,9 @@ Provides Latin music style context and default progressions.
 
 from typing import List
 from app.services.base_genre_generator import BaseGenreGenerator
+from app.services.local_llm_generator_mixin import LocalLLMGeneratorMixin
+from app.services.ml_progression_predictor_mixin import MLProgressionPredictorMixin
+from app.services.user_preference_learning_mixin import UserPreferenceLearningMixin
 from app.latin.arrangement.arranger import LatinArranger
 from app.schemas.latin import (
     GenerateLatinRequest,
@@ -14,7 +17,12 @@ from app.schemas.latin import (
 )
 
 
-class LatinGeneratorService(BaseGenreGenerator):
+class LatinGeneratorService(
+    LocalLLMGeneratorMixin,
+    MLProgressionPredictorMixin,
+    UserPreferenceLearningMixin,
+    BaseGenreGenerator
+):
     """
     Latin/Salsa music generator.
 

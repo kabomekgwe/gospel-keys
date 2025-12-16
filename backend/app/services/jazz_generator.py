@@ -6,6 +6,9 @@ Reduced from 284 lines to ~90 lines by using BaseGenreGenerator.
 from typing import List
 
 from app.services.base_genre_generator import BaseGenreGenerator
+from app.services.local_llm_generator_mixin import LocalLLMGeneratorMixin
+from app.services.ml_progression_predictor_mixin import MLProgressionPredictorMixin
+from app.services.user_preference_learning_mixin import UserPreferenceLearningMixin
 from app.schemas.jazz import (
     GenerateJazzRequest,
     GenerateJazzResponse,
@@ -14,7 +17,12 @@ from app.schemas.jazz import (
 from app.jazz.arrangement.arranger import JazzArranger
 
 
-class JazzGeneratorService(BaseGenreGenerator):
+class JazzGeneratorService(
+    LocalLLMGeneratorMixin,
+    MLProgressionPredictorMixin,
+    UserPreferenceLearningMixin,
+    BaseGenreGenerator
+):
     """
     Jazz piano generation service.
 
