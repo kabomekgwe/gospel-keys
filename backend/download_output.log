@@ -1,56 +1,0 @@
-═══════════════════════════════════════════════════════════════════
-🌙 OVERNIGHT LLAMA 3.3 70B DOWNLOAD WITH SLEEP PREVENTION
-═══════════════════════════════════════════════════════════════════
-
-This script will:
-  ✅ Prevent your Mac from sleeping
-  ✅ Keep display on (optional - press Ctrl+Shift+Eject to turn off)
-  ✅ Download Llama 3.3 70B (37GB)
-  ✅ Log everything to download_log.txt
-  ✅ Play a sound when complete
-
-⏱️  Estimated time: 15-30 minutes
-💾 Download size: 37GB
-
-💡 TIP: You can close this terminal, but keep Terminal.app running
-
-🐍 Activating Python virtual environment...
-☕ Starting caffeinate (prevents sleep during download)...
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🔒 YOUR MAC WILL NOT SLEEP UNTIL DOWNLOAD COMPLETES
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-======================================================================
-🌙 OVERNIGHT LLAMA 3.3 70B DOWNLOAD
-======================================================================
-Started: 2025-12-16 01:10:07
-
-This script will:
-  1. Keep your Mac awake (no sleep during download)
-  2. Download Llama 3.3 70B 4-bit (37GB)
-  3. Show progress updates
-  4. Log everything to download_log.txt
-
-⏱️  Estimated time: 15-30 minutes (depending on internet speed)
-💾 Download size: 37GB
-📁 Location: ~/.cache/huggingface/hub/
-
-[01:10:07] 🚀 Starting download process...
-[01:10:07] 📦 Importing MLX framework...
-[01:10:24] ✅ MLX imported successfully
-[01:10:24] 📦 Importing multi-model service...
-Fetching 11 files:   0%|          | 0/11 [00:00<?, ?it/s]Fetching 11 files: 100%|██████████| 11/11 [00:00<00:00, 154823.30it/s]
-[01:10:26] ✅ Service imported successfully
-[01:10:26] ✅ Multi-model service is available
-[01:10:26] 
-[01:10:26] ======================================================================
-[01:10:26] 📥 STARTING LLAMA 3.3 70B DOWNLOAD (37GB)
-[01:10:26] ======================================================================
-[01:10:26] ⏳ This will take 15-30 minutes on fast internet...
-[01:10:26] 💡 Your Mac will stay awake during the download
-[01:10:26] 🔔 You'll hear a sound when complete (if volume is on)
-[01:10:26] 
-[01:10:26] 🔄 Loading Llama 3.3 70B model...
-[01:10:26]    (Downloading from mlx-community/Llama-3.3-70B-Instruct-4bit)
-Fetching 13 files:   0%|          | 0/13 [00:00<?, ?it/s]Fetching 13 files:   8%|▊         | 1/13 [00:01<00:14,  1.19s/it]Fetching 13 files:  15%|█▌        | 2/13 [22:34<2:26:03, 796.71s/it]Fetching 13 files:  31%|███       | 4/13 [22:47<45:10, 301.19s/it]  Fetching 13 files:  46%|████▌     | 6/13 [22:49<18:35, 159.43s/it]Fetching 13 files:  54%|█████▍    | 7/13 [22:51<11:57, 119.62s/it]Fetching 13 files: 100%|██████████| 13/13 [22:51<00:00, 105.49s/it]
