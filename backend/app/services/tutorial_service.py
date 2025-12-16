@@ -1,7 +1,8 @@
 """Tutorial Generation Service
 
 Generates comprehensive AI-powered tutorials for curriculum lessons.
-Uses Gemini Pro/Ultra for high-quality educational content.
+Now using enhanced prompt architecture with genre-authentic system prompts
+and silent fallback tracking.
 """
 
 import json
@@ -10,31 +11,45 @@ from datetime import datetime
 from typing import Dict, Optional
 
 from app.database.curriculum_models import CurriculumLesson
-from app.services.ai_orchestrator import ai_orchestrator, TaskType
+from app.services.ai_orchestrator_enhanced import enhanced_ai_orchestrator, TaskType
+from app.prompts.builders import TutorialPromptBuilder
 from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 
 
 class TutorialService:
-    """Service for generating AI-powered lesson tutorials"""
+    """Service for generating AI-powered lesson tutorials with genre authenticity"""
 
     def __init__(self):
         self.cache_ttl_hours = 720  # 30 days
+        self.orchestrator = enhanced_ai_orchestrator
 
     async def generate_lesson_tutorial(
         self,
         lesson: CurriculumLesson,
-        force_regenerate: bool = False
+        force_regenerate: bool = False,
+        user_skill_levels: Optional[Dict[str, int]] = None,
+        genre: Optional[str] = None
     ) -> Dict:
         """Generate comprehensive tutorial for a lesson
 
         Args:
             lesson: CurriculumLesson model instance
             force_regenerate: Regenerate even if tutorial exists
+            user_skill_levels: Optional skill levels for personalization
+                Example: {
+                    "overall": "intermediate",
+                    "technical_ability": 6,
+                    "theory_knowledge": 5,
+                    "rhythm_competency": 7,
+                    "goals": ["Master gospel voicings", "Learn runs"]
+                }
+            genre: Musical genre (gospel, jazz, blues, classical, neosoul)
+                If None, defaults to "gospel" for backward compatibility
 
         Returns:
-            Tutorial content dictionary
+            Tutorial content dictionary with genre-authentic content
         """
         try:
             # Check if tutorial already exists
@@ -44,125 +59,206 @@ class TutorialService:
                     logger.info(f"Using cached tutorial for lesson {lesson.id}")
                     return existing_tutorial
 
-            logger.info(f"Generating tutorial for lesson: {lesson.title}")
+            # Default to gospel if no genre specified (backward compatibility)
+            if genre is None:
+                genre = "gospel"
+                logger.debug(f"No genre specified, defaulting to gospel for lesson {lesson.id}")
 
-            # Build AI prompt
-            prompt = self._build_tutorial_prompt(lesson)
+            logger.info(
+                f"Generating tutorial for lesson: {lesson.title} (genre: {genre})",
+                extra={"lesson_id": lesson.id, "genre": genre}
+            )
 
-            # Generate using AI orchestrator
-            tutorial_data = await ai_orchestrator.generate_with_fallback(
+            # Build genre-authentic prompt using new architecture
+            prompt = self._build_enhanced_tutorial_prompt(
+                lesson,
+                user_skill_levels,
+                genre
+            )
+
+            # Generate using enhanced orchestrator with metadata tracking
+            tutorial_data = await self.orchestrator.generate_with_metadata(
                 prompt=prompt,
                 task_type=TaskType.TUTORIAL_GENERATION,
+                complexity=7,  # Tutorials are moderately complex (Llama 3.3 70B)
                 generation_config={
                     "temperature": 0.7,  # Creative but structured
                     "max_output_tokens": 4096,
                 },
-                cache_ttl_hours=self.cache_ttl_hours
+                cache_ttl_hours=self.cache_ttl_hours,
+                genre=genre,
+                return_metadata=False  # Users see only content (silent fallback)
             )
 
             # Validate structure
             validated_tutorial = self._validate_tutorial_structure(tutorial_data)
 
-            logger.info(f"Successfully generated tutorial for lesson {lesson.id}")
+            logger.info(
+                f"Successfully generated tutorial for lesson {lesson.id}",
+                extra={"genre": genre, "complexity": 7}
+            )
             return validated_tutorial
 
         except Exception as e:
-            logger.error(f"Failed to generate tutorial for lesson {lesson.id}: {e}")
+            logger.error(
+                f"Failed to generate tutorial for lesson {lesson.id}: {e}",
+                extra={"genre": genre, "error_type": type(e).__name__}
+            )
             # Return fallback template
             return self._get_fallback_tutorial(lesson)
 
-    def _build_tutorial_prompt(self, lesson: CurriculumLesson) -> str:
-        """Build AI prompt for tutorial generation
+    def _build_enhanced_tutorial_prompt(
+        self,
+        lesson: CurriculumLesson,
+        user_skill_levels: Optional[Dict[str, int]] = None,
+        genre: Optional[str] = None
+    ) -> str:
+        """Build enhanced tutorial prompt using new PromptBuilder
+
+        This replaces the old string concatenation approach with a structured,
+        genre-aware prompt builder that includes authentic cultural context.
 
         Args:
             lesson: CurriculumLesson model instance
+            user_skill_levels: Optional skill level dict
+            genre: Musical genre (gospel, jazz, blues, classical, neosoul)
 
         Returns:
-            Formatted prompt string
+            Complete prompt string with genre-authentic context
         """
+        # Initialize builder with genre context (includes genre-specific system prompt)
+        builder = TutorialPromptBuilder(genre=genre)
+
         # Parse lesson content
         theory_content = {}
         concepts = []
 
         try:
-            theory_content = json.loads(lesson.theory_content_json)
-            concepts = json.loads(lesson.concepts_json)
+            if lesson.theory_content_json:
+                theory_content = json.loads(lesson.theory_content_json)
+            if lesson.concepts_json:
+                concepts = json.loads(lesson.concepts_json)
         except json.JSONDecodeError:
-            pass
+            logger.warning(f"Failed to parse lesson content JSON for lesson {lesson.id}")
 
-        # Build prompt
-        prompt = f"""Generate a comprehensive piano lesson tutorial in JSON format.
+        # Add lesson content
+        builder.add_lesson_content(
+            title=lesson.title,
+            description=lesson.description,
+            concepts=concepts,
+            week_number=lesson.week_number,
+            duration_minutes=lesson.estimated_duration_minutes,
+            difficulty="intermediate"  # Could be dynamic based on lesson
+        )
 
-Lesson Information:
-- Title: {lesson.title}
-- Description: {lesson.description or 'Not provided'}
-- Week Number: {lesson.week_number}
-- Duration: {lesson.estimated_duration_minutes} minutes
-- Theory Content: {json.dumps(theory_content, indent=2)}
-- Key Concepts: {json.dumps(concepts, indent=2)}
+        # Add student profile if available
+        if user_skill_levels:
+            builder.add_student_profile(
+                skill_level=user_skill_levels.get('overall', 'intermediate'),
+                technical_ability=user_skill_levels.get('technical_ability'),
+                theory_knowledge=user_skill_levels.get('theory_knowledge'),
+                rhythm_competency=user_skill_levels.get('rhythm_competency'),
+                goals=user_skill_levels.get('goals', [])
+            )
 
-Generate a detailed tutorial with the following JSON structure:
+        # Add output format specification
+        builder.add_output_format(
+            "JSON",
+            schema={
+                "overview": "Learning objectives, outcomes, duration, difficulty",
+                "theory": "Summary, key points, examples, notation tips",
+                "demonstration": "Description, example progressions, exercises, visual aids",
+                "practice_guide": "Warm-up, detailed steps, cool-down",
+                "tips_and_tricks": "Category, tip, why it helps",
+                "common_mistakes": "Mistake, why it happens, fix, prevention",
+                "next_steps": "Preview, optional practice, resources"
+            }
+        )
 
-{{
-  "overview": {{
-    "what_you_will_learn": ["list of 3-5 learning objectives"],
-    "learning_outcomes": ["list of 3-5 expected outcomes"],
-    "duration_minutes": {lesson.estimated_duration_minutes},
-    "difficulty": "beginner|intermediate|advanced"
-  }},
-  "theory": {{
-    "summary": "2-3 paragraph explanation of the theory",
-    "key_points": ["list of 5-7 key theoretical points"],
-    "examples": ["list of 3-5 musical examples with explanations"],
-    "notation_tips": ["list of 3-5 notation reading tips"]
-  }},
-  "demonstration": {{
-    "description": "Detailed description of what to demonstrate",
-    "example_progressions": ["list of 2-3 chord progressions to demonstrate"],
-    "reference_exercises": ["list of exercise titles from this lesson"],
-    "visual_aids": ["list of suggested diagrams or visual aids"]
-  }},
-  "practice_guide": {{
-    "warm_up": ["list of 2-3 warm-up activities"],
-    "steps": [
-      {{
-        "step": 1,
-        "title": "Step title",
-        "instruction": "Detailed instruction",
-        "duration_minutes": 5,
-        "success_criteria": "How to know you've mastered this step",
-        "common_challenges": "Potential difficulties"
-      }}
-    ],
-    "cool_down": ["list of 1-2 cool-down activities"]
-  }},
-  "tips_and_tricks": [
-    {{
-      "category": "technique|theory|practice|performance",
-      "tip": "Specific actionable tip",
-      "why_it_helps": "Explanation of benefit"
-    }}
-  ],
-  "common_mistakes": [
-    {{
-      "mistake": "Description of common error",
-      "why_it_happens": "Explanation of cause",
-      "fix": "How to correct it",
-      "prevention": "How to avoid it"
-    }}
-  ],
-  "next_steps": {{
-    "preview": "Preview of what comes next in the curriculum",
-    "optional_practice": ["list of 2-3 optional exercises for advanced students"],
-    "resources": ["list of 2-3 recommended resources"]
-  }}
-}}
+        # Add genre-specific guidance
+        if genre:
+            genre_guidance = self._get_genre_specific_guidance(genre)
+            if genre_guidance:
+                builder.add_custom_section("Genre-Specific Tutorial Focus", genre_guidance)
 
-Focus on Gospel piano style. Make instructions clear, actionable, and encouraging.
-Ensure all JSON is valid and properly formatted.
-"""
+        # Add theory content context if available
+        if theory_content:
+            theory_text = json.dumps(theory_content, indent=2)
+            builder.add_custom_section(
+                "Theory Content Context",
+                f"Reference this theory content when creating the tutorial:\n{theory_text}"
+            )
 
-        return prompt
+        # Build and return
+        final_prompt = builder.build()
+
+        # Log token estimate for monitoring
+        token_estimate = builder.get_token_estimate()
+        logger.debug(
+            f"Built tutorial prompt",
+            extra={
+                "token_estimate": token_estimate,
+                "lesson_id": lesson.id,
+                "genre": genre,
+                "has_user_profile": user_skill_levels is not None
+            }
+        )
+
+        return final_prompt
+
+    def _get_genre_specific_guidance(self, genre: str) -> str:
+        """Get additional genre-specific guidance for tutorials
+
+        Args:
+            genre: Musical genre
+
+        Returns:
+            Genre-specific guidance text
+        """
+        guidance_map = {
+            "gospel": """
+- Emphasize the "feeling" and spiritual context
+- Reference Sunday morning worship applications
+- Explain voicings in terms of emotional impact
+- Connect technique to congregational support
+- Use authentic gospel terminology (runs, shouts, Sunday morning sound)
+- Suggest listening to contemporary gospel artists
+            """,
+            "jazz": """
+- Reference jazz standards and specific recordings
+- Explain historical context (bebop, modal, contemporary)
+- Connect to jazz tradition and lineage
+- Use proper jazz terminology (comping, changes, guide tones)
+- Include chord-scale relationships
+- Suggest listening to classic jazz recordings
+            """,
+            "blues": """
+- Emphasize feel, expression, and authenticity
+- Reference blues legends and regional styles (Delta, Chicago, Texas)
+- Explain "singing" on the piano
+- Connect to emotion and personal expression
+- Use blues terminology (blue note, shuffle, crushed note)
+- Suggest listening to blues masters
+            """,
+            "classical": """
+- Reference composers and period styles (Baroque, Classical, Romantic)
+- Emphasize proper technique and interpretation
+- Include historical performance practice
+- Use Italian/German musical terminology
+- Connect to music theory and analysis
+- Suggest score study and listening examples
+            """,
+            "neosoul": """
+- Reference modern artists (D'Angelo, Robert Glasper, Erykah Badu, H.E.R.)
+- Explain contemporary production context
+- Emphasize groove, pocket, and laid-back feel
+- Connect to hip-hop and R&B influences
+- Use modern terminology (vamp, texture, Rhodes sound)
+- Suggest listening to contemporary neo-soul artists
+            """
+        }
+
+        return guidance_map.get(genre.lower(), "")
 
     def _validate_tutorial_structure(self, tutorial_data: Dict) -> Dict:
         """Validate and ensure tutorial has required structure
@@ -186,20 +282,20 @@ Ensure all JSON is valid and properly formatted.
                 tutorial_data[section] = self._get_default_section(section)
 
         # Validate overview
-        if "what_you_will_learn" not in tutorial_data["overview"]:
-            tutorial_data["overview"]["what_you_will_learn"] = []
-        if "learning_outcomes" not in tutorial_data["overview"]:
+        if "what_you_will_learn" not in tutorial_data.get("overview", {}):
+            tutorial_data.setdefault("overview", {})["what_you_will_learn"] = []
+        if "learning_outcomes" not in tutorial_data.get("overview", {}):
             tutorial_data["overview"]["learning_outcomes"] = []
 
         # Validate theory
-        if "summary" not in tutorial_data["theory"]:
-            tutorial_data["theory"]["summary"] = ""
-        if "key_points" not in tutorial_data["theory"]:
+        if "summary" not in tutorial_data.get("theory", {}):
+            tutorial_data.setdefault("theory", {})["summary"] = ""
+        if "key_points" not in tutorial_data.get("theory", {}):
             tutorial_data["theory"]["key_points"] = []
 
         # Validate practice guide
-        if "steps" not in tutorial_data["practice_guide"]:
-            tutorial_data["practice_guide"]["steps"] = []
+        if "steps" not in tutorial_data.get("practice_guide", {}):
+            tutorial_data.setdefault("practice_guide", {})["steps"] = []
 
         return tutorial_data
 
