@@ -1,10 +1,10 @@
 """AI Generator API Routes"""
 
 from datetime import datetime, timedelta
-from typing import Dict
+from typing import Dict, List, Optional
 from decimal import Decimal
 
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Query
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -20,8 +20,17 @@ from app.schemas.ai import (
     UsageStatsResponse, ModelUsageStats, TaskTypeStats,
     ArrangeRequest, ArrangeResponse,
     SplitVoicingRequest, SplitVoicingResponse,
+    TheoryExplainRequest, TheoryExplainResponse,
+    MidiTokenizeRequest, MidiTokenizeResponse,
+    ChordPredictRequest, ChordPredictResponse,
+    MidiGenerateRequest, MidiGenerateResponse
 )
 from app.services.ai_generator import ai_generator_service
+from app.services.template_loader import template_loader
+from app.services.ai.theory_service import theory_service
+from app.services.ai.midi_service import midi_service
+from app.services.ai.chord_service import chord_service
+
 from app.database.session import get_db
 from app.database.models import ModelUsageLog
 
@@ -35,11 +44,20 @@ async def list_generators():
     return ai_generator_service.get_available_generators()
 
 
+@router.get("/templates", response_model=List[Dict[str, str]])
+async def list_templates():
+    """List available curriculum templates"""
+    return template_loader.list_templates()
+
+
 @router.post("/progression", response_model=ProgressionResponse)
-async def generate_progression(request: ProgressionRequest):
+async def generate_progression(
+    request: ProgressionRequest,
+    template_id: Optional[str] = Query(None, description="Optional ID of a curriculum template/exercise")
+):
     """Generate a chord progression based on style, mood, and key"""
     try:
-        return await ai_generator_service.generate_progression(request)
+        return await ai_generator_service.generate_progression(request, template_id=template_id)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Generation failed: {str(e)}")
 
@@ -72,10 +90,13 @@ async def optimize_voice_leading(request: VoiceLeadingRequest):
 
 
 @router.post("/exercise", response_model=ExerciseResponse)
-async def generate_exercise(request: ExerciseRequest):
+async def generate_exercise(
+    request: ExerciseRequest,
+    template_id: Optional[str] = Query(None, description="Optional ID of a curriculum template/exercise")
+):
     """Generate a practice exercise"""
     try:
-        return await ai_generator_service.generate_exercise(request)
+        return await ai_generator_service.generate_exercise(request, template_id=template_id)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Exercise generation failed: {str(e)}")
 
@@ -241,3 +262,57 @@ async def get_usage_stats(
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to get usage stats: {str(e)}")
+
+
+# === Phase 1 & 2: Local AI Stack Routes ===
+
+@router.post("/theory/explain", response_model=TheoryExplainResponse)
+async def explain_theory(request: TheoryExplainRequest):
+    """Explain a music theory concept using local LLM (Qwen)"""
+    try:
+        explanation = await theory_service.explain_concept(request.concept, request.context)
+        return TheoryExplainResponse(explanation=explanation)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Theory explanation failed: {str(e)}")
+
+@router.post("/chords/predict", response_model=ChordPredictResponse)
+async def predict_chords(request: ChordPredictRequest):
+    """Predict next chords using MusicLang"""
+    try:
+        predictions = await chord_service.predict_next_chords(request.progression, request.num_chords)
+        return ChordPredictResponse(predicted_chords=predictions)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Chord prediction failed: {str(e)}")
+
+@router.post("/midi/tokenize", response_model=MidiTokenizeResponse)
+async def tokenize_midi(request: MidiTokenizeRequest):
+    """Tokenize a MIDI file using MidiTok"""
+    try:
+        tokens = midi_service.tokenize_midi_file(request.file_path)
+        return MidiTokenizeResponse(tokens=tokens)
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="MIDI file not found")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Tokenization failed: {str(e)}")
+
+@router.post("/midi/generate", response_model=MidiGenerateResponse)
+async def generate_midi(request: MidiGenerateRequest):
+    """Generate MIDI from text prompt using MusicLang"""
+    try:
+        midi_path = await chord_service.generate_score(
+            prompt=request.prompt,
+            num_tokens=request.num_tokens
+        )
+        if midi_path:
+            return MidiGenerateResponse(
+                success=True,
+                midi_file_path=midi_path,
+                message="MIDI generated successfully"
+            )
+        else:
+            return MidiGenerateResponse(
+                success=False,
+                message="Failed to generate MIDI"
+            )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"MIDI generation failed: {str(e)}")

@@ -1,0 +1,459 @@
+{
+  "info": {
+    "name": "Gospel Keys - Curriculum API",
+    "description": "AI-powered music education curriculum API with personalized learning paths",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8000/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "curriculum_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "module_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "lesson_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "exercise_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "assessment_id",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Curriculum Generation",
+      "item": [
+        {
+          "name": "Generate Personalized Curriculum (AI)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"My Gospel Piano Journey\",\n  \"duration_weeks\": 12,\n  \"genre\": \"gospel\",\n  \"skill_level\": \"intermediate\",\n  \"goals\": [\"church\", \"improvise\", \"byear\"]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/curriculum/generate",
+              "host": ["{{baseUrl}}"],
+              "path": ["curriculum", "generate"]
+            },
+            "description": "Generates a personalized curriculum using local LLM (Phi-3.5 Mini or Qwen2.5-7B). Takes 5-15 seconds."
+          },
+          "response": []
+        },
+        {
+          "name": "List Available Templates",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/curriculum/templates",
+              "host": ["{{baseUrl}}"],
+              "path": ["curriculum", "templates"]
+            },
+            "description": "Returns list of default curriculum templates (gospel_essentials, jazz_foundations, etc.)"
+          },
+          "response": []
+        },
+        {
+          "name": "Create from Default Template",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"template_key\": \"gospel_essentials\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/curriculum/default",
+              "host": ["{{baseUrl}}"],
+              "path": ["curriculum", "default"]
+            },
+            "description": "Creates a curriculum from a pre-built template (no AI generation needed)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "2. Curriculum Management",
+      "item": [
+        {
+          "name": "Get Active Curriculum",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/curriculum/",
+              "host": ["{{baseUrl}}"],
+              "path": ["curriculum", ""]
+            },
+            "description": "Returns user's currently active curriculum with modules"
+          },
+          "response": []
+        },
+        {
+          "name": "List All Curriculums",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/curriculum/list",
+              "host": ["{{baseUrl}}"],
+              "path": ["curriculum", "list"]
+            },
+            "description": "Returns all curriculums for the user (personal + global templates)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Curriculum by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/curriculum/{{curriculum_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["curriculum", "{{curriculum_id}}"]
+            },
+            "description": "Returns full curriculum details with all modules, lessons, and exercises"
+          },
+          "response": []
+        },
+        {
+          "name": "Activate Curriculum",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/curriculum/{{curriculum_id}}/activate",
+              "host": ["{{baseUrl}}"],
+              "path": ["curriculum", "{{curriculum_id}}", "activate"]
+            },
+            "description": "Sets a curriculum as active. If it's a global template, clones it first."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "3. User Profile & Assessment",
+      "item": [
+        {
+          "name": "Get Skill Profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/curriculum/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["curriculum", "profile"]
+            },
+            "description": "Returns user's current skill levels and learning preferences"
+          },
+          "response": []
+        },
+        {
+          "name": "Submit Assessment (Update Profile)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"skill_levels\": {\n    \"technical_ability\": 6,\n    \"theory_knowledge\": 5,\n    \"rhythm_competency\": 7,\n    \"ear_training\": 4,\n    \"improvisation\": 5\n  },\n  \"style_familiarity\": {\n    \"gospel\": 8,\n    \"jazz\": 5,\n    \"blues\": 4,\n    \"classical\": 3,\n    \"neo_soul\": 6,\n    \"contemporary\": 7\n  },\n  \"primary_goal\": \"gospel_keys\",\n  \"interests\": [\"gospel\", \"jazz\", \"neo_soul\"],\n  \"weekly_practice_hours\": 10.0,\n  \"learning_velocity\": \"medium\",\n  \"preferred_style\": \"visual\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/curriculum/assessment",
+              "host": ["{{baseUrl}}"],
+              "path": ["curriculum", "assessment"]
+            },
+            "description": "Updates user's skill profile based on self-assessment"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "4. Daily Practice",
+      "item": [
+        {
+          "name": "Get Daily Practice Queue",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/curriculum/daily",
+              "host": ["{{baseUrl}}"],
+              "path": ["curriculum", "daily"]
+            },
+            "description": "Returns today's practice exercises ordered by priority (overdue, due today, new)"
+          },
+          "response": []
+        },
+        {
+          "name": "Complete Exercise",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quality\": 4,\n  \"score\": 85.5,\n  \"duration_seconds\": 300\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/curriculum/exercises/{{exercise_id}}/complete",
+              "host": ["{{baseUrl}}"],
+              "path": ["curriculum", "exercises", "{{exercise_id}}", "complete"]
+            },
+            "description": "Marks exercise as practiced and updates SRS scheduling. Quality: 0-5 (SM-2 algorithm)"
+          },
+          "response": []
+        },
+        {
+          "name": "Add Lick to Practice",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"lick_name\": \"Bebop Lick in C\",\n  \"notes\": [\"C\", \"D\", \"E\", \"F\", \"G\", \"A\", \"Bb\", \"B\"],\n  \"midi_notes\": [60, 62, 64, 65, 67, 69, 70, 71],\n  \"context\": \"Cmaj7\",\n  \"style\": \"bebop\",\n  \"difficulty\": \"intermediate\",\n  \"duration_beats\": 4.0\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/curriculum/add-lick-to-practice",
+              "host": ["{{baseUrl}}"],
+              "path": ["curriculum", "add-lick-to-practice"]
+            },
+            "description": "Adds a generated jazz lick to the practice queue"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "5. Modules & Lessons",
+      "item": [
+        {
+          "name": "Get Module Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/curriculum/modules/{{module_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["curriculum", "modules", "{{module_id}}"]
+            },
+            "description": "Returns module with all lessons and exercise summaries"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Lesson Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/curriculum/lessons/{{lesson_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["curriculum", "lessons", "{{lesson_id}}"]
+            },
+            "description": "Returns lesson with theory content, concepts, and exercises"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Lesson Tutorial",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/curriculum/lessons/{{lesson_id}}/tutorial?force_regenerate=false",
+              "host": ["{{baseUrl}}"],
+              "path": ["curriculum", "lessons", "{{lesson_id}}", "tutorial"],
+              "query": [
+                {
+                  "key": "force_regenerate",
+                  "value": "false"
+                }
+              ]
+            },
+            "description": "Returns AI-generated tutorial for a lesson (cached if exists)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "6. AI Coach & Adaptation",
+      "item": [
+        {
+          "name": "Chat with AI Coach",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"text\": \"I'm struggling with the ii-V-I progression. Can you help?\",\n  \"context\": {\n    \"current_exercise\": \"Gospel ii-V-I in C\",\n    \"current_lesson\": \"Module 2: Harmonic Foundation\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/curriculum/ai-coach/chat",
+              "host": ["{{baseUrl}}"],
+              "path": ["curriculum", "ai-coach", "chat"]
+            },
+            "description": "Get personalized coaching based on user's skill level, recent performance, and specific question"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Performance Analysis",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/curriculum/performance-analysis?lookback_days=7",
+              "host": ["{{baseUrl}}"],
+              "path": ["curriculum", "performance-analysis"],
+              "query": [
+                {
+                  "key": "lookback_days",
+                  "value": "7"
+                }
+              ]
+            },
+            "description": "Analyzes user performance: completion rate, quality scores, weak/strong areas, recommendations"
+          },
+          "response": []
+        },
+        {
+          "name": "Apply Curriculum Adaptations",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/curriculum/apply-adaptations",
+              "host": ["{{baseUrl}}"],
+              "path": ["curriculum", "apply-adaptations"]
+            },
+            "description": "Analyzes performance and automatically adapts curriculum (adds remedial exercises, adjusts difficulty)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "7. Assessments & Milestones",
+      "item": [
+        {
+          "name": "Generate Diagnostic Assessment",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/curriculum/generate-diagnostic-assessment",
+              "host": ["{{baseUrl}}"],
+              "path": ["curriculum", "generate-diagnostic-assessment"]
+            },
+            "description": "Generates initial diagnostic assessment to determine skill level"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Current Assessment",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/curriculum/assessments/current",
+              "host": ["{{baseUrl}}"],
+              "path": ["curriculum", "assessments", "current"]
+            },
+            "description": "Returns active assessment if one exists"
+          },
+          "response": []
+        },
+        {
+          "name": "Submit Assessment Responses",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"responses\": {\n    \"question_1\": \"answer_1\",\n    \"question_2\": \"answer_2\",\n    \"question_3\": \"answer_3\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/curriculum/assessments/{{assessment_id}}/submit",
+              "host": ["{{baseUrl}}"],
+              "path": ["curriculum", "assessments", "{{assessment_id}}", "submit"]
+            },
+            "description": "Submits assessment responses, triggers evaluation, updates skill profile, and adapts curriculum"
+          },
+          "response": []
+        },
+        {
+          "name": "Check Milestone Assessments",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/curriculum/curricula/{{curriculum_id}}/check-milestones",
+              "host": ["{{baseUrl}}"],
+              "path": ["curriculum", "curricula", "{{curriculum_id}}", "check-milestones"]
+            },
+            "description": "Checks if milestone assessments should be triggered (Week 4, Week 8, Final)"
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,2081 @@
+{
+    "curriculum_id": "gospel_mastery",
+    "meta": {
+        "title": "Gospel Keys Essentials",
+        "weeks": 16,
+        "level": "Intermediate to Advanced",
+        "description": "From Drop-2 voicings to Shout Music and Talk Music.",
+        "engine_settings": {
+            "swing": 0.58,
+            "velocity_humanization": 0.15
+        }
+    },
+    "modules": [
+        {
+            "module_title": "The Gospel Sound Architecture",
+            "weeks": [
+                1,
+                2,
+                3,
+                4
+            ],
+            "lessons": [
+                {
+                    "week": 1,
+                    "title": "Drop-2 Voicings (Major & Minor)",
+                    "theory_data": {
+                        "concept": "Drop-2",
+                        "rule": "Voice 1-3-5-7, drop 2nd highest note an octave."
+                    },
+                    "exercises": [
+                        {
+                            "name": "Major 7 Drop-2 Cycle",
+                            "midi_metadata": {
+                                "type": "voicing",
+                                "stack_semitones": [
+                                    -5,
+                                    0,
+                                    4,
+                                    11
+                                ],
+                                "root_movement": "circle_4ths",
+                                "velocity_map": [
+                                    85,
+                                    70,
+                                    75,
+                                    95
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 2,
+                    "title": "The Preacher's Chord (7#9#5)",
+                    "exercises": [
+                        {
+                            "name": "Shout Chord Stabs",
+                            "midi_metadata": {
+                                "type": "rhythm",
+                                "stack_semitones": [
+                                    0,
+                                    4,
+                                    10,
+                                    15,
+                                    20,
+                                    24
+                                ],
+                                "rhythm_grid_16th": [
+                                    1,
+                                    0,
+                                    1,
+                                    1,
+                                    0,
+                                    1,
+                                    0,
+                                    0
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 3,
+                    "title": "Diminished Passing Chords",
+                    "exercises": [
+                        {
+                            "name": "Chromatic Diminished Walk",
+                            "midi_metadata": {
+                                "type": "progression",
+                                "progression_logic": "I -> I#dim -> ii -> ii#dim -> iii",
+                                "voicing_stack": [
+                                    0,
+                                    3,
+                                    6,
+                                    9
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 4,
+                    "title": "Gospel Waltz (12/8 Feel)",
+                    "exercises": [
+                        {
+                            "name": "6/8 Ballad Feel",
+                            "midi_metadata": {
+                                "time_signature": "6/8",
+                                "rhythm_grid": "triplet_feel",
+                                "lh_pattern": "root_5_octave"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "module_title": "Essential Progressions",
+            "weeks": [
+                5,
+                6,
+                7,
+                8
+            ],
+            "lessons": [
+                {
+                    "week": 5,
+                    "title": "The 7-3-6 Turnaround",
+                    "exercises": [
+                        {
+                            "name": "7-3-6 in Ab",
+                            "midi_metadata": {
+                                "key": "Ab",
+                                "roots": [
+                                    11,
+                                    4,
+                                    9
+                                ],
+                                "qualities": [
+                                    "dim7",
+                                    "alt7",
+                                    "m9"
+                                ],
+                                "voice_leading": "smooth"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 6,
+                    "title": "Walk-Downs (4-3-2-1)",
+                    "exercises": [
+                        {
+                            "name": "Standard Walk-Down",
+                            "midi_metadata": {
+                                "progression_roots": [
+                                    5,
+                                    4,
+                                    3,
+                                    2,
+                                    1
+                                ],
+                                "voicing_style": "shells_with_melody"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 7,
+                    "title": "Tritone Substitutions",
+                    "exercises": [
+                        {
+                            "name": "2-5-1 Reharm",
+                            "midi_metadata": {
+                                "progression_roots": [
+                                    2,
+                                    1,
+                                    0
+                                ],
+                                "qualities": [
+                                    "m9",
+                                    "13#11",
+                                    "Maj9"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 8,
+                    "title": "The 5-1-4 Progression",
+                    "exercises": [
+                        {
+                            "name": "Arrival at IV",
+                            "midi_metadata": {
+                                "progression": [
+                                    "v9",
+                                    "I_alt",
+                                    "IV_maj9"
+                                ],
+                                "voicing_stack_rh": [
+                                    10,
+                                    14,
+                                    17
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "module_title": "Service Elements",
+            "weeks": [
+                9,
+                10,
+                11,
+                12
+            ],
+            "lessons": [
+                {
+                    "week": 9,
+                    "title": "Talk Music (Quartal)",
+                    "exercises": [
+                        {
+                            "name": "So What Stacks",
+                            "midi_metadata": {
+                                "stack_semitones": [
+                                    0,
+                                    5,
+                                    10,
+                                    15,
+                                    19
+                                ],
+                                "sustain": true
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 10,
+                    "title": "Phrygian Walk Downs",
+                    "exercises": [
+                        {
+                            "name": "Phrygian Chord Cycle",
+                            "midi_metadata": {
+                                "root_movement": "semitone_down",
+                                "quality": "sus_b9"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 11,
+                    "title": "Shout Music: Bass Lines",
+                    "exercises": [
+                        {
+                            "name": "Walking Bass",
+                            "midi_metadata": {
+                                "pattern": "chromatic_1_to_4",
+                                "bpm": 160
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 12,
+                    "title": "Shout Music: RH Stabs",
+                    "exercises": [
+                        {
+                            "name": "Polyrhythmic Stabs",
+                            "midi_metadata": {
+                                "grid": "3_against_4"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "module_title": "Advanced Performance",
+            "weeks": [
+                13,
+                14,
+                15,
+                16
+            ],
+            "lessons": [
+                {
+                    "week": 13,
+                    "title": "Organ Slides",
+                    "exercises": [
+                        {
+                            "name": "Crush Notes",
+                            "midi_metadata": {
+                                "technique": "crush_minor3_to_major3",
+                                "velocity": 120
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 14,
+                    "title": "Poly-Chords",
+                    "exercises": [
+                        {
+                            "name": "Upper Structures",
+                            "midi_metadata": {
+                                "lh": "tritone",
+                                "rh": "major_triad_whole_step_up"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 15,
+                    "title": "Reharmonization",
+                    "exercises": [
+                        {
+                            "name": "Hymn Reharm",
+                            "midi_metadata": {
+                                "technique": "internal_voice_leading"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 16,
+                    "title": "Final Breakdown",
+                    "exercises": [
+                        {
+                            "name": "Full Song Structure",
+                            "midi_metadata": {
+                                "structure": [
+                                    "intro",
+                                    "verse",
+                                    "chorus",
+                                    "shout",
+                                    "outro"
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+
+
+{
+    "curriculum_id": "jazz_berklee_expert",
+    "meta": {
+        "title": "Jazz Piano & Berklee Essentials",
+        "weeks": 16,
+        "level": "Advanced",
+        "description": "Rigorous harmony, bebop scales, and advanced comping.",
+        "engine_settings": {
+            "swing": 0.66,
+            "ppq": 480
+        }
+    },
+    "modules": [
+        {
+            "module_title": "Harmonic Foundations",
+            "weeks": [
+                1,
+                2,
+                3,
+                4
+            ],
+            "lessons": [
+                {
+                    "week": 1,
+                    "title": "Shell Voicings (A/B)",
+                    "exercises": [
+                        {
+                            "name": "Form A/B Identification",
+                            "midi_metadata": {
+                                "form_a_stack": [
+                                    0,
+                                    7,
+                                    10
+                                ],
+                                "form_b_stack": [
+                                    0,
+                                    3,
+                                    10
+                                ],
+                                "rule": "Keep common tones"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 2,
+                    "title": "Guide Tone Lines",
+                    "exercises": [
+                        {
+                            "name": "3rd and 7th Lines",
+                            "midi_metadata": {
+                                "notes_allowed": [
+                                    3,
+                                    10
+                                ],
+                                "rhythm": "whole_notes"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 3,
+                    "title": "3-Note Rootless",
+                    "exercises": [
+                        {
+                            "name": "Shell + 9th",
+                            "midi_metadata": {
+                                "stack": [
+                                    0,
+                                    3,
+                                    7,
+                                    14
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 4,
+                    "title": "Rhythmic Comping",
+                    "exercises": [
+                        {
+                            "name": "Charleston Rhythm",
+                            "midi_metadata": {
+                                "grid_8th": [
+                                    1,
+                                    0,
+                                    0,
+                                    1,
+                                    0,
+                                    0,
+                                    0,
+                                    0
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "module_title": "Advanced Voicings",
+            "weeks": [
+                5,
+                6,
+                7,
+                8
+            ],
+            "lessons": [
+                {
+                    "week": 5,
+                    "title": "Rootless Type A",
+                    "exercises": [
+                        {
+                            "name": "3-5-7-9 Stack",
+                            "midi_metadata": {
+                                "stack_semitones": [
+                                    4,
+                                    7,
+                                    11,
+                                    14
+                                ],
+                                "root_omitted": true
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 6,
+                    "title": "Rootless Type B",
+                    "exercises": [
+                        {
+                            "name": "7-9-3-5 Stack",
+                            "midi_metadata": {
+                                "stack_semitones": [
+                                    10,
+                                    14,
+                                    16,
+                                    19
+                                ],
+                                "root_omitted": true
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 7,
+                    "title": "The A-B Cycle",
+                    "exercises": [
+                        {
+                            "name": "ii-V-I Flow",
+                            "midi_metadata": {
+                                "pattern": "A->B->A"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 8,
+                    "title": "Altered Dominants",
+                    "exercises": [
+                        {
+                            "name": "Alt Stacks",
+                            "midi_metadata": {
+                                "stack": [
+                                    10,
+                                    15,
+                                    16,
+                                    20
+                                ],
+                                "description": "7, #9, 3, b13"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "module_title": "Improvisation Language",
+            "weeks": [
+                9,
+                10,
+                11,
+                12
+            ],
+            "lessons": [
+                {
+                    "week": 9,
+                    "title": "Bebop Scales",
+                    "exercises": [
+                        {
+                            "name": "Dominant Bebop Scale",
+                            "midi_metadata": {
+                                "intervals": [
+                                    0,
+                                    2,
+                                    4,
+                                    5,
+                                    7,
+                                    9,
+                                    10,
+                                    11,
+                                    12
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 10,
+                    "title": "Enclosures",
+                    "exercises": [
+                        {
+                            "name": "Targeting Chord Tones",
+                            "midi_metadata": {
+                                "pattern_semitones": [
+                                    1,
+                                    -1,
+                                    0
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 11,
+                    "title": "Arpeggio Extension",
+                    "exercises": [
+                        {
+                            "name": "1-3-5-7-9 Runs",
+                            "midi_metadata": {
+                                "direction": "up_down"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 12,
+                    "title": "Rhythmic Displacement",
+                    "exercises": [
+                        {
+                            "name": "Starting on 'And' of 2",
+                            "midi_metadata": {
+                                "start_offset_8th": 3
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "module_title": "Advanced Forms",
+            "weeks": [
+                13,
+                14,
+                15,
+                16
+            ],
+            "lessons": [
+                {
+                    "week": 13,
+                    "title": "Rhythm Changes",
+                    "exercises": [
+                        {
+                            "name": "Oleo Changes",
+                            "midi_metadata": {
+                                "bpm": 200,
+                                "progression": "rhythm_changes"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 14,
+                    "title": "Modal Jazz",
+                    "exercises": [
+                        {
+                            "name": "So What Voicing",
+                            "midi_metadata": {
+                                "stack": [
+                                    0,
+                                    5,
+                                    10,
+                                    15,
+                                    19
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 15,
+                    "title": "Coltrane Changes",
+                    "exercises": [
+                        {
+                            "name": "Giant Steps Matrix",
+                            "midi_metadata": {
+                                "key_centers": "major_3rds"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 16,
+                    "title": "Block Chords",
+                    "exercises": [
+                        {
+                            "name": "Locked Hands",
+                            "midi_metadata": {
+                                "voicing": "4_way_close_doubled"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+
+{
+    "curriculum_id": "neosoul_rnb_expert",
+    "meta": {
+        "title": "Neo-Soul, R&B & Trap Soul",
+        "weeks": 16,
+        "description": "Clusters, Dilla-feel, and Production Keys.",
+        "engine_settings": {
+            "groove": "dilla_lazy",
+            "velocity_curve": "soft_felt_piano"
+        }
+    },
+    "modules": [
+        {
+            "module_title": "Harmonic Colors",
+            "weeks": [
+                1,
+                2,
+                3,
+                4
+            ],
+            "lessons": [
+                {
+                    "week": 1,
+                    "title": "Minor 11th Chords",
+                    "exercises": [
+                        {
+                            "name": "Kenny Voicing",
+                            "midi_metadata": {
+                                "stack_semitones": [
+                                    -12,
+                                    -5,
+                                    -2,
+                                    2,
+                                    5,
+                                    9,
+                                    12
+                                ],
+                                "cluster": true
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 2,
+                    "title": "Lydian Stacks (Maj9#11)",
+                    "exercises": [
+                        {
+                            "name": "Dreamy Chords",
+                            "midi_metadata": {
+                                "stack_semitones": [
+                                    0,
+                                    4,
+                                    7,
+                                    11,
+                                    14,
+                                    18
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 3,
+                    "title": "Grace Notes (The 'Flip')",
+                    "exercises": [
+                        {
+                            "name": "Pentatonic Slides",
+                            "midi_metadata": {
+                                "notes": "b3->3",
+                                "speed": "instant"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 4,
+                    "title": "Secondary Dominants",
+                    "exercises": [
+                        {
+                            "name": "5-1-4 Progression",
+                            "midi_metadata": {
+                                "progression": [
+                                    "v9",
+                                    "I13",
+                                    "IVmaj9"
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "module_title": "Rhythm & Feel",
+            "weeks": [
+                5,
+                6,
+                7,
+                8
+            ],
+            "lessons": [
+                {
+                    "week": 5,
+                    "title": "Dilla Time",
+                    "exercises": [
+                        {
+                            "name": "Drunk Beat",
+                            "midi_metadata": {
+                                "quantization_offset_ms": -35
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 6,
+                    "title": "Trap Soul 808s",
+                    "exercises": [
+                        {
+                            "name": "Sparse Voicings",
+                            "midi_metadata": {
+                                "rule": "No bass notes in LH (leave for 808)"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 7,
+                    "title": "Syncopated Comping",
+                    "exercises": [
+                        {
+                            "name": "Anticipated Chords",
+                            "midi_metadata": {
+                                "grid_16th": [
+                                    0,
+                                    0,
+                                    0,
+                                    1,
+                                    0,
+                                    0,
+                                    1,
+                                    0
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 8,
+                    "title": "Lo-Fi Texture",
+                    "exercises": [
+                        {
+                            "name": "Detuned Comping",
+                            "midi_metadata": {
+                                "pitch_fluctuation": true,
+                                "velocity_cap": 60
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "module_title": "Advanced Harmony",
+            "weeks": [
+                9,
+                10,
+                11,
+                12
+            ],
+            "lessons": [
+                {
+                    "week": 9,
+                    "title": "Tritone Subs",
+                    "exercises": [
+                        {
+                            "name": "Chromatic Bass Movement",
+                            "midi_metadata": {
+                                "progression": [
+                                    "ii",
+                                    "subV",
+                                    "I"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 10,
+                    "title": "Passing Diminished",
+                    "exercises": [
+                        {
+                            "name": "III-VI Connection",
+                            "midi_metadata": {
+                                "chord": "dim7"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 11,
+                    "title": "Quartal Voicings in R&B",
+                    "exercises": [
+                        {
+                            "name": "4ths Stacks",
+                            "midi_metadata": {
+                                "stack": [
+                                    0,
+                                    5,
+                                    10,
+                                    15
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 12,
+                    "title": "Double Stops",
+                    "exercises": [
+                        {
+                            "name": "Guitar Licks on Piano",
+                            "midi_metadata": {
+                                "intervals": [
+                                    0,
+                                    5
+                                ],
+                                "scale": "pentatonic"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "module_title": "Production & Fusion",
+            "weeks": [
+                13,
+                14,
+                15,
+                16
+            ],
+            "lessons": [
+                {
+                    "week": 13,
+                    "title": "Reharmonization",
+                    "exercises": [
+                        {
+                            "name": "Pop Song Reharm",
+                            "midi_metadata": {
+                                "technique": "minor_conversion"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 14,
+                    "title": "Sample Chopping",
+                    "exercises": [
+                        {
+                            "name": "Rhythmic Stabs",
+                            "midi_metadata": {
+                                "style": "mpc_chops"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 15,
+                    "title": "Polyrhythms",
+                    "exercises": [
+                        {
+                            "name": "5/4 Groove",
+                            "midi_metadata": {
+                                "time_signature": "5/4"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 16,
+                    "title": "The Glasper Aesthetic",
+                    "exercises": [
+                        {
+                            "name": "Jazz/Hip-Hop Fusion",
+                            "midi_metadata": {
+                                "lh": "hip_hop_bass",
+                                "rh": "jazz_solo"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+
+{
+    "curriculum_id": "blues_mastery",
+    "meta": {
+        "title": "Blues Master Class",
+        "weeks": 16,
+        "level": "Beginner to Advanced",
+        "description": "12-Bar, Shuffle, Boogie-Woogie, and New Orleans styles.",
+        "engine_settings": {
+            "swing": 0.60,
+            "velocity_humanization": 0.2
+        }
+    },
+    "modules": [
+        {
+            "module_title": "Blues Fundamentals",
+            "weeks": [
+                1,
+                2,
+                3,
+                4
+            ],
+            "lessons": [
+                {
+                    "week": 1,
+                    "title": "The 12-Bar Form",
+                    "exercises": [
+                        {
+                            "name": "Basic Shuffle in C",
+                            "midi_metadata": {
+                                "progression": "12_bar_blues",
+                                "pattern": "shuffle_comping"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 2,
+                    "title": "The Blues Scale",
+                    "exercises": [
+                        {
+                            "name": "Call and Response",
+                            "midi_metadata": {
+                                "scale_intervals": [
+                                    0,
+                                    3,
+                                    5,
+                                    6,
+                                    7,
+                                    10,
+                                    12
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 3,
+                    "title": "The 'Crush' Note",
+                    "exercises": [
+                        {
+                            "name": "Grace Note Drill",
+                            "midi_metadata": {
+                                "articulation": "crush_3rd"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 4,
+                    "title": "Dominant 7th Voicings",
+                    "exercises": [
+                        {
+                            "name": "Blues Shells",
+                            "midi_metadata": {
+                                "stack": [
+                                    0,
+                                    4,
+                                    10
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "module_title": "Left Hand Patterns",
+            "weeks": [
+                5,
+                6,
+                7,
+                8
+            ],
+            "lessons": [
+                {
+                    "week": 5,
+                    "title": "The Shuffle Bass",
+                    "exercises": [
+                        {
+                            "name": "5th to 6th Shuffle",
+                            "midi_metadata": {
+                                "pattern": "root_5_root_6"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 6,
+                    "title": "Walking Bass",
+                    "exercises": [
+                        {
+                            "name": "Quarter Note Walk",
+                            "midi_metadata": {
+                                "pattern": "arpeggio_approach"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 7,
+                    "title": "Boogie Woogie Bass",
+                    "exercises": [
+                        {
+                            "name": "Octave Jump",
+                            "midi_metadata": {
+                                "grid_8th": [
+                                    1,
+                                    1,
+                                    1,
+                                    1,
+                                    1,
+                                    1,
+                                    1,
+                                    1
+                                ],
+                                "intervals": "broken_octaves"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 8,
+                    "title": "New Orleans Bass",
+                    "exercises": [
+                        {
+                            "name": "Rumba Boogie",
+                            "midi_metadata": {
+                                "grid": "3-3-2_clave"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "module_title": "Advanced Licks",
+            "weeks": [
+                9,
+                10,
+                11,
+                12
+            ],
+            "lessons": [
+                {
+                    "week": 9,
+                    "title": "Tremolos",
+                    "exercises": [
+                        {
+                            "name": "The 'Shake'",
+                            "midi_metadata": {
+                                "notes": "octaves_rapid_alternation"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 10,
+                    "title": "Pre-War Blues Licks",
+                    "exercises": [
+                        {
+                            "name": "Otis Spann Run",
+                            "midi_metadata": {
+                                "style": "32nd_note_runs"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 11,
+                    "title": "Double Stops",
+                    "exercises": [
+                        {
+                            "name": "6th Intervals",
+                            "midi_metadata": {
+                                "intervals": [
+                                    0,
+                                    9
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 12,
+                    "title": "Turnarounds",
+                    "exercises": [
+                        {
+                            "name": "Chromatic Turnaround",
+                            "midi_metadata": {
+                                "progression": "I-IV-I-V"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "module_title": "Performance Styles",
+            "weeks": [
+                13,
+                14,
+                15,
+                16
+            ],
+            "lessons": [
+                {
+                    "week": 13,
+                    "title": "Chicago Blues",
+                    "exercises": [
+                        {
+                            "name": "Band Comping",
+                            "midi_metadata": {
+                                "style": "chicago_stabs"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 14,
+                    "title": "Slow Blues",
+                    "exercises": [
+                        {
+                            "name": "12/8 Triplets",
+                            "midi_metadata": {
+                                "tempo": 60
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 15,
+                    "title": "Jazz-Blues Fusion",
+                    "exercises": [
+                        {
+                            "name": "Parker Blues Changes",
+                            "midi_metadata": {
+                                "progression": "bird_blues"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 16,
+                    "title": "Full Solo",
+                    "exercises": [
+                        {
+                            "name": "3-Chorus Solo",
+                            "midi_metadata": {
+                                "structure": "build_climax_resolve"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+
+{
+    "curriculum_id": "worship_ready",
+    "meta": {
+        "title": "Contemporary Worship & Band Ready",
+        "weeks": 16,
+        "level": "Beginner to Intermediate",
+        "description": "Pads, Textures, Nashville Numbers, and Dynamics.",
+        "engine_settings": {
+            "sustain_pedal": "always_on_overlap",
+            "velocity_curve": "soft_pad"
+        }
+    },
+    "modules": [
+        {
+            "module_title": "Foundations of Texture",
+            "weeks": [
+                1,
+                2,
+                3,
+                4
+            ],
+            "lessons": [
+                {
+                    "week": 1,
+                    "title": "The '1-5' Drone",
+                    "exercises": [
+                        {
+                            "name": "Key of D Drone",
+                            "midi_metadata": {
+                                "rh_fixed": [
+                                    2,
+                                    9
+                                ],
+                                "lh_moving": "progression"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 2,
+                    "title": "Sus2 Chords",
+                    "exercises": [
+                        {
+                            "name": "Add9 Drill",
+                            "midi_metadata": {
+                                "stack": [
+                                    0,
+                                    2,
+                                    7
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 3,
+                    "title": "Slash Chords",
+                    "exercises": [
+                        {
+                            "name": "Inversions Over Bass",
+                            "midi_metadata": {
+                                "chord": "I/3",
+                                "stack": [
+                                    4,
+                                    7,
+                                    12
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 4,
+                    "title": "Pad Playing",
+                    "exercises": [
+                        {
+                            "name": "Whole Note Transitions",
+                            "midi_metadata": {
+                                "voice_leading": "minimal_movement"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "module_title": "Essential Progressions",
+            "weeks": [
+                5,
+                6,
+                7,
+                8
+            ],
+            "lessons": [
+                {
+                    "week": 5,
+                    "title": "1-5-6-4",
+                    "exercises": [
+                        {
+                            "name": "The 4 Chords",
+                            "midi_metadata": {
+                                "progression": [
+                                    1,
+                                    5,
+                                    6,
+                                    4
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 6,
+                    "title": "Nashville Number System",
+                    "exercises": [
+                        {
+                            "name": "Transposition Drill",
+                            "midi_metadata": {
+                                "keys": [
+                                    "C",
+                                    "G",
+                                    "D",
+                                    "E"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 7,
+                    "title": "6m-4-1-5",
+                    "exercises": [
+                        {
+                            "name": "Emotional Loop",
+                            "midi_metadata": {
+                                "progression": [
+                                    6,
+                                    4,
+                                    1,
+                                    5
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 8,
+                    "title": "Walk-Ups (1-2m-1/3-4)",
+                    "exercises": [
+                        {
+                            "name": "Building Tension",
+                            "midi_metadata": {
+                                "bass_line": "diatonic_step"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "module_title": "Dynamics & Leading",
+            "weeks": [
+                9,
+                10,
+                11,
+                12
+            ],
+            "lessons": [
+                {
+                    "week": 9,
+                    "title": "Building Dynamics",
+                    "exercises": [
+                        {
+                            "name": "The 'Build'",
+                            "midi_metadata": {
+                                "velocity_ramp": [
+                                    40,
+                                    110
+                                ],
+                                "rhythm_density": "increase"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 10,
+                    "title": "Spontaneous Worship",
+                    "exercises": [
+                        {
+                            "name": "Free Flow",
+                            "midi_metadata": {
+                                "style": "rubato"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 11,
+                    "title": "Intro/Outro Creation",
+                    "exercises": [
+                        {
+                            "name": "Melodic Hooks",
+                            "midi_metadata": {
+                                "technique": "high_octave_motif"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 12,
+                    "title": "Playing with a Band",
+                    "exercises": [
+                        {
+                            "name": "Staying Out of the Way",
+                            "midi_metadata": {
+                                "range_restriction": "mid_high"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "module_title": "Tech & Advanced",
+            "weeks": [
+                13,
+                14,
+                15,
+                16
+            ],
+            "lessons": [
+                {
+                    "week": 13,
+                    "title": "MainStage/Keys Setup",
+                    "exercises": [
+                        {
+                            "name": "Layering Sounds",
+                            "midi_metadata": {
+                                "simulation": "piano_pad_strings"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 14,
+                    "title": "Poly-Chords in Worship",
+                    "exercises": [
+                        {
+                            "name": "5 over 1",
+                            "midi_metadata": {
+                                "stack": "Maj9_sound"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 15,
+                    "title": "Modulations",
+                    "exercises": [
+                        {
+                            "name": "Key Change Drill",
+                            "midi_metadata": {
+                                "modulation": "whole_step_up"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 16,
+                    "title": "Full Set List",
+                    "exercises": [
+                        {
+                            "name": "3-Song Transition",
+                            "midi_metadata": {
+                                "flow": "seamless"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+
+{
+    "curriculum_id": "classical_abrsm",
+    "meta": {
+        "title": "Classical Piano (Grades 1-3+)",
+        "weeks": 16,
+        "level": "Beginner to Intermediate",
+        "description": "Technique, Sight Reading, and Repertoire.",
+        "engine_settings": {
+            "velocity_curve": "linear",
+            "quantization": "strict"
+        }
+    },
+    "modules": [
+        {
+            "module_title": "Technique Foundations",
+            "weeks": [
+                1,
+                2,
+                3,
+                4
+            ],
+            "lessons": [
+                {
+                    "week": 1,
+                    "title": "Hanon No. 1",
+                    "exercises": [
+                        {
+                            "name": "Finger Independence",
+                            "midi_metadata": {
+                                "pattern": [
+                                    0,
+                                    2,
+                                    4,
+                                    5,
+                                    7,
+                                    5,
+                                    4,
+                                    2
+                                ],
+                                "fingering": "1-2-3-4-5"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 2,
+                    "title": "Major Scales (C, G, D)",
+                    "exercises": [
+                        {
+                            "name": "2 Octave Scales",
+                            "midi_metadata": {
+                                "pattern": "major_scale",
+                                "octaves": 2
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 3,
+                    "title": "Arpeggios",
+                    "exercises": [
+                        {
+                            "name": "Triad Arpeggios",
+                            "midi_metadata": {
+                                "pattern": "root_3_5_root"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 4,
+                    "title": "Articulation: Staccato vs Legato",
+                    "exercises": [
+                        {
+                            "name": "Touch Drill",
+                            "midi_metadata": {
+                                "duration_mod": [
+                                    0.5,
+                                    1.0
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "module_title": "Grade 1-2 Repertoire",
+            "weeks": [
+                5,
+                6,
+                7,
+                8
+            ],
+            "lessons": [
+                {
+                    "week": 5,
+                    "title": "Minuet in G",
+                    "exercises": [
+                        {
+                            "name": "Bach/Petzold Minuet",
+                            "midi_metadata": {
+                                "repertoire_id": "minuet_g"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 6,
+                    "title": "Sight Reading 1",
+                    "exercises": [
+                        {
+                            "name": "5-Finger Position",
+                            "midi_metadata": {
+                                "range": "C3-G3"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 7,
+                    "title": "Minor Scales (Harmonic)",
+                    "exercises": [
+                        {
+                            "name": "A Minor Harmonic",
+                            "midi_metadata": {
+                                "intervals": [
+                                    0,
+                                    2,
+                                    3,
+                                    5,
+                                    7,
+                                    8,
+                                    11,
+                                    12
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 8,
+                    "title": "Broken Chords",
+                    "exercises": [
+                        {
+                            "name": "Alberti Bass",
+                            "midi_metadata": {
+                                "pattern": "1-5-3-5"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "module_title": "Intermediate Technique",
+            "weeks": [
+                9,
+                10,
+                11,
+                12
+            ],
+            "lessons": [
+                {
+                    "week": 9,
+                    "title": "Chromatic Scales",
+                    "exercises": [
+                        {
+                            "name": "Chromatic Runs",
+                            "midi_metadata": {
+                                "fingering": "1-3-1-3"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 10,
+                    "title": "Phrasing & Dynamics",
+                    "exercises": [
+                        {
+                            "name": "Crescendo/Diminuendo",
+                            "midi_metadata": {
+                                "velocity_curve": "swell"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 11,
+                    "title": "Grade 3 Scales",
+                    "exercises": [
+                        {
+                            "name": "Eb and Bb Major",
+                            "midi_metadata": {
+                                "black_key_starts": true
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 12,
+                    "title": "Pedaling",
+                    "exercises": [
+                        {
+                            "name": "Syncopated Pedal",
+                            "midi_metadata": {
+                                "pedal_timing": "up_down_on_chord_change"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "module_title": "Grade 3 Repertoire",
+            "weeks": [
+                13,
+                14,
+                15,
+                16
+            ],
+            "lessons": [
+                {
+                    "week": 13,
+                    "title": "Sonatina Style",
+                    "exercises": [
+                        {
+                            "name": "Clementi Op 36 No 1",
+                            "midi_metadata": {
+                                "repertoire_id": "clementi_1"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 14,
+                    "title": "Romantic Expressiveness",
+                    "exercises": [
+                        {
+                            "name": "Schumann Piece",
+                            "midi_metadata": {
+                                "style": "cantabile"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 15,
+                    "title": "Advanced Aural Skills",
+                    "exercises": [
+                        {
+                            "name": "Interval Recognition",
+                            "midi_metadata": {
+                                "intervals": [
+                                    "P4",
+                                    "P5",
+                                    "M6"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 16,
+                    "title": "Mock Exam",
+                    "exercises": [
+                        {
+                            "name": "Full Performance",
+                            "midi_metadata": {
+                                "scales": "random",
+                                "pieces": 3
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+
+{
+    "curriculum_id": "latin_rhythms_expert",
+    "meta": {
+        "title": "Latin Piano Rhythms",
+        "weeks": 16,
+        "level": "Intermediate",
+        "description": "Bossa, Salsa, Montunos, and Afro-Cuban 6/8.",
+        "engine_settings": {
+            "quantization": "straight_syncopated",
+            "velocity_accent": "strong_weak"
+        }
+    },
+    "modules": [
+        {
+            "module_title": "Bossa Nova",
+            "weeks": [
+                1,
+                2,
+                3,
+                4
+            ],
+            "lessons": [
+                {
+                    "week": 1,
+                    "title": "The Pattern",
+                    "exercises": [
+                        {
+                            "name": "Bossa LH",
+                            "midi_metadata": {
+                                "grid": [
+                                    1,
+                                    0,
+                                    0,
+                                    1,
+                                    0,
+                                    0,
+                                    1,
+                                    0,
+                                    0,
+                                    0,
+                                    1,
+                                    0,
+                                    1,
+                                    0,
+                                    0,
+                                    0
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 2,
+                    "title": "Bossa Voicings",
+                    "exercises": [
+                        {
+                            "name": "9th Chords",
+                            "midi_metadata": {
+                                "stack": [
+                                    0,
+                                    3,
+                                    7,
+                                    14
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 3,
+                    "title": "Desafinado Style",
+                    "exercises": [
+                        {
+                            "name": "Anticipations",
+                            "midi_metadata": {
+                                "push": "8th_note"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 4,
+                    "title": "Full Comping",
+                    "exercises": [
+                        {
+                            "name": "2-Hand Comp",
+                            "midi_metadata": {
+                                "hands": "independent"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "module_title": "Salsa & Clave",
+            "weeks": [
+                5,
+                6,
+                7,
+                8
+            ],
+            "lessons": [
+                {
+                    "week": 5,
+                    "title": "Clave (2-3 vs 3-2)",
+                    "exercises": [
+                        {
+                            "name": "Clave Tapping",
+                            "midi_metadata": {
+                                "pattern": "son_clave"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 6,
+                    "title": "The Montuno",
+                    "exercises": [
+                        {
+                            "name": "C Montuno Octaves",
+                            "midi_metadata": {
+                                "arpeggio": "broken_octave"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 7,
+                    "title": "Salsa Progressions",
+                    "exercises": [
+                        {
+                            "name": "I-IV-V-IV Loop",
+                            "midi_metadata": {
+                                "rhythm": "salsa"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 8,
+                    "title": "Tumbao Bass",
+                    "exercises": [
+                        {
+                            "name": "Bass Anticipation",
+                            "midi_metadata": {
+                                "accent": "beat_4"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "module_title": "Afro-Cuban Styles",
+            "weeks": [
+                9,
+                10,
+                11,
+                12
+            ],
+            "lessons": [
+                {
+                    "week": 9,
+                    "title": "Mambo",
+                    "exercises": [
+                        {
+                            "name": "Mambo Bell Pattern",
+                            "midi_metadata": {
+                                "style": "uptempo"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 10,
+                    "title": "Cha-Cha-Cha",
+                    "exercises": [
+                        {
+                            "name": "Cha-Cha Rhythm",
+                            "midi_metadata": {
+                                "bpm": 120,
+                                "feel": "straight"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 11,
+                    "title": "6/8 Afro-Cuban",
+                    "exercises": [
+                        {
+                            "name": "Bembe Rhythm",
+                            "midi_metadata": {
+                                "time_signature": "12/8"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 12,
+                    "title": "Guajeos",
+                    "exercises": [
+                        {
+                            "name": "Advanced Riffs",
+                            "midi_metadata": {
+                                "syncopation": "high"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "module_title": "Latin Jazz",
+            "weeks": [
+                13,
+                14,
+                15,
+                16
+            ],
+            "lessons": [
+                {
+                    "week": 13,
+                    "title": "Michel Camilo Style",
+                    "exercises": [
+                        {
+                            "name": "Percussive Piano",
+                            "midi_metadata": {
+                                "velocity": "fff"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 14,
+                    "title": "Latin Standards",
+                    "exercises": [
+                        {
+                            "name": "Blue Bossa",
+                            "midi_metadata": {
+                                "style": "latin_jazz"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 15,
+                    "title": "Songo",
+                    "exercises": [
+                        {
+                            "name": "Songo Groove",
+                            "midi_metadata": {
+                                "complexity": "high"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "week": 16,
+                    "title": "Timba Piano",
+                    "exercises": [
+                        {
+                            "name": "Timba Montuno",
+                            "midi_metadata": {
+                                "fusion": "funk_salsa"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

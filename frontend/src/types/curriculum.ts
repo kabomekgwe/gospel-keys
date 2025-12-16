@@ -184,19 +184,31 @@ export interface ExerciseCompleteRequest {
 }
 
 export interface CurriculumTemplate {
-  key: string;
+  id: string;
+  type: 'default' | 'dynamic';
   title: string;
   description: string;
   weeks: number;
+  key?: string; // Legacy support
 }
 
 export interface GenerateCurriculumRequest {
   title: string;
   duration_weeks: number;
+  // Wizard data for personalization
+  genre?: string;
+  skill_level?: string;
+  goals?: string[];
+  days_per_week?: number;
+  session_length?: string;
 }
 
 export interface CreateDefaultCurriculumRequest {
   template_key: string;
+}
+
+export interface CreateCurriculumFromTemplateRequest {
+  template_id: string;
 }
 
 export interface AddLickToPracticeRequest {

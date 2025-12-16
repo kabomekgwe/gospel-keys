@@ -57,6 +57,11 @@ class TaskType(Enum):
     THEORY_EXERCISE_GEN = "theory_exercise_generation"     # Generate theory-focused exercises
     SUBSTITUTION_ANALYSIS = "substitution_analysis"        # Analyze chord substitutions
     VOICE_LEADING_ANALYSIS = "voice_leading_analysis"      # Analyze voice leading quality
+    # Hybrid music generation (Phase 1)
+    HYBRID_MUSIC_GENERATION = "hybrid_music_generation"    # Full music generation pipeline
+    CHORD_GENERATION = "chord_generation"                  # musiclang chord generation
+    MELODY_GENERATION = "melody_generation"                # Qwen melody generation
+    MUSIC_TOKENIZATION = "music_tokenization"              # MidiTok tokenization
 
 
 class GeminiModel(Enum):
@@ -436,10 +441,11 @@ class AIOrchestrator:
             is_valid, issues = self._validate_curriculum_quality(result)
             if is_valid:
                 logger.info(f"✅ Curriculum generated successfully with {len(result.get('modules', []))} modules")
+                return result
             else:
                 logger.warning(f"⚠️ Curriculum quality issues detected: {issues}")
-            
-            return result
+                logger.info("🔄 Using fallback template due to incomplete AI response")
+                return self._generate_fallback_curriculum(skill_profile, duration_weeks)
             
         except Exception as e:
             logger.error(f"❌ Curriculum generation failed: {e}")
@@ -616,52 +622,181 @@ Each exercise MUST have COMPLETE, DETAILED content:
         skill_profile: Dict[str, Any],
         duration_weeks: int
     ) -> Dict[str, Any]:
-        """Generate a template-based curriculum when AI fails"""
+        """Generate a template-based curriculum when AI fails - WITH FULL LESSONS"""
         goal = skill_profile.get('primary_goal', 'general_musicianship') or 'general_musicianship'
 
-        # Basic template structure
+        # Comprehensive fallback with full lessons and exercises
         if 'gospel' in goal.lower():
             modules = [
                 {
                     "title": "Gospel Piano Fundamentals",
+                    "description": "Build your foundation in gospel piano with essential chord shapes and progressions.",
                     "theme": "gospel_basics",
                     "start_week": 1,
-                    "end_week": 4,
-                    "outcomes": ["Basic gospel chord shapes", "Common progressions"],
-                },
-                {
-                    "title": "Gospel Voicings & Runs",
-                    "theme": "gospel_voicings",
-                    "start_week": 5,
-                    "end_week": 8,
-                    "outcomes": ["Gospel voicing techniques", "Basic runs"],
+                    "end_week": 6,
+                    "outcomes": ["Basic gospel chord shapes", "Common progressions", "Proper hand positioning"],
+                    "lessons": [
+                        {
+                            "title": "Essential Gospel Chords",
+                            "description": "Learn the core major 7th, minor 7th, and dominant 7th chords used in gospel music.",
+                            "week_number": 1,
+                            "concepts": ["Major 7th chords", "Minor 7th chords", "Dominant 7th chords"],
+                            "theory_content": {
+                                "summary": "Gospel music relies heavily on extended chords. We start with 7th chords as the foundation.",
+                                "key_points": ["Major 7 = bright, jazzy sound", "Dominant 7 = tension that resolves", "Minor 7 = soulful, mellow"]
+                            },
+                            "exercises": [
+                                {
+                                    "title": "Major 7th Chord Practice",
+                                    "description": "Play Cmaj7, Fmaj7, Gmaj7 in root position.",
+                                    "exercise_type": "voicing",
+                                    "content": {
+                                        "chords": ["Cmaj7", "Fmaj7", "Gmaj7"],
+                                        "key": "C",
+                                        "tips": ["Keep fingers curved", "Use proper fingering: 1-2-3-5"]
+                                    },
+                                    "difficulty": "beginner",
+                                    "estimated_duration_minutes": 10
+                                },
+                                {
+                                    "title": "Gospel 1-4-5 Progression",
+                                    "description": "The most common gospel progression in the key of C.",
+                                    "exercise_type": "progression",
+                                    "content": {
+                                        "chords": ["Cmaj7", "Fmaj7", "G7", "Cmaj7"],
+                                        "roman_numerals": ["Imaj7", "IVmaj7", "V7", "Imaj7"],
+                                        "key": "C",
+                                        "tips": ["Let each chord ring", "Practice with a metronome at 70 BPM"]
+                                    },
+                                    "difficulty": "beginner",
+                                    "estimated_duration_minutes": 15
+                                }
+                            ]
+                        },
+                        {
+                            "title": "Gospel Turnarounds",
+                            "description": "Master the classic 1-6-2-5 turnaround used in countless gospel songs.",
+                            "week_number": 2,
+                            "concepts": ["Turnarounds", "Circle of fifths movement", "Voice leading"],
+                            "theory_content": {
+                                "summary": "Turnarounds create harmonic motion that leads back to the beginning. The 1-6-2-5 is essential.",
+                                "key_points": ["Creates forward momentum", "Each chord leads naturally to the next", "Used at the end of phrases"]
+                            },
+                            "exercises": [
+                                {
+                                    "title": "Classic Gospel Turnaround",
+                                    "description": "1-6-2-5 in the key of C.",
+                                    "exercise_type": "progression",
+                                    "content": {
+                                        "chords": ["Cmaj7", "Am7", "Dm7", "G7"],
+                                        "roman_numerals": ["Imaj7", "vi7", "ii7", "V7"],
+                                        "key": "C",
+                                        "tips": ["Focus on smooth voice leading", "Keep the common tones between chords"]
+                                    },
+                                    "difficulty": "beginner",
+                                    "estimated_duration_minutes": 15
+                                }
+                            ]
+                        }
+                    ]
                 },
             ]
         elif 'jazz' in goal.lower():
             modules = [
                 {
-                    "title": "Jazz Fundamentals",
+                    "title": "Jazz Piano Fundamentals",
+                    "description": "Build your jazz vocabulary with essential voicings and the most important progression in jazz.",
                     "theme": "jazz_basics",
                     "start_week": 1,
-                    "end_week": 4,
-                    "outcomes": ["ii-V-I progressions", "Jazz voicings"],
-                },
-                {
-                    "title": "Jazz Improvisation",
-                    "theme": "jazz_improv",
-                    "start_week": 5,
-                    "end_week": 8,
-                    "outcomes": ["Scale choices", "Melodic patterns"],
+                    "end_week": 6,
+                    "outcomes": ["ii-V-I progressions", "Jazz voicings", "Shell voicings"],
+                    "lessons": [
+                        {
+                            "title": "The ii-V-I Progression",
+                            "description": "Master the most important chord progression in jazz music.",
+                            "week_number": 1,
+                            "concepts": ["ii-V-I", "Chord functions", "Resolution"],
+                            "theory_content": {
+                                "summary": "The ii-V-I is the backbone of jazz harmony. Understanding it unlocks thousands of jazz standards.",
+                                "key_points": ["ii chord creates motion", "V chord builds tension", "I chord resolves"]
+                            },
+                            "exercises": [
+                                {
+                                    "title": "Basic ii-V-I in C",
+                                    "description": "Play Dm7-G7-Cmaj7 with root position voicings.",
+                                    "exercise_type": "progression",
+                                    "content": {
+                                        "chords": ["Dm7", "G7", "Cmaj7"],
+                                        "roman_numerals": ["ii7", "V7", "Imaj7"],
+                                        "key": "C",
+                                        "tips": ["Listen for the resolution", "Practice in all 12 keys eventually"]
+                                    },
+                                    "difficulty": "beginner",
+                                    "estimated_duration_minutes": 15
+                                },
+                                {
+                                    "title": "Shell Voicings",
+                                    "description": "Learn 3-note voicings with root, 3rd, and 7th.",
+                                    "exercise_type": "voicing",
+                                    "content": {
+                                        "chord": "Dm7",
+                                        "notes": ["D", "F", "C"],
+                                        "voicing_type": "shell"
+                                    },
+                                    "difficulty": "beginner",
+                                    "estimated_duration_minutes": 10
+                                }
+                            ]
+                        }
+                    ]
                 },
             ]
         else:
             modules = [
                 {
                     "title": "Piano Fundamentals",
+                    "description": "Build a solid foundation with proper technique and basic music reading skills.",
                     "theme": "fundamentals",
                     "start_week": 1,
                     "end_week": 6,
-                    "outcomes": ["Basic technique", "Reading skills"],
+                    "outcomes": ["Basic technique", "Reading skills", "Hand independence"],
+                    "lessons": [
+                        {
+                            "title": "Hand Position & Basic Technique",
+                            "description": "Learn proper hand positioning and finger technique at the piano.",
+                            "week_number": 1,
+                            "concepts": ["Hand position", "Finger curvature", "Relaxed wrists"],
+                            "theory_content": {
+                                "summary": "Good technique starts with proper hand position. This prevents injury and enables faster progress.",
+                                "key_points": ["Keep fingers curved", "Wrists relaxed and level", "Sit at proper height"]
+                            },
+                            "exercises": [
+                                {
+                                    "title": "C Major Scale",
+                                    "description": "Practice the C major scale with proper fingering.",
+                                    "exercise_type": "scale",
+                                    "content": {
+                                        "scale": "C Major",
+                                        "key": "C",
+                                        "fingering": "1-2-3-1-2-3-4-5"
+                                    },
+                                    "difficulty": "beginner",
+                                    "estimated_duration_minutes": 10
+                                },
+                                {
+                                    "title": "Simple Chord Practice",
+                                    "description": "Play C, F, and G major triads.",
+                                    "exercise_type": "voicing",
+                                    "content": {
+                                        "chords": ["C", "F", "G"],
+                                        "key": "C"
+                                    },
+                                    "difficulty": "beginner",
+                                    "estimated_duration_minutes": 10
+                                }
+                            ]
+                        }
+                    ]
                 },
             ]
         

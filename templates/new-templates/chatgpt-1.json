@@ -1,0 +1,785 @@
+# 16-Week Piano Genre Templates (JSON)
+
+Below are **fully structured, engine-ready JSON templates** for each genre. Each genre explicitly defines **Weeks 1–16** with progressive focus. These are *templates*, not static lessons: your AI layer generates MIDI, notation, audio, licks, and assessments from each week spec.
+
+---
+
+## Gospel Keys Essentials (16 Weeks)
+
+```json
+{
+    "genre": "gospel",
+    "level": "beginner_to_advanced",
+    "weeks": [
+        {
+            "week": 1,
+            "focus": "Triads & basic inversions",
+            "skills": [
+                "I-IV-V",
+                "basic rhythm"
+            ],
+            "outputs": [
+                "voicings",
+                "midi"
+            ]
+        },
+        {
+            "week": 2,
+            "focus": "7th chords",
+            "skills": [
+                "maj7",
+                "dom7",
+                "min7"
+            ],
+            "outputs": [
+                "exercises",
+                "midi"
+            ]
+        },
+        {
+            "week": 3,
+            "focus": "9th chords",
+            "skills": [
+                "add9",
+                "maj9",
+                "min9"
+            ],
+            "outputs": [
+                "voicings",
+                "theory"
+            ]
+        },
+        {
+            "week": 4,
+            "focus": "Gospel 2-5-1",
+            "skills": [
+                "voice leading"
+            ],
+            "outputs": [
+                "progressions"
+            ]
+        },
+        {
+            "week": 5,
+            "focus": "Preacher chords",
+            "skills": [
+                "7#9",
+                "blues color"
+            ],
+            "outputs": [
+                "licks"
+            ]
+        },
+        {
+            "week": 6,
+            "focus": "Walk-ups & walk-downs",
+            "skills": [
+                "bass motion"
+            ],
+            "outputs": [
+                "midi"
+            ]
+        },
+        {
+            "week": 7,
+            "focus": "Passing diminished chords",
+            "skills": [
+                "chromatic harmony"
+            ],
+            "outputs": [
+                "progressions"
+            ]
+        },
+        {
+            "week": 8,
+            "focus": "Shout music patterns",
+            "skills": [
+                "high energy rhythm"
+            ],
+            "outputs": [
+                "grooves"
+            ]
+        },
+        {
+            "week": 9,
+            "focus": "Modulations",
+            "skills": [
+                "key changes"
+            ],
+            "outputs": [
+                "theory"
+            ]
+        },
+        {
+            "week": 10,
+            "focus": "Advanced voicings",
+            "skills": [
+                "quartal stacks"
+            ],
+            "outputs": [
+                "voicings"
+            ]
+        },
+        {
+            "week": 11,
+            "focus": "Call & response",
+            "skills": [
+                "improvisation"
+            ],
+            "outputs": [
+                "licks"
+            ]
+        },
+        {
+            "week": 12,
+            "focus": "Band-style playing",
+            "skills": [
+                "space awareness"
+            ],
+            "outputs": [
+                "arrangements"
+            ]
+        },
+        {
+            "week": 13,
+            "focus": "Reharmonization",
+            "skills": [
+                "subs",
+                "extensions"
+            ],
+            "outputs": [
+                "theory"
+            ]
+        },
+        {
+            "week": 14,
+            "focus": "Solo worship flow",
+            "skills": [
+                "dynamics"
+            ],
+            "outputs": [
+                "midi"
+            ]
+        },
+        {
+            "week": 15,
+            "focus": "Advanced shout sequences",
+            "skills": [
+                "endings"
+            ],
+            "outputs": [
+                "licks"
+            ]
+        },
+        {
+            "week": 16,
+            "focus": "Assessment & free play",
+            "skills": [
+                "full integration"
+            ],
+            "outputs": [
+                "evaluation"
+            ]
+        }
+    ]
+}
+```
+
+---
+
+## Jazz Improvisation Bootcamp (16 Weeks)
+
+```json
+{
+    "genre": "jazz",
+    "level": "intermediate_to_advanced",
+    "weeks": [
+        {
+            "week": 1,
+            "focus": "Shell voicings",
+            "skills": [
+                "3rd",
+                "7th"
+            ]
+        },
+        {
+            "week": 2,
+            "focus": "Guide tone lines",
+            "skills": [
+                "voice leading"
+            ]
+        },
+        {
+            "week": 3,
+            "focus": "Major ii-V-I",
+            "skills": [
+                "swing feel"
+            ]
+        },
+        {
+            "week": 4,
+            "focus": "Minor ii-V-i",
+            "skills": [
+                "altered dominants"
+            ]
+        },
+        {
+            "week": 5,
+            "focus": "Arpeggio soloing",
+            "skills": [
+                "chord tones"
+            ]
+        },
+        {
+            "week": 6,
+            "focus": "Approach notes",
+            "skills": [
+                "chromaticism"
+            ]
+        },
+        {
+            "week": 7,
+            "focus": "Enclosures",
+            "skills": [
+                "bebop language"
+            ]
+        },
+        {
+            "week": 8,
+            "focus": "Motivic development",
+            "skills": [
+                "phrasing"
+            ]
+        },
+        {
+            "week": 9,
+            "focus": "Modes",
+            "skills": [
+                "modal harmony"
+            ]
+        },
+        {
+            "week": 10,
+            "focus": "Altered scale",
+            "skills": [
+                "tension"
+            ]
+        },
+        {
+            "week": 11,
+            "focus": "Rhythmic displacement",
+            "skills": [
+                "time feel"
+            ]
+        },
+        {
+            "week": 12,
+            "focus": "Comping behind solos",
+            "skills": [
+                "interaction"
+            ]
+        },
+        {
+            "week": 13,
+            "focus": "Transcription",
+            "skills": [
+                "vocabulary"
+            ]
+        },
+        {
+            "week": 14,
+            "focus": "Playing standards",
+            "skills": [
+                "form awareness"
+            ]
+        },
+        {
+            "week": 15,
+            "focus": "Extended solos",
+            "skills": [
+                "storytelling"
+            ]
+        },
+        {
+            "week": 16,
+            "focus": "Performance evaluation",
+            "skills": [
+                "full integration"
+            ]
+        }
+    ]
+}
+```
+
+---
+
+## Neo-Soul Mastery (16 Weeks)
+
+```json
+{
+    "genre": "neo_soul",
+    "level": "intermediate_to_advanced",
+    "weeks": [
+        {
+            "week": 1,
+            "focus": "Minor 9 & 11 chords"
+        },
+        {
+            "week": 2,
+            "focus": "Cluster voicings"
+        },
+        {
+            "week": 3,
+            "focus": "Quartal harmony"
+        },
+        {
+            "week": 4,
+            "focus": "Neo-soul progressions"
+        },
+        {
+            "week": 5,
+            "focus": "Behind-the-beat feel"
+        },
+        {
+            "week": 6,
+            "focus": "Dilla groove timing"
+        },
+        {
+            "week": 7,
+            "focus": "Grace notes"
+        },
+        {
+            "week": 8,
+            "focus": "Chord slides"
+        },
+        {
+            "week": 9,
+            "focus": "Reharmonization"
+        },
+        {
+            "week": 10,
+            "focus": "Modal interchange"
+        },
+        {
+            "week": 11,
+            "focus": "Melodic fills"
+        },
+        {
+            "week": 12,
+            "focus": "Sparse comping"
+        },
+        {
+            "week": 13,
+            "focus": "Chord-melody textures"
+        },
+        {
+            "week": 14,
+            "focus": "Production-aware playing"
+        },
+        {
+            "week": 15,
+            "focus": "Signature voicings"
+        },
+        {
+            "week": 16,
+            "focus": "Creative assessment"
+        }
+    ]
+}
+```
+
+---
+
+## Blues Master Class (16 Weeks)
+
+```json
+{
+    "genre": "blues",
+    "weeks": [
+        {
+            "week": 1,
+            "focus": "12-bar form"
+        },
+        {
+            "week": 2,
+            "focus": "Blues scale"
+        },
+        {
+            "week": 3,
+            "focus": "Shuffle rhythm"
+        },
+        {
+            "week": 4,
+            "focus": "Dominant 7 voicings"
+        },
+        {
+            "week": 5,
+            "focus": "Turnarounds"
+        },
+        {
+            "week": 6,
+            "focus": "Walking bass"
+        },
+        {
+            "week": 7,
+            "focus": "Call and response"
+        },
+        {
+            "week": 8,
+            "focus": "Classic licks"
+        },
+        {
+            "week": 9,
+            "focus": "Slow blues"
+        },
+        {
+            "week": 10,
+            "focus": "Boogie patterns"
+        },
+        {
+            "week": 11,
+            "focus": "Minor blues"
+        },
+        {
+            "week": 12,
+            "focus": "Intros & endings"
+        },
+        {
+            "week": 13,
+            "focus": "Improvised choruses"
+        },
+        {
+            "week": 14,
+            "focus": "Stylistic authenticity"
+        },
+        {
+            "week": 15,
+            "focus": "Extended forms"
+        },
+        {
+            "week": 16,
+            "focus": "Performance assessment"
+        }
+    ]
+}
+```
+
+---
+
+## Classical ABRSM (16 Weeks)
+
+```json
+{
+    "genre": "classical",
+    "weeks": [
+        {
+            "week": 1,
+            "focus": "Major scales"
+        },
+        {
+            "week": 2,
+            "focus": "Minor scales"
+        },
+        {
+            "week": 3,
+            "focus": "Arpeggios"
+        },
+        {
+            "week": 4,
+            "focus": "Sight reading"
+        },
+        {
+            "week": 5,
+            "focus": "Hand independence"
+        },
+        {
+            "week": 6,
+            "focus": "Articulation"
+        },
+        {
+            "week": 7,
+            "focus": "Dynamics"
+        },
+        {
+            "week": 8,
+            "focus": "Pedaling"
+        },
+        {
+            "week": 9,
+            "focus": "Phrasing"
+        },
+        {
+            "week": 10,
+            "focus": "Ornaments"
+        },
+        {
+            "week": 11,
+            "focus": "Repertoire study"
+        },
+        {
+            "week": 12,
+            "focus": "Tempo control"
+        },
+        {
+            "week": 13,
+            "focus": "Memory playing"
+        },
+        {
+            "week": 14,
+            "focus": "Exam simulation"
+        },
+        {
+            "week": 15,
+            "focus": "Refinement"
+        },
+        {
+            "week": 16,
+            "focus": "Graded assessment"
+        }
+    ]
+}
+```
+
+---
+
+## Latin Piano (16 Weeks)
+
+```json
+{
+    "genre": "latin",
+    "weeks": [
+        {
+            "week": 1,
+            "focus": "Clave awareness"
+        },
+        {
+            "week": 2,
+            "focus": "Bossa nova LH"
+        },
+        {
+            "week": 3,
+            "focus": "Bossa voicings"
+        },
+        {
+            "week": 4,
+            "focus": "Anticipations"
+        },
+        {
+            "week": 5,
+            "focus": "Montuno basics"
+        },
+        {
+            "week": 6,
+            "focus": "2-3 clave"
+        },
+        {
+            "week": 7,
+            "focus": "3-2 clave"
+        },
+        {
+            "week": 8,
+            "focus": "Salsa harmony"
+        },
+        {
+            "week": 9,
+            "focus": "Afro-Cuban patterns"
+        },
+        {
+            "week": 10,
+            "focus": "Left-hand tumbao"
+        },
+        {
+            "week": 11,
+            "focus": "Right-hand syncopation"
+        },
+        {
+            "week": 12,
+            "focus": "Band-style playing"
+        },
+        {
+            "week": 13,
+            "focus": "Improvisation"
+        },
+        {
+            "week": 14,
+            "focus": "Reharmonization"
+        },
+        {
+            "week": 15,
+            "focus": "Extended montunos"
+        },
+        {
+            "week": 16,
+            "focus": "Groove assessment"
+        }
+    ]
+}
+```
+
+---
+
+## Modern R&B / Producer Keys (16 Weeks)
+
+```json
+{
+    "genre": "modern_rnb",
+    "weeks": [
+        {
+            "week": 1,
+            "focus": "Lo-fi chord stacks"
+        },
+        {
+            "week": 2,
+            "focus": "Major 7 textures"
+        },
+        {
+            "week": 3,
+            "focus": "Minor 9 voicings"
+        },
+        {
+            "week": 4,
+            "focus": "Sparse harmony"
+        },
+        {
+            "week": 5,
+            "focus": "Trap soul progressions"
+        },
+        {
+            "week": 6,
+            "focus": "808-aware voicings"
+        },
+        {
+            "week": 7,
+            "focus": "Top-line melodies"
+        },
+        {
+            "week": 8,
+            "focus": "Chord rhythm placement"
+        },
+        {
+            "week": 9,
+            "focus": "Production dynamics"
+        },
+        {
+            "week": 10,
+            "focus": "Automation-style playing"
+        },
+        {
+            "week": 11,
+            "focus": "Layering keys"
+        },
+        {
+            "week": 12,
+            "focus": "Sound selection"
+        },
+        {
+            "week": 13,
+            "focus": "Hooks"
+        },
+        {
+            "week": 14,
+            "focus": "Beat collaboration"
+        },
+        {
+            "week": 15,
+            "focus": "Track building"
+        },
+        {
+            "week": 16,
+            "focus": "Producer assessment"
+        }
+    ]
+}
+```
+
+---
+
+## Worship Band Ready (16 Weeks)
+
+```json
+{
+    "genre": "worship",
+    "weeks": [
+        {
+            "week": 1,
+            "focus": "Nashville numbers"
+        },
+        {
+            "week": 2,
+            "focus": "Pad playing"
+        },
+        {
+            "week": 3,
+            "focus": "Slash chords"
+        },
+        {
+            "week": 4,
+            "focus": "1-5-6-4 mastery"
+        },
+        {
+            "week": 5,
+            "focus": "Dynamics"
+        },
+        {
+            "week": 6,
+            "focus": "Builds & drops"
+        },
+        {
+            "week": 7,
+            "focus": "Spontaneous transitions"
+        },
+        {
+            "week": 8,
+            "focus": "Prayer moments"
+        },
+        {
+            "week": 9,
+            "focus": "Band awareness"
+        },
+        {
+            "week": 10,
+            "focus": "Intro creation"
+        },
+        {
+            "week": 11,
+            "focus": "Outro creation"
+        },
+        {
+            "week": 12,
+            "focus": "Key changes"
+        },
+        {
+            "week": 13,
+            "focus": "Leading from keys"
+        },
+        {
+            "week": 14,
+            "focus": "Extended worship flow"
+        },
+        {
+            "week": 15,
+            "focus": "Service simulation"
+        },
+        {
+            "week": 16,
+            "focus": "Live readiness assessment"
+        }
+    ]
+}
+```
+
+---
+
+These JSON templates are **intentionally deterministic** so your AI can:
+
+* Generate MIDI deterministically
+* Vary difficulty programmatically
+* Cross-map skills between genres
+* Attach scoring, timing, and harmonic validation
+
+If you want, next we can:
+
+* Normalize this into a single master schema
+* Add per-week MIDI constraints (range, density, rhythm)
+* Add assessment rubrics per genre
+* Build the generator prompts per exercise type

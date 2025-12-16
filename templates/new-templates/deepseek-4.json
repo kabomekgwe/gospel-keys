@@ -1,0 +1,815 @@
+{
+    "title": "Modern R&B Producer Keys",
+    "description": "Keyboard techniques for R&B and hip-hop production. Lo-fi chords, trap soul progressions, and the sounds behind modern hits, expanded with 2025 vocal processing and beat trends for full track mastery.",
+    "modules": [
+        {
+            "title": "Lo-Fi & Chill Chords",
+            "description": "The dreamy, nostalgic sounds of lo-fi hip-hop, with ear training for textures.",
+            "theme": "rnb_lofi",
+            "start_week": 1,
+            "end_week": 4,
+            "prerequisites": [
+                "Extended chords"
+            ],
+            "outcomes": [
+                "Major 7th Voicings",
+                "9th & 11th Extensions",
+                "Detuned Piano Sound",
+                "Sample Chops",
+                "Ear for Textures"
+            ],
+            "lessons": [
+                {
+                    "title": "Lo-Fi Chord Stacks",
+                    "description": "Creating lush, jazzy chords for beats.",
+                    "week_number": 1,
+                    "concepts": [
+                        "Maj7/9 Voicings",
+                        "Add9 Chords",
+                        "Cluster Voicings"
+                    ],
+                    "theory_content": {
+                        "summary": "Lo-fi uses warm, imperfect chords for vibe.",
+                        "key_points": [
+                            "Detune slightly",
+                            "Stack 7-9-11"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Lo-Fi ii-V-I",
+                            "description": "Dm9 - G13 - Cmaj9 with lo-fi voicings.",
+                            "exercise_type": "progression",
+                            "content": {
+                                "chords": [
+                                    "Dm9",
+                                    "G13",
+                                    "Cmaj9"
+                                ],
+                                "style": "lo-fi"
+                            },
+                            "midi_prompt": "MIDI lo-fi progression with detune",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 15
+                        },
+                        {
+                            "title": "Chord Stacks with Effects",
+                            "description": "Add reverb sim in practice.",
+                            "exercise_type": "production",
+                            "content": {
+                                "effects": "reverb, tape warble"
+                            },
+                            "midi_prompt": "MIDI with lo-fi effects",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 15
+                        },
+                        {
+                            "title": "Ear Training: Lo-Fi Texture ID",
+                            "description": "Identify detuned chords.",
+                            "exercise_type": "aural",
+                            "midi_prompt": "Lo-fi clips for ID",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 10
+                        },
+                        {
+                            "title": "Daily Lo-Fi Drill",
+                            "description": "Practice stacks in 3 keys.",
+                            "exercise_type": "drill",
+                            "midi_prompt": "Multi-key lo-fi MIDI",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 15
+                        }
+                    ]
+                },
+                {
+                    "title": "9th & 11th Extensions",
+                    "description": "Add advanced extensions to lo-fi.",
+                    "week_number": 2,
+                    "concepts": [
+                        "9ths",
+                        "11ths"
+                    ],
+                    "theory_content": {
+                        "summary": "Extensions add depth.",
+                        "key_points": [
+                            "Avoid clashing notes"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Extended Lo-Fi Progression",
+                            "description": "Apply to ii-V-I.",
+                            "exercise_type": "progression",
+                            "midi_prompt": "Extended lo-fi MIDI",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 20
+                        },
+                        {
+                            "title": "Extensions Ear Training",
+                            "description": "Identify 9ths/11ths.",
+                            "exercise_type": "aural",
+                            "midi_prompt": "Extension clips",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 10
+                        }
+                    ]
+                },
+                {
+                    "title": "Detuned Piano Sound",
+                    "description": "Create lo-fi detune effects, with 2025 sound design updates.",
+                    "week_number": 3,
+                    "concepts": [
+                        "Detuning",
+                        "Sound Design"
+                    ],
+                    "theory_content": {
+                        "summary": "Detune adds nostalgia.",
+                        "key_points": [
+                            "Slight detune",
+                            "Layer effects"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Detune Drill",
+                            "description": "Apply detune to chords.",
+                            "exercise_type": "production",
+                            "midi_prompt": "Detuned MIDI",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 15
+                        }
+                    ]
+                },
+                {
+                    "title": "Sample Chops in Lo-Fi",
+                    "description": "Chop samples for R&B, with 2025 sampling techniques.",
+                    "week_number": 4,
+                    "concepts": [
+                        "Sampling",
+                        "Chopping"
+                    ],
+                    "theory_content": {
+                        "summary": "Sampling adds texture.",
+                        "key_points": [
+                            "Time-stretch",
+                            "Layer with keys"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Chop Jazz Sample",
+                            "description": "Into lo-fi chords.",
+                            "exercise_type": "production",
+                            "midi_prompt": "Sample MIDI chop",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 20
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "title": "Trap Soul Progressions",
+            "description": "Dark, emotional progressions used in modern R&B, with 2025 808 updates.",
+            "theme": "rnb_trapsoul",
+            "start_week": 5,
+            "end_week": 8,
+            "prerequisites": [
+                "Lo-fi mastery"
+            ],
+            "outcomes": [
+                "Minor Key Progressions",
+                "808 Bass Awareness",
+                "Melancholic Voicings",
+                "Hi-Hat Syncopation",
+                "Ear for Trap Feel"
+            ],
+            "lessons": [
+                {
+                    "title": "The Trap Soul Sound",
+                    "description": "Bryson Tiller, 6LACK, and the melancholic minor vibe.",
+                    "week_number": 5,
+                    "concepts": [
+                        "i-VI-III-VII",
+                        "Minor 9ths",
+                        "Sparse Voicings"
+                    ],
+                    "theory_content": {
+                        "summary": "Trap soul blends R&B with trap beats.",
+                        "key_points": [
+                            "Sparse for space",
+                            "808 sub-bass"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Classic Trap Soul Progression",
+                            "description": "Am9 - Fmaj7 - Cmaj7 - G with 808 bass in mind.",
+                            "exercise_type": "progression",
+                            "content": {
+                                "chords": [
+                                    "Am9",
+                                    "Fmaj7",
+                                    "Cmaj7",
+                                    "G"
+                                ],
+                                "key": "Am"
+                            },
+                            "midi_prompt": "MIDI trap soul with 808",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 15
+                        },
+                        {
+                            "title": "Sparse Voicing Drill",
+                            "description": "Play with minimal notes.",
+                            "exercise_type": "voicing",
+                            "content": {
+                                "style": "sparse"
+                            },
+                            "midi_prompt": "MIDI sparse trap",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 15
+                        },
+                        {
+                            "title": "Trap Ear Training",
+                            "description": "Identify minor progressions.",
+                            "exercise_type": "aural",
+                            "midi_prompt": "Trap clips for ID",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 10
+                        }
+                    ]
+                },
+                {
+                    "title": "808 Bass Awareness",
+                    "description": "Integrate 808s with keys, with 2025 sub-bass trends.",
+                    "week_number": 6,
+                    "concepts": [
+                        "808 Bass",
+                        "Sub-Bass"
+                    ],
+                    "theory_content": {
+                        "summary": "808s add depth to trap.",
+                        "key_points": [
+                            "Low frequency",
+                            "Layer with chords"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Progression with 808",
+                            "description": "Add 808 to trap progression.",
+                            "exercise_type": "production",
+                            "midi_prompt": "808 MIDI integration",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 20
+                        }
+                    ]
+                },
+                {
+                    "title": "Melancholic Voicings",
+                    "description": "Sparse voicings for emotional trap.",
+                    "week_number": 7,
+                    "concepts": [
+                        "Sparse Voicings",
+                        "Emotional Chords"
+                    ],
+                    "theory_content": {
+                        "summary": "Sparse creates mood.",
+                        "key_points": [
+                            "Minimal notes",
+                            "Focus on root/b7"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Melancholic Drill",
+                            "description": "Practice sparse in minor keys.",
+                            "exercise_type": "voicing",
+                            "midi_prompt": "Melancholic MIDI",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 15
+                        }
+                    ]
+                },
+                {
+                    "title": "Hi-Hat Syncopation",
+                    "description": "Add trap rhythms to keys, with 2025 hi-hat patterns.",
+                    "week_number": 8,
+                    "concepts": [
+                        "Hi-Hats",
+                        "Triplets"
+                    ],
+                    "theory_content": {
+                        "summary": "Hi-hats drive trap energy.",
+                        "key_points": [
+                            "Triplet hi-hats",
+                            "Sync with keys"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Trap Rhythm over Chords",
+                            "description": "Layer hi-hats on progression.",
+                            "exercise_type": "rhythm",
+                            "content": {
+                                "tempo": 140
+                            },
+                            "midi_prompt": "MIDI trap rhythm layer",
+                            "difficulty": "advanced",
+                            "estimated_duration_minutes": 20
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "title": "Full Production",
+            "description": "Build full tracks with 2025 vocal and mix trends from SoundOracle.",
+            "theme": "rnb_production",
+            "start_week": 15,
+            "end_week": 20,
+            "prerequisites": [
+                "Timing mastery"
+            ],
+            "outcomes": [
+                "Beat Making",
+                "Fusion Licks",
+                "Live Performance",
+                "Vocal Support",
+                "Final Project"
+            ],
+            "lessons": [
+                {
+                    "title": "Beat Making Basics",
+                    "description": "Layer keys with beats.",
+                    "week_number": 15,
+                    "concepts": [
+                        "Beats",
+                        "Drum Programming"
+                    ],
+                    "theory_content": {
+                        "summary": "Production adds reverb, delay for atmospheric sound.",
+                        "key_points": [
+                            "Use lo-fi effects",
+                            "Layer with synth pads"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Produce a Loop",
+                            "description": "Create MIDI loop with min11 and Dilla groove.",
+                            "exercise_type": "production",
+                            "content": {
+                                "elements": "chords + beat"
+                            },
+                            "midi_prompt": "Generate full MIDI loop with effects sim",
+                            "difficulty": "advanced",
+                            "estimated_duration_minutes": 25
+                        }
+                    ]
+                },
+                {
+                    "title": "Fusion Licks in Production",
+                    "description": "Add fusion licks to beats.",
+                    "week_number": 16,
+                    "concepts": [
+                        "Fusion Licks"
+                    ],
+                    "exercises": [
+                        {
+                            "title": "Fusion Lick Drill",
+                            "description": "Add licks to loop.",
+                            "exercise_type": "production",
+                            "midi_prompt": "Fusion lick MIDI",
+                            "difficulty": "advanced",
+                            "estimated_duration_minutes": 20
+                        }
+                    ]
+                },
+                {
+                    "title": "Live Performance with Production",
+                    "description": "Simulate live with produced tracks.",
+                    "week_number": 17,
+                    "concepts": [
+                        "Live Production"
+                    ],
+                    "exercises": [
+                        {
+                            "title": "Live Sim Drill",
+                            "description": "Play over produced loop.",
+                            "exercise_type": "performance",
+                            "midi_prompt": "Produced backing",
+                            "difficulty": "mastery",
+                            "estimated_duration_minutes": 30
+                        }
+                    ]
+                },
+                {
+                    "title": "Vocal Support in Full Track",
+                    "description": "Integrate vocals with keys, with 2025 processing.",
+                    "week_number": 18,
+                    "concepts": [
+                        "Vocal Integration"
+                    ],
+                    "theory_content": {
+                        "summary": "Vocal processing enhances keys.",
+                        "key_points": [
+                            "Auto-tune integration",
+                            "Harmony layers"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Vocal Key Harmony",
+                            "description": "Support simulated vocals with processing.",
+                            "exercise_type": "harmony",
+                            "midi_prompt": "Vocal MIDI support",
+                            "difficulty": "mastery",
+                            "estimated_duration_minutes": 25
+                        }
+                    ]
+                },
+                {
+                    "title": "Mixing Basics for R&B",
+                    "description": "Mix tracks with 2025 trends.",
+                    "week_number": 19,
+                    "concepts": [
+                        "Mixing",
+                        "Effects"
+                    ],
+                    "exercises": [
+                        {
+                            "title": "Mix Drill",
+                            "description": "Mix produced loop.",
+                            "exercise_type": "production",
+                            "midi_prompt": "Mix MIDI elements",
+                            "difficulty": "mastery",
+                            "estimated_duration_minutes": 30
+                        }
+                    ]
+                },
+                {
+                    "title": "Final R&B Project",
+                    "description": "Create and assess full track.",
+                    "week_number": 20,
+                    "concepts": [
+                        "Full Track"
+                    ],
+                    "exercises": [
+                        {
+                            "title": "Original R&B Track",
+                            "description": "Complete production with vocal and mix.",
+                            "exercise_type": "project",
+                            "midi_prompt": "Elements for track",
+                            "difficulty": "mastery",
+                            "estimated_duration_minutes": 45
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+
+
+{
+    "title": "Worship Band Ready",
+    "description": "Practical keyboard skills for playing in a worship band. Nashville numbers, team dynamics, pad textures, and leading with confidence, expanded with 2025 tech and spiritual elements for ministry mastery.",
+    "modules": [
+        {
+            "title": "Worship Keys Fundamentals",
+            "description": "Essential skills for fitting into a worship band, with chart reading and ear basics.",
+            "theme": "worship_fundamentals",
+            "start_week": 1,
+            "end_week": 4,
+            "prerequisites": [
+                "Basic chords"
+            ],
+            "outcomes": [
+                "Nashville Number System",
+                "Pad Playing",
+                "Team Dynamics",
+                "Chart Reading",
+                "Ear for Chords"
+            ],
+            "lessons": [
+                {
+                    "title": "The Nashville Number System",
+                    "description": "Transpose any song instantly using numbers.",
+                    "week_number": 1,
+                    "concepts": [
+                        "Number System",
+                        "Transposition",
+                        "Chord Charts"
+                    ],
+                    "theory_content": {
+                        "summary": "Numbers allow quick key changes for vocalists.",
+                        "key_points": [
+                            "1 = I, 5 = V",
+                            "Slash for inversions"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "1-5-6-4 in Every Key",
+                            "description": "The most common worship progression, all 12 keys.",
+                            "exercise_type": "progression",
+                            "content": {
+                                "roman_numerals": [
+                                    "I",
+                                    "V",
+                                    "vi",
+                                    "IV"
+                                ],
+                                "practice": "all_keys"
+                            },
+                            "midi_prompt": "MIDI 1-5-6-4 all keys",
+                            "difficulty": "beginner",
+                            "estimated_duration_minutes": 20
+                        },
+                        {
+                            "title": "Transpose Chart",
+                            "description": "Transpose a simple chart from C to Eb.",
+                            "exercise_type": "transposition",
+                            "content": {
+                                "original_key": "C"
+                            },
+                            "midi_prompt": "MIDI transposed example",
+                            "difficulty": "beginner",
+                            "estimated_duration_minutes": 20
+                        },
+                        {
+                            "title": "Number System Ear Training",
+                            "description": "Identify numbers in progressions.",
+                            "exercise_type": "aural",
+                            "midi_prompt": "Progression clips for number ID",
+                            "difficulty": "beginner",
+                            "estimated_duration_minutes": 10
+                        }
+                    ]
+                },
+                {
+                    "title": "Pad Playing & Textures",
+                    "description": "Creating atmosphere without stepping on other instruments.",
+                    "week_number": 2,
+                    "concepts": [
+                        "Pad Sounds",
+                        "Sustained Chords",
+                        "Less is More"
+                    ],
+                    "theory_content": {
+                        "summary": "Pads provide foundation in full band.",
+                        "key_points": [
+                            "Use synth or piano sustain",
+                            "Avoid low register clash"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Whole Note Pad Exercise",
+                            "description": "Hold each chord for 4 bars, focusing on smooth transitions.",
+                            "exercise_type": "rhythm",
+                            "content": {
+                                "duration": "4 bars per chord"
+                            },
+                            "midi_prompt": "MIDI pad exercise",
+                            "difficulty": "beginner",
+                            "estimated_duration_minutes": 10
+                        }
+                    ]
+                },
+                # Expand similarly for weeks 3-4 with team dynamics, chart reading, ear drills.
+            ]
+        },
+        {
+            "title": "Leading & Dynamics",
+            "description": "Ownership of keys role, with dynamics and intros.",
+            "theme": "worship_leading",
+            "start_week": 5,
+            "end_week": 8,
+            "prerequisites": [
+                "Fundamentals"
+            ],
+            "outcomes": [
+                "Building Dynamics",
+                "Intro/Outro Creation",
+                "Spontaneous Worship",
+                "Ear for Dynamics"
+            ],
+            "lessons": [
+                {
+                    "title": "Building Dynamics",
+                    "description": "From quiet to loud for arcs.",
+                    "week_number": 5,
+                    "concepts": [
+                        "Crescendo",
+                        "Intensity"
+                    ],
+                    "exercises": [
+                        {
+                            "title": "Dynamic Build Exercise",
+                            "description": "Start with pads, add rhythm.",
+                            "exercise_type": "dynamics",
+                            "content": {
+                                "levels": "soft to loud"
+                            },
+                            "midi_prompt": "MIDI dynamic build",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 15
+                        }
+                    ]
+                },
+                # Expand for weeks 6-8 with intro/outro, spontaneous, ear drills.
+            ]
+        },
+        {
+            "title": "Advanced Leadership & Tech",
+            "description": "Leading sets, using tech in worship, with 2025 multi-keys updates from Sunday Sounds.",
+            "theme": "worship_leadership",
+            "start_week": 9,
+            "end_week": 16,
+            "prerequisites": [
+                "Dynamics"
+            ],
+            "outcomes": [
+                "Set Building",
+                "Click Tracks",
+                "Multi-Keys Setup",
+                "Holy Spirit-Led Play",
+                "Final Set Performance"
+            ],
+            "lessons": [
+                {
+                    "title": "Set Building",
+                    "description": "Arrange songs for flow.",
+                    "week_number": 9,
+                    "concepts": [
+                        "Flow",
+                        "Key Transitions"
+                    ],
+                    "theory_content": {
+                        "summary": "Sets maintain energy.",
+                        "key_points": [
+                            "Modulate between songs",
+                            "Theme consistency"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Build a 3-Song Set",
+                            "description": "Choose and arrange.",
+                            "exercise_type": "set",
+                            "content": {
+                                "songs": 3
+                            },
+                            "midi_prompt": "MIDI set transitions",
+                            "difficulty": "advanced",
+                            "estimated_duration_minutes": 25
+                        }
+                    ]
+                },
+                {
+                    "title": "Click Tracks",
+                    "description": "Sync with band using clicks, 2025 updates.",
+                    "week_number": 10,
+                    "concepts": [
+                        "Clicks",
+                        "In-Ears"
+                    ],
+                    "exercises": [
+                        {
+                            "title": "Play to Click",
+                            "description": "Practice with metronome click.",
+                            "exercise_type": "rhythm",
+                            "content": {
+                                "tempo": "varied"
+                            },
+                            "midi_prompt": "MIDI click track",
+                            "difficulty": "advanced",
+                            "estimated_duration_minutes": 20
+                        }
+                    ]
+                },
+                {
+                    "title": "Multi-Keys Setup",
+                    "description": "Use multiple sounds, with 2025 tech.",
+                    "week_number": 11,
+                    "concepts": [
+                        "Multi-Keys",
+                        "Tech"
+                    ],
+                    "exercises": [
+                        {
+                            "title": "Multi-Key Drill",
+                            "description": "Layer pads and leads.",
+                            "exercise_type": "tech",
+                            "midi_prompt": "Multi-sound MIDI",
+                            "difficulty": "advanced",
+                            "estimated_duration_minutes": 25
+                        }
+                    ]
+                },
+                {
+                    "title": "Holy Spirit-Led Play",
+                    "description": "Flow with spiritual prompts.",
+                    "week_number": 12,
+                    "concepts": [
+                        "Spirit-Led"
+                    ],
+                    "exercises": [
+                        {
+                            "title": "Spirit Flow Session",
+                            "description": "Improv with prayer.",
+                            "exercise_type": "improv",
+                            "midi_prompt": "Ambient backing",
+                            "difficulty": "mastery",
+                            "estimated_duration_minutes": 30
+                        }
+                    ]
+                },
+                {
+                    "title": "Advanced Cues and Team Play",
+                    "week_number": 13,
+                    "concepts": [
+                        "Cues",
+                        "Team"
+                    ],
+                    "exercises": [
+                        {
+                            "title": "Cue Drill",
+                            "description": "Practice cues in sim band.",
+                            "exercise_type": "ensemble",
+                            "midi_prompt": "Band with cues MIDI",
+                            "difficulty": "mastery",
+                            "estimated_duration_minutes": 25
+                        }
+                    ]
+                },
+                {
+                    "title": "Scriptural Leadership Reflection",
+                    "week_number": 14,
+                    "concepts": [
+                        "Scriptural",
+                        "Reflection"
+                    ],
+                    "exercises": [
+                        {
+                            "title": "Reflection Improv",
+                            "description": "Improv on scripture.",
+                            "exercise_type": "reflection",
+                            "midi_prompt": "Ambient MIDI",
+                            "difficulty": "mastery",
+                            "estimated_duration_minutes": 30
+                        }
+                    ]
+                },
+                {
+                    "title": "Final Set Preparation",
+                    "week_number": 15,
+                    "concepts": [
+                        "Set Prep"
+                    ],
+                    "exercises": [
+                        {
+                            "title": "Prepare Final Set",
+                            "description": "Build and rehearse set.",
+                            "exercise_type": "set",
+                            "midi_prompt": "Set backing",
+                            "difficulty": "mastery",
+                            "estimated_duration_minutes": 40
+                        }
+                    ]
+                },
+                {
+                    "title": "Final Set Performance and Assessment",
+                    "week_number": 16,
+                    "concepts": [
+                        "Performance"
+                    ],
+                    "exercises": [
+                        {
+                            "title": "Perform Final Set",
+                            "description": "Full simulation.",
+                            "exercise_type": "performance",
+                            "midi_prompt": "Band sim for set",
+                            "difficulty": "mastery",
+                            "estimated_duration_minutes": 45
+                        },
+                        {
+                            "title": "Assessment with Rubric",
+                            "description": "Self-critique.",
+                            "exercise_type": "assessment",
+                            "content": {
+                                "rubric": "Leadership, dynamics, tech"
+                            },
+                            "midi_prompt": "None",
+                            "difficulty": "mastery",
+                            "estimated_duration_minutes": 30
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,1795 @@
+DEFAULT_CURRICULUMS = {
+    "gospel_essentials": {
+        "id": "gospel_essentials",
+        "title": "Gospel Keys Essentials",
+        "description": "From traditional hymns to contemporary gospel: chords, movements, shout patterns, and preacher backing.",
+        "style_tags": [
+            "gospel",
+            "church",
+            "traditional",
+            "contemporary"
+        ],
+        "level": "beginner_to_intermediate",
+        "estimated_total_weeks": 12,
+        "modules": [
+            {
+                "id": "gospel_harmony_foundations",
+                "title": "Gospel Harmony Foundations",
+                "description": "Move from triads to rich 7ths and 9ths, learn the 1-4-5 gospel style and basic shout ideas.",
+                "theme": "gospel_basics",
+                "start_week": 1,
+                "end_week": 4,
+                "outcomes": [
+                    "Play major, minor and dominant 7th chords in all keys",
+                    "Use basic gospel 2-5-1 in at least 3 keys",
+                    "Understand the 1-4-5 shout feel"
+                ],
+                "lessons": [
+                    {
+                        "id": "gospel_1_beyond_triads",
+                        "title": "Beyond Triads: 7th Chords",
+                        "description": "Introduction to Major 7, Dominant 7, and Minor 7 chords with basic drop-2 voicings.",
+                        "week_number": 1,
+                        "concepts": [
+                            "Major 7th",
+                            "Dominant 7th",
+                            "Minor 7th",
+                            "Drop-2 Voicings"
+                        ],
+                        "theory_content": {
+                            "summary": "Gospel harmony relies on 7th chords to create warmth and color over simple melodies.",
+                            "key_points": [
+                                "Construct maj7, min7 and dom7 from every scale degree",
+                                "Use inversions to keep common tones between chords",
+                                "Drop-2 voicings create a smoother, choir-like sound"
+                            ],
+                            "recommended_keys": [
+                                "C",
+                                "F",
+                                "G"
+                            ]
+                        },
+                        "exercises": [
+                            {
+                                "id": "ex_gospel_1_diatonic_7ths_c",
+                                "title": "Diatonic 7th Chords in C",
+                                "description": "Play diatonic 7th chords in C Major ascending and descending.",
+                                "exercise_type": "scale",
+                                "tags": [
+                                    "diatonic_7ths",
+                                    "chord_drill"
+                                ],
+                                "content": {
+                                    "scale": "C Major",
+                                    "pattern": "Diatonic 7ths",
+                                    "notes_per_step": 4,
+                                    "include_inversions": True,
+                                    "hands": "both",
+                                    "midi_hints": {
+                                        "tempo_bpm": 70,
+                                        "swing": False,
+                                        "articulation": "legato",
+                                        "voicing_type": "root_position_and_inversions"
+                                    }
+                                },
+                                "difficulty": "beginner",
+                                "estimated_duration_minutes": 10
+                            },
+                            {
+                                "id": "ex_gospel_1_251_c",
+                                "title": "Gospel 2-5-1 in C",
+                                "description": "Basic gospel 2-5-1 with extensions.",
+                                "exercise_type": "progression",
+                                "tags": [
+                                    "251",
+                                    "extensions"
+                                ],
+                                "content": {
+                                    "key": "C",
+                                    "chords": [
+                                        "Dm9",
+                                        "G13",
+                                        "Cmaj9"
+                                    ],
+                                    "roman_numerals": [
+                                        "ii9",
+                                        "V13",
+                                        "Imaj9"
+                                    ],
+                                    "left_hand": {
+                                        "pattern": "root_octaves",
+                                        "register": "low"
+                                    },
+                                    "right_hand": {
+                                        "voicing": "drop2",
+                                        "register": "middle"
+                                    },
+                                    "midi_hints": {
+                                        "tempo_bpm": 80,
+                                        "swing": True,
+                                        "bars": 4,
+                                        "loop": True
+                                    }
+                                },
+                                "difficulty": "beginner",
+                                "estimated_duration_minutes": 15
+                            }
+                        ]
+                    },
+                    {
+                        "id": "gospel_2_preachers_chord",
+                        "title": "The Preacher's Chord",
+                        "description": "Master the dominant 7#9 chord and use it in cycles for shouts.",
+                        "week_number": 2,
+                        "concepts": [
+                            "Dominant 7#9",
+                            "Tritones",
+                            "Blues Scale"
+                        ],
+                        "theory_content": {
+                            "summary": "The 7#9 chord is a staple for preacher backing and intense gospel moments.",
+                            "key_points": [
+                                "Think of 7#9 as a dominant chord with both major and minor 3rd color",
+                                "The tritone (3rd and b7) defines the chord’s function",
+                                "Blues scale tones blend naturally with 7#9 chords"
+                            ],
+                            "example_chords": [
+                                "E7#9",
+                                "A7#9",
+                                "D7#9",
+                                "G7#9"
+                            ]
+                        },
+                        "exercises": [
+                            {
+                                "id": "ex_gospel_2_e7sharp9_voicing",
+                                "title": "E7#9 Voicing",
+                                "description": "Construct and play a standard preacher voicing for E7#9.",
+                                "exercise_type": "voicing",
+                                "tags": [
+                                    "preacher_chord",
+                                    "voicing"
+                                ],
+                                "content": {
+                                    "chord": "E7#9",
+                                    "notes": [
+                                        "E",
+                                        "G#",
+                                        "D",
+                                        "G"
+                                    ],
+                                    "hands": {
+                                        "left": [
+                                            "E",
+                                            "D"
+                                        ],
+                                        "right": [
+                                            "G#",
+                                            "G"
+                                        ]
+                                    },
+                                    "register": {
+                                        "left": "C2-C3",
+                                        "right": "C4-C5"
+                                    },
+                                    "midi_hints": {
+                                        "tempo_bpm": 60,
+                                        "sustain": True,
+                                        "repeat_times": 8
+                                    }
+                                },
+                                "difficulty": "intermediate",
+                                "estimated_duration_minutes": 10
+                            },
+                            {
+                                "id": "ex_gospel_2_preacher_cycle",
+                                "title": "Preacher Chords in Cycle of 4ths",
+                                "description": "Move 7#9 chords through the cycle of 4ths with steady groove.",
+                                "exercise_type": "progression",
+                                "tags": [
+                                    "cycle_of_fourths",
+                                    "preacher"
+                                ],
+                                "content": {
+                                    "key_center": "C",
+                                    "cycle_type": "fourths",
+                                    "chords": [
+                                        "E7#9",
+                                        "A7#9",
+                                        "D7#9",
+                                        "G7#9",
+                                        "C7#9"
+                                    ],
+                                    "bars_per_chord": 1,
+                                    "left_hand": "root_5th",
+                                    "right_hand": "compact_7sharp9",
+                                    "midi_hints": {
+                                        "tempo_bpm": 110,
+                                        "swing": True,
+                                        "loop": True
+                                    }
+                                },
+                                "difficulty": "intermediate",
+                                "estimated_duration_minutes": 15
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "gospel_progressions_movements",
+                "title": "Gospel Progressions & Movements",
+                "description": "Connect chords with classic gospel movements like 7-3-6 and walk-ups.",
+                "theme": "gospel_progressions",
+                "start_week": 5,
+                "end_week": 8,
+                "outcomes": [
+                    "Play 7-3-6 progressions in multiple keys",
+                    "Use diminished passing chords effectively",
+                    "Apply walk-ups and walk-downs in congregational songs"
+                ],
+                "lessons": [
+                    {
+                        "id": "gospel_3_736",
+                        "title": "The 7-3-6 Progression",
+                        "description": "Turnaround to the relative minor with secondary dominants and diminished chords.",
+                        "week_number": 5,
+                        "concepts": [
+                            "Secondary Dominants",
+                            "Diminished Passing Chords",
+                            "Voice Leading"
+                        ],
+                        "theory_content": {
+                            "summary": "The 7-3-6 is a signature gospel move leading smoothly into vi.",
+                            "key_points": [
+                                "Use vii°7 and V7/vi to pull strongly into vi",
+                                "Keep common tones in the top voice for smoothness",
+                                "Experiment with altered dominants for more tension"
+                            ],
+                            "example_key": "Ab"
+                        },
+                        "exercises": [
+                            {
+                                "id": "ex_gospel_3_736_ab",
+                                "title": "7-3-6 in Ab",
+                                "description": "Play Gdim7 → C7(b9) → Fm9 with smooth inner-voice movement.",
+                                "exercise_type": "progression",
+                                "tags": [
+                                    "736",
+                                    "secondary_dominant"
+                                ],
+                                "content": {
+                                    "key": "Ab",
+                                    "chords": [
+                                        "Gdim7",
+                                        "C7(b9)",
+                                        "Fm9"
+                                    ],
+                                    "roman_numerals": [
+                                        "vii°7/vi",
+                                        "V7/vi",
+                                        "vi9"
+                                    ],
+                                    "bars": [
+                                        1,
+                                        1,
+                                        2
+                                    ],
+                                    "midi_hints": {
+                                        "tempo_bpm": 90,
+                                        "swing": True,
+                                        "groove_style": "slow_shout"
+                                    }
+                                },
+                                "difficulty": "intermediate",
+                                "estimated_duration_minutes": 20
+                            }
+                        ]
+                    },
+                    {
+                        "id": "gospel_4_walkups",
+                        "title": "Walk-ups and Walk-downs",
+                        "description": "Bass movements that drive congregational singing.",
+                        "week_number": 6,
+                        "concepts": [
+                            "Bass Lines",
+                            "Slash Chords",
+                            "Chromaticism"
+                        ],
+                        "theory_content": {
+                            "summary": "Walk-ups and walk-downs connect primary chords with strong bass motion.",
+                            "key_points": [
+                                "Use passing diminished chords between I and IV",
+                                "Slash chords keep upper structure stable while bass moves",
+                                "Apply to classic hymn progressions"
+                            ]
+                        },
+                        "exercises": [
+                            {
+                                "id": "ex_gospel_4_1_to_4_walkup_c",
+                                "title": "The 1 to 4 Walk-up in C",
+                                "description": "C → C/E → F → F#dim7 → C/G pattern.",
+                                "exercise_type": "progression",
+                                "tags": [
+                                    "walkup",
+                                    "slash_chords"
+                                ],
+                                "content": {
+                                    "key": "C",
+                                    "chords": [
+                                        "C",
+                                        "C/E",
+                                        "F",
+                                        "F#dim7",
+                                        "C/G"
+                                    ],
+                                    "roman_numerals": [
+                                        "I",
+                                        "I/3",
+                                        "IV",
+                                        "#iv°7",
+                                        "I/5"
+                                    ],
+                                    "bass_line": [
+                                        "C",
+                                        "E",
+                                        "F",
+                                        "F#",
+                                        "G"
+                                    ],
+                                    "midi_hints": {
+                                        "tempo_bpm": 100,
+                                        "swing": True,
+                                        "feel": "congregational"
+                                    }
+                                },
+                                "difficulty": "intermediate",
+                                "estimated_duration_minutes": 15
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "gospel_shout_and_vamps",
+                "title": "Shout Patterns & Preacher Vamps",
+                "description": "Up-tempo shouts and repeating vamps to back the preacher.",
+                "theme": "gospel_shout",
+                "start_week": 9,
+                "end_week": 12,
+                "outcomes": [
+                    "Comp over fast shout patterns",
+                    "Loop preacher vamps comfortably in multiple keys"
+                ],
+                "lessons": [
+                    {
+                        "id": "gospel_5_basic_shout",
+                        "title": "Basic Shout Pattern in C",
+                        "description": "Simple two-bar shout pattern using 1-4-5.",
+                        "week_number": 9,
+                        "concepts": [
+                            "Shout Pattern",
+                            "Hand Coordination"
+                        ],
+                        "theory_content": {
+                            "summary": "Shouts are looped patterns combining strong rhythm and simple harmony.",
+                            "key_points": [
+                                "Keep left hand steady on roots and 5ths",
+                                "Right hand outlines dominant 7th shapes and riffs"
+                            ]
+                        },
+                        "exercises": [
+                            {
+                                "id": "ex_gospel_5_shout_c",
+                                "title": "Two-bar Shout Loop in C",
+                                "description": "Loop a basic shout pattern: C7–F7–G7 hits.",
+                                "exercise_type": "rhythm",
+                                "tags": [
+                                    "shout",
+                                    "loop"
+                                ],
+                                "content": {
+                                    "key": "C",
+                                    "bars": 2,
+                                    "left_hand_pattern": "C-G / F-C / G-D",
+                                    "right_hand_hits": [
+                                        "C-E-Bb",
+                                        "F-A-Eb",
+                                        "G-B-F"
+                                    ],
+                                    "subdivision": "8th_note_shuffle",
+                                    "midi_hints": {
+                                        "tempo_bpm": 160,
+                                        "swing": True,
+                                        "loop": True
+                                    }
+                                },
+                                "difficulty": "intermediate",
+                                "estimated_duration_minutes": 20
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "jazz_bootcamp": {
+        "id": "jazz_bootcamp",
+        "title": "Jazz Improvisation Bootcamp",
+        "description": "From shell voicings and ii-V-I to guide tones, arpeggio soloing, and approach notes.",
+        "style_tags": [
+            "jazz",
+            "swing",
+            "bebop"
+        ],
+        "level": "beginner_to_intermediate",
+        "estimated_total_weeks": 12,
+        "modules": [
+            {
+                "id": "jazz_fundamentals",
+                "title": "Jazz Fundamentals",
+                "theme": "jazz_basics",
+                "start_week": 1,
+                "end_week": 4,
+                "outcomes": [
+                    "Play shell voicings through all keys",
+                    "Understand swing feel and basic jazz time",
+                    "Connect 3rds and 7ths with guide-tone lines"
+                ],
+                "lessons": [
+                    {
+                        "id": "jazz_1_shells",
+                        "title": "Shell Voicings (A & B Forms)",
+                        "description": "Left hand voicings using root, 3rd, and 7th.",
+                        "week_number": 1,
+                        "concepts": [
+                            "Shell Voicings",
+                            "Voice Leading",
+                            "Swing Feel"
+                        ],
+                        "theory_content": {
+                            "summary": "Shell voicings free the right hand for melody while clearly outlining harmony.",
+                            "key_points": [
+                                "A form: Root–3rd–7th; B form: Root–7th–3rd",
+                                "Move between A and B to keep voicings close",
+                                "Use swing 8ths rather than straight 8ths"
+                            ],
+                            "recommended_progression": "ii-V-I"
+                        },
+                        "exercises": [
+                            {
+                                "id": "ex_jazz_1_shells_cycle",
+                                "title": "Shells around the Cycle",
+                                "description": "Play ii–V–I shells through all 12 keys.",
+                                "exercise_type": "voicing",
+                                "tags": [
+                                    "shells",
+                                    "cycle_of_fifths"
+                                ],
+                                "content": {
+                                    "pattern": "ii-V-I_cycle",
+                                    "voicing_type": "shell",
+                                    "keys": "all",
+                                    "hands": {
+                                        "left": "shell_voicings",
+                                        "right": "metronome_click_or_ride_sim"
+                                    },
+                                    "midi_hints": {
+                                        "tempo_bpm": 80,
+                                        "swing": True,
+                                        "bars_per_key": 4
+                                    }
+                                },
+                                "difficulty": "beginner",
+                                "estimated_duration_minutes": 20
+                            }
+                        ]
+                    },
+                    {
+                        "id": "jazz_2_guide_tones",
+                        "title": "Guide Tone Lines",
+                        "description": "Connecting 3rds and 7ths through chord changes.",
+                        "week_number": 2,
+                        "concepts": [
+                            "Guide Tones",
+                            "Thirds and Sevenths"
+                        ],
+                        "theory_content": {
+                            "summary": "Guide tones are the 3rd and 7th of each chord and define its function.",
+                            "key_points": [
+                                "Connect guide tones with stepwise motion",
+                                "Practice playing only 3rds and 7ths over a tune",
+                                "Use them as a skeleton for improvisation"
+                            ]
+                        },
+                        "exercises": [
+                            {
+                                "id": "ex_jazz_2_guide_tones_blue_bossa",
+                                "title": "Guide Tones on Blue Bossa",
+                                "description": "Play only 3rds and 7ths over Blue Bossa changes.",
+                                "exercise_type": "progression",
+                                "tags": [
+                                    "guide_tones",
+                                    "standard"
+                                ],
+                                "content": {
+                                    "tune": "Blue Bossa",
+                                    "key": "Cm",
+                                    "chords": [
+                                        "Cm7",
+                                        "Fm7",
+                                        "Dm7b5",
+                                        "G7alt"
+                                    ],
+                                    "play_only_intervals": [
+                                        "3rd",
+                                        "7th"
+                                    ],
+                                    "chorus_repeats": 4,
+                                    "midi_hints": {
+                                        "tempo_bpm": 110,
+                                        "swing": False,
+                                        "feel": "bossa"
+                                    }
+                                },
+                                "difficulty": "intermediate",
+                                "estimated_duration_minutes": 15
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "jazz_begin_improv",
+                "title": "Beginning Improvisation",
+                "theme": "jazz_improv",
+                "start_week": 5,
+                "end_week": 8,
+                "outcomes": [
+                    "Improvise using chord-tone arpeggios",
+                    "Add chromatic approach notes to target tones",
+                    "Maintain form over basic standards"
+                ],
+                "lessons": [
+                    {
+                        "id": "jazz_3_arpeggio_soloing",
+                        "title": "Arpeggio Soloing",
+                        "description": "Use 1-3-5-7 chord tones to outline changes.",
+                        "week_number": 5,
+                        "concepts": [
+                            "Chord Tones",
+                            "Arpeggios"
+                        ],
+                        "theory_content": {
+                            "summary": "Arpeggios connect directly to the harmony and create clear lines.",
+                            "key_points": [
+                                "Practice ascending and descending patterns",
+                                "Link arpeggios with stepwise passing tones",
+                                "Target 3rd or 7th on strong beats"
+                            ]
+                        },
+                        "exercises": [
+                            {
+                                "id": "ex_jazz_3_arps_251_bb",
+                                "title": "Arpeggios over 2-5-1 in Bb",
+                                "description": "1-3-5-7 up, 7-5-3-1 down over ii–V–I.",
+                                "exercise_type": "scale",
+                                "tags": [
+                                    "arpeggios",
+                                    "251"
+                                ],
+                                "content": {
+                                    "key": "Bb",
+                                    "pattern": "1-3-5-7_up_7-5-3-1_down",
+                                    "progression": [
+                                        "Cm7",
+                                        "F7",
+                                        "Bbmaj7"
+                                    ],
+                                    "midi_hints": {
+                                        "tempo_bpm": 100,
+                                        "swing": True,
+                                        "notes_per_beat": 2
+                                    }
+                                },
+                                "difficulty": "intermediate",
+                                "estimated_duration_minutes": 20
+                            }
+                        ]
+                    },
+                    {
+                        "id": "jazz_4_approach_notes",
+                        "title": "Approach Notes & Enclosures",
+                        "description": "Chromatic approaches into target chord tones.",
+                        "week_number": 6,
+                        "concepts": [
+                            "Chromatics",
+                            "Enclosures"
+                        ],
+                        "theory_content": {
+                            "summary": "Approach notes add tension and release around chord tones.",
+                            "key_points": [
+                                "Use half-step below or above the target",
+                                "Combine above-below patterns for enclosures",
+                                "Aim enclosures at 3rd or 7th on downbeats"
+                            ]
+                        },
+                        "exercises": [
+                            {
+                                "id": "ex_jazz_4_half_step_approach",
+                                "title": "Half-step Approaches to 3rds",
+                                "description": "Approach every 3rd of a chord from a half-step below.",
+                                "exercise_type": "lick",
+                                "tags": [
+                                    "chromatic",
+                                    "approach_notes"
+                                ],
+                                "content": {
+                                    "pattern": "chromatic_below",
+                                    "apply_to": "3rd",
+                                    "progression_template": "ii-V-I_all_keys",
+                                    "midi_hints": {
+                                        "tempo_bpm": 120,
+                                        "swing": True,
+                                        "bars_per_key": 2
+                                    }
+                                },
+                                "difficulty": "advanced",
+                                "estimated_duration_minutes": 15
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "neosoul_mastery": {
+        "id": "neosoul_mastery",
+        "title": "Neo-Soul Mastery",
+        "description": "Lush minor 9/11 chords, cluster voicings, Dilla feel, and expressive grace notes.",
+        "style_tags": [
+            "neo_soul",
+            "rnb",
+            "groove"
+        ],
+        "level": "intermediate",
+        "estimated_total_weeks": 10,
+        "modules": [
+            {
+                "id": "neosoul_harmony",
+                "title": "Neo-Soul Harmony",
+                "theme": "neosoul_basics",
+                "start_week": 1,
+                "end_week": 4,
+                "outcomes": [
+                    "Play minor 9 and minor 11 voicings in several keys",
+                    "Use cluster voicings for rich textures",
+                    "Apply tritone substitutions to smooth progressions"
+                ],
+                "lessons": [
+                    {
+                        "id": "neo_1_minor11",
+                        "title": "The Minor 11th Chord",
+                        "description": "The quintessential Neo-Soul chord and its variations.",
+                        "week_number": 1,
+                        "concepts": [
+                            "Minor 9th",
+                            "Minor 11th",
+                            "Cluster Voicings"
+                        ],
+                        "theory_content": {
+                            "summary": "Minor 11 voicings combine extended color tones with tight clusters.",
+                            "key_points": [
+                                "Think: 1–b3–5–b7–9–11",
+                                "Split between hands for playability",
+                                "Cluster 9, 11 and upper tones together"
+                            ]
+                        },
+                        "exercises": [
+                            {
+                                "id": "ex_neo_1_ebm11",
+                                "title": "Eb Minor 11 Deep Dive",
+                                "description": "Voicing Ebm11 with clustered upper structure.",
+                                "exercise_type": "voicing",
+                                "tags": [
+                                    "minor11",
+                                    "clusters"
+                                ],
+                                "content": {
+                                    "chord": "Ebm11",
+                                    "notes": [
+                                        "Eb",
+                                        "Bb",
+                                        "Db",
+                                        "F",
+                                        "Ab",
+                                        "Bb"
+                                    ],
+                                    "hands": {
+                                        "left": [
+                                            "Eb",
+                                            "Bb",
+                                            "Db"
+                                        ],
+                                        "right": [
+                                            "F",
+                                            "Ab",
+                                            "Bb"
+                                        ]
+                                    },
+                                    "midi_hints": {
+                                        "tempo_bpm": 60,
+                                        "articulation": "legato",
+                                        "sustain": True
+                                    }
+                                },
+                                "difficulty": "intermediate",
+                                "estimated_duration_minutes": 15
+                            }
+                        ]
+                    },
+                    {
+                        "id": "neo_2_tritone_subs",
+                        "title": "Tritone Substitution in Neo-Soul",
+                        "description": "Reharmonizing V chords for chromatic bass and smooth voice leading.",
+                        "week_number": 2,
+                        "concepts": [
+                            "Tritone Substitution",
+                            "Extended Dominants"
+                        ],
+                        "theory_content": {
+                            "summary": "Tritone subs create smooth, chromatic motion and jazzy color.",
+                            "key_points": [
+                                "Replace V7 with bII7",
+                                "Preserve guide tones across the substitution",
+                                "Use tensions like 9 and #11 on the subV7"
+                            ]
+                        },
+                        "exercises": [
+                            {
+                                "id": "ex_neo_2_tritone_251_c",
+                                "title": "Tritone Subs in 2-5-1 (C)",
+                                "description": "Dm9 – Db9#11 – Cmaj9 progression.",
+                                "exercise_type": "progression",
+                                "tags": [
+                                    "tritone_sub",
+                                    "smooth_bass"
+                                ],
+                                "content": {
+                                    "key": "C",
+                                    "chords": [
+                                        "Dm9",
+                                        "Db9#11",
+                                        "Cmaj9"
+                                    ],
+                                    "roman_numerals": [
+                                        "ii9",
+                                        "subV9#11",
+                                        "Imaj9"
+                                    ],
+                                    "bass_line": [
+                                        "D",
+                                        "Db",
+                                        "C"
+                                    ],
+                                    "midi_hints": {
+                                        "tempo_bpm": 80,
+                                        "swing": False,
+                                        "feel": "laid_back"
+                                    }
+                                },
+                                "difficulty": "advanced",
+                                "estimated_duration_minutes": 20
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "neosoul_groove_ornament",
+                "title": "Groove & Ornamentation",
+                "theme": "neosoul_groove",
+                "start_week": 5,
+                "end_week": 8,
+                "outcomes": [
+                    "Play behind the beat with Dilla-style timing",
+                    "Use grace notes and crushed notes tastefully",
+                    "Apply pentatonic slides over major chords"
+                ],
+                "lessons": [
+                    {
+                        "id": "neo_3_dilla_feel",
+                        "title": "The 'Dilla' Feel",
+                        "description": "Micro-timing and laid-back groove.",
+                        "week_number": 5,
+                        "concepts": [
+                            "Micro-timing",
+                            "Syncopation"
+                        ],
+                        "theory_content": {
+                            "summary": "Dilla feel pushes kicks early and snares late for a 'drunken' groove.",
+                            "key_points": [
+                                "Place right-hand chords slightly late",
+                                "Keep left-hand bass more on the grid",
+                                "Practice with quantized vs. shifted MIDI"
+                            ]
+                        },
+                        "exercises": [
+                            {
+                                "id": "ex_neo_3_laidback_scales",
+                                "title": "Laid Back Scales",
+                                "description": "Play major scales with deliberate back-of-the-beat placement.",
+                                "exercise_type": "rhythm",
+                                "tags": [
+                                    "timing",
+                                    "feel"
+                                ],
+                                "content": {
+                                    "scale": "F Major",
+                                    "hands": "right",
+                                    "midi_hints": {
+                                        "tempo_bpm": 70,
+                                        "swing": True,
+                                        "timing_offset_ms": 40
+                                    }
+                                },
+                                "difficulty": "intermediate",
+                                "estimated_duration_minutes": 15
+                            }
+                        ]
+                    },
+                    {
+                        "id": "neo_4_grace_notes",
+                        "title": "Grace Notes & Slides",
+                        "description": "Decorate chords with pentatonic slides and crushed notes.",
+                        "week_number": 6,
+                        "concepts": [
+                            "Pentatonic Slides",
+                            "Crushed Notes"
+                        ],
+                        "theory_content": {
+                            "summary": "Slides from b3 to 3 and crushed notes add vocal-like expressiveness.",
+                            "key_points": [
+                                "Use short grace notes before strong beats",
+                                "Slide from a half-step below key chord tones",
+                                "Combine with sustain pedal for glue"
+                            ]
+                        },
+                        "exercises": [
+                            {
+                                "id": "ex_neo_4_pentatonic_grace",
+                                "title": "Pentatonic Grace Notes",
+                                "description": "Slide from b3 to 3 over major chords using pentatonic fragments.",
+                                "exercise_type": "lick",
+                                "tags": [
+                                    "ornament",
+                                    "pentatonic"
+                                ],
+                                "content": {
+                                    "key": "D",
+                                    "target_chords": [
+                                        "Dmaj9",
+                                        "Gmaj9"
+                                    ],
+                                    "slide_intervals": [
+                                        "b3_to_3"
+                                    ],
+                                    "midi_hints": {
+                                        "tempo_bpm": 80,
+                                        "swing": False,
+                                        "articulation": "legato_with_grace"
+                                    }
+                                },
+                                "difficulty": "intermediate",
+                                "estimated_duration_minutes": 10
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "contemporary_worship": {
+        "id": "contemporary_worship",
+        "title": "Contemporary Worship Piano",
+        "description": "Sus chords, pads, textures, and modern worship progressions like 1-5-6-4.",
+        "style_tags": [
+            "worship",
+            "praise",
+            "pads"
+        ],
+        "level": "beginner_to_intermediate",
+        "estimated_total_weeks": 8,
+        "modules": [
+            {
+                "id": "worship_essentials",
+                "title": "Worship Essentials",
+                "theme": "worship_basics",
+                "start_week": 1,
+                "end_week": 4,
+                "outcomes": [
+                    "Use sus2 and sus4 chords in common keys",
+                    "Play simple pad textures",
+                    "Understand basic slash chords"
+                ],
+                "lessons": [
+                    {
+                        "id": "worship_1_sus_chords",
+                        "title": "Suspended Chords (Sus2 & Sus4)",
+                        "description": "Create open, airy textures with sus voicings.",
+                        "week_number": 1,
+                        "concepts": [
+                            "Sus2",
+                            "Sus4",
+                            "Add2"
+                        ],
+                        "theory_content": {
+                            "summary": "Sus chords remove the 3rd and replace it with 2 or 4 for ambiguity.",
+                            "key_points": [
+                                "Use sus chords over I and V",
+                                "Resolve sus4 to major triad for lift",
+                                "Use add2 to keep the 3rd but add color"
+                            ]
+                        },
+                        "exercises": [
+                            {
+                                "id": "ex_worship_1_sus_d",
+                                "title": "Sus Chords in D Major",
+                                "description": "Alternate between D and Dsus4, A and Asus4.",
+                                "exercise_type": "voicing",
+                                "tags": [
+                                    "sus4",
+                                    "worship_texture"
+                                ],
+                                "content": {
+                                    "key": "D",
+                                    "chords": [
+                                        "D",
+                                        "Dsus4",
+                                        "A",
+                                        "Asus4"
+                                    ],
+                                    "pattern": "2_bars_each",
+                                    "midi_hints": {
+                                        "tempo_bpm": 68,
+                                        "sustain": True,
+                                        "dynamic_range": "pp_to_mf"
+                                    }
+                                },
+                                "difficulty": "beginner",
+                                "estimated_duration_minutes": 10
+                            }
+                        ]
+                    },
+                    {
+                        "id": "worship_2_slash_chords",
+                        "title": "Slash Chords",
+                        "description": "Create movement over static bass notes.",
+                        "week_number": 2,
+                        "concepts": [
+                            "Slash Chords",
+                            "Bass Pedal"
+                        ],
+                        "theory_content": {
+                            "summary": "Slash chords separate chord quality from bass note to shape harmonic movement.",
+                            "key_points": [
+                                "Use I/5 and IV/1 to smooth transitions",
+                                "Keep right-hand chords simple triads",
+                                "Treat bass note as independent line"
+                            ]
+                        },
+                        "exercises": [
+                            {
+                                "id": "ex_worship_2_1_over_5",
+                                "title": "1 over 5 Slash Chords",
+                                "description": "Practice C/G, F/C voice leading.",
+                                "exercise_type": "progression",
+                                "tags": [
+                                    "slash",
+                                    "voice_leading"
+                                ],
+                                "content": {
+                                    "key": "C",
+                                    "chords": [
+                                        "C/G",
+                                        "F/C"
+                                    ],
+                                    "bars_per_chord": 2,
+                                    "midi_hints": {
+                                        "tempo_bpm": 70,
+                                        "sustain": True,
+                                        "feel": "ballad"
+                                    }
+                                },
+                                "difficulty": "intermediate",
+                                "estimated_duration_minutes": 15
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "blues_master": {
+        "id": "blues_master",
+        "title": "Blues Master Class",
+        "description": "12-bar form, blues scale, shuffle feel, turnarounds, and classic licks.",
+        "style_tags": [
+            "blues",
+            "shuffle",
+            "improv"
+        ],
+        "level": "beginner_to_intermediate",
+        "estimated_total_weeks": 10,
+        "modules": [
+            {
+                "id": "blues_fundamentals",
+                "title": "Blues Fundamentals",
+                "theme": "blues_basics",
+                "start_week": 1,
+                "end_week": 4,
+                "outcomes": [
+                    "Understand 12-bar form in at least two keys",
+                    "Play basic dominant 7th voicings",
+                    "Use the blues scale over I, IV, V"
+                ],
+                "lessons": [
+                    {
+                        "id": "blues_1_12bar_form",
+                        "title": "The 12-Bar Blues Form",
+                        "description": "Classic I–IV–V shuffle with dominant 7ths.",
+                        "week_number": 1,
+                        "concepts": [
+                            "12-Bar Form",
+                            "Dominant 7ths",
+                            "Shuffle Feel"
+                        ],
+                        "theory_content": {
+                            "summary": "12-bar blues uses I, IV and V dominant chords in a set pattern.",
+                            "key_points": [
+                                "Memorize the standard 12-bar layout",
+                                "Practice left-hand shuffle patterns",
+                                "Use simple right-hand riffs at first"
+                            ]
+                        },
+                        "exercises": [
+                            {
+                                "id": "ex_blues_1_12bar_c",
+                                "title": "Basic 12-Bar in C",
+                                "description": "Play C7–F7–G7 progression with shuffle feel.",
+                                "exercise_type": "progression",
+                                "tags": [
+                                    "12bar",
+                                    "shuffle"
+                                ],
+                                "content": {
+                                    "key": "C",
+                                    "chords": [
+                                        "C7",
+                                        "C7",
+                                        "C7",
+                                        "C7",
+                                        "F7",
+                                        "F7",
+                                        "C7",
+                                        "C7",
+                                        "G7",
+                                        "F7",
+                                        "C7",
+                                        "G7"
+                                    ],
+                                    "left_hand_pattern": "boogie_woogie",
+                                    "midi_hints": {
+                                        "tempo_bpm": 110,
+                                        "swing": True,
+                                        "feel": "shuffle"
+                                    }
+                                },
+                                "difficulty": "beginner",
+                                "estimated_duration_minutes": 20
+                            }
+                        ]
+                    },
+                    {
+                        "id": "blues_2_blues_scale",
+                        "title": "The Blues Scale",
+                        "description": "Learn the minor pentatonic with added blue note.",
+                        "week_number": 2,
+                        "concepts": [
+                            "Minor Pentatonic",
+                            "Blue Note (b5)",
+                            "Call and Response"
+                        ],
+                        "theory_content": {
+                            "summary": "Blues scale adds the b5 to minor pentatonic for extra tension.",
+                            "key_points": [
+                                "Use call and response between low and high registers",
+                                "Target chord tones on strong beats",
+                                "Use bends and slides on the blue note when possible"
+                            ]
+                        },
+                        "exercises": [
+                            {
+                                "id": "ex_blues_2_c_blues_scale",
+                                "title": "C Blues Scale Patterns",
+                                "description": "Play C–Eb–F–Gb–G–Bb–C in multiple patterns.",
+                                "exercise_type": "scale",
+                                "tags": [
+                                    "blues_scale"
+                                ],
+                                "content": {
+                                    "scale": "C Blues",
+                                    "notes": [
+                                        "C",
+                                        "Eb",
+                                        "F",
+                                        "Gb",
+                                        "G",
+                                        "Bb",
+                                        "C"
+                                    ],
+                                    "patterns": [
+                                        "straight",
+                                        "triplets"
+                                    ],
+                                    "midi_hints": {
+                                        "tempo_bpm": 90,
+                                        "swing": True,
+                                        "hands": "both_separate_then_together"
+                                    }
+                                },
+                                "difficulty": "beginner",
+                                "estimated_duration_minutes": 15
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "berklee_jazz": {
+        "id": "berklee_jazz",
+        "title": "Berklee Jazz Essentials",
+        "description": "Shell and rootless voicings, ii–V–I mastery, and standards like Autumn Leaves.",
+        "style_tags": [
+            "jazz",
+            "standards",
+            "berklee"
+        ],
+        "level": "intermediate",
+        "estimated_total_weeks": 12,
+        "modules": [
+            {
+                "id": "berklee_voicings",
+                "title": "Jazz Voicings Foundation",
+                "theme": "jazz_voicings",
+                "start_week": 1,
+                "end_week": 4,
+                "outcomes": [
+                    "Play A/B shell voicings fluently",
+                    "Use rootless voicings for ii–V–I",
+                    "Voice-lead smoothly between chords"
+                ],
+                "lessons": [
+                    {
+                        "id": "berklee_1_shells",
+                        "title": "Shell Voicings: Root–3rd–7th",
+                        "description": "Professional left-hand shell shapes.",
+                        "week_number": 1,
+                        "concepts": [
+                            "Shell Voicings",
+                            "A Form",
+                            "B Form"
+                        ],
+                        "exercises": [
+                            {
+                                "id": "ex_berklee_1_shells_all_keys",
+                                "title": "ii–V–I Shells Through All Keys",
+                                "description": "Dm7–G7–Cmaj7 pattern via cycle of 4ths.",
+                                "exercise_type": "voicing",
+                                "tags": [
+                                    "shells",
+                                    "cycle"
+                                ],
+                                "content": {
+                                    "pattern": "ii-V-I_cycle",
+                                    "voicing_type": "shell",
+                                    "keys": "all",
+                                    "midi_hints": {
+                                        "tempo_bpm": 80,
+                                        "swing": True,
+                                        "bars_per_key": 4
+                                    }
+                                },
+                                "difficulty": "intermediate",
+                                "estimated_duration_minutes": 25
+                            }
+                        ]
+                    },
+                    {
+                        "id": "berklee_2_rootless",
+                        "title": "Rootless Voicings",
+                        "description": "Drop the root, keep guide tones and tensions.",
+                        "week_number": 2,
+                        "concepts": [
+                            "Type A Rootless",
+                            "Type B Rootless",
+                            "Tensions"
+                        ],
+                        "exercises": [
+                            {
+                                "id": "ex_berklee_2_rootless_251",
+                                "title": "Rootless ii–V–I Drill",
+                                "description": "Left-hand rootless, right-hand simple melody.",
+                                "exercise_type": "voicing",
+                                "tags": [
+                                    "rootless",
+                                    "251"
+                                ],
+                                "content": {
+                                    "keys": [
+                                        "C",
+                                        "F",
+                                        "Bb"
+                                    ],
+                                    "left_hand_shapes": "type_A_and_B",
+                                    "midi_hints": {
+                                        "tempo_bpm": 100,
+                                        "swing": True
+                                    }
+                                },
+                                "difficulty": "advanced",
+                                "estimated_duration_minutes": 20
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "berklee_standards_improv",
+                "title": "Jazz Standards & Improvisation",
+                "theme": "jazz_standards",
+                "start_week": 5,
+                "end_week": 10,
+                "outcomes": [
+                    "Play Autumn Leaves melody and harmony",
+                    "Improvise using chord tones and approach notes",
+                    "Understand basic jazz song forms"
+                ],
+                "lessons": [
+                    {
+                        "id": "berklee_3_autumn_leaves",
+                        "title": "Your First Jazz Standard: Autumn Leaves",
+                        "description": "Learn the head and basic comping.",
+                        "week_number": 5,
+                        "concepts": [
+                            "ii–V–I Major",
+                            "ii–V–i Minor",
+                            "Form"
+                        ],
+                        "exercises": [
+                            {
+                                "id": "ex_berklee_3_autumn_head",
+                                "title": "Autumn Leaves Head in Gm",
+                                "description": "Play melody with left-hand shell voicings.",
+                                "exercise_type": "repertoire",
+                                "tags": [
+                                    "standard",
+                                    "melody"
+                                ],
+                                "content": {
+                                    "song": "Autumn Leaves",
+                                    "key": "Gm",
+                                    "form": "AABC",
+                                    "midi_hints": {
+                                        "tempo_bpm": 120,
+                                        "swing": True
+                                    }
+                                },
+                                "difficulty": "intermediate",
+                                "estimated_duration_minutes": 30
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "classical_abrsm": {
+        "id": "classical_abrsm",
+        "title": "Classical Piano: ABRSM Grades 1–3",
+        "description": "Scales, arpeggios, sight-reading, and graded classical repertoire.",
+        "style_tags": [
+            "classical",
+            "abrsm",
+            "graded"
+        ],
+        "level": "beginner",
+        "estimated_total_weeks": 15,
+        "modules": [
+            {
+                "id": "abrsm_grade1",
+                "title": "Grade 1: Foundations",
+                "theme": "classical_grade1",
+                "start_week": 1,
+                "end_week": 5,
+                "outcomes": [
+                    "Play C and G major scales (2 octaves)",
+                    "Perform basic arpeggios",
+                    "Develop consistent hand position"
+                ],
+                "lessons": [
+                    {
+                        "id": "abrsm_1_scales_c_g",
+                        "title": "Scales: C & G Major",
+                        "description": "Two-octave scales with correct fingering.",
+                        "week_number": 1,
+                        "concepts": [
+                            "Scale Fingering",
+                            "Hand Position",
+                            "Thumb Under"
+                        ],
+                        "exercises": [
+                            {
+                                "id": "ex_abrsm_1_c_major_2oct",
+                                "title": "C Major Scale (2 Octaves)",
+                                "description": "Hands separate then together at 60 BPM.",
+                                "exercise_type": "scale",
+                                "tags": [
+                                    "scale",
+                                    "technique"
+                                ],
+                                "content": {
+                                    "scale": "C Major",
+                                    "octaves": 2,
+                                    "hands": "both",
+                                    "midi_hints": {
+                                        "tempo_bpm": 60,
+                                        "swing": False,
+                                        "articulation": "legato"
+                                    }
+                                },
+                                "difficulty": "beginner",
+                                "estimated_duration_minutes": 10
+                            }
+                        ]
+                    },
+                    {
+                        "id": "abrsm_2_arps_c_g",
+                        "title": "Arpeggios: C & G Major",
+                        "description": "Two-octave arpeggios with smooth thumb crossings.",
+                        "week_number": 2,
+                        "concepts": [
+                            "Arpeggio Fingering",
+                            "Wrist Rotation"
+                        ],
+                        "exercises": [
+                            {
+                                "id": "ex_abrsm_2_c_major_arp",
+                                "title": "C Major Arpeggio (2 Octaves)",
+                                "description": "C–E–G pattern, hands separate.",
+                                "exercise_type": "arpeggio",
+                                "tags": [
+                                    "arpeggio",
+                                    "technique"
+                                ],
+                                "content": {
+                                    "scale": "C Major",
+                                    "octaves": 2,
+                                    "midi_hints": {
+                                        "tempo_bpm": 60
+                                    }
+                                },
+                                "difficulty": "beginner",
+                                "estimated_duration_minutes": 10
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "abrsm_grade2",
+                "title": "Grade 2: Expanding Technique",
+                "theme": "classical_grade2",
+                "start_week": 6,
+                "end_week": 10,
+                "outcomes": [
+                    "Play more major and minor scales",
+                    "Increase tempo while staying relaxed",
+                    "Add basic dynamics and phrasing"
+                ],
+                "lessons": [
+                    {
+                        "id": "abrsm_3_minor_scales",
+                        "title": "Minor Scales: A & D Natural Minor",
+                        "description": "Introduction to minor modes.",
+                        "week_number": 6,
+                        "concepts": [
+                            "Natural Minor",
+                            "Relative Major/Minor"
+                        ],
+                        "exercises": [
+                            {
+                                "id": "ex_abrsm_3_a_minor_scale",
+                                "title": "A Natural Minor Scale",
+                                "description": "Two octaves, hands together at 72 BPM.",
+                                "exercise_type": "scale",
+                                "tags": [
+                                    "scale",
+                                    "minor"
+                                ],
+                                "content": {
+                                    "scale": "A Natural Minor",
+                                    "octaves": 2,
+                                    "hands": "both",
+                                    "midi_hints": {
+                                        "tempo_bpm": 72
+                                    }
+                                },
+                                "difficulty": "intermediate",
+                                "estimated_duration_minutes": 10
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "latin_rhythms": {
+        "id": "latin_rhythms",
+        "title": "Latin Piano Rhythms",
+        "description": "Bossa nova, salsa montuno, and clave-based Afro-Cuban patterns.",
+        "style_tags": [
+            "latin",
+            "bossa",
+            "salsa"
+        ],
+        "level": "intermediate",
+        "estimated_total_weeks": 8,
+        "modules": [
+            {
+                "id": "latin_bossa",
+                "title": "Bossa Nova Essentials",
+                "theme": "latin_bossa",
+                "start_week": 1,
+                "end_week": 4,
+                "outcomes": [
+                    "Internalize bossa nova left-hand pattern",
+                    "Play simple bossa chords and bass",
+                    "Maintain steady groove at slow tempos"
+                ],
+                "lessons": [
+                    {
+                        "id": "latin_1_bossa_groove",
+                        "title": "The Bossa Nova Groove",
+                        "description": "Root–chord pattern behind standards like Girl from Ipanema.",
+                        "week_number": 1,
+                        "concepts": [
+                            "Syncopation",
+                            "Bass + Chord Pattern",
+                            "Anticipations"
+                        ],
+                        "exercises": [
+                            {
+                                "id": "ex_latin_1_bossa_dm",
+                                "title": "Classic Bossa Pattern in Dm",
+                                "description": "Root on beat 1, chord anticipating beat 2.",
+                                "exercise_type": "rhythm",
+                                "tags": [
+                                    "bossa",
+                                    "groove"
+                                ],
+                                "content": {
+                                    "key": "Dm",
+                                    "pattern": "bossa_nova_standard",
+                                    "bars": 4,
+                                    "midi_hints": {
+                                        "tempo_bpm": 120,
+                                        "swing": False,
+                                        "feel": "bossa"
+                                    }
+                                },
+                                "difficulty": "intermediate",
+                                "estimated_duration_minutes": 20
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "latin_salsa",
+                "title": "Salsa Montuno",
+                "theme": "latin_salsa",
+                "start_week": 5,
+                "end_week": 8,
+                "outcomes": [
+                    "Understand 2–3 and 3–2 clave",
+                    "Clap clave patterns accurately",
+                    "Play simple montuno over clave"
+                ],
+                "lessons": [
+                    {
+                        "id": "latin_2_clave",
+                        "title": "Understanding Clave",
+                        "description": "The rhythmic key of Afro-Cuban music.",
+                        "week_number": 5,
+                        "concepts": [
+                            "2-3 Clave",
+                            "3-2 Clave",
+                            "Clave Direction"
+                        ],
+                        "exercises": [
+                            {
+                                "id": "ex_latin_2_clapping_clave",
+                                "title": "Clapping Clave Patterns",
+                                "description": "Internalize 2–3 and 3–2 clave.",
+                                "exercise_type": "rhythm",
+                                "tags": [
+                                    "clave",
+                                    "coordination"
+                                ],
+                                "content": {
+                                    "patterns": [
+                                        "2-3",
+                                        "3-2"
+                                    ],
+                                    "bars": 2,
+                                    "midi_hints": {
+                                        "tempo_bpm": 100,
+                                        "swing": False,
+                                        "instrument": "clap"
+                                    }
+                                },
+                                "difficulty": "beginner",
+                                "estimated_duration_minutes": 10
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "modern_rnb": {
+        "id": "modern_rnb",
+        "title": "Modern R&B Producer Keys",
+        "description": "Lo-fi chord stacks, trap soul progressions, and producer-friendly keyboard skills.",
+        "style_tags": [
+            "rnb",
+            "trap_soul",
+            "lofi"
+        ],
+        "level": "intermediate",
+        "estimated_total_weeks": 10,
+        "modules": [
+            {
+                "id": "rnb_lofi",
+                "title": "Lo-Fi & Chill Chords",
+                "theme": "rnb_lofi",
+                "start_week": 1,
+                "end_week": 4,
+                "outcomes": [
+                    "Stack major 7/9 chords for lo-fi textures",
+                    "Use add9 chords and clusters",
+                    "Create simple four-bar loops"
+                ],
+                "lessons": [
+                    {
+                        "id": "rnb_1_lofi_stacks",
+                        "title": "Lo-Fi Chord Stacks",
+                        "description": "Lush, jazzy chords for beats.",
+                        "week_number": 1,
+                        "concepts": [
+                            "Maj7/9 Voicings",
+                            "Add9 Chords",
+                            "Clusters"
+                        ],
+                        "exercises": [
+                            {
+                                "id": "ex_rnb_1_lofi_251_c",
+                                "title": "Lo-Fi ii–V–I in C",
+                                "description": "Dm9–G13–Cmaj9 with warm voicings.",
+                                "exercise_type": "progression",
+                                "tags": [
+                                    "lofi",
+                                    "jazz_rnb"
+                                ],
+                                "content": {
+                                    "chords": [
+                                        "Dm9",
+                                        "G13",
+                                        "Cmaj9"
+                                    ],
+                                    "style": "lofi",
+                                    "midi_hints": {
+                                        "tempo_bpm": 72,
+                                        "swing": False,
+                                        "velocity_range": [
+                                            40,
+                                            70
+                                        ],
+                                        "detune_cents": 5
+                                    }
+                                },
+                                "difficulty": "intermediate",
+                                "estimated_duration_minutes": 15
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "rnb_trapsoul",
+                "title": "Trap Soul Progressions",
+                "theme": "rnb_trapsoul",
+                "start_week": 5,
+                "end_week": 8,
+                "outcomes": [
+                    "Use minor 9 chords in emotional progressions",
+                    "Understand 808 bass interaction",
+                    "Create melancholic four-bar loops"
+                ],
+                "lessons": [
+                    {
+                        "id": "rnb_2_trapsoul_sound",
+                        "title": "The Trap Soul Sound",
+                        "description": "Dark minor progressions and sparse voicings.",
+                        "week_number": 5,
+                        "concepts": [
+                            "i–VI–III–VII",
+                            "Minor 9ths",
+                            "Sparse Voicings"
+                        ],
+                        "exercises": [
+                            {
+                                "id": "ex_rnb_2_trapsoul_progression",
+                                "title": "Classic Trap Soul Progression in Am",
+                                "description": "Am9–Fmaj7–Cmaj7–G with 808-conscious spacing.",
+                                "exercise_type": "progression",
+                                "tags": [
+                                    "trapsoul",
+                                    "loop"
+                                ],
+                                "content": {
+                                    "key": "Am",
+                                    "chords": [
+                                        "Am9",
+                                        "Fmaj7",
+                                        "Cmaj7",
+                                        "G"
+                                    ],
+                                    "roman_numerals": [
+                                        "i9",
+                                        "VImaj7",
+                                        "IIImaj7",
+                                        "VII"
+                                    ],
+                                    "bars_per_chord": 1,
+                                    "midi_hints": {
+                                        "tempo_bpm": 75,
+                                        "swing": False,
+                                        "register": {
+                                            "left": "A1-C2",
+                                            "right": "C4-C5"
+                                        }
+                                    }
+                                },
+                                "difficulty": "intermediate",
+                                "estimated_duration_minutes": 15
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "worship_band": {
+        "id": "worship_band",
+        "title": "Worship Band Ready",
+        "description": "Nashville numbers, pad playing, band dynamics, and worship leading basics.",
+        "style_tags": [
+            "worship",
+            "band",
+            "nashville"
+        ],
+        "level": "beginner_to_intermediate",
+        "estimated_total_weeks": 8,
+        "modules": [
+            {
+                "id": "worship_band_fundamentals",
+                "title": "Worship Keys Fundamentals",
+                "theme": "worship_fundamentals",
+                "start_week": 1,
+                "end_week": 4,
+                "outcomes": [
+                    "Use the Nashville Number System",
+                    "Play 1–5–6–4 in all keys",
+                    "Create simple pad textures"
+                ],
+                "lessons": [
+                    {
+                        "id": "worship_band_1_numbers",
+                        "title": "The Nashville Number System",
+                        "description": "Transpose any song using numbers.",
+                        "week_number": 1,
+                        "concepts": [
+                            "Number System",
+                            "Transposition",
+                            "Chord Charts"
+                        ],
+                        "exercises": [
+                            {
+                                "id": "ex_worship_band_1_1564_all_keys",
+                                "title": "1–5–6–4 in Every Key",
+                                "description": "Play I–V–vi–IV across the circle of fifths.",
+                                "exercise_type": "progression",
+                                "tags": [
+                                    "1564",
+                                    "numbers"
+                                ],
+                                "content": {
+                                    "roman_numerals": [
+                                        "I",
+                                        "V",
+                                        "vi",
+                                        "IV"
+                                    ],
+                                    "practice": "all_keys",
+                                    "midi_hints": {
+                                        "tempo_bpm": 72,
+                                        "swing": False,
+                                        "feel": "worship_ballad"
+                                    }
+                                },
+                                "difficulty": "beginner",
+                                "estimated_duration_minutes": 20
+                            }
+                        ]
+                    },
+                    {
+                        "id": "worship_band_2_pads",
+                        "title": "Playing Pads & Textures",
+                        "description": "Atmospheric playing without clutter.",
+                        "week_number": 2,
+                        "concepts": [
+                            "Pad Sounds",
+                            "Sustained Chords",
+                            "Less is More"
+                        ],
+                        "exercises": [
+                            {
+                                "id": "ex_worship_band_2_whole_note_pads",
+                                "title": "Whole Note Pad Exercise",
+                                "description": "Hold each chord for 4 bars and focus on transitions.",
+                                "exercise_type": "rhythm",
+                                "tags": [
+                                    "pads",
+                                    "texture"
+                                ],
+                                "content": {
+                                    "key": "G",
+                                    "progression": [
+                                        "G",
+                                        "D",
+                                        "Em",
+                                        "C"
+                                    ],
+                                    "bars_per_chord": 4,
+                                    "midi_hints": {
+                                        "tempo_bpm": 60,
+                                        "sustain": True,
+                                        "velocity_range": [
+                                            30,
+                                            50
+                                        ]
+                                    }
+                                },
+                                "difficulty": "beginner",
+                                "estimated_duration_minutes": 10
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}

@@ -62,7 +62,7 @@ class Settings(BaseSettings):
     # SAFE for 24GB RAM: Qwen2.5-7B (complexity 1-7)
     # Complexity 8-10 will use Gemini API (cloud fallback)
     local_llm_model: str = "mlx-community/Qwen2.5-7B-Instruct-4bit"
-    force_local_llm: bool = False  # Use Gemini for complexity 8-10 (curriculum generation)
+    force_local_llm: bool = True  # Force MLX-only mode - no cloud API calls
 
     model_config = SettingsConfigDict(
         env_file=".env",

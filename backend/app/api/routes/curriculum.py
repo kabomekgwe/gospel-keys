@@ -26,7 +26,9 @@ from app.schemas.curriculum import (
     AssessmentSubmission,
     UserSkillProfileResponse,
     CurriculumGenerateRequest,
+    CurriculumGenerateRequest,
     CurriculumDefaultRequest,
+    CurriculumFromTemplateRequest,
     CurriculumResponse,
     CurriculumSummary,
     CurriculumModuleResponse,
@@ -135,6 +137,9 @@ async def generate_curriculum(
         user_id=user_id,
         title=request.title,
         duration_weeks=request.duration_weeks,
+        genre=request.genre,
+        skill_level=request.skill_level,
+        goals=request.goals,
     )
     return await _curriculum_to_response(curriculum, service)
 
@@ -156,22 +161,61 @@ async def create_default_curriculum(
         raise HTTPException(status_code=400, detail=str(e))
 
 
+@router.post("/from-template", response_model=CurriculumResponse)
+async def create_curriculum_from_template(
+    request: CurriculumFromTemplateRequest,
+    user_id: int = Depends(get_current_user_id),
+    service: CurriculumService = Depends(get_curriculum_service)
+):
+    """Create a new curriculum from a dynamic template file"""
+    try:
+        curriculum = await service.create_curriculum_from_template(
+            user_id=user_id,
+            template_id=request.template_id
+        )
+        return await _curriculum_to_response(curriculum, service)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+
 @router.get("/templates", response_model=List[dict])
 async def list_curriculum_templates():
-    """List available default curriculum templates"""
+    """List available curriculum templates (Defaults + Dynamic)"""
     from app.services.curriculum_defaults import DEFAULT_CURRICULUMS
-    return [
-        {
-            "key": key,
+    from app.services.template_loader import template_loader
+    
+    templates = []
+    
+    # 1. Default (Hardcoded) Templates
+    for key, template in DEFAULT_CURRICULUMS.items():
+        templates.append({
+            "id": key,
+            "type": "default",
             "title": template["title"],
             "description": template["description"],
             "weeks": sum(
                 (m.get('end_week', 4) - m.get('start_week', 1) + 1) 
                 for m in template.get('modules', [])
             )
-        }
-        for key, template in DEFAULT_CURRICULUMS.items()
-    ]
+        })
+        
+    # 2. Dynamic Templates (Files)
+    dynamic_templates = template_loader.list_templates()
+    for tmpl in dynamic_templates:
+        # Avoid duplicates if ID conflicts (unlikely but good safety)
+        if any(t['id'] == tmpl['id'] for t in templates):
+            continue
+            
+        templates.append({
+            "id": tmpl['id'],
+            "type": "dynamic",
+            "title": tmpl['name'], # list_templates returns 'name'
+            "description": tmpl.get('description', 'Dynamic Template'),
+            "weeks": tmpl.get('total_weeks', 12) # template loader might extract this
+        })
+        
+    return templates
 
 
 

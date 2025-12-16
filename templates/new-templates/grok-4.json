@@ -1,0 +1,1312 @@
+{
+    "title": "Modern R&B Producer Keys",
+    "description": "Keyboard techniques for R&B and hip-hop production. Lo-fi chords, trap soul progressions, and the sounds behind modern hits, expanded with 2025 vocal processing and beat trends for full track mastery.",
+    "modules": [
+        {
+            "title": "Lo-Fi & Chill Chords",
+            "description": "The dreamy, nostalgic sounds of lo-fi hip-hop, with ear training for textures.",
+            "theme": "rnb_lofi",
+            "start_week": 1,
+            "end_week": 4,
+            "prerequisites": [
+                "Extended chords"
+            ],
+            "outcomes": [
+                "Major 7th Voicings",
+                "9th & 11th Extensions",
+                "Detuned Piano Sound",
+                "Sample Chops",
+                "Ear for Textures"
+            ],
+            "lessons": [
+                {
+                    "title": "Lo-Fi Chord Stacks",
+                    "description": "Creating lush, jazzy chords for beats.",
+                    "week_number": 1,
+                    "concepts": [
+                        "Maj7/9 Voicings",
+                        "Add9 Chords",
+                        "Cluster Voicings"
+                    ],
+                    "theory_content": {
+                        "summary": "Lo-fi uses warm, imperfect chords for vibe.",
+                        "key_points": [
+                            "Detune slightly",
+                            "Stack 7-9-11"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Lo-Fi ii-V-I",
+                            "description": "Dm9 - G13 - Cmaj9 with lo-fi voicings.",
+                            "exercise_type": "progression",
+                            "content": {
+                                "chords": [
+                                    "Dm9",
+                                    "G13",
+                                    "Cmaj9"
+                                ],
+                                "style": "lo-fi"
+                            },
+                            "midi_prompt": "MIDI lo-fi progression with detune",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 15
+                        },
+                        {
+                            "title": "Chord Stacks with Effects",
+                            "description": "Add reverb sim in practice.",
+                            "exercise_type": "production",
+                            "content": {
+                                "effects": "reverb, tape warble"
+                            },
+                            "midi_prompt": "MIDI with lo-fi effects",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 15
+                        },
+                        {
+                            "title": "Ear Training: Lo-Fi Texture ID",
+                            "description": "Identify detuned chords.",
+                            "exercise_type": "aural",
+                            "midi_prompt": "Lo-fi clips for ID",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 10
+                        },
+                        {
+                            "title": "Daily Lo-Fi Drill",
+                            "description": "Practice stacks in 3 keys.",
+                            "exercise_type": "drill",
+                            "midi_prompt": "Multi-key lo-fi MIDI",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 15
+                        }
+                    ]
+                },
+                {
+                    "title": "9th & 11th Extensions",
+                    "description": "Add advanced extensions to lo-fi.",
+                    "week_number": 2,
+                    "concepts": [
+                        "9ths",
+                        "11ths"
+                    ],
+                    "theory_content": {
+                        "summary": "Extensions add depth.",
+                        "key_points": [
+                            "Avoid clashing notes"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Extended Lo-Fi Progression",
+                            "description": "Apply to ii-V-I.",
+                            "exercise_type": "progression",
+                            "midi_prompt": "Extended lo-fi MIDI",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 20
+                        },
+                        {
+                            "title": "Extensions Ear Training",
+                            "description": "Identify 9ths/11ths.",
+                            "exercise_type": "aural",
+                            "midi_prompt": "Extension clips",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 10
+                        }
+                    ]
+                },
+                {
+                    "title": "Detuned Piano Sound",
+                    "description": "Create lo-fi detune effects, with 2025 sound design updates.",
+                    "week_number": 3,
+                    "concepts": [
+                        "Detuning",
+                        "Sound Design"
+                    ],
+                    "theory_content": {
+                        "summary": "Detune adds nostalgia.",
+                        "key_points": [
+                            "Slight detune",
+                            "Layer effects"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Detune Drill",
+                            "description": "Apply detune to chords.",
+                            "exercise_type": "production",
+                            "midi_prompt": "Detuned MIDI",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 15
+                        }
+                    ]
+                },
+                {
+                    "title": "Sample Chops in Lo-Fi",
+                    "description": "Chop samples for R&B, with 2025 sampling techniques.",
+                    "week_number": 4,
+                    "concepts": [
+                        "Sampling",
+                        "Chopping"
+                    ],
+                    "theory_content": {
+                        "summary": "Sampling adds texture.",
+                        "key_points": [
+                            "Time-stretch",
+                            "Layer with keys"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Chop Jazz Sample",
+                            "description": "Into lo-fi chords.",
+                            "exercise_type": "production",
+                            "midi_prompt": "Sample MIDI chop",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 20
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "title": "Trap Soul Progressions",
+            "description": "Dark, emotional progressions used in modern R&B, with 2025 808 updates.",
+            "theme": "rnb_trapsoul",
+            "start_week": 5,
+            "end_week": 8,
+            "prerequisites": [
+                "Lo-fi mastery"
+            ],
+            "outcomes": [
+                "Minor Key Progressions",
+                "808 Bass Awareness",
+                "Melancholic Voicings",
+                "Hi-Hat Syncopation",
+                "Ear for Trap Feel"
+            ],
+            "lessons": [
+                {
+                    "title": "The Trap Soul Sound",
+                    "description": "Bryson Tiller, 6LACK, and the melancholic minor vibe.",
+                    "week_number": 5,
+                    "concepts": [
+                        "i-VI-III-VII",
+                        "Minor 9ths",
+                        "Sparse Voicings"
+                    ],
+                    "theory_content": {
+                        "summary": "Trap soul blends R&B with trap beats.",
+                        "key_points": [
+                            "Sparse for space",
+                            "808 sub-bass"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Classic Trap Soul Progression",
+                            "description": "Am9 - Fmaj7 - Cmaj7 - G with 808 bass in mind.",
+                            "exercise_type": "progression",
+                            "content": {
+                                "chords": [
+                                    "Am9",
+                                    "Fmaj7",
+                                    "Cmaj7",
+                                    "G"
+                                ],
+                                "key": "Am"
+                            },
+                            "midi_prompt": "MIDI trap soul with 808",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 15
+                        },
+                        {
+                            "title": "Sparse Voicing Drill",
+                            "description": "Play with minimal notes.",
+                            "exercise_type": "voicing",
+                            "content": {
+                                "style": "sparse"
+                            },
+                            "midi_prompt": "MIDI sparse trap",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 15
+                        },
+                        {
+                            "title": "Trap Ear Training",
+                            "description": "Identify minor progressions.",
+                            "exercise_type": "aural",
+                            "midi_prompt": "Trap clips for ID",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 10
+                        }
+                    ]
+                },
+                {
+                    "title": "808 Bass Awareness",
+                    "description": "Integrate 808s with keys, with 2025 sub-bass trends.",
+                    "week_number": 6,
+                    "concepts": [
+                        "808 Bass",
+                        "Sub-Bass"
+                    ],
+                    "theory_content": {
+                        "summary": "808s add depth to trap.",
+                        "key_points": [
+                            "Low frequency",
+                            "Layer with chords"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Progression with 808",
+                            "description": "Add 808 to trap progression.",
+                            "exercise_type": "production",
+                            "midi_prompt": "808 MIDI integration",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 20
+                        }
+                    ]
+                },
+                {
+                    "title": "Melancholic Voicings",
+                    "description": "Sparse voicings for emotional trap.",
+                    "week_number": 7,
+                    "concepts": [
+                        "Sparse Voicings",
+                        "Emotional Chords"
+                    ],
+                    "theory_content": {
+                        "summary": "Sparse creates mood.",
+                        "key_points": [
+                            "Minimal notes",
+                            "Focus on root/b7"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Melancholic Drill",
+                            "description": "Practice sparse in minor keys.",
+                            "exercise_type": "voicing",
+                            "midi_prompt": "Melancholic MIDI",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 15
+                        }
+                    ]
+                },
+                {
+                    "title": "Hi-Hat Syncopation",
+                    "description": "Add trap rhythms to keys, with 2025 hi-hat patterns.",
+                    "week_number": 8,
+                    "concepts": [
+                        "Hi-Hats",
+                        "Triplets"
+                    ],
+                    "theory_content": {
+                        "summary": "Hi-hats drive trap energy.",
+                        "key_points": [
+                            "Triplet hi-hats",
+                            "Sync with keys"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Trap Rhythm over Chords",
+                            "description": "Layer hi-hats on progression.",
+                            "exercise_type": "rhythm",
+                            "content": {
+                                "tempo": 140
+                            },
+                            "midi_prompt": "MIDI trap rhythm layer",
+                            "difficulty": "advanced",
+                            "estimated_duration_minutes": 20
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "title": "Full Production",
+            "description": "Build full tracks with 2025 vocal and mix trends from SoundOracle.",
+            "theme": "rnb_production",
+            "start_week": 15,
+            "end_week": 20,
+            "prerequisites": [
+                "Timing mastery"
+            ],
+            "outcomes": [
+                "Beat Making",
+                "Fusion Licks",
+                "Live Performance",
+                "Vocal Support",
+                "Final Project"
+            ],
+            "lessons": [
+                {
+                    "title": "Beat Making Basics",
+                    "description": "Layer keys with beats.",
+                    "week_number": 15,
+                    "concepts": [
+                        "Beats",
+                        "Drum Programming"
+                    ],
+                    "theory_content": {
+                        "summary": "Production adds reverb, delay for atmospheric sound.",
+                        "key_points": [
+                            "Use lo-fi effects",
+                            "Layer with synth pads"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Produce a Loop",
+                            "description": "Create MIDI loop with min11 and Dilla groove.",
+                            "exercise_type": "production",
+                            "content": {
+                                "elements": "chords + beat"
+                            },
+                            "midi_prompt": "Generate full MIDI loop with effects sim",
+                            "difficulty": "advanced",
+                            "estimated_duration_minutes": 25
+                        }
+                    ]
+                },
+                {
+                    "title": "Fusion Licks in Production",
+                    "description": "Add fusion licks to beats.",
+                    "week_number": 16,
+                    "concepts": [
+                        "Fusion Licks"
+                    ],
+                    "exercises": [
+                        {
+                            "title": "Fusion Lick Drill",
+                            "description": "Add licks to loop.",
+                            "exercise_type": "production",
+                            "midi_prompt": "Fusion lick MIDI",
+                            "difficulty": "advanced",
+                            "estimated_duration_minutes": 20
+                        }
+                    ]
+                },
+                {
+                    "title": "Live Performance with Production",
+                    "description": "Simulate live with produced tracks.",
+                    "week_number": 17,
+                    "concepts": [
+                        "Live Production"
+                    ],
+                    "exercises": [
+                        {
+                            "title": "Live Sim Drill",
+                            "description": "Play over produced loop.",
+                            "exercise_type": "performance",
+                            "midi_prompt": "Produced backing",
+                            "difficulty": "mastery",
+                            "estimated_duration_minutes": 30
+                        }
+                    ]
+                },
+                {
+                    "title": "Vocal Support in Full Track",
+                    "description": "Integrate vocals with keys, with 2025 processing.",
+                    "week_number": 18,
+                    "concepts": [
+                        "Vocal Integration"
+                    ],
+                    "theory_content": {
+                        "summary": "Vocal processing enhances keys.",
+                        "key_points": [
+                            "Auto-tune integration",
+                            "Harmony layers"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Vocal Key Harmony",
+                            "description": "Support simulated vocals with processing.",
+                            "exercise_type": "harmony",
+                            "midi_prompt": "Vocal MIDI support",
+                            "difficulty": "mastery",
+                            "estimated_duration_minutes": 25
+                        }
+                    ]
+                },
+                {
+                    "title": "Mixing Basics for R&B",
+                    "description": "Mix tracks with 2025 trends.",
+                    "week_number": 19,
+                    "concepts": [
+                        "Mixing",
+                        "Effects"
+                    ],
+                    "exercises": [
+                        {
+                            "title": "Mix Drill",
+                            "description": "Mix produced loop.",
+                            "exercise_type": "production",
+                            "midi_prompt": "Mix MIDI elements",
+                            "difficulty": "mastery",
+                            "estimated_duration_minutes": 30
+                        }
+                    ]
+                },
+                {
+                    "title": "Final R&B Project",
+                    "description": "Create and assess full track.",
+                    "week_number": 20,
+                    "concepts": [
+                        "Full Track"
+                    ],
+                    "exercises": [
+                        {
+                            "title": "Original R&B Track",
+                            "description": "Complete production with vocal and mix.",
+                            "exercise_type": "project",
+                            "midi_prompt": "Elements for track",
+                            "difficulty": "mastery",
+                            "estimated_duration_minutes": 45
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+
+
+
+{
+    "title": "Gospel Keys Essentials",
+    "description": "From triads to advanced reharms for gospel.",
+    "levels": {
+        "beginner": {
+            "modules": [
+                {
+                    "title": "Beginner Fundamentals",
+                    "description": "Foundational skills for beginner gospel keys essentials.",
+                    "theme": "gospel keys essentials_beginner",
+                    "start_week": 1,
+                    "end_week": 8,
+                    "prerequisites": [],
+                    "outcomes": [
+                        "Basic chords",
+                        "Simple progressions",
+                        "Ear basics"
+                    ],
+                    "lessons": [
+                        {
+                            "title": "Week 1 Lesson",
+                            "description": "Lesson for week 1 in beginner.",
+                            "week_number": 1,
+                            "concepts": [
+                                "Concept 1",
+                                "Concept 2"
+                            ],
+                            "theory_content": {
+                                "summary": "Summary",
+                                "key_points": [
+                                    "Point 1",
+                                    "Point 2"
+                                ]
+                            },
+                            "exercises": [
+                                {
+                                    "title": "Exercise 1",
+                                    "description": "Description",
+                                    "exercise_type": "type",
+                                    "content": {},
+                                    "midi_prompt": "Prompt",
+                                    "difficulty": "beginner",
+                                    "estimated_duration_minutes": 15
+                                }
+                            ]
+                        },
+                        {
+                            "title": "Week 2 Lesson",
+                            "description": "Lesson for week 2 in beginner.",
+                            "week_number": 2,
+                            "concepts": [
+                                "Concept 1",
+                                "Concept 2"
+                            ],
+                            "theory_content": {
+                                "summary": "Summary",
+                                "key_points": [
+                                    "Point 1",
+                                    "Point 2"
+                                ]
+                            },
+                            "exercises": [
+                                {
+                                    "title": "Exercise 1",
+                                    "description": "Description",
+                                    "exercise_type": "type",
+                                    "content": {},
+                                    "midi_prompt": "Prompt",
+                                    "difficulty": "beginner",
+                                    "estimated_duration_minutes": 15
+                                }
+                            ]
+                        },
+                        {
+                            "title": "Week 3 Lesson",
+                            "description": "Lesson for week 3 in beginner.",
+                            "week_number": 3,
+                            "concepts": [
+                                "Concept 1",
+                                "Concept 2"
+                            ],
+                            "theory_content": {
+                                "summary": "Summary",
+                                "key_points": [
+                                    "Point 1",
+                                    "Point 2"
+                                ]
+                            },
+                            "exercises": [
+                                {
+                                    "title": "Exercise 1",
+                                    "description": "Description",
+                                    "exercise_type": "type",
+                                    "content": {},
+                                    "midi_prompt": "Prompt",
+                                    "difficulty": "beginner",
+                                    "estimated_duration_minutes": 15
+                                }
+                            ]
+                        },
+                        {
+                            "title": "Week 4 Lesson",
+                            "description": "Lesson for week 4 in beginner.",
+                            "week_number": 4,
+                            "concepts": [
+                                "Concept 1",
+                                "Concept 2"
+                            ],
+                            "theory_content": {
+                                "summary": "Summary",
+                                "key_points": [
+                                    "Point 1",
+                                    "Point 2"
+                                ]
+                            },
+                            "exercises": [
+                                {
+                                    "title": "Exercise 1",
+                                    "description": "Description",
+                                    "exercise_type": "type",
+                                    "content": {},
+                                    "midi_prompt": "Prompt",
+                                    "difficulty": "beginner",
+                                    "estimated_duration_minutes": 15
+                                }
+                            ]
+                        },
+                        {
+                            "title": "Week 5 Lesson",
+                            "description": "Lesson for week 5 in beginner.",
+                            "week_number": 5,
+                            "concepts": [
+                                "Concept 1",
+                                "Concept 2"
+                            ],
+                            "theory_content": {
+                                "summary": "Summary",
+                                "key_points": [
+                                    "Point 1",
+                                    "Point 2"
+                                ]
+                            },
+                            "exercises": [
+                                {
+                                    "title": "Exercise 1",
+                                    "description": "Description",
+                                    "exercise_type": "type",
+                                    "content": {},
+                                    "midi_prompt": "Prompt",
+                                    "difficulty": "beginner",
+                                    "estimated_duration_minutes": 15
+                                }
+                            ]
+                        },
+                        {
+                            "title": "Week 6 Lesson",
+                            "description": "Lesson for week 6 in beginner.",
+                            "week_number": 6,
+                            "concepts": [
+                                "Concept 1",
+                                "Concept 2"
+                            ],
+                            "theory_content": {
+                                "summary": "Summary",
+                                "key_points": [
+                                    "Point 1",
+                                    "Point 2"
+                                ]
+                            },
+                            "exercises": [
+                                {
+                                    "title": "Exercise 1",
+                                    "description": "Description",
+                                    "exercise_type": "type",
+                                    "content": {},
+                                    "midi_prompt": "Prompt",
+                                    "difficulty": "beginner",
+                                    "estimated_duration_minutes": 15
+                                }
+                            ]
+                        },
+                        {
+                            "title": "Week 7 Lesson",
+                            "description": "Lesson for week 7 in beginner.",
+                            "week_number": 7,
+                            "concepts": [
+                                "Concept 1",
+                                "Concept 2"
+                            ],
+                            "theory_content": {
+                                "summary": "Summary",
+                                "key_points": [
+                                    "Point 1",
+                                    "Point 2"
+                                ]
+                            },
+                            "exercises": [
+                                {
+                                    "title": "Exercise 1",
+                                    "description": "Description",
+                                    "exercise_type": "type",
+                                    "content": {},
+                                    "midi_prompt": "Prompt",
+                                    "difficulty": "beginner",
+                                    "estimated_duration_minutes": 15
+                                }
+                            ]
+                        },
+                        {
+                            "title": "Week 8 Lesson",
+                            "description": "Lesson for week 8 in beginner.",
+                            "week_number": 8,
+                            "concepts": [
+                                "Concept 1",
+                                "Concept 2"
+                            ],
+                            "theory_content": {
+                                "summary": "Summary",
+                                "key_points": [
+                                    "Point 1",
+                                    "Point 2"
+                                ]
+                            },
+                            "exercises": [
+                                {
+                                    "title": "Exercise 1",
+                                    "description": "Description",
+                                    "exercise_type": "type",
+                                    "content": {},
+                                    "midi_prompt": "Prompt",
+                                    "difficulty": "beginner",
+                                    "estimated_duration_minutes": 15
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "title": "Beginner Advanced",
+                    "description": "Advanced skills for beginner gospel keys essentials.",
+                    "theme": "gospel keys essentials_advanced_beginner",
+                    "start_week": 9,
+                    "end_week": 8,
+                    "prerequisites": [
+                        "Beginner Fundamentals"
+                    ],
+                    "outcomes": [
+                        "Fusion",
+                        "Improv",
+                        "Performance"
+                    ],
+                    "lessons": []
+                }
+            ]
+        },
+        "intermediate": {
+            "modules": [
+                {
+                    "title": "Intermediate Fundamentals",
+                    "description": "Foundational skills for intermediate gospel keys essentials.",
+                    "theme": "gospel keys essentials_intermediate",
+                    "start_week": 9,
+                    "end_week": 16,
+                    "prerequisites": [
+                        "Gospel Keys Essentials beginner mastery"
+                    ],
+                    "outcomes": [
+                        "7th chords",
+                        "Progressions",
+                        "Intermediate ear"
+                    ],
+                    "lessons": [
+                        {
+                            "title": "Week 9 Lesson",
+                            "description": "Lesson for week 9 in intermediate.",
+                            "week_number": 9,
+                            "concepts": [
+                                "Concept 1",
+                                "Concept 2"
+                            ],
+                            "theory_content": {
+                                "summary": "Summary",
+                                "key_points": [
+                                    "Point 1",
+                                    "Point 2"
+                                ]
+                            },
+                            "exercises": [
+                                {
+                                    "title": "Exercise 1",
+                                    "description": "Description",
+                                    "exercise_type": "type",
+                                    "content": {},
+                                    "midi_prompt": "Prompt",
+                                    "difficulty": "intermediate",
+                                    "estimated_duration_minutes": 15
+                                }
+                            ]
+                        },
+                        {
+                            "title": "Week 10 Lesson",
+                            "description": "Lesson for week 10 in intermediate.",
+                            "week_number": 10,
+                            "concepts": [
+                                "Concept 1",
+                                "Concept 2"
+                            ],
+                            "theory_content": {
+                                "summary": "Summary",
+                                "key_points": [
+                                    "Point 1",
+                                    "Point 2"
+                                ]
+                            },
+                            "exercises": [
+                                {
+                                    "title": "Exercise 1",
+                                    "description": "Description",
+                                    "exercise_type": "type",
+                                    "content": {},
+                                    "midi_prompt": "Prompt",
+                                    "difficulty": "intermediate",
+                                    "estimated_duration_minutes": 15
+                                }
+                            ]
+                        },
+                        {
+                            "title": "Week 11 Lesson",
+                            "description": "Lesson for week 11 in intermediate.",
+                            "week_number": 11,
+                            "concepts": [
+                                "Concept 1",
+                                "Concept 2"
+                            ],
+                            "theory_content": {
+                                "summary": "Summary",
+                                "key_points": [
+                                    "Point 1",
+                                    "Point 2"
+                                ]
+                            },
+                            "exercises": [
+                                {
+                                    "title": "Exercise 1",
+                                    "description": "Description",
+                                    "exercise_type": "type",
+                                    "content": {},
+                                    "midi_prompt": "Prompt",
+                                    "difficulty": "intermediate",
+                                    "estimated_duration_minutes": 15
+                                }
+                            ]
+                        },
+                        {
+                            "title": "Week 12 Lesson",
+                            "description": "Lesson for week 12 in intermediate.",
+                            "week_number": 12,
+                            "concepts": [
+                                "Concept 1",
+                                "Concept 2"
+                            ],
+                            "theory_content": {
+                                "summary": "Summary",
+                                "key_points": [
+                                    "Point 1",
+                                    "Point 2"
+                                ]
+                            },
+                            "exercises": [
+                                {
+                                    "title": "Exercise 1",
+                                    "description": "Description",
+                                    "exercise_type": "type",
+                                    "content": {},
+                                    "midi_prompt": "Prompt",
+                                    "difficulty": "intermediate",
+                                    "estimated_duration_minutes": 15
+                                }
+                            ]
+                        },
+                        {
+                            "title": "Week 13 Lesson",
+                            "description": "Lesson for week 13 in intermediate.",
+                            "week_number": 13,
+                            "concepts": [
+                                "Concept 1",
+                                "Concept 2"
+                            ],
+                            "theory_content": {
+                                "summary": "Summary",
+                                "key_points": [
+                                    "Point 1",
+                                    "Point 2"
+                                ]
+                            },
+                            "exercises": [
+                                {
+                                    "title": "Exercise 1",
+                                    "description": "Description",
+                                    "exercise_type": "type",
+                                    "content": {},
+                                    "midi_prompt": "Prompt",
+                                    "difficulty": "intermediate",
+                                    "estimated_duration_minutes": 15
+                                }
+                            ]
+                        },
+                        {
+                            "title": "Week 14 Lesson",
+                            "description": "Lesson for week 14 in intermediate.",
+                            "week_number": 14,
+                            "concepts": [
+                                "Concept 1",
+                                "Concept 2"
+                            ],
+                            "theory_content": {
+                                "summary": "Summary",
+                                "key_points": [
+                                    "Point 1",
+                                    "Point 2"
+                                ]
+                            },
+                            "exercises": [
+                                {
+                                    "title": "Exercise 1",
+                                    "description": "Description",
+                                    "exercise_type": "type",
+                                    "content": {},
+                                    "midi_prompt": "Prompt",
+                                    "difficulty": "intermediate",
+                                    "estimated_duration_minutes": 15
+                                }
+                            ]
+                        },
+                        {
+                            "title": "Week 15 Lesson",
+                            "description": "Lesson for week 15 in intermediate.",
+                            "week_number": 15,
+                            "concepts": [
+                                "Concept 1",
+                                "Concept 2"
+                            ],
+                            "theory_content": {
+                                "summary": "Summary",
+                                "key_points": [
+                                    "Point 1",
+                                    "Point 2"
+                                ]
+                            },
+                            "exercises": [
+                                {
+                                    "title": "Exercise 1",
+                                    "description": "Description",
+                                    "exercise_type": "type",
+                                    "content": {},
+                                    "midi_prompt": "Prompt",
+                                    "difficulty": "intermediate",
+                                    "estimated_duration_minutes": 15
+                                }
+                            ]
+                        },
+                        {
+                            "title": "Week 16 Lesson",
+                            "description": "Lesson for week 16 in intermediate.",
+                            "week_number": 16,
+                            "concepts": [
+                                "Concept 1",
+                                "Concept 2"
+                            ],
+                            "theory_content": {
+                                "summary": "Summary",
+                                "key_points": [
+                                    "Point 1",
+                                    "Point 2"
+                                ]
+                            },
+                            "exercises": [
+                                {
+                                    "title": "Exercise 1",
+                                    "description": "Description",
+                                    "exercise_type": "type",
+                                    "content": {},
+                                    "midi_prompt": "Prompt",
+                                    "difficulty": "intermediate",
+                                    "estimated_duration_minutes": 15
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "title": "Intermediate Advanced",
+                    "description": "Advanced skills for intermediate gospel keys essentials.",
+                    "theme": "gospel keys essentials_advanced_intermediate",
+                    "start_week": 17,
+                    "end_week": 16,
+                    "prerequisites": [
+                        "Intermediate Fundamentals"
+                    ],
+                    "outcomes": [
+                        "Fusion",
+                        "Improv",
+                        "Performance"
+                    ],
+                    "lessons": []
+                }
+            ]
+        },
+        "advanced": {
+            "modules": [
+                {
+                    "title": "Advanced Fundamentals",
+                    "description": "Foundational skills for advanced gospel keys essentials.",
+                    "theme": "gospel keys essentials_advanced",
+                    "start_week": 17,
+                    "end_week": 24,
+                    "prerequisites": [
+                        "Gospel Keys Essentials beginner mastery",
+                        "Gospel Keys Essentials intermediate mastery"
+                    ],
+                    "outcomes": [
+                        "Extensions",
+                        "Reharms",
+                        "Advanced ear"
+                    ],
+                    "lessons": [
+                        {
+                            "title": "Week 17 Lesson",
+                            "description": "Lesson for week 17 in advanced.",
+                            "week_number": 17,
+                            "concepts": [
+                                "Concept 1",
+                                "Concept 2"
+                            ],
+                            "theory_content": {
+                                "summary": "Summary",
+                                "key_points": [
+                                    "Point 1",
+                                    "Point 2"
+                                ]
+                            },
+                            "exercises": [
+                                {
+                                    "title": "Exercise 1",
+                                    "description": "Description",
+                                    "exercise_type": "type",
+                                    "content": {},
+                                    "midi_prompt": "Prompt",
+                                    "difficulty": "advanced",
+                                    "estimated_duration_minutes": 15
+                                }
+                            ]
+                        },
+                        {
+                            "title": "Week 18 Lesson",
+                            "description": "Lesson for week 18 in advanced.",
+                            "week_number": 18,
+                            "concepts": [
+                                "Concept 1",
+                                "Concept 2"
+                            ],
+                            "theory_content": {
+                                "summary": "Summary",
+                                "key_points": [
+                                    "Point 1",
+                                    "Point 2"
+                                ]
+                            },
+                            "exercises": [
+                                {
+                                    "title": "Exercise 1",
+                                    "description": "Description",
+                                    "exercise_type": "type",
+                                    "content": {},
+                                    "midi_prompt": "Prompt",
+                                    "difficulty": "advanced",
+                                    "estimated_duration_minutes": 15
+                                }
+                            ]
+                        },
+                        {
+                            "title": "Week 19 Lesson",
+                            "description": "Lesson for week 19 in advanced.",
+                            "week_number": 19,
+                            "concepts": [
+                                "Concept 1",
+                                "Concept 2"
+                            ],
+                            "theory_content": {
+                                "summary": "Summary",
+                                "key_points": [
+                                    "Point 1",
+                                    "Point 2"
+                                ]
+                            },
+                            "exercises": [
+                                {
+                                    "title": "Exercise 1",
+                                    "description": "Description",
+                                    "exercise_type": "type",
+                                    "content": {},
+                                    "midi_prompt": "Prompt",
+                                    "difficulty": "advanced",
+                                    "estimated_duration_minutes": 15
+                                }
+                            ]
+                        },
+                        {
+                            "title": "Week 20 Lesson",
+                            "description": "Lesson for week 20 in advanced.",
+                            "week_number": 20,
+                            "concepts": [
+                                "Concept 1",
+                                "Concept 2"
+                            ],
+                            "theory_content": {
+                                "summary": "Summary",
+                                "key_points": [
+                                    "Point 1",
+                                    "Point 2"
+                                ]
+                            },
+                            "exercises": [
+                                {
+                                    "title": "Exercise 1",
+                                    "description": "Description",
+                                    "exercise_type": "type",
+                                    "content": {},
+                                    "midi_prompt": "Prompt",
+                                    "difficulty": "advanced",
+                                    "estimated_duration_minutes": 15
+                                }
+                            ]
+                        },
+                        {
+                            "title": "Week 21 Lesson",
+                            "description": "Lesson for week 21 in advanced.",
+                            "week_number": 21,
+                            "concepts": [
+                                "Concept 1",
+                                "Concept 2"
+                            ],
+                            "theory_content": {
+                                "summary": "Summary",
+                                "key_points": [
+                                    "Point 1",
+                                    "Point 2"
+                                ]
+                            },
+                            "exercises": [
+                                {
+                                    "title": "Exercise 1",
+                                    "description": "Description",
+                                    "exercise_type": "type",
+                                    "content": {},
+                                    "midi_prompt": "Prompt",
+                                    "difficulty": "advanced",
+                                    "estimated_duration_minutes": 15
+                                }
+                            ]
+                        },
+                        {
+                            "title": "Week 22 Lesson",
+                            "description": "Lesson for week 22 in advanced.",
+                            "week_number": 22,
+                            "concepts": [
+                                "Concept 1",
+                                "Concept 2"
+                            ],
+                            "theory_content": {
+                                "summary": "Summary",
+                                "key_points": [
+                                    "Point 1",
+                                    "Point 2"
+                                ]
+                            },
+                            "exercises": [
+                                {
+                                    "title": "Exercise 1",
+                                    "description": "Description",
+                                    "exercise_type": "type",
+                                    "content": {},
+                                    "midi_prompt": "Prompt",
+                                    "difficulty": "advanced",
+                                    "estimated_duration_minutes": 15
+                                }
+                            ]
+                        },
+                        {
+                            "title": "Week 23 Lesson",
+                            "description": "Lesson for week 23 in advanced.",
+                            "week_number": 23,
+                            "concepts": [
+                                "Concept 1",
+                                "Concept 2"
+                            ],
+                            "theory_content": {
+                                "summary": "Summary",
+                                "key_points": [
+                                    "Point 1",
+                                    "Point 2"
+                                ]
+                            },
+                            "exercises": [
+                                {
+                                    "title": "Exercise 1",
+                                    "description": "Description",
+                                    "exercise_type": "type",
+                                    "content": {},
+                                    "midi_prompt": "Prompt",
+                                    "difficulty": "advanced",
+                                    "estimated_duration_minutes": 15
+                                }
+                            ]
+                        },
+                        {
+                            "title": "Week 24 Lesson",
+                            "description": "Lesson for week 24 in advanced.",
+                            "week_number": 24,
+                            "concepts": [
+                                "Concept 1",
+                                "Concept 2"
+                            ],
+                            "theory_content": {
+                                "summary": "Summary",
+                                "key_points": [
+                                    "Point 1",
+                                    "Point 2"
+                                ]
+                            },
+                            "exercises": [
+                                {
+                                    "title": "Exercise 1",
+                                    "description": "Description",
+                                    "exercise_type": "type",
+                                    "content": {},
+                                    "midi_prompt": "Prompt",
+                                    "difficulty": "advanced",
+                                    "estimated_duration_minutes": 15
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "title": "Advanced Advanced",
+                    "description": "Advanced skills for advanced gospel keys essentials.",
+                    "theme": "gospel keys essentials_advanced_advanced",
+                    "start_week": 25,
+                    "end_week": 24,
+                    "prerequisites": [
+                        "Advanced Fundamentals"
+                    ],
+                    "outcomes": [
+                        "Fusion",
+                        "Improv",
+                        "Performance"
+                    ],
+                    "lessons": []
+                }
+            ]
+        }
+    }
+}
+
+
+{
+    "title": "Jazz Improvisation Bootcamp",
+    "description": "From swing to bebop mastery.",
+    "levels": {
+        "beginner": {
+            "modules": [
+                {
+                    "title": "Beginner Fundamentals",
+                    "description": "Foundational skills for beginner jazz improvisation bootcamp.",
+                    "theme": "jazz improvisation bootcamp_beginner",
+                    "start_week": 1,
+                    "end_week": 8,
+                    "prerequisites": [],
+                    "outcomes": [
+                        "Basic chords",
+                        "Simple progressions",
+                        "Ear basics"
+                    ],
+                    "lessons": [
+                        {
+                            "title": "Week 1 Lesson",
+                            "description": "Lesson for week 1 in beginner.",
+                            "week_number": 1,
+                            "concepts": [
+                                "Concept 1",
+                                "Concept 2"
+                            ],
+                            "theory_content": {
+                                "summary": "Summary",
+                                "key_points": [
+                                    "Point 1",
+                                    "Point 2"
+                                ]
+                            },
+                            "exercises": [
+                                {
+                                    "title": "Exercise 1",
+                                    "description": "Description",
+                                    "exercise_type": "type",
+                                    "content": {},
+                                    "midi_prompt": "Prompt",
+                                    "difficulty": "beginner",
+                                    "estimated_duration_minutes": 15
+                                }
+                            ]
+                        },
+                        # Additional lessons for weeks 2-8 follow similar structure.
+                    ]
+                },
+                {
+                    "title": "Beginner Advanced",
+                    "description": "Advanced skills for beginner jazz improvisation bootcamp.",
+                    "theme": "jazz improvisation bootcamp_advanced_beginner",
+                    "start_week": 9,
+                    "end_week": 8,
+                    "prerequisites": [
+                        "Beginner Fundamentals"
+                    ],
+                    "outcomes": [
+                        "Fusion",
+                        "Improv",
+                        "Performance"
+                    ],
+                    "lessons": []
+                }
+            ]
+        },
+        # Intermediate and advanced levels follow, with customized outcomes like "7th chords" for intermediate.
+    }
+}

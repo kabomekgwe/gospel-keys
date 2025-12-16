@@ -1,0 +1,1080 @@
+"""Enhanced Curriculum Templates with Complete Content.
+
+Expanded pre-defined curriculums with comprehensive lessons, exercises, and AI-ready structure.
+"""
+
+# Expanded with more modules, lessons, and detailed exercises
+GOSPEL_KEYS_ESSENTIALS = {
+    "title": "Gospel Keys Essentials: From Beginner to Church Musician",
+    "description": "Complete gospel piano mastery: traditional to contemporary. Master the 'church sound' through essential voicings, passing chords, shout patterns, and worship improvisation techniques.",
+    "prerequisites": [
+        "Basic triads",
+        "Major/minor scales",
+        "Simple chord progressions"
+    ],
+    "total_weeks": 12,
+    "modules": [
+        {
+            "title": "Gospel Harmony Foundations",
+            "description": "Moving from triads to the rich sound of 7th, 9th, and extended gospel chords.",
+            "theme": "gospel_basics",
+            "start_week": 1,
+            "end_week": 4,
+            "weekly_time_commitment_minutes": 180,
+            "outcomes": [
+                "Major & Minor 7th/9th Chords",
+                "The 1-4-5 Gospel Style",
+                "Basic Shout Patterns",
+                "Smooth Voice Leading",
+                "Left Hand Bass Patterns"
+            ],
+            "lessons": [
+                {
+                    "title": "Beyond Triads: 7th Chords Gospel Style",
+                    "description": "Introduction to Major 7, Dominant 7, Minor 7, and Minor 7b5 chords in gospel context.",
+                    "week_number": 1,
+                    "day_number": 1,
+                    "concepts": [
+                        "Major 7th",
+                        "Dominant 7th",
+                        "Minor 7th",
+                        "Drop-2 Voicings",
+                        "Common Tone Technique"
+                    ],
+                    "theory_content": {
+                        "summary": "Gospel music uses 7th chords to create emotional tension and release. Understanding extensions is crucial for the authentic sound.",
+                        "key_points": [
+                            "Add the 7th note to every triad for fullness",
+                            "Use inversions to keep common tones between chords",
+                            "Dominant 7th chords create tension that resolves to the tonic",
+                            "Minor 7th chords provide soulful, melancholic colors"
+                        ],
+                        "formulas": {
+                            "Major 7": "1-3-5-7",
+                            "Dominant 7": "1-3-5-b7",
+                            "Minor 7": "1-b3-5-b7",
+                            "Minor 7b5": "1-b3-b5-b7"
+                        }
+                    },
+                    "exercises": [
+                        {
+                            "title": "Diatonic 7th Chords in All Keys",
+                            "description": "Play all 7th chords in C, F, and G Major, focusing on smooth voice leading.",
+                            "exercise_type": "scale_diatonic",
+                            "content": {
+                                "scales": [
+                                    "C Major",
+                                    "F Major",
+                                    "G Major"
+                                ],
+                                "pattern": "Diatonic 7ths ascending and descending",
+                                "tempo_range": [
+                                    60,
+                                    80
+                                ],
+                                "hands": [
+                                    "left",
+                                    "right",
+                                    "together"
+                                ]
+                            },
+                            "difficulty": "beginner",
+                            "estimated_duration_minutes": 15,
+                            "repetitions": 3,
+                            "success_criteria": "Play all chords smoothly at 80 BPM without stopping"
+                        },
+                        {
+                            "title": "Gospel 2-5-1 Progression Drill",
+                            "description": "Master the foundational ii-V-I progression with 9th chords.",
+                            "exercise_type": "progression",
+                            "content": {
+                                "chords": [
+                                    "Dm9",
+                                    "G13",
+                                    "Cmaj9"
+                                ],
+                                "roman_numerals": [
+                                    "ii9",
+                                    "V13",
+                                    "Imaj9"
+                                ],
+                                "key": "C",
+                                "voicings": [
+                                    "close",
+                                    "open",
+                                    "drop2"
+                                ],
+                                "bass_pattern": [
+                                    "root",
+                                    "root-fifth",
+                                    "walking"
+                                ]
+                            },
+                            "difficulty": "beginner",
+                            "estimated_duration_minutes": 20,
+                            "repetitions": 5,
+                            "success_criteria": "Play progression in all 12 keys with 2 different voicings"
+                        },
+                        {
+                            "title": "Gospel Shout Pattern in Eb",
+                            "description": "Learn the classic shout pattern used in traditional gospel.",
+                            "exercise_type": "rhythm_pattern",
+                            "content": {
+                                "key": "Eb",
+                                "chord_progression": [
+                                    "Eb9",
+                                    "Ab9",
+                                    "Eb9",
+                                    "Bb9"
+                                ],
+                                "rhythm_pattern": "Shuffle triplet feel",
+                                "left_hand_pattern": "Octave bass with fifth"
+                            },
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 25,
+                            "midi_pattern": "eb_gospel_shout.mid",
+                            "audio_example": "shout_pattern_eb.mp3"
+                        }
+                    ],
+                    "practice_routine": {
+                        "warmup": "5 min - C major scale with 7th chords",
+                        "main_practice": "20 min - Gospel 2-5-1 in all keys",
+                        "application": "15 min - Play shout pattern with backing track",
+                        "cool_down": "5 min - Improvise simple melody over chords"
+                    }
+                },
+                {
+                    "title": "The Preacher's Chord and Tension Notes",
+                    "description": "Mastering dominant 7#9, 7b9, 7alt chords and bluesy gospel improvisation.",
+                    "week_number": 2,
+                    "day_number": 1,
+                    "concepts": [
+                        "Dominant 7#9",
+                        "Dominant 7b9",
+                        "Altered Dominant",
+                        "Blues Scale",
+                        "Tritone Substitution"
+                    ],
+                    "theory_content": {
+                        "summary": "The preacher's chord (7#9) adds grit and soul. Altered tensions create harmonic interest and direction.",
+                        "key_points": [
+                            "7#9 contains both major and minor 3rd",
+                            "Altered tensions (b9, #9, #11, b13) create maximum tension",
+                            "Tritone substitution allows smooth chromatic bass movement"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "E7#9 Voicing Variations",
+                            "description": "Learn 4 different voicings for the classic 'Hendrix' chord.",
+                            "exercise_type": "voicing_study",
+                            "content": {
+                                "chord": "E7#9",
+                                "voicings": [
+                                    {
+                                        "notes": [
+                                            "E",
+                                            "G#",
+                                            "D",
+                                            "G"
+                                        ],
+                                        "hand": "left"
+                                    },
+                                    {
+                                        "notes": [
+                                            "B",
+                                            "D",
+                                            "G#",
+                                            "G"
+                                        ],
+                                        "hand": "right"
+                                    },
+                                    {
+                                        "notes": [
+                                            "E",
+                                            "B",
+                                            "D",
+                                            "G",
+                                            "G#"
+                                        ],
+                                        "hand": "both"
+                                    },
+                                    {
+                                        "notes": [
+                                            "G",
+                                            "D",
+                                            "G#",
+                                            "B"
+                                        ],
+                                        "hand": "right_spread"
+                                    }
+                                ],
+                                "fingering": "Standard gospel fingering"
+                            },
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 20
+                        },
+                        {
+                            "title": "Preacher Chords Through Cycle of 4ths",
+                            "description": "Master moving the #9 chord through all 12 keys with voice leading.",
+                            "exercise_type": "progression",
+                            "content": {
+                                "chords": [
+                                    "E7#9",
+                                    "A7#9",
+                                    "D7#9",
+                                    "G7#9",
+                                    "C7#9",
+                                    "F7#9",
+                                    "Bb7#9",
+                                    "Eb7#9",
+                                    "Ab7#9",
+                                    "Db7#9",
+                                    "Gb7#9",
+                                    "B7#9"
+                                ],
+                                "key_center": "All keys",
+                                "voice_leading_rule": "Keep common tones, minimal movement"
+                            },
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 25
+                        },
+                        {
+                            "title": "Gospel Blues Scale Licks",
+                            "description": "Learn 5 essential gospel blues licks over dominant 7 chords.",
+                            "exercise_type": "lick_library",
+                            "content": {
+                                "key": "C",
+                                "scale": "C Blues",
+                                "licks": [
+                                    {
+                                        "notes": [
+                                            "C",
+                                            "Eb",
+                                            "F",
+                                            "Gb",
+                                            "G",
+                                            "Bb"
+                                        ],
+                                        "rhythm": "Triplet based"
+                                    },
+                                    {
+                                        "notes": [
+                                            "Eb",
+                                            "F",
+                                            "G",
+                                            "Bb",
+                                            "C"
+                                        ],
+                                        "rhythm": "8th note syncopated"
+                                    },
+                                    {
+                                        "notes": [
+                                            "C",
+                                            "Bb",
+                                            "G",
+                                            "Gb",
+                                            "F",
+                                            "Eb"
+                                        ],
+                                        "rhythm": "Descending with grace notes"
+                                    }
+                                ],
+                                "application_chord": "C7"
+                            },
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 20
+                        }
+                    ]
+                },
+                {
+                    "title": "Gospel Turnarounds and Cadences",
+                    "description": "Master classic gospel endings and transitions between sections.",
+                    "week_number": 3,
+                    "concepts": [
+                        "Turnarounds",
+                        "Cadences",
+                        "Plagal Cadence",
+                        "Deceptive Cadence"
+                    ],
+                    "exercises": [
+                        {
+                            "title": "Traditional Gospel Turnaround in C",
+                            "description": "Learn the classic I-VI-II-V turnaround with variations.",
+                            "exercise_type": "progression",
+                            "content": {
+                                "basic": [
+                                    "C",
+                                    "A7",
+                                    "Dm7",
+                                    "G7"
+                                ],
+                                "gospel_variation": [
+                                    "Cmaj7",
+                                    "A7#9",
+                                    "Dm9",
+                                    "G13"
+                                ],
+                                "extended": [
+                                    "Cmaj9",
+                                    "A7b9",
+                                    "Dm11",
+                                    "G7#5#9"
+                                ]
+                            },
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 25
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "title": "Gospel Progressions & Movements",
+            "description": "Connecting chords with soulful classic movements, walk-ups, walk-downs, and modal interchange.",
+            "theme": "gospel_progressions",
+            "start_week": 5,
+            "end_week": 8,
+            "weekly_time_commitment_minutes": 210,
+            "outcomes": [
+                "7-3-6 Progression Mastery",
+                "Tritone Substitution Application",
+                "Gospel Waltz & 6/8 Feel",
+                "Walking Bass Lines",
+                "Modal Interchange Colors"
+            ],
+            "lessons": [
+                {
+                    "title": "The Classic 7-3-6 Progression",
+                    "description": "The essential gospel progression from dominant to relative minor with passing chords.",
+                    "week_number": 5,
+                    "concepts": [
+                        "Secondary Dominants",
+                        "Diminished Passing Chords",
+                        "Relative Minor",
+                        "Voice Leading"
+                    ],
+                    "theory_content": {
+                        "summary": "The 7-3-6 (V7/vi - iii - vi) creates emotional movement toward the relative minor.",
+                        "analysis": "In C: B7 - Em - Am (V7/vi - iii - vi) often with passing diminished chords"
+                    },
+                    "exercises": [
+                        {
+                            "title": "7-3-6 in All 12 Keys with Passing Chords",
+                            "description": "Master this progression in every key with diminished connecting chords.",
+                            "exercise_type": "progression",
+                            "content": {
+                                "keys": "All 12 keys",
+                                "base_progression": [
+                                    "V7/vi",
+                                    "iii",
+                                    "vi"
+                                ],
+                                "with_passing": [
+                                    "#iv°7",
+                                    "V7/vi",
+                                    "iii",
+                                    "vi"
+                                ],
+                                "voicing_style": "Open gospel voicings"
+                            },
+                            "difficulty": "advanced",
+                            "estimated_duration_minutes": 30
+                        },
+                        {
+                            "title": "7-3-6 Application in 'Amazing Grace'",
+                            "description": "Apply the progression to a familiar hymn.",
+                            "exercise_type": "repertoire_application",
+                            "content": {
+                                "song": "Amazing Grace",
+                                "section": "Verse 2",
+                                "original_chords": [
+                                    "G",
+                                    "C",
+                                    "G",
+                                    "D7",
+                                    "G"
+                                ],
+                                "gospelized": [
+                                    "G",
+                                    "G/B",
+                                    "C",
+                                    "C/E",
+                                    "F#°7",
+                                    "G/B",
+                                    "D7#9",
+                                    "G"
+                                ]
+                            },
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 20
+                        }
+                    ]
+                },
+                {
+                    "title": "Walk-ups, Walk-downs & Bass Motion",
+                    "description": "Bass line movements that drive congregational songs and create momentum.",
+                    "week_number": 6,
+                    "concepts": [
+                        "Bass Lines",
+                        "Slash Chords",
+                        "Chromatic Approach",
+                        "Pedal Point"
+                    ],
+                    "exercises": [
+                        {
+                            "title": "The 1 to 4 Walk-up with Variations",
+                            "description": "Multiple approaches to moving from I to IV with bass motion.",
+                            "exercise_type": "bass_line_study",
+                            "content": {
+                                "basic": [
+                                    "C",
+                                    "C/E",
+                                    "F"
+                                ],
+                                "chromatic": [
+                                    "C",
+                                    "C#°7",
+                                    "Dm7",
+                                    "D#°7",
+                                    "C/E",
+                                    "F"
+                                ],
+                                "gospel": [
+                                    "C",
+                                    "C/E",
+                                    "F",
+                                    "F#°7",
+                                    "C/G",
+                                    "G7",
+                                    "C"
+                                ],
+                                "left_hand_patterns": [
+                                    "Root only",
+                                    "Root-fifth",
+                                    "Octaves",
+                                    "Walking line"
+                                ]
+                            },
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 25
+                        },
+                        {
+                            "title": "Descending Bass Line Gospel Ballad",
+                            "description": "Create emotional ballads using descending chromatic bass.",
+                            "exercise_type": "progression",
+                            "content": {
+                                "chords": [
+                                    "Cmaj7",
+                                    "C/B",
+                                    "Am7",
+                                    "Am7/G",
+                                    "Fmaj7",
+                                    "Fmaj7/E",
+                                    "Dm7",
+                                    "Dm7/C"
+                                ],
+                                "roman_numerals": [
+                                    "I",
+                                    "I/7",
+                                    "vi",
+                                    "vi/5",
+                                    "IV",
+                                    "IV/3",
+                                    "ii",
+                                    "ii/7"
+                                ],
+                                "bass_motion": "Chromatic descent C-B-A#-A-G#-G-F#-F-E-D#-D-C#-C"
+                            },
+                            "difficulty": "advanced",
+                            "estimated_duration_minutes": 30
+                        }
+                    ]
+                },
+                {
+                    "title": "Modal Interchange in Gospel",
+                    "description": "Borrowing chords from parallel minor for emotional depth.",
+                    "week_number": 7,
+                    "concepts": [
+                        "Borrowed Chords",
+                        "Mode Mixture",
+                        "BVII chord",
+                        "bVI chord"
+                    ],
+                    "exercises": [
+                        {
+                            "title": "Gospel Ballad with Borrowed Chords",
+                            "description": "Create soulful progressions using chords from parallel minor.",
+                            "exercise_type": "composition",
+                            "content": {
+                                "key": "C",
+                                "diatonic": [
+                                    "C",
+                                    "F",
+                                    "G",
+                                    "Am"
+                                ],
+                                "with_borrowed": [
+                                    "C",
+                                    "Eb",
+                                    "F",
+                                    "Bb",
+                                    "C"
+                                ],
+                                "common_borrowed": [
+                                    "Eb",
+                                    "Ab",
+                                    "Bb",
+                                    "Fm"
+                                ]
+                            },
+                            "difficulty": "advanced",
+                            "estimated_duration_minutes": 25
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "title": "Gospel Improvisation & Worship Leading",
+            "description": "Developing improvisational skills, spontaneous worship, and effective service playing.",
+            "theme": "gospel_improv",
+            "start_week": 9,
+            "end_week": 12,
+            "outcomes": [
+                "Spontaneous Worship Creation",
+                "Melodic Improvisation",
+                "Dynamic Control",
+                "Service Flow Management"
+            ],
+            "lessons": [
+                {
+                    "title": "Worship Improvisation Techniques",
+                    "description": "Creating spontaneous worship music that supports the congregation.",
+                    "week_number": 9,
+                    "exercises": [
+                        {
+                            "title": "4-Chord Worship Improv Framework",
+                            "description": "Improvise over I-V-vi-IV with melodic development.",
+                            "exercise_type": "improvisation",
+                            "content": {
+                                "progression": [
+                                    "C",
+                                    "G",
+                                    "Am",
+                                    "F"
+                                ],
+                                "duration": "5 minutes continuous",
+                                "techniques": [
+                                    "Call and response",
+                                    "Melodic sequence",
+                                    "Dynamic build"
+                                ]
+                            },
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 30
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "final_project": {
+        "title": "Complete Gospel Arrangement",
+        "description": "Arrange a traditional hymn with gospel techniques learned",
+        "requirements": [
+            "Use at least 3 gospel techniques",
+            "Include intro, verses, chorus, bridge",
+            "Incorporate dynamic contrast"
+        ]
+    }
+}
+
+# Additional curriculum expansions would follow similar pattern...
+
+# Enhanced with AI-generation hooks
+CURRICULUM_TEMPLATE = {
+    "title": "",
+    "description": "",
+    "prerequisites": [],
+    "total_weeks": 0,
+    "target_level": "",  # beginner, intermediate, advanced
+    "genres": [],  # jazz, gospel, classical, etc.
+    "modules": [
+        {
+            "title": "",
+            "description": "",
+            "theme": "",
+            "start_week": 0,
+            "end_week": 0,
+            "weekly_time_commitment_minutes": 0,
+            "learning_objectives": [],
+            "outcomes": [],
+            "key_concepts": [],
+            "lessons": [
+                {
+                    "title": "",
+                    "description": "",
+                    "week_number": 0,
+                    "day_number": 0,  # For daily practice plans
+                    "concepts": [],
+                    "focus_areas": [],  # Technique, Theory, Repertoire, etc.
+                    "theory_content": {
+                        "summary": "",
+                        "key_points": [],
+                        "formulas": {},
+                        "analysis": "",
+                        "examples": []
+                    },
+                    "exercises": [
+                        {
+                            "title": "",
+                            "description": "",
+                            "exercise_type": "",  # scale, progression, voicing, lick, rhythm, etc.
+                            "subtype": "",  # For more specificity
+                            "content": {
+                                "key": "",
+                                "tempo_range": [
+                                    0,
+                                    0
+                                ],
+                                "repetitions": 0,
+                                "variations": [],
+                                "midi_reference": "",
+                                "audio_example": ""
+                            },
+                            "difficulty": "",
+                            "estimated_duration_minutes": 0,
+                            "success_criteria": "",
+                            "progression_rules": {},  # For AI generation
+                            "generation_prompt": ""  # Prompt for AI to generate variations
+                        }
+                    ],
+                    "practice_routine": {
+                        "warmup": "",
+                        "technical_work": "",
+                        "repertoire": "",
+                        "improvisation": "",
+                        "ear_training": "",
+                        "cool_down": ""
+                    },
+                    "assessment": {
+                        "checkpoints": [],
+                        "recording_required": False,
+                        "tempo_target": 0
+                    }
+                }
+            ],
+            "module_project": {
+                "title": "",
+                "description": "",
+                "requirements": []
+            }
+        }
+    ],
+    "resources": {
+        "recommended_books": [],
+        "essential_recordings": [],
+        "reference_tracks": [],
+        "software_tools": []
+    },
+    "ai_generation_settings": {
+        "exercise_variation_prompt": "Generate 3 variations of this exercise with increased difficulty",
+        "progression_generation_rules": {
+            "chord_complexity": "",
+            "voicing_style": "",
+            "rhythmic_complexity": ""
+        }
+    }
+}
+
+# Additional enhanced curriculums would follow...
+
+JAZZ_IMPROV_BOOTCAMP_EXPANDED = {
+    "title": "Jazz Improvisation Bootcamp: From Beginner to Confident Soloist",
+    "description": "Complete jazz piano roadmap from basic swing to advanced improvisation. Covers shell voicings, 2-5-1 mastery, guide tones, bebop language, and standard repertoire.",
+    "prerequisites": [
+        "Basic chords",
+        "Major scales",
+        "Reading chord symbols"
+    ],
+    "total_weeks": 16,
+    "target_level": "beginner_to_intermediate",
+    "genres": [
+        "jazz",
+        "swing",
+        "bebop"
+    ],
+    "modules": [
+        {
+            "title": "Jazz Fundamentals & Time Feel",
+            "description": "Establishing proper swing feel, basic voicings, and essential jazz language.",
+            "theme": "jazz_fundamentals",
+            "start_week": 1,
+            "end_week": 4,
+            "weekly_time_commitment_minutes": 240,
+            "outcomes": [
+                "Solid Swing Feel",
+                "Shell Voicings Mastery",
+                "Basic Blues Comping",
+                "Guide Tone Understanding",
+                "Beginning Phrasing"
+            ],
+            "lessons": [
+                {
+                    "title": "Swing Feel & Basic Comping",
+                    "description": "Developing authentic swing feel and basic comping patterns.",
+                    "week_number": 1,
+                    "day_number": 1,
+                    "concepts": [
+                        "Swing Feel",
+                        "Comping Patterns",
+                        "Freddie Green Style",
+                        "Basic Voicings"
+                    ],
+                    "exercises": [
+                        {
+                            "title": "Swing Feel Metronome Study",
+                            "description": "Internalize swing feel with various metronome settings.",
+                            "exercise_type": "rhythm",
+                            "content": {
+                                "tempos": [
+                                    60,
+                                    80,
+                                    100,
+                                    120,
+                                    140,
+                                    180
+                                ],
+                                "patterns": [
+                                    "2 & 4 accent",
+                                    "Triplet based",
+                                    "Charleston rhythm"
+                                ],
+                                "duration_per_tempo": 2
+                            },
+                            "difficulty": "beginner",
+                            "estimated_duration_minutes": 20
+                        },
+                        {
+                            "title": "Blues Comping Patterns in Bb",
+                            "description": "Learn 5 essential comping patterns for blues.",
+                            "exercise_type": "comping_patterns",
+                            "content": {
+                                "key": "Bb",
+                                "patterns": [
+                                    {
+                                        "name": "Basic Freddie",
+                                        "rhythm": "Quarter notes on 2 & 4"
+                                    },
+                                    {
+                                        "name": "Two-beat feel",
+                                        "rhythm": "Half notes"
+                                    },
+                                    {
+                                        "name": "Sparse comping",
+                                        "rhythm": "Occasional chords"
+                                    },
+                                    {
+                                        "name": "Walking bass + chords",
+                                        "rhythm": "Walking quarter notes"
+                                    }
+                                ]
+                            },
+                            "difficulty": "beginner",
+                            "estimated_duration_minutes": 25
+                        }
+                    ]
+                },
+                {
+                    "title": "Shell Voicings & Voice Leading",
+                    "description": "Master left-hand shell voicings (A & B forms) with smooth voice leading.",
+                    "week_number": 2,
+                    "concepts": [
+                        "Shell Voicings",
+                        "Voice Leading",
+                        "Common Tone",
+                        "Minimum Movement"
+                    ],
+                    "exercises": [
+                        {
+                            "title": "ii-V-I Shells Through Cycle of 4ths",
+                            "description": "Practice shell voicings through all keys with focus on voice leading.",
+                            "exercise_type": "voicing_cycle",
+                            "content": {
+                                "progression": "ii-V-I",
+                                "keys": "All 12 keys",
+                                "voicing_types": [
+                                    "A Form (R-3-7)",
+                                    "B Form (R-7-3)"
+                                ],
+                                "voice_leading_rules": [
+                                    "Keep common tones",
+                                    "Move stepwise when possible"
+                                ]
+                            },
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 30,
+                            "success_criteria": "Play cycle at 120 BPM without hesitation"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+
+# Function to generate AI-based exercises
+def generate_ai_exercise(base_exercise, variation_params): """Generate variations of exercises using AI rules."""
+    variations = []
+    
+    if base_exercise[
+    "exercise_type"
+] == "progression":
+        # Generate progression variations
+        for i in range(variation_params.get("count",
+3)):
+            variation = {
+                **base_exercise,
+    "title": f"{base_exercise['title']} - Variation {i+1}",
+    "content": {
+                    **base_exercise[
+            "content"
+        ],
+        "chords": vary_progression(
+                        base_exercise[
+            "content"
+        ][
+            "chords"
+        ],
+                        variation_params.get("complexity_level",
+        1)
+                    )
+    },
+    "difficulty": increase_difficulty(
+                    base_exercise[
+        "difficulty"
+    ],
+                    variation_params.get("difficulty_increment",
+    0)
+                )
+}
+            variations.append(variation)
+    
+    return variations
+
+def vary_progression(chords, complexity): """Vary a chord progression based on complexity level."""
+    # Implementation would use music theory rules
+    # For now, return placeholder
+    return chords
+
+# Complete set of enhanced curriculums
+ENHANCED_CURRICULUMS = {
+    "gospel_essentials": GOSPEL_KEYS_ESSENTIALS,
+    "jazz_bootcamp": JAZZ_IMPROV_BOOTCAMP_EXPANDED,
+    # Other curriculums would be expanded similarly...
+}
+
+# AI Generation Prompts for each exercise type
+AI_GENERATION_PROMPTS = {
+    "scale_exercise": "Generate {count} scale exercises in {key} that focus on {technique}. Include variations in rhythm, articulation, and range.",
+    "progression_exercise": "Create {count} variations of {progression} in {key} with increasing harmonic complexity. Include voicing suggestions and rhythmic patterns.",
+    "voicing_exercise": "Generate {count} voicing exercises for {chord_type} in various inversions and spreads. Include fingerings and voice leading examples.",
+    "lick_exercise": "Create {count} {style} licks in {key} that work over {chord_type}. Include rhythmic variations and practice tips.",
+    "rhythm_exercise": "Generate {count} rhythmic patterns for {style} music at tempo {tempo}. Include syncopation and polyrhythm variations.",
+    "improvisation_exercise": "Create {count} improvisation exercises based on {progression} focusing on {technique}. Include melodic development ideas.",
+    "ear_training": "Generate {count} ear training exercises for identifying {intervals_or_chords} in {context}.",
+    "sight_reading": "Create {count} sight-reading excerpts in {key} with {time_signature} at level {difficulty}."
+}
+
+# Practice Plan Generator
+def generate_daily_practice_plan(level, available_time, focus_areas): """Generate a personalized daily practice plan."""
+    plan = {
+    "warmup": {
+        "duration": min(10, available_time * 0.1),
+        "exercises": [
+            "Scales",
+            "Arpeggios",
+            "Chords"
+        ]
+    },
+    "technical_work": {
+        "duration": available_time * 0.3,
+        "focus": focus_areas.get("technique",
+        "General")
+    },
+    "repertoire": {
+        "duration": available_time * 0.3,
+        "pieces": []
+    },
+    "improvisation": {
+        "duration": available_time * 0.2,
+        "exercises": []
+    },
+    "ear_training": {
+        "duration": available_time * 0.1,
+        "exercises": []
+    }
+}
+    return plan
+
+# MIDI Generation Configuration
+MIDI_GENERATION_CONFIG = {
+    "tempo_ranges": {
+        "slow": [
+            40,
+            70
+        ],
+        "medium": [
+            80,
+            120
+        ],
+        "fast": [
+            130,
+            200
+        ]
+    },
+    "instrument_profiles": {
+        "gospel": {
+            "acoustic_piano": 1,
+            "organ": 2,
+            "bass": 3
+        },
+        "jazz": {
+            "acoustic_piano": 1,
+            "upright_bass": 2,
+            "drums": 3
+        },
+        "neo_soul": {
+            "electric_piano": 1,
+            "synth_bass": 2,
+            "drums": 3
+        }
+    },
+    "style_parameters": {
+        "gospel": {
+            "swing": 0.6,
+            "velocity_variation": 0.8,
+            "grace_notes": True
+        },
+        "jazz": {
+            "swing": 0.7,
+            "velocity_variation": 0.6,
+            "ghost_notes": True
+        }
+    }
+}
+
+# Assessment Rubrics
+ASSESSMENT_RUBRICS = {
+    "technical_exercises": {
+        "criteria": [
+            "Accuracy",
+            "Tempo",
+            "Consistency",
+            "Articulation"
+        ],
+        "levels": {
+            "beginner": {
+                "tempo": 60,
+                "accuracy": 80
+            },
+            "intermediate": {
+                "tempo": 120,
+                "accuracy": 90
+            },
+            "advanced": {
+                "tempo": 180,
+                "accuracy": 95
+            }
+        }
+    },
+    "improvisation": {
+        "criteria": [
+            "Melodic Development",
+            "Harmonic Accuracy",
+            "Rhythmic Interest",
+            "Emotional Expression"
+        ],
+        "rating_scale": [
+            1,
+            2,
+            3,
+            4,
+            5
+        ]
+    }
+}
+
+# Progress Tracking Structure
+PROGRESS_TRACKING = {
+    "daily_practice": {
+        "fields": [
+            "date",
+            "duration",
+            "exercises_completed",
+            "difficulty_rating",
+            "self_assessment"
+        ],
+        "metrics": [
+            "consistency_streak",
+            "total_practice_time",
+            "skill_growth_rate"
+        ]
+    },
+    "weekly_review": {
+        "questions": [
+            "What felt easy this week?",
+            "What was challenging?",
+            "What breakthroughs did you have?",
+            "What needs more attention?"
+        ],
+        "goals": [
+            "technical_goals",
+            "repertoire_goals",
+            "improvisation_goals"
+        ]
+    }
+}
+
+if __name__ == "__main__":
+    # Example usage
+    print(f"Enhanced Gospel Curriculum: {GOSPEL_KEYS_ESSENTIALS['title']}")
+    print(f"Total weeks: {GOSPEL_KEYS_ESSENTIALS['total_weeks']}")
+    print(f"Modules: {len(GOSPEL_KEYS_ESSENTIALS['modules'])}")
+    
+    # Generate sample practice plan
+    sample_plan = generate_daily_practice_plan(
+        level="intermediate",
+        available_time=60,
+        focus_areas={
+    "technique": "Voicings",
+    "repertoire": "Gospel"
+}
+    )
+    print(f"\nSample Practice Plan: {sample_plan}")
+
+
+    class ExerciseGenerator:
+    def generate_scale_exercises(self, key, technique, count=5): """Generate scale exercises with AI assistance"""
+        
+    def generate_progression_variations(self, base_progression, complexity_levels=3): """Generate progressive variations of chord progressions"""
+
+
+        class MIDIExporter:
+    def export_exercise(self, exercise_data, style="gospel", tempo=120): """Export exercises as MIDI files with proper styling"""
+        
+    def create_backing_tracks(self, progression, style, instruments): """Generate style-accurate backing tracks"""
+
+        class ProgressAnalyzer:
+    def analyze_performance(self, recording, rubric): """Analyze user recordings against assessment rubrics"""
+        
+    def suggest_next_steps(self, current_level, strengths, weaknesses): """AI-powered practice recommendations"""
+
+
+        class CurriculumCustomizer:
+    def create_personalized_curriculum(self, 
+                                     current_skills, 
+                                     goals, 
+                                     available_time,
+                                     preferred_genres): """Generate personalized learning path"""

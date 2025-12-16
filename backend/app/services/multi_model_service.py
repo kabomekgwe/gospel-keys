@@ -80,10 +80,10 @@ class MultiModelLLMService:
                 "chat_template": "chatml",  # <|user|>, <|assistant|>, <|end|>
             },
             LocalModelTier.MEDIUM: {
-                "name": "mlx-community/Qwen2.5-14B-Instruct-4bit",
+                "name": "mlx-community/Qwen2.5-7B-Instruct-4bit",
                 "max_tokens": 4096,
                 "chat_template": "qwen",  # <|im_start|>, <|im_end|>
-                "ram_required_gb": 12,
+                "ram_required_gb": 6,
             },
         }
 
@@ -114,7 +114,7 @@ class MultiModelLLMService:
             if tier == LocalModelTier.SMALL:
                 logger.info("⏳ Loading Phi-3.5 Mini (~3GB RAM, cached after first download)")
             elif tier == LocalModelTier.MEDIUM:
-                logger.info("⏳ Loading Qwen2.5-14B (~12GB RAM, cached after first download)")
+                logger.info("⏳ Loading Qwen2.5-7B (~6GB RAM, cached after first download)")
             
             # Memory safety check before loading
             if MEMORY_CHECK_AVAILABLE:

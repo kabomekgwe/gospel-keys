@@ -1,0 +1,1479 @@
+{
+    "app_configuration": {
+        "name": "MusicStyleMaster",
+        "version": "1.0",
+        "features": [
+            "sheet_music_generation",
+            "midi_export",
+            "browser_playback",
+            "interactive_practice"
+        ],
+        "instruments_supported": [
+            "piano",
+            "guitar",
+            "bass",
+            "drums",
+            "strings",
+            "brass",
+            "woodwinds"
+        ],
+        "output_formats": [
+            "musicxml",
+            "pdf",
+            "midi",
+            "mp3",
+            "wav"
+        ]
+    },
+    "style_templates": {
+        "classical": {
+            "metadata": {
+                "era": "Baroque|Classical|Romantic|Impressionist|20th_Century",
+                "complexity_levels": [
+                    "beginner",
+                    "intermediate",
+                    "advanced",
+                    "virtuoso"
+                ],
+                "time_period": "1600-present"
+            },
+            "characteristics": {
+                "rhythm": [
+                    "strict_tempo",
+                    "rubato_in_romantic",
+                    "complex_meter_changes",
+                    "precise_articulation"
+                ],
+                "harmony": [
+                    "functional_harmony",
+                    "counterpoint",
+                    "modulation",
+                    "chromaticism"
+                ],
+                "melody": [
+                    "lyrical_phrases",
+                    "motivic_development",
+                    "ornamentation",
+                    "wide_range"
+                ],
+                "form": [
+                    "sonata_form",
+                    "rondo",
+                    "theme_variations",
+                    "fugue"
+                ],
+                "articulation": [
+                    "legato",
+                    "staccato",
+                    "marcato",
+                    "tenuto"
+                ]
+            },
+            "generation_templates": {
+                "scale_exercise": {
+                    "parameters": {
+                        "key": "random_or_specified",
+                        "scale_type": "major|harmonic_minor|melodic_minor|chromatic",
+                        "octaves": 2,
+                        "hands": "together|separate|contrary",
+                        "articulation": "legato|staccato",
+                        "tempo": 80,
+                        "dynamic_shape": "crescendo|diminuendo|terraced"
+                    },
+                    "visualization": {
+                        "staff_notation": {
+                            "clefs": [
+                                "treble",
+                                "bass"
+                            ],
+                            "key_signature": "automatic",
+                            "time_signature": "4/4",
+                            "expression_marks": true,
+                            "fingerings": "recommended"
+                        },
+                        "keyboard_diagram": {
+                            "highlight_changing_notes": true,
+                            "show_fingering": true
+                        }
+                    },
+                    "midi_generation": {
+                        "velocity_map": {
+                            "default": 80,
+                            "crescendo": "linear_increase",
+                            "diminuendo": "linear_decrease"
+                        },
+                        "articulation": {
+                            "legato": 100,
+                            "staccato": 50
+                        },
+                        "pedal_marking": "sustain_pedal_changes"
+                    }
+                },
+                "composition_template": {
+                    "form_options": [
+                        "binary",
+                        "ternary",
+                        "rondo",
+                        "sonatina"
+                    ],
+                    "harmonic_progression": {
+                        "beginner": "I-IV-V-I",
+                        "intermediate": "I-VI-ii-V-I",
+                        "advanced": "modulating_progressions"
+                    },
+                    "texture_options": [
+                        "homophonic",
+                        "polyphonic",
+                        "melody_accompaniment"
+                    ],
+                    "ornamentation_rules": {
+                        "trills": "upper_neighbor",
+                        "mordents": "lower_neighbor",
+                        "turns": "four_note_pattern",
+                        "appoggiaturas": "accented_non_chord_tone"
+                    }
+                }
+            },
+            "interactive_features": {
+                "metronome_settings": {
+                    "subdivision": "quarter|eighth|triplet",
+                    "accent_pattern": "1-2-3-4",
+                    "visual_beat": "bouncing_ball|flashing"
+                },
+                "practice_tools": {
+                    "loop_sections": true,
+                    "slow_down": true,
+                    "hands_separate": true,
+                    "highlight_difficult_passages": true
+                }
+            }
+        },
+        "ragtime": {
+            "metadata": {
+                "era": "Late_19th_Early_20th_Century",
+                "key_characteristics": [
+                    "syncopated_melody",
+                    "stride_bass",
+                    "march_tempo"
+                ],
+                "representative_composers": [
+                    "Scott_Joplin",
+                    "Joseph_Lamb",
+                    "James_Scott"
+                ]
+            },
+            "characteristics": {
+                "rhythm": [
+                    "syncopated_right_hand",
+                    "steady_bass",
+                    "2/4_or_4/4_march_tempo"
+                ],
+                "harmony": [
+                    "tonic_subdominant_dominant",
+                    "secondary_dominants",
+                    "chromatic_passages"
+                ],
+                "melody": [
+                    "syncopated",
+                    "often_in_octaves",
+                    "rag_breaks"
+                ],
+                "form": [
+                    "multi_strain",
+                    "AABBACCDD",
+                    "introduction_optional"
+                ],
+                "left_hand_patterns": [
+                    "oom_pah",
+                    "stride",
+                    "walking_bass"
+                ]
+            },
+            "generation_templates": {
+                "left_hand_pattern": {
+                    "patterns": [
+                        {
+                            "name": "Standard_Stride",
+                            "description": "Low bass note on beats 1 and 3, chord in middle register on beats 2 and 4",
+                            "midi_pattern": [
+                                {
+                                    "time": "0:0:0",
+                                    "note": "C2",
+                                    "duration": "eighth"
+                                },
+                                {
+                                    "time": "0:0:2",
+                                    "notes": [
+                                        "C4",
+                                        "E4",
+                                        "G4"
+                                    ],
+                                    "duration": "eighth"
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Walking_Bass",
+                            "description": "Moving bass line with chord on offbeats",
+                            "midi_pattern": [
+                                {
+                                    "time": "0:0:0",
+                                    "note": "C2",
+                                    "duration": "sixteenth"
+                                },
+                                {
+                                    "time": "0:0:1",
+                                    "notes": [
+                                        "E3",
+                                        "G3"
+                                    ],
+                                    "duration": "sixteenth"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "syncopation_exercise": {
+                    "parameters": {
+                        "syncopation_level": "light|medium|heavy",
+                        "tempo": 100,
+                        "key": "C|F|G|Bb"
+                    },
+                    "rhythmic_patterns": [
+                        "quarter-eighth-quarter-eighth",
+                        "eighth-quarter-eighth-quarter",
+                        "quarter-quarter-eighth-eighth"
+                    ]
+                }
+            }
+        },
+        "blues": {
+            "metadata": {
+                "era": "Early_20th_Century_Present",
+                "substyles": [
+                    "delta",
+                    "chicago",
+                    "texas",
+                    "electric"
+                ],
+                "form": "12_bar_standard"
+            },
+            "characteristics": {
+                "rhythm": [
+                    "shuffle_rhythm",
+                    "swing_eighth_notes",
+                    "call_response"
+                ],
+                "harmony": [
+                    "I7_IV7_V7",
+                    "turnarounds",
+                    "quick_change"
+                ],
+                "melody": [
+                    "blues_scale",
+                    "bent_notes",
+                    "repetitive_phrases"
+                ],
+                "form": [
+                    "12_bar_blues",
+                    "8_bar_blues",
+                    "16_bar_blues"
+                ],
+                "improvisation": [
+                    "call_response",
+                    "lick_based",
+                    "pentatonic_focus"
+                ]
+            },
+            "generation_templates": {
+                "12_bar_template": {
+                    "structure": [
+                        {
+                            "bars": "1-4",
+                            "chord": "I7",
+                            "variations": [
+                                "basic",
+                                "quick_change"
+                            ]
+                        },
+                        {
+                            "bars": "5-6",
+                            "chord": "IV7",
+                            "variations": [
+                                "standard",
+                                "with_pass"
+                            ]
+                        },
+                        {
+                            "bars": "7-8",
+                            "chord": "I7",
+                            "variations": [
+                                "return",
+                                "walkup"
+                            ]
+                        },
+                        {
+                            "bars": "9-10",
+                            "chord": "V7",
+                            "variations": [
+                                "standard",
+                                "secondary_dominant"
+                            ]
+                        },
+                        {
+                            "bars": "11-12",
+                            "chord": "turnaround",
+                            "variations": [
+                                "I_VI_II_V",
+                                "I_III_II_V",
+                                "chromatic"
+                            ]
+                        }
+                    ],
+                    "turnaround_options": [
+                        "I7-VI7-II7-V7",
+                        "I7-III7-II7-V7",
+                        "I7-bIII7-II7-V7"
+                    ]
+                },
+                "blues_lick_library": {
+                    "categories": [
+                        {
+                            "name": "Opening_Licks",
+                            "position": "bars_1-2",
+                            "character": "establishes_key"
+                        },
+                        {
+                            "name": "Turnaround_Licks",
+                            "position": "bars_11-12",
+                            "character": "creates_tension_for_next_chord"
+                        }
+                    ]
+                }
+            }
+        },
+        "stride": {
+            "metadata": {
+                "era": "1920s_1930s",
+                "characteristics": [
+                    "virtuosic_left_hand",
+                    "ragtime_influence",
+                    "harlem_style"
+                ],
+                "key_practitioners": [
+                    "Fats_Waller",
+                    "James_P_Johnson",
+                    "Willie_The_Lion_Smith"
+                ]
+            },
+            "characteristics": {
+                "rhythm": [
+                    "strict_tempo",
+                    "bouncing_left_hand",
+                    "syncopated_right_hand"
+                ],
+                "harmony": [
+                    "extended_chords",
+                    "chromatic_bass_motion",
+                    "secondary_dominants"
+                ],
+                "left_hand": [
+                    "wide_leaps",
+                    "alternating_bass_chord",
+                    "walking_bass"
+                ],
+                "right_hand": [
+                    "melody_octaves",
+                    "chord_stabs",
+                    "improvised_counterpoint"
+                ]
+            },
+            "generation_templates": {
+                "left_hand_exercises": {
+                    "difficulty_levels": {
+                        "beginner": {
+                            "leap_range": "octave",
+                            "tempo": 100,
+                            "pattern": "bass_chord_bass_chord"
+                        },
+                        "intermediate": {
+                            "leap_range": "tenth",
+                            "tempo": 120,
+                            "pattern": "walking_bass_with_chords"
+                        },
+                        "advanced": {
+                            "leap_range": "twelfth_plus",
+                            "tempo": 140,
+                            "pattern": "counterpoint_between_hands"
+                        }
+                    }
+                }
+            }
+        },
+        "boogie_woogie": {
+            "metadata": {
+                "era": "1920s_1940s",
+                "characteristics": [
+                    "driving_left_hand",
+                    "blues_harmony",
+                    "improvised_right_hand"
+                ],
+                "key_practitioners": [
+                    "Meade_Lux_Lewis",
+                    "Albert_Ammons",
+                    "Pete_Johnson"
+                ]
+            },
+            "characteristics": {
+                "rhythm": [
+                    "relentless_eighth_note_bass",
+                    "shuffle_feel",
+                    "heavy_beat"
+                ],
+                "harmony": [
+                    "12_bar_blues",
+                    "walking_bass_lines",
+                    "power_chords"
+                ],
+                "left_hand_patterns": [
+                    "ostinato_bass",
+                    "walking_bass",
+                    "rolling_patterns"
+                ],
+                "right_hand": [
+                    "improvised_riffs",
+                    "tremolo",
+                    "crushed_notes"
+                ]
+            },
+            "generation_templates": {
+                "boogie_bass_patterns": [
+                    {
+                        "name": "Standard_Boogie",
+                        "pattern": "C-E-G-A-Bb-A-G-E",
+                        "midi_sequence": [
+                            {
+                                "time": "0:0:0",
+                                "note": "C2",
+                                "duration": "eighth"
+                            },
+                            {
+                                "time": "0:0:1",
+                                "note": "E2",
+                                "duration": "eighth"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Walking_Boogie",
+                        "pattern": "chromatic_walkups",
+                        "midi_sequence": "C-C#-D-D#-E"
+                    }
+                ]
+            }
+        },
+        "jazz_swing": {
+            "metadata": {
+                "era": "1930s_1940s",
+                "characteristics": [
+                    "swing_rhythm",
+                    "big_band_arrangements",
+                    "improvised_solos"
+                ],
+                "substyles": [
+                    "big_band",
+                    "small_group",
+                    "vocal_jazz"
+                ]
+            },
+            "characteristics": {
+                "rhythm": [
+                    "swing_eighth_notes",
+                    "walking_bass",
+                    "ride_cymbal_pattern"
+                ],
+                "harmony": [
+                    "extended_chords",
+                    "ii-V-I_progressions",
+                    "reharmonization"
+                ],
+                "melody": [
+                    "improvised_solos",
+                    "arranged_melodies",
+                    "call_response"
+                ],
+                "form": [
+                    "32_bar_AABA",
+                    "12_bar_blues",
+                    "through_composed"
+                ],
+                "articulation": [
+                    "swing_phrasing",
+                    "ghost_notes",
+                    "accents"
+                ]
+            },
+            "generation_templates": {
+                "swing_rhythm_explanation": {
+                    "concept": "Unequal subdivision of the beat",
+                    "ratio": "2:1_for_triplet_feel",
+                    "midi_implementation": "delay_second_eighth_note"
+                },
+                "comping_patterns": {
+                    "piano": [
+                        {
+                            "name": "Freddie_Green_Style",
+                            "description": "Chord on every beat, minimal movement",
+                            "midi_pattern": "quarter_note_chords"
+                        },
+                        {
+                            "name": "Bud_Powell_Style",
+                            "description": "Syncopated chords, sparse",
+                            "midi_pattern": "offbeat_chords"
+                        }
+                    ],
+                    "guitar": [
+                        {
+                            "name": "Four_to_the_Floor",
+                            "description": "Chord on every beat",
+                            "midi_pattern": "steady_quarter_notes"
+                        }
+                    ]
+                }
+            }
+        },
+        "jazz_ballad": {
+            "metadata": {
+                "era": "1940s_present",
+                "characteristics": [
+                    "slow_tempo",
+                    "expressive_playing",
+                    "rubato"
+                ],
+                "mood": [
+                    "romantic",
+                    "introspective",
+                    "melancholic"
+                ]
+            },
+            "characteristics": {
+                "rhythm": [
+                    "rubato",
+                    "free_tempo",
+                    "behind_the_beat"
+                ],
+                "harmony": [
+                    "rich_chords",
+                    "altered_extensions",
+                    "reharmonization"
+                ],
+                "melody": [
+                    "lyrical",
+                    "expressive",
+                    "wide_dynamic_range"
+                ],
+                "form": [
+                    "standard_song_form",
+                    "through_composed"
+                ],
+                "articulation": [
+                    "legato",
+                    "smears",
+                    "bends"
+                ]
+            },
+            "generation_templates": {
+                "ballad_comping": {
+                    "techniques": [
+                        {
+                            "name": "Arpeggiated_Chords",
+                            "description": "Rolling chords rather than block chords",
+                            "midi_pattern": "broken_chord_pattern"
+                        },
+                        {
+                            "name": "Pedal_Point",
+                            "description": "Sustained bass note under changing harmony",
+                            "midi_pattern": "sustained_bass_with_changing_chords"
+                        }
+                    ]
+                },
+                "rubato_guidelines": {
+                    "tempo_variation": "10-20%_slower_or_faster",
+                    "phrasing": "accelerando_into_cadences",
+                    "midi_implementation": "tempo_map_with_gradual_changes"
+                }
+            }
+        },
+        "gospel": {
+            "metadata": {
+                "era": "20th_Century_Present",
+                "characteristics": [
+                    "emotional_intensity",
+                    "call_response",
+                    "improvisation"
+                ],
+                "substyles": [
+                    "traditional",
+                    "contemporary",
+                    "urban"
+                ]
+            },
+            "characteristics": {
+                "rhythm": [
+                    "shuffle",
+                    "swing",
+                    "straight_eighth"
+                ],
+                "harmony": [
+                    "extended_chords",
+                    "walking_bass",
+                    "reharmonization"
+                ],
+                "melody": [
+                    "pentatonic",
+                    "blue_notes",
+                    "improvised_embellishments"
+                ],
+                "form": [
+                    "verse_chorus",
+                    "through_composed",
+                    "hymn_based"
+                ],
+                "articulation": [
+                    "slides",
+                    "bends",
+                    "crushed_notes"
+                ]
+            },
+            "generation_templates": {
+                "gospel_chord_progressions": [
+                    {
+                        "name": "2-5-1_Gospel",
+                        "progression": "ii9-V13-Imaj9",
+                        "character": "smooth_voice_leading"
+                    },
+                    {
+                        "name": "7-3-6",
+                        "progression": "V7/vi-iii-vi",
+                        "character": "emotional_turnaround"
+                    }
+                ],
+                "walking_bass_patterns": [
+                    {
+                        "name": "Chromatic_Walkup",
+                        "pattern": "C-C#-D-D#-E",
+                        "use": "approaching_I_chord"
+                    }
+                ]
+            }
+        },
+        "country": {
+            "metadata": {
+                "era": "1920s_present",
+                "characteristics": [
+                    "storytelling",
+                    "simple_harmonies",
+                    "twang"
+                ],
+                "substyles": [
+                    "bluegrass",
+                    "honky_tonk",
+                    "country_pop",
+                    "alt_country"
+                ]
+            },
+            "characteristics": {
+                "rhythm": [
+                    "straight_eighth",
+                    "two_step",
+                    "waltz"
+                ],
+                "harmony": [
+                    "I-IV-V",
+                    "simple_chords",
+                    "pedal_steel_sounds"
+                ],
+                "melody": [
+                    "pentatonic",
+                    "yodeling",
+                    "storytelling"
+                ],
+                "form": [
+                    "verse_chorus",
+                    "AABA",
+                    "story_song"
+                ],
+                "articulation": [
+                    "bends",
+                    "slides",
+                    "hammer_ons"
+                ]
+            },
+            "generation_templates": {
+                "country_licks": {
+                    "positions": [
+                        {
+                            "name": "Open_Position_Licks",
+                            "description": "Uses open strings, common in bluegrass",
+                            "midi_pattern": "open_string_based"
+                        },
+                        {
+                            "name": "Telecaster_Licks",
+                            "description": "Bright, twangy, often on high strings",
+                            "midi_pattern": "high_string_riffs"
+                        }
+                    ]
+                }
+            }
+        },
+        "rock": {
+            "metadata": {
+                "era": "1950s_present",
+                "characteristics": [
+                    "driving_rhythm",
+                    "electric_instruments",
+                    "amplification"
+                ],
+                "substyles": [
+                    "classic_rock",
+                    "hard_rock",
+                    "alternative",
+                    "progressive"
+                ]
+            },
+            "characteristics": {
+                "rhythm": [
+                    "straight_eighth",
+                    "heavy_backbeat",
+                    "driving_beat"
+                ],
+                "harmony": [
+                    "power_chords",
+                    "pentatonic",
+                    "blues_based"
+                ],
+                "melody": [
+                    "riff_based",
+                    "vocal_hooks",
+                    "guitar_solos"
+                ],
+                "form": [
+                    "verse_chorus",
+                    "extended_jams",
+                    "concept_albums"
+                ],
+                "articulation": [
+                    "distortion",
+                    "feedback",
+                    "bending"
+                ]
+            },
+            "generation_templates": {
+                "rock_riff_generator": {
+                    "parameters": {
+                        "key": "E|A|D|G",
+                        "scale": "minor_pentatonic|blues_scale",
+                        "complexity": "simple|moderate|complex",
+                        "instrument": "guitar|bass|piano"
+                    },
+                    "common_patterns": [
+                        {
+                            "name": "Power_Chord_Riff",
+                            "pattern": "root-fifth-octave",
+                            "midi_implementation": "distorted_guitar_sound"
+                        },
+                        {
+                            "name": "Blues_Based_Riff",
+                            "pattern": "pentatonic_with_bends",
+                            "midi_implementation": "slide_and_bend_effects"
+                        }
+                    ]
+                }
+            }
+        },
+        "bossa_nova": {
+            "metadata": {
+                "era": "1950s_1960s",
+                "characteristics": [
+                    "gentle_sway",
+                    "sophisticated_harmony",
+                    "brazilian_rhythm"
+                ],
+                "key_composers": [
+                    "Antonio_Carlos_Jobim",
+                    "João_Gilberto",
+                    "Stan_Getz"
+                ]
+            },
+            "characteristics": {
+                "rhythm": [
+                    "clave_based",
+                    "syncopated",
+                    "gentle_swing"
+                ],
+                "harmony": [
+                    "extended_chords",
+                    "chromatic_motion",
+                    "modal_interchange"
+                ],
+                "melody": [
+                    "lyrical",
+                    "understated",
+                    "portuguese_phrasing"
+                ],
+                "form": [
+                    "AABA",
+                    "through_composed",
+                    "samba_form"
+                ],
+                "articulation": [
+                    "soft_attack",
+                    "legato",
+                    "subtle_dynamics"
+                ]
+            },
+            "generation_templates": {
+                "bossa_rhythm_patterns": {
+                    "guitar_pattern": "thumb_bass_fingers_chord",
+                    "piano_pattern": "bass_note_then_chord",
+                    "midi_implementation": "syncopated_chord_placement"
+                },
+                "common_chord_progressions": [
+                    {
+                        "name": "Jobim_Progression",
+                        "progression": "Imaj7-VI7-ii7-V7",
+                        "character": "smooth_voice_leading"
+                    }
+                ]
+            }
+        },
+        "r&b_neosoul": {
+            "metadata": {
+                "era": "1990s_present",
+                "characteristics": [
+                    "smooth_groove",
+                    "extended_chords",
+                    "electronic_elements"
+                ],
+                "key_artists": [
+                    "D'Angelo",
+                    "Erykah_Badu",
+                    "Jill_Scott",
+                    "Robert_Glasper"
+                ]
+            },
+            "characteristics": {
+                "rhythm": [
+                    "laid_back",
+                    "syncopated",
+                    "hip_hop_influenced"
+                ],
+                "harmony": [
+                    "extended_chords",
+                    "cluster_voicings",
+                    "modal_interchange"
+                ],
+                "melody": [
+                    "melismatic",
+                    "improvised_embellishments",
+                    "vocal_style"
+                ],
+                "form": [
+                    "verse_chorus",
+                    "extended_vamps",
+                    "through_composed"
+                ],
+                "articulation": [
+                    "slides",
+                    "ghost_notes",
+                    "grace_notes"
+                ]
+            },
+            "generation_templates": {
+                "neo_soul_chord_voicings": [
+                    {
+                        "name": "Minor_11th_Voicing",
+                        "voicing": "LH: root-5th-b7th, RH: 9th-11th-5th",
+                        "character": "warm_cluster"
+                    },
+                    {
+                        "name": "Major_9th_Voicing",
+                        "voicing": "LH: 3rd-7th, RH: 9th-5th-root",
+                        "character": "open_spread"
+                    }
+                ]
+            }
+        },
+        "funk_smooth_jazz": {
+            "metadata": {
+                "era": "1970s_present",
+                "characteristics": [
+                    "syncopated_rhythm",
+                    "groove_based",
+                    "improvisation"
+                ],
+                "substyles": [
+                    "funk",
+                    "fusion",
+                    "smooth_jazz",
+                    "acid_jazz"
+                ]
+            },
+            "characteristics": {
+                "rhythm": [
+                    "syncopated",
+                    "groove_centric",
+                    "tight_ensemble"
+                ],
+                "harmony": [
+                    "extended_chords",
+                    "modal_vamps",
+                    "jazz_harmony"
+                ],
+                "melody": [
+                    "riff_based",
+                    "improvised",
+                    "repetitive_grooves"
+                ],
+                "form": [
+                    "vamp_based",
+                    "extended_improvisation",
+                    "through_composed"
+                ],
+                "articulation": [
+                    "staccato",
+                    "muted",
+                    "percussive"
+                ]
+            },
+            "generation_templates": {
+                "funk_groove_generator": {
+                    "parameters": {
+                        "instrument": "guitar|bass|keyboard|horns",
+                        "complexity": "simple|syncopated|complex",
+                        "tempo": "90-120"
+                    },
+                    "common_patterns": [
+                        {
+                            "name": "16th_Note_Funk",
+                            "pattern": "syncopated_16th_notes",
+                            "midi_implementation": "staccato_articulation"
+                        },
+                        {
+                            "name": "Single_Note_Riffs",
+                            "pattern": "repetitive_motifs",
+                            "midi_implementation": "wah_effect_automation"
+                        }
+                    ]
+                }
+            }
+        },
+        "film_music": {
+            "metadata": {
+                "era": "20th_Century_Present",
+                "characteristics": [
+                    "evocative",
+                    "programmatic",
+                    "orchestral"
+                ],
+                "functions": [
+                    "underscoring",
+                    "theme_music",
+                    "source_music"
+                ]
+            },
+            "characteristics": {
+                "rhythm": [
+                    "rubato",
+                    "synchronized_to_picture",
+                    "tempo_changes"
+                ],
+                "harmony": [
+                    "emotional_progressions",
+                    "leitmotif",
+                    "textural"
+                ],
+                "melody": [
+                    "memorable_themes",
+                    "leitmotif_development",
+                    "emotional_arc"
+                ],
+                "form": [
+                    "scene_based",
+                    "through_composed",
+                    "theme_variations"
+                ],
+                "orchestration": [
+                    "large_ensemble",
+                    "specific_instrument_colors",
+                    "textural_layering"
+                ]
+            },
+            "generation_templates": {
+                "leitmotif_generator": {
+                    "parameters": {
+                        "character_type": "hero|villain|love_interest|location",
+                        "emotional_tone": "triumphant|sinister|romantic|mysterious"
+                    },
+                    "musical_elements": [
+                        {
+                            "hero_theme": "ascending_major_arpeggios",
+                            "villain_theme": "descending_minor_chromatic",
+                            "love_theme": "lyrical_melody_with_suspensions"
+                        }
+                    ]
+                }
+            }
+        },
+        "contemporary_new_age": {
+            "metadata": {
+                "era": "1970s_present",
+                "characteristics": [
+                    "ambient",
+                    "minimalist",
+                    "meditative"
+                ],
+                "key_artists": [
+                    "George_Winston",
+                    "Enya",
+                    "Yanni",
+                    "Ludovico_Einaudi"
+                ]
+            },
+            "characteristics": {
+                "rhythm": [
+                    "free_tempo",
+                    "ostinato",
+                    "minimal_changes"
+                ],
+                "harmony": [
+                    "modal",
+                    "simple_progressions",
+                    "suspended_chords"
+                ],
+                "melody": [
+                    "repetitive",
+                    "minimalist",
+                    "lyrical"
+                ],
+                "form": [
+                    "through_composed",
+                    "minimal_variation",
+                    "cyclical"
+                ],
+                "articulation": [
+                    "legato",
+                    "sustained",
+                    "pedaled"
+                ]
+            },
+            "generation_templates": {
+                "minimalist_pattern_generator": {
+                    "parameters": {
+                        "pattern_type": "ostinato|arpeggio|repeated_phrase",
+                        "variation_technique": "note_addition|rhythmic_displacement|octave_transfer"
+                    },
+                    "common_techniques": [
+                        {
+                            "name": "Phase_Shifting",
+                            "description": "Repeating pattern at slightly different tempo",
+                            "midi_implementation": "multiple_tracks_slight_tempo_diff"
+                        },
+                        {
+                            "name": "Note_Addition",
+                            "description": "Gradually adding notes to pattern",
+                            "midi_implementation": "gradual_note_increase"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    "interactive_features": {
+        "dynamic_sheet_music": {
+            "rendering_engine": "vexflow_or_similar",
+            "features": [
+                "click_to_play_notes",
+                "highlight_current_position",
+                "zoom_in_out",
+                "transpose_in_real_time",
+                "change_clef_visibility"
+            ],
+            "visual_feedback": {
+                "note_highlight_color": "#4CAF50",
+                "chord_highlight_color": "#2196F3",
+                "scale_highlight_color": "#FF9800"
+            }
+        },
+        "midi_generation": {
+            "export_options": {
+                "format": [
+                    "midi_0",
+                    "midi_1",
+                    "musicxml"
+                ],
+                "include_metadata": true,
+                "tempo_map": "included",
+                "instrument_program_change": true
+            },
+            "import_options": {
+                "supported_formats": [
+                    "midi",
+                    "musicxml",
+                    "abc_notation"
+                ],
+                "auto_analysis": [
+                    "chord_detection",
+                    "form_analysis",
+                    "difficulty_assessment"
+                ]
+            },
+            "real_time_midi": {
+                "input_detection": true,
+                "performance_analysis": [
+                    "accuracy",
+                    "timing",
+                    "expression"
+                ],
+                "record_function": true
+            }
+        },
+        "browser_playback": {
+            "audio_engine": "web_audio_api",
+            "sound_fonts": {
+                "piano": "fluidr3_gm.sf2",
+                "guitar": "jazz_guitar.sf2",
+                "drums": "general_midi_drums",
+                "orchestral": "soundfont_orchestra"
+            },
+            "playback_controls": {
+                "play_pause": true,
+                "stop": true,
+                "loop_section": true,
+                "tempo_adjustment": "20-200%",
+                "volume_control": "per_instrument",
+                "solo_mute": true
+            },
+            "visualization": {
+                "piano_roll": true,
+                "waveform_display": true,
+                "spectrogram": false,
+                "note_falling_display": false
+            }
+        },
+        "practice_tools": {
+            "metronome": {
+                "subdivisions": [
+                    "quarter",
+                    "eighth",
+                    "triplet",
+                    "sixteenth"
+                ],
+                "sound_options": [
+                    "click",
+                    "wood_block",
+                    "cowbell"
+                ],
+                "visual_beat": [
+                    "flashing",
+                    "bouncing",
+                    "progress_bar"
+                ]
+            },
+            "recording": {
+                "audio_format": "wav_mp3",
+                "midi_recording": true,
+                "save_to_cloud": true,
+                "compare_recordings": true
+            },
+            "analysis_tools": {
+                "note_accuracy": true,
+                "rhythmic_precision": true,
+                "tempo_consistency": true,
+                "dynamic_range": true
+            }
+        }
+    },
+    "generation_workflow": {
+        "user_input": {
+            "style_selection": "dropdown_menu",
+            "parameters": {
+                "key": "dropdown_12_keys",
+                "tempo": "slider_40-200",
+                "complexity": "beginner_intermediate_advanced",
+                "instrumentation": "checkbox_list",
+                "length": "bars_or_minutes"
+            }
+        },
+        "generation_process": {
+            "step_1": "analyze_parameters",
+            "step_2": "select_template_based_on_style",
+            "step_3": "generate_musical_content",
+            "step_4": "create_visual_representation",
+            "step_5": "generate_midi_audio",
+            "step_6": "present_interactive_interface"
+        },
+        "output_options": {
+            "view": [
+                "sheet_music",
+                "tablature",
+                "piano_roll",
+                "chord_chart"
+            ],
+            "download": [
+                "pdf",
+                "midi",
+                "musicxml",
+                "audio_file"
+            ],
+            "share": [
+                "link",
+                "embed_code",
+                "social_media"
+            ]
+        }
+    },
+    "educational_framework": {
+        "learning_paths": {
+            "by_style": {
+                "classical": [
+                    "scales",
+                    "etudes",
+                    "sonatinas",
+                    "sonatas"
+                ],
+                "jazz": [
+                    "blues",
+                    "standards",
+                    "improvisation",
+                    "reharmonization"
+                ],
+                "pop": [
+                    "chord_progressions",
+                    "song_forms",
+                    "production_techniques"
+                ]
+            },
+            "by_skill": {
+                "beginner": [
+                    "note_reading",
+                    "basic_chords",
+                    "simple_rhythms"
+                ],
+                "intermediate": [
+                    "scale_patterns",
+                    "chord_inversions",
+                    "improvisation_basics"
+                ],
+                "advanced": [
+                    "advanced_harmony",
+                    "complex_rhythms",
+                    "composition"
+                ]
+            }
+        },
+        "assessment_tools": {
+            "auto_graded_exercises": [
+                "scale_accuracy",
+                "rhythm_timing",
+                "ear_training"
+            ],
+            "performance_rubrics": {
+                "technical": [
+                    "accuracy",
+                    "fluency",
+                    "tone_quality"
+                ],
+                "musical": [
+                    "phrasing",
+                    "dynamics",
+                    "style_authenticity"
+                ]
+            }
+        }
+    },
+    "example_templates": {
+        "blues_exercise": {
+            "request": {
+                "style": "blues",
+                "key": "A",
+                "tempo": 100,
+                "complexity": "intermediate",
+                "instrument": "piano",
+                "exercise_type": "12_bar_with_licks"
+            },
+            "response": {
+                "sheet_music": {
+                    "format": "musicxml",
+                    "content": "12_bar_blues_in_A_with_turnaround",
+                    "visualization": "interactive_staff_notation"
+                },
+                "midi": {
+                    "format": "midi_1",
+                    "tracks": [
+                        "piano_right",
+                        "piano_left",
+                        "bass",
+                        "drums"
+                    ],
+                    "tempo": 100
+                },
+                "audio": {
+                    "format": "mp3",
+                    "duration": "48_bars",
+                    "mix": "balanced"
+                },
+                "interactive_features": {
+                    "playback_controls": true,
+                    "practice_tools": [
+                        "loop_turnaround",
+                        "slow_down",
+                        "metronome"
+                    ],
+                    "educational_notes": [
+                        "blues_scale_suggestions",
+                        "chord_voicings",
+                        "improvisation_tips"
+                    ]
+                }
+            }
+        }
+    }
+}
+
+{
+    "technical_implementation": {
+        "frontend_technologies": {
+            "framework": "React/Vue.js",
+            "music_rendering": [
+                "VexFlow",
+                "OpenSheetMusicDisplay"
+            ],
+            "audio_engine": [
+                "Tone.js",
+                "Web Audio API",
+                "SoundFont2"
+            ],
+            "midi_handling": [
+                "MIDI.js",
+                "WebMIDI API"
+            ],
+            "ui_components": [
+                "Material-UI",
+                "Tailwind CSS"
+            ]
+        },
+        "backend_services": {
+            "generation_engine": {
+                "language": "Python/Node.js",
+                "libraries": [
+                    "music21",
+                    "pretty_midi",
+                    "tensorflow_for_ai"
+                ],
+                "algorithms": [
+                    "markov_chains",
+                    "neural_networks",
+                    "rule_based_systems"
+                ]
+            },
+            "audio_processing": {
+                "synthesis": [
+                    "fluidsynth",
+                    "soundfont_loader"
+                ],
+                "effects": [
+                    "reverb",
+                    "delay",
+                    "compression"
+                ],
+                "format_conversion": [
+                    "ffmpeg",
+                    "lame_mp3"
+                ]
+            },
+            "storage": {
+                "database": "PostgreSQL_with_JSONB",
+                "file_storage": "AWS_S3",
+                "caching": "Redis"
+            }
+        },
+        "generation_algorithms": {
+            "melodic_generation": {
+                "markov_chains": "note_to_note_probabilities",
+                "neural_networks": "LSTM_for_phrases",
+                "rule_based": "scale_and_chord_constraints"
+            },
+            "harmonic_generation": {
+                "progression_analysis": "common_practice_rules",
+                "voice_leading": "smooth_motion_algorithms",
+                "reharmonization": "substitution_rules"
+            },
+            "rhythmic_generation": {
+                "pattern_recognition": "style_specific_grooves",
+                "complexity_adjustment": "syncopation_levels",
+                "humanization": "microtiming_variations"
+            }
+        },
+        "real_time_features": {
+            "midi_input_processing": {
+                "note_recognition": "onset_detection",
+                "chord_detection": "real_time_analysis",
+                "performance_evaluation": "accuracy_scoring"
+            },
+            "audio_output": {
+                "low_latency": "<20ms",
+                "multi_track": "up_to_16_tracks",
+                "effects_chain": "real_time_processing"
+            }
+        }
+    },
+    "api_endpoints": {
+        "generate_exercise": {
+            "endpoint": "/api/generate/exercise",
+            "method": "POST",
+            "parameters": {
+                "style": "string",
+                "key": "string",
+                "tempo": "integer",
+                "complexity": "string",
+                "instrument": "string",
+                "exercise_type": "string"
+            },
+            "response": {
+                "exercise_id": "uuid",
+                "sheet_music_url": "string",
+                "midi_url": "string",
+                "audio_url": "string",
+                "interactive_url": "string"
+            }
+        },
+        "playback_control": {
+            "endpoint": "/api/playback/control",
+            "method": "POST",
+            "parameters": {
+                "action": "play|pause|stop|loop",
+                "tempo": "integer",
+                "section_start": "integer",
+                "section_end": "integer"
+            }
+        },
+        "export_content": {
+            "endpoint": "/api/export/{format}",
+            "method": "GET",
+            "parameters": {
+                "exercise_id": "uuid",
+                "format": "pdf|midi|musicxml|mp3"
+            }
+        }
+    },
+    "user_experience_flow": {
+        "step_1": "Select style and parameters",
+        "step_2": "Generate musical content",
+        "step_3": "View interactive sheet music",
+        "step_4": "Playback with controls",
+        "step_5": "Practice with tools",
+        "step_6": "Export/share results",
+        "step_7": "Save to personal library"
+    }
+}

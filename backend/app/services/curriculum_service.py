@@ -28,6 +28,9 @@ from app.services.ai_orchestrator import ai_orchestrator
 from app.services.curriculum_defaults import DEFAULT_CURRICULUMS
 from app.services.srs_service import SRSService
 
+from app.services.srs_service import SRSService
+from app.services.template_loader import template_loader
+
 logger = logging.getLogger(__name__)
 
 
@@ -134,12 +137,37 @@ class CurriculumService:
         self,
         user_id: int,
         title: Optional[str] = None,
-        duration_weeks: int = 12
+        duration_weeks: int = 12,
+        genre: Optional[str] = None,
+        skill_level: Optional[str] = None,
+        goals: Optional[List[str]] = None,
     ) -> Curriculum:
         """Generate a personalized curriculum for the user"""
         # Get user's skill profile
         profile = await self.get_or_create_skill_profile(user_id)
         profile_dict = self._profile_to_dict(profile)
+        
+        # Merge wizard data into profile for generation
+        # This overrides defaults with user selections from wizard
+        if genre:
+            profile_dict['primary_goal'] = genre  # Use genre as primary goal for fallback matching
+            if genre not in profile_dict.get('interests', []):
+                interests = profile_dict.get('interests', [])
+                profile_dict['interests'] = [genre] + interests
+        if goals:
+            # Map wizard goal IDs to goal descriptions
+            goal_map = {
+                'church': 'play_for_worship',
+                'improvise': 'improvisation',
+                'standards': 'jazz_standards',
+                'byear': 'play_by_ear',
+                'compose': 'composition',
+                'accompany': 'accompaniment',
+                'technique': 'technique',
+                'theory': 'music_theory'
+            }
+            mapped_goals = [goal_map.get(g, g) for g in goals]
+            profile_dict['goals'] = mapped_goals
 
         # Generate curriculum plan with error handling
         try:
@@ -150,6 +178,9 @@ class CurriculumService:
                     "Initialization errors: " + ", ".join(ai_orchestrator.initialization_errors)
                 )
 
+            # DEBUG: Log the profile being sent to AI
+            logger.info(f"🔍 DEBUG curriculum generation: genre={genre}, primary_goal={profile_dict.get('primary_goal')}, interests={profile_dict.get('interests')}")
+            
             plan = await ai_orchestrator.generate_curriculum_plan(profile_dict, duration_weeks)
 
         except Exception as e:
@@ -184,7 +215,7 @@ class CurriculumService:
         user_id: int,
         template_key: str = "gospel_essentials"
     ) -> Curriculum:
-        """Create a curriculum from a default template"""
+        """Create a curriculum from a default template (HARDCODED)"""
         if template_key not in DEFAULT_CURRICULUMS:
             raise ValueError(f"Unknown template: {template_key}")
             
@@ -204,8 +235,155 @@ class CurriculumService:
             plan=plan,
             title=plan.get('title'),
             duration_weeks=duration_weeks,
-            ai_model="template"
+            ai_model="template_static"
         )
+
+    async def create_curriculum_from_template(
+        self,
+        user_id: int,
+        template_id: str
+    ) -> Curriculum:
+        """Create a curriculum from a dynamic template file (markdown/json)"""
+        template_data = template_loader.get_template(template_id)
+        if not template_data:
+            raise ValueError(f"Template not found: {template_id}")
+
+        # Map dynamic template structure to standard plan structure
+        plan = self._map_template_to_plan(template_data, template_id)
+        
+        # Determine duration
+        modules = plan.get('modules', [])
+        duration_weeks = 12 # Default
+        if modules:
+            last_mod = modules[-1]
+            duration_weeks = last_mod.get('end_week', 12)
+
+        return await self._create_curriculum_from_plan(
+            user_id=user_id,
+            plan=plan,
+            title=plan.get('title'),
+            duration_weeks=duration_weeks,
+            ai_model=f"template_dynamic:{template_id}"
+        )
+
+    def _map_template_to_plan(self, data: Dict[str, Any], template_id: str) -> Dict[str, Any]:
+        """Convert diverse template formats into standard Curriculum Plan dict"""
+        # 1. Detect format based on keys
+        # The new templates (gemini.md, deepseek.json) usually have a top-level key or are the dict themselves.
+        # Often they have 'curriculum' or 'modules' keys.
+        
+        # Helper to normalize keys (case insensitive)
+        def get_ci(d, k):
+            return next((v for key, v in d.items() if key.lower() == k.lower()), None)
+            
+        # Extract title/description
+        title = data.get('title') or get_ci(data, 'name') or f"Curriculum {template_id}"
+        desc = data.get('description') or get_ci(data, 'objective') or "Imported curriculum"
+        
+        # Locate modules list
+        modules_data = data.get('modules') or get_ci(data, 'modules') or []
+        
+        # If no modules found, check if it's a structure like {"Gospel Curriculum": {...}}
+        if not modules_data:
+            for k, v in data.items():
+                if isinstance(v, dict) and (v.get('modules') or get_ci(v, 'modules')):
+                    title = k
+                    modules_data = v.get('modules') or get_ci(v, 'modules')
+                    desc = v.get('description') or desc
+                    break
+
+        standard_modules = []
+        current_week = 1
+        
+        for idx, mod in enumerate(modules_data):
+            mod_title = mod.get('title') or mod.get('name') or f"Module {idx+1}"
+            mod_desc = mod.get('description') or mod.get('objective')
+            
+            # Identify weeks
+            # Some templates use "weeks": "1-4" string, others ints
+            weeks_raw = mod.get('weeks') or f"{current_week}-{current_week+3}"
+            try:
+                if isinstance(weeks_raw, str) and '-' in weeks_raw:
+                    start, end = map(int, weeks_raw.split('-'))
+                elif isinstance(weeks_raw, int):
+                    start, end = weeks_raw, weeks_raw
+                else:
+                    start, end = current_week, current_week + 3
+            except:
+                start, end = current_week, current_week + 3
+            
+            # Update current week tracker
+            current_week = end + 1
+            
+            # Process Lessons
+            lessons_data = mod.get('lessons') or mod.get('topics') or []
+            standard_lessons = []
+            
+            for l_idx, lesson in enumerate(lessons_data):
+                l_title = lesson.get('title') or lesson.get('topic') or f"Lesson {l_idx+1}"
+                
+                # Exercises
+                exercises_data = lesson.get('exercises') or lesson.get('practice_routine') or []
+                standard_exercises = []
+                
+                for ex_idx, ex in enumerate(exercises_data):
+                    # Map exercise fields
+                    # Different templates have different keys (name vs title, instructions vs description)
+                    ex_title = ex.get('title') or ex.get('name') or f"Exercise {ex_idx+1}"
+                    ex_desc = ex.get('description') or ex.get('instructions') or "Practice this concept."
+                    
+                    # Extract engine data / content
+                    # If template has 'musical_data', 'engine_data', or specific fields like 'voicing_stack'
+                    content = {}
+                    if 'content' in ex:
+                        content = ex['content']
+                    elif 'musical_data' in ex:
+                        content = ex['musical_data'] 
+                    else:
+                        # Copy everything else as content
+                        content = {k:v for k,v in ex.items() if k not in ['title', 'name', 'description', 'instructions', 'difficulty']}
+                    
+                    # Ensure minimal valid content structure
+                    if not content:
+                        content = {"instructions": ex_desc}
+
+                    standard_exercises.append({
+                        "title": ex_title,
+                        "description": ex_desc,
+                        "exercise_type": ex.get('type', 'progression').lower(),
+                        "difficulty": ex.get('difficulty', 'intermediate').lower(),
+                        "estimated_duration_minutes": ex.get('duration', 15),
+                        "content": content,
+                        # Pass through MIDI generation hints if present
+                        "midi_file_path": ex.get('midi_file_path'), # If pre-generated
+                        "audio_generation_status": "pending" 
+                    })
+
+                standard_lessons.append({
+                    "title": l_title,
+                    "description": lesson.get('description'),
+                    "week_number": start + l_idx if start + l_idx <= end else end, # distribute lessons across weeks
+                    "theory_content": lesson.get('theory', {}),
+                    "concepts": lesson.get('concepts', []),
+                    "estimated_duration_minutes": 60,
+                    "exercises": standard_exercises
+                })
+
+            standard_modules.append({
+                "title": mod_title,
+                "description": mod_desc,
+                "theme": mod.get('theme', 'general'),
+                "start_week": start,
+                "end_week": end,
+                "outcomes": mod.get('outcomes', []),
+                "lessons": standard_lessons
+            })
+
+        return {
+            "title": title,
+            "description": desc,
+            "modules": standard_modules
+        }
 
     async def _create_curriculum_from_plan(
         self,

@@ -36,8 +36,12 @@ class User(Base):
     practice_sessions: Mapped[List["PracticeSession"]] = relationship(back_populates="user", cascade="all, delete-orphan")
     
     # Curriculum relationships
-    skill_profile: Mapped["UserSkillProfile"] = relationship(back_populates="user", uselist=False, cascade="all, delete-orphan")
-    curricula: Mapped[List["Curriculum"]] = relationship(back_populates="user", cascade="all, delete-orphan")
+    # TODO: Uncomment when UserSkillProfile and Curriculum models are created
+    # skill_profile: Mapped["UserSkillProfile"] = relationship(back_populates="user", uselist=False, cascade="all, delete-orphan")
+    # curricula: Mapped[List["Curriculum"]] = relationship(back_populates="user", cascade="all, delete-orphan")
+
+    # Exercise progress relationships
+    exercise_progress: Mapped[List["UserExerciseProgress"]] = relationship(cascade="all, delete-orphan")
 
 
 
@@ -516,3 +520,149 @@ class ProgressMetric(Base):
 
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+
+# =============================================================================
+# Exercise Library and Progress Tracking Tables
+# =============================================================================
+
+class CurriculumLibrary(Base):
+    """
+    Curriculum templates from AI providers (Claude, Gemini, etc.)
+    Top-level container for curriculum content
+    """
+    __tablename__ = "curriculum_library"
+
+    id: Mapped[str] = mapped_column(String(255), primary_key=True)
+    title: Mapped[str] = mapped_column(String(500), nullable=False)
+    description: Mapped[Optional[str]] = mapped_column(Text)
+
+    # Metadata
+    genre: Mapped[Optional[str]] = mapped_column(String(50))
+    difficulty_level: Mapped[Optional[str]] = mapped_column(String(50))
+    estimated_duration_weeks: Mapped[Optional[int]] = mapped_column(Integer)
+
+    # Source tracking
+    source_file: Mapped[Optional[str]] = mapped_column(String(500))
+    ai_provider: Mapped[Optional[str]] = mapped_column(String(100))
+
+    # Usage statistics
+    times_accessed: Mapped[int] = mapped_column(Integer, default=0)
+    avg_completion_rate: Mapped[Optional[float]] = mapped_column(Float)
+
+    # JSON fields
+    tags_json: Mapped[Optional[str]] = mapped_column(Text)  # JSON list
+    prerequisites_json: Mapped[Optional[str]] = mapped_column(Text)  # JSON list
+    learning_objectives_json: Mapped[Optional[str]] = mapped_column(Text)  # JSON list
+    modules_json: Mapped[Optional[str]] = mapped_column(Text)  # Full curriculum structure
+
+    # Timestamps
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, index=True)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relationships
+    exercises: Mapped[List["ExerciseLibrary"]] = relationship(
+        back_populates="curriculum",
+        cascade="all, delete-orphan"
+    )
+
+
+class ExerciseLibrary(Base):
+    """
+    Individual exercises from curriculum templates.
+    Includes MIDI generation info and exercise content
+    """
+    __tablename__ = "exercise_library"
+
+    id: Mapped[str] = mapped_column(String(255), primary_key=True)
+    curriculum_id: Mapped[str] = mapped_column(
+        ForeignKey("curriculum_library.id", ondelete="CASCADE"),
+        index=True,
+        nullable=False
+    )
+
+    # Exercise metadata
+    title: Mapped[str] = mapped_column(String(500), nullable=False)
+    description: Mapped[Optional[str]] = mapped_column(Text)
+    exercise_type: Mapped[str] = mapped_column(String(50), nullable=False, index=True)  # scale, progression, lick, etc.
+    difficulty: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
+
+    # Exercise content
+    instructions: Mapped[Optional[str]] = mapped_column(Text)
+    midi_prompt: Mapped[Optional[str]] = mapped_column(Text)  # Prompt for MIDI generation
+
+    # File paths
+    midi_file_path: Mapped[Optional[str]] = mapped_column(String(500))
+    audio_file_path: Mapped[Optional[str]] = mapped_column(String(500))
+
+    # Music theory
+    key: Mapped[Optional[str]] = mapped_column(String(20))
+    time_signature: Mapped[Optional[str]] = mapped_column(String(20))
+    tempo_bpm: Mapped[Optional[int]] = mapped_column(Integer)
+
+    # JSON fields
+    tags_json: Mapped[Optional[str]] = mapped_column(Text)  # JSON list
+    content_json: Mapped[Optional[str]] = mapped_column(Text)  # Full exercise content
+
+    # Usage statistics
+    times_accessed: Mapped[int] = mapped_column(Integer, default=0)
+    avg_completion_time: Mapped[Optional[float]] = mapped_column(Float)  # seconds
+    avg_score: Mapped[Optional[float]] = mapped_column(Float)  # 0-100
+
+    # Timestamps
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, index=True)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relationships
+    curriculum: Mapped["CurriculumLibrary"] = relationship(back_populates="exercises")
+    user_progress: Mapped[List["UserExerciseProgress"]] = relationship(
+        back_populates="exercise",
+        cascade="all, delete-orphan"
+    )
+
+
+class UserExerciseProgress(Base):
+    """
+    Tracks user progress on individual exercises.
+    Implements spaced repetition (SM-2 algorithm) and performance metrics
+    """
+    __tablename__ = "user_exercise_progress"
+
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"),
+        primary_key=True,
+        index=True
+    )
+    exercise_id: Mapped[str] = mapped_column(
+        ForeignKey("exercise_library.id", ondelete="CASCADE"),
+        primary_key=True,
+        index=True
+    )
+
+    # Practice statistics
+    times_practiced: Mapped[int] = mapped_column(Integer, default=0)
+    total_practice_time_seconds: Mapped[int] = mapped_column(Integer, default=0)
+    best_score: Mapped[Optional[float]] = mapped_column(Float)  # 0-100
+    avg_score: Mapped[Optional[float]] = mapped_column(Float)  # 0-100
+
+    # Spaced repetition (SM-2 algorithm)
+    ease_factor: Mapped[float] = mapped_column(Float, default=2.5)
+    interval: Mapped[int] = mapped_column(Integer, default=1)  # days
+    repetitions: Mapped[int] = mapped_column(Integer, default=0)
+    last_reviewed: Mapped[Optional[datetime]] = mapped_column(DateTime)
+    next_review: Mapped[Optional[datetime]] = mapped_column(DateTime, index=True)
+
+    # Mastery tracking
+    is_mastered: Mapped[bool] = mapped_column(Boolean, default=False)
+    mastered_at: Mapped[Optional[datetime]] = mapped_column(DateTime)
+
+    # Performance history (JSON)
+    quality_ratings_json: Mapped[Optional[str]] = mapped_column(Text)  # JSON list of 0-5 ratings
+
+    # Timestamps
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relationships
+    user: Mapped["User"] = relationship()
+    exercise: Mapped["ExerciseLibrary"] = relationship(back_populates="user_progress")

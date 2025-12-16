@@ -26,6 +26,7 @@ export const API_ENDPOINTS = {
     assessment: `${API_V1_PREFIX}/curriculum/assessment`,
     generate: `${API_V1_PREFIX}/curriculum/generate`,
     default: `${API_V1_PREFIX}/curriculum/default`,
+    fromTemplate: `${API_V1_PREFIX}/curriculum/from-template`,
     templates: `${API_V1_PREFIX}/curriculum/templates`,
     list: `${API_V1_PREFIX}/curriculum/list`,
     active: `${API_V1_PREFIX}/curriculum`,

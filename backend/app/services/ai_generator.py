@@ -55,6 +55,9 @@ from app.blues.arrangement.arranger import BluesArranger
 from app.classical.arrangement.arranger import ClassicalArranger
 from app.gospel.midi.enhanced_exporter import export_enhanced_midi
 
+from app.services.template_loader import template_loader
+
+
 
 # Configure Gemini
 if settings.google_api_key:
@@ -202,7 +205,8 @@ class AIGeneratorService:
         }
         return GeneratorsListResponse(generators=generators)
     
-    async def generate_progression(self, request: ProgressionRequest) -> ProgressionResponse:
+
+    async def generate_progression(self, request: ProgressionRequest, template_id: Optional[str] = None) -> ProgressionResponse:
         """Generate a chord progression using Gemini with enhanced context.
         
         Enhanced with:
@@ -211,7 +215,34 @@ class AIGeneratorService:
         - Creativity level instructions
         - Optional educational content
         - Optional variation generation
+        - Optional template context for curriculum-driven generation
         """
+        # Build prompt
+        prompt_parts = []
+        
+        # 1. Template Context (Highest Priority)
+        engine_data = None
+        if template_id:
+            # Try to load template data
+            found_data = template_loader.find_exercise_by_id(template_id)
+            if found_data:
+                # Extract engine_data if available
+                engine_data = found_data.get("engine_data") or found_data.get("musical_data")
+                
+                # Build context prompt
+                context = f"""
+TARGET CURRICULUM EXERCISE: {found_data.get('name') or found_data.get('title')}
+INSTRUCTIONS: {found_data.get('instructions') or found_data.get('pedagogy', {}).get('objective')}
+THEORY FOCUS: {found_data.get('theory_prompt') or found_data.get('pedagogy', {}).get('theory_summary')}
+
+SPECIFIC PARAMETERS (engine_data):
+{json.dumps(engine_data, indent=2) if engine_data else "None"}
+
+Generate the progression adhering strictly to these instructional constraints.
+"""
+                prompt_parts.append(context)
+
+
         # Build enhanced prompt with genre DNA
         genre_context = get_genre_prompt_context(request.style.value)
         creativity_instruction = get_creativity_instruction(request.creativity.value)
@@ -221,15 +252,13 @@ class AIGeneratorService:
         if request.style_reference:
             style_reference_prompt = get_style_reference_prompt(request.style_reference)
         
-        prompt = f"""You are an expert music producer and composer specializing in {request.style.value} music.
-Generate a {request.length}-chord progression in the key of {request.key} {request.mode}.
-
-{genre_context}
-
-{creativity_instruction}
-
-{style_reference_prompt}
-
+        prompt_parts.append(f"You are an expert music producer and composer specializing in {request.style.value} music.")
+        prompt_parts.append(f"Generate a {request.length}-chord progression in the key of {request.key} {request.mode}.")
+        prompt_parts.append(genre_context)
+        prompt_parts.append(creativity_instruction)
+        prompt_parts.append(style_reference_prompt)
+        
+        prompt_parts.append(f"""
 Additional Parameters:
 - Mood: {request.mood.value if request.mood else 'Not specified'}
 - Extensions: {'Include rich extensions (7ths, 9ths, 11ths, 13ths)' if request.include_extensions else 'Use basic triads'}
@@ -260,7 +289,9 @@ CRITICAL REQUIREMENTS:
 3. MIDI notes in playable piano range (C3-C6, MIDI 48-84)
 4. Include insightful roman numeral analysis
 5. Provide genuinely helpful tips, not generic advice
-6. Return ONLY the JSON, no other text"""
+6. Return ONLY the JSON, no other text""")
+
+        prompt = "\n\n".join(prompt_parts)
 
         data = await self._generate_with_fallback(prompt, "progression")
         
@@ -290,6 +321,7 @@ CRITICAL REQUIREMENTS:
             education=education,
             variations=variations,
             variations_data=variations_data,
+            engine_data=engine_data,
         )
     
     async def _generate_progression_variations(
@@ -692,8 +724,28 @@ Return ONLY the JSON, no other text"""
             tips=data.get("tips")
         )
     
-    async def generate_exercise(self, request: ExerciseRequest) -> ExerciseResponse:
+
+    async def generate_exercise(self, request: ExerciseRequest, template_id: Optional[str] = None) -> ExerciseResponse:
         """Generate a practice exercise"""
+        
+        # Template context injection
+        template_context_str = ""
+        engine_data = None
+        
+        if template_id:
+            found_data = template_loader.find_exercise_by_id(template_id)
+            if found_data:
+                engine_data = found_data.get("engine_data") or found_data.get("musical_data")
+                template_context_str = f"""
+************************************************
+STRICT TEMPLATE INSTRUCTION:
+This exercise MUST be based on the following curriculum template:
+TITLE: {found_data.get('name') or found_data.get('title')}
+INSTRUCTION: {found_data.get('instructions') or found_data.get('pedagogy', {}).get('objective')}
+PARAMETERS: {json.dumps(engine_data)}
+************************************************
+"""
+
         prompt = f"""You are an expert piano pedagogue and practice coach.
 Create a practice exercise with these parameters:
 
@@ -701,6 +753,7 @@ Type: {request.type.value}
 Key: {request.key}
 Difficulty: {request.difficulty.value}
 {'Focus area: ' + request.focus if request.focus else ''}
+{template_context_str}
 
 Return a JSON object with this exact structure:
 {{
@@ -715,7 +768,8 @@ Return a JSON object with this exact structure:
         }}
     ],
     "variations": ["Variation 1", "Variation 2 to make it harder"],
-    "difficulty": "{request.difficulty.value}"
+    "difficulty": "{request.difficulty.value}",
+    "engine_data": {{ "optional": "raw data associated with exercise" }}
 }}
 
 Make the exercise:
@@ -733,7 +787,8 @@ Return ONLY the JSON, no other text"""
             description=data["description"],
             steps=[ExerciseStep(**step) for step in data["steps"]],
             variations=data.get("variations"),
-            difficulty=data["difficulty"]
+            difficulty=data["difficulty"],
+            engine_data=data.get("engine_data")
         )
     
     async def get_substitutions(self, request: SubstitutionRequest) -> SubstitutionResponse:

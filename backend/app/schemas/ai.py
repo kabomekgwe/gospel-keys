@@ -335,6 +335,26 @@ class ExerciseResponse(BaseModel):
     steps: list[ExerciseStep] = Field(..., description="Exercise steps")
     variations: Optional[list[str]] = Field(None, description="Variation ideas")
     difficulty: str = Field(..., description="Difficulty level")
+    engine_data: Optional[dict] = Field(None, description="Raw data for audio engine/frontend")
+
+
+class ProgressionResponse(BaseModel):
+    """Response with generated progression"""
+    progression: list[ChordInfo] = Field(..., description="Generated chords")
+    key: str = Field(..., description="Key of the progression")
+    style: str = Field(..., description="Style applied")
+    analysis: Optional[str] = Field(None, description="Brief analysis of the progression")
+    tips: Optional[list[str]] = Field(None, description="Performance tips")
+    # Arrangement data (when arrange_as_midi=True)
+    midi_file_path: Optional[str] = Field(None, description="Path to generated MIDI file")
+    midi_base64: Optional[str] = Field(None, description="Base64-encoded MIDI data")
+    arrangement_info: Optional[dict] = Field(None, description="Arrangement metadata (tempo, bars, notes, etc.)")
+    # Enhanced response data
+    education: Optional[EducationalContent] = Field(None, description="Educational context for learning")
+    variations: Optional[list[CreativeVariation]] = Field(None, description="Alternative creative options")
+    variations_data: Optional[list[list[ChordInfo]]] = Field(None, description="Chord data for each variation")
+    engine_data: Optional[dict] = Field(None, description="Raw data for audio engine/frontend")
+
 
 
 class SubstitutionResponse(BaseModel):
@@ -439,3 +459,51 @@ class UsageStatsResponse(BaseModel):
     models: list[ModelUsageStats] = Field(..., description="Stats per model")
     task_types: list[TaskTypeStats] = Field(..., description="Stats per task type")
     date_range: dict[str, str] = Field(..., description="Start and end dates")
+
+
+# === Phase 1 & 2: Local Stack Schemas ===
+
+class TheoryExplainRequest(BaseModel):
+    """Request for music theory explanation"""
+    concept: str = Field(..., description="The concept to explain (e.g. 'Secondary Dominants')")
+    context: str = Field("general", description="Context (jazz, classical, gospel)")
+
+
+class TheoryExplainResponse(BaseModel):
+    """Response for theory explanation"""
+    explanation: str = Field(..., description="Generated explanation")
+
+
+class MidiTokenizeRequest(BaseModel):
+    """Request to tokenize a MIDI file"""
+    file_path: str = Field(..., description="Path to the MIDI file on server")
+
+
+class MidiTokenizeResponse(BaseModel):
+    """Response with tokens"""
+    tokens: list[int] = Field(..., description="List of MIDI tokens")
+
+
+class ChordPredictRequest(BaseModel):
+    """Request to predict next chords"""
+    progression: list[str] = Field(..., description="Current chord progression")
+    num_chords: int = Field(4, description="Number of chords to predict")
+
+
+class ChordPredictResponse(BaseModel):
+    """Response with prediction"""
+    predicted_chords: list[str] = Field(..., description="Predicted continuation")
+    # variations?
+
+
+class MidiGenerateRequest(BaseModel):
+    """Request to generate MIDI from text prompt"""
+    prompt: str = Field(..., description="Text prompt or chord sequence (e.g. 'I % I.M')")
+    num_tokens: int = Field(1024, description="Length of generation in tokens")
+
+
+class MidiGenerateResponse(BaseModel):
+    """Response with generated MIDI file"""
+    success: bool = Field(..., description="Success status")
+    midi_file_path: Optional[str] = Field(None, description="Path to generated MIDI file")
+    message: Optional[str] = Field(None, description="Error or status message")

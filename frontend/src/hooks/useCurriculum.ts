@@ -16,7 +16,9 @@ import type {
   ExerciseCompleteRequest,
   CurriculumTemplate,
   GenerateCurriculumRequest,
+  GenerateCurriculumRequest,
   CreateDefaultCurriculumRequest,
+  CreateCurriculumFromTemplateRequest,
   AICoachMessage,
   AICoachResponse,
   AddLickToPracticeRequest,
@@ -110,6 +112,18 @@ export function useCreateDefaultCurriculum() {
   return useMutation({
     mutationFn: (request: CreateDefaultCurriculumRequest) =>
       apiClient.post<Curriculum>(API_ENDPOINTS.curriculum.default, request),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: curriculumKeys.list() });
+    },
+  });
+}
+
+export function useCreateCurriculumFromTemplate() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (request: CreateCurriculumFromTemplateRequest) =>
+      apiClient.post<Curriculum>(API_ENDPOINTS.curriculum.fromTemplate, request),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: curriculumKeys.list() });
     },

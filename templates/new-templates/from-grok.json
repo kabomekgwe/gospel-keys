@@ -1,0 +1,3144 @@
+# Curriculum templates
+
+## Grok
+GOSPEL_KEYS_ESSENTIALS = {
+    "title": "Gospel Keys Essentials",
+    "description": "The definitive start to playing traditional and contemporary gospel. Master the 'church sound' through essential voicings, passing chords, and standard progressions. Expanded with advanced fills and band integration.",
+    "modules": [
+        {
+            "title": "Gospel Harmony Foundations",
+            "description": "Moving from triads to the rich sound of 7th and 9th chords.",
+            "theme": "gospel_basics",
+            "start_week": 1,
+            "end_week": 4,
+            "prerequisites": [
+                "Basic triads"
+            ],
+            "outcomes": [
+                "Major & Minor 7th Chords",
+                "The 1-4-5 Gospel Style",
+                "Basic Shout Patterns",
+                "Inversion Mastery"
+            ],
+            "lessons": [
+                {
+                    "title": "Beyond Triads: 7th Chords",
+                    "description": "Introduction to Major 7, Dominant 7, and Minor 7 chords.",
+                    "week_number": 1,
+                    "concepts": [
+                        "Major 7th",
+                        "Dominant 7th",
+                        "Minor 7th",
+                        "Drop-2 Voicings"
+                    ],
+                    "theory_content": {
+                        "summary": "Gospel music relies heavily on 7th chords to create a fuller sound. These extensions add tension and resolution, common in hymns and shouts.",
+                        "key_points": [
+                            "Add the 7th note to every triad",
+                            "Use inversions to keep common tones",
+                            "Practice in root position and inversions for smooth transitions"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Diatonic 7th Chords in C",
+                            "description": "Play all 7th chords in C Major (Cmaj7, Dm7, Em7...)",
+                            "exercise_type": "scale",
+                            "content": {
+                                "scale": "C Major",
+                                "pattern": "Diatonic 7ths"
+                            },
+                            "midi_prompt": "Generate MIDI for diatonic 7ths in C at 60 BPM, left hand roots, right hand chords",
+                            "difficulty": "beginner",
+                            "estimated_duration_minutes": 10
+                        },
+                        {
+                            "title": "Gospel 2-5-1",
+                            "description": "The foundational progression of gospel harmony.",
+                            "exercise_type": "progression",
+                            "content": {
+                                "chords": [
+                                    "Dm9",
+                                    "G13",
+                                    "Cmaj9"
+                                ],
+                                "roman_numerals": [
+                                    "ii9",
+                                    "V13",
+                                    "Imaj9"
+                                ],
+                                "key": "C"
+                            },
+                            "midi_prompt": "Create MIDI loop for 2-5-1 in C with bass line",
+                            "difficulty": "beginner",
+                            "estimated_duration_minutes": 15
+                        },
+                        # New exercise
+                        {
+                            "title": "Inversion Drills for 7ths",
+                            "description": "Practice all inversions of Cmaj7, Dm7 in both hands.",
+                            "exercise_type": "voicing",
+                            "content": {
+                                "chords": [
+                                    "Cmaj7",
+                                    "Dm7"
+                                ],
+                                "inversions": [
+                                    "Root, 1st, 2nd, 3rd"
+                                ]
+                            },
+                            "midi_prompt": "Generate MIDI for 7th chord inversions ascending/descending",
+                            "difficulty": "beginner",
+                            "estimated_duration_minutes": 12
+                        }
+                    ]
+                },
+                {
+                    "title": "The Preacher's Chord",
+                    "description": "Mastering the dominant 7#9 chord used for shouts and accents.",
+                    "week_number": 2,
+                    "concepts": [
+                        "Dominant 7#9",
+                        "Tritones",
+                        "Blues Scale"
+                    ],
+                    "theory_content": {
+                        "summary": "The 7#9, often called the 'Hendrix chord,' adds grit and tension, resolving strongly to the tonic.",
+                        "key_points": [
+                            "Built on root, 3rd, b7, #9",
+                            "Tritone between 3rd and b7 creates dissonance",
+                            "Common in transitions to minor keys"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "E7#9 Voicing",
+                            "description": "Constructing the 'Hendrix' or 'Preacher' chord.",
+                            "exercise_type": "voicing",
+                            "content": {
+                                "chord": "E7#9",
+                                "notes": [
+                                    "E",
+                                    "G#",
+                                    "D",
+                                    "G"
+                                ]
+                            },
+                            "midi_prompt": "MIDI for E7#9 held for 4 beats",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 10
+                        },
+                        {
+                            "title": "Preacher Chords in Cycle",
+                            "description": "Moving the #9 chord through the cycle of 4ths.",
+                            "exercise_type": "progression",
+                            "content": {
+                                "chords": [
+                                    "E7#9",
+                                    "A7#9",
+                                    "D7#9",
+                                    "G7#9"
+                                ],
+                                "key": "C"
+                            },
+                            "midi_prompt": "Cycle of 4ths MIDI with preacher chords at 70 BPM",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 15
+                        },
+                        # New exercise
+                        {
+                            "title": "Shout Pattern Improv",
+                            "description": "Improvise shouts using 7#9 over a I-IV-V backing.",
+                            "exercise_type": "improv",
+                            "content": {
+                                "key": "Bb",
+                                "backing": "I-IV-V loop"
+                            },
+                            "midi_prompt": "Generate MIDI backing track for gospel shout in Bb",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 18
+                        }
+                    ]
+                },
+                # New lesson
+                {
+                    "title": "Basic Passing Chords",
+                    "description": "Using diminished chords to connect progressions smoothly.",
+                    "week_number": 3,
+                    "concepts": [
+                        "Diminished 7ths",
+                        "Passing Tones"
+                    ],
+                    "theory_content": {
+                        "summary": "Passing chords fill gaps between main harmonies, adding movement in gospel hymns.",
+                        "key_points": [
+                            "Dim7 often used between I and IV",
+                            "Resolve by half-step"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "I to IV with Passing Dim",
+                            "description": "C - C#dim7 - Dm7",
+                            "exercise_type": "progression",
+                            "content": {
+                                "key": "C",
+                                "chords": [
+                                    "C",
+                                    "C#dim7",
+                                    "Dm7"
+                                ]
+                            },
+                            "midi_prompt": "MIDI for passing chord progression in C",
+                            "difficulty": "beginner",
+                            "estimated_duration_minutes": 15
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "title": "Gospel Progressions & Movements",
+            "description": "Connecting chords with soulful classic movements.",
+            "theme": "gospel_progressions",
+            "start_week": 5,
+            "end_week": 8,
+            "prerequisites": [
+                "7th chords mastery"
+            ],
+            "outcomes": [
+                "7-3-6 Progression",
+                "Tritone Subs",
+                "Gospel Waltz",
+                "Bass Runs"
+            ],
+            "lessons": [
+                {
+                    "title": "The 7-3-6 Progression",
+                    "description": "The classic gospel turnaround to the relative minor.",
+                    "week_number": 5,
+                    "concepts": [
+                        "Secondary Dominants",
+                        "Diminished Passing Chords"
+                    ],
+                    "theory_content": {
+                        "summary": "This progression creates emotional depth, often used in amen cadences.",
+                        "key_points": [
+                            "Moves from VII to III to VI",
+                            "Add alterations like b9 for tension"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "7-3-6 in Ab",
+                            "description": "Gdim7 -> C7alt -> Fm9",
+                            "exercise_type": "progression",
+                            "content": {
+                                "key": "Ab",
+                                "chords": [
+                                    "Gdim7",
+                                    "C7(b9)",
+                                    "Fm9"
+                                ],
+                                "roman_numerals": [
+                                    "vii°7/vi",
+                                    "V7/vi",
+                                    "vi7"
+                                ]
+                            },
+                            "midi_prompt": "Generate MIDI for 7-3-6 in Ab with slow tempo",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 20
+                        },
+                        # New exercise
+                        {
+                            "title": "Variations on 7-3-6",
+                            "description": "Add tritone subs to the progression.",
+                            "exercise_type": "progression",
+                            "content": {
+                                "key": "Ab",
+                                "chords": [
+                                    "Gdim7",
+                                    "Gb7alt",
+                                    "Fm9"
+                                ]
+                            },
+                            "midi_prompt": "MIDI variation with tritone sub",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 20
+                        }
+                    ]
+                },
+                {
+                    "title": "Walk-ups and Walk-downs",
+                    "description": "Bass line movements that drive congregational songs.",
+                    "week_number": 6,
+                    "concepts": [
+                        "Bass Lines",
+                        "Slash Chords"
+                    ],
+                    "theory_content": {
+                        "summary": "Walk-ups use chromatic or diatonic steps to connect chords, enhancing groove.",
+                        "key_points": [
+                            "Common in uptempo songs",
+                            "Combine with right-hand fills"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "The 1 to 4 Walk-up",
+                            "description": "C -> C/E -> F",
+                            "exercise_type": "progression",
+                            "content": {
+                                "key": "C",
+                                "chords": [
+                                    "C",
+                                    "C/E",
+                                    "F",
+                                    "F#dim7",
+                                    "C/G"
+                                ],
+                                "roman_numerals": [
+                                    "I",
+                                    "I/3",
+                                    "IV",
+                                    "#iv°7",
+                                    "I/5"
+                                ]
+                            },
+                            "midi_prompt": "MIDI for walk-up with bass emphasis",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 15
+                        },
+                        # New exercise
+                        {
+                            "title": "Walk-down from V to I",
+                            "description": "G -> G/B -> C -> A7 -> D7 -> G",
+                            "exercise_type": "progression",
+                            "content": {
+                                "key": "G",
+                                "chords": [
+                                    "G",
+                                    "G/B",
+                                    "C",
+                                    "A7",
+                                    "D7",
+                                    "G"
+                                ]
+                            },
+                            "midi_prompt": "Generate walk-down MIDI in G",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 15
+                        }
+                    ]
+                },
+                # New lesson
+                {
+                    "title": "Gospel Waltz Patterns",
+                    "description": "3/4 time movements for slower, reflective songs.",
+                    "week_number": 7,
+                    "concepts": [
+                        "Waltz Rhythm",
+                        "Broken Chords"
+                    ],
+                    "theory_content": {
+                        "summary": "Waltz adds variety to gospel, often in ballads.",
+                        "key_points": [
+                            "Accent beat 1",
+                            "Use arpeggios for flow"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Waltz 1-4-5 in Eb",
+                            "description": "Eb - Ab - Bb7 in 3/4.",
+                            "exercise_type": "rhythm",
+                            "content": {
+                                "key": "Eb",
+                                "time_signature": "3/4"
+                            },
+                            "midi_prompt": "MIDI waltz progression in Eb",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 18
+                        }
+                    ]
+                }
+            ]
+        },
+        # New module
+        {
+            "title": "Advanced Gospel Application",
+            "description": "Integrating techniques into full songs and band settings.",
+            "theme": "gospel_advanced",
+            "start_week": 9,
+            "end_week": 12,
+            "prerequisites": [
+                "Progressions mastery"
+            ],
+            "outcomes": [
+                "Full Song Arrangements",
+                "Ear Training",
+                "Band Improv"
+            ],
+            "lessons": [
+                {
+                    "title": "Arranging a Gospel Hymn",
+                    "description": "Apply voicings and movements to 'Amazing Grace'.",
+                    "week_number": 9,
+                    "concepts": [
+                        "Arrangement",
+                        "Modulation"
+                    ],
+                    "theory_content": {
+                        "summary": "Arrangements layer basics with advanced fills for performance.",
+                        "key_points": [
+                            "Modulate up a half-step for climax",
+                            "Add shouts in chorus"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Amazing Grace Arrangement",
+                            "description": "Full play-through with walk-ups.",
+                            "exercise_type": "repertoire",
+                            "content": {
+                                "song": "Amazing Grace",
+                                "key": "G"
+                            },
+                            "midi_prompt": "Generate MIDI arrangement for Amazing Grace",
+                            "difficulty": "advanced",
+                            "estimated_duration_minutes": 25
+                        }
+                    ]
+                },
+                {
+                    "title": "Ear Training for Gospel",
+                    "description": "Transcribe simple progressions by ear.",
+                    "week_number": 10,
+                    "concepts": [
+                        "Transcription",
+                        "Chord Recognition"
+                    ],
+                    "exercises": [
+                        {
+                            "title": "Transcribe 1-4-5 Shout",
+                            "description": "Listen and notate a MIDI clip.",
+                            "exercise_type": "ear_training",
+                            "content": {
+                                "key": "F"
+                            },
+                            "midi_prompt": "Create MIDI for ear training: 1-4-5 in F",
+                            "difficulty": "advanced",
+                            "estimated_duration_minutes": 20
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+
+JAZZ_IMPROV_BOOTCAMP = {
+    "title": "Jazz Improvisation Bootcamp",
+    "description": "A step-by-step roadmap from basic swing to confident soloing. Focuses on 'Shell Voicings', 2-5-1 mastery, and guide tones. Expanded with modal concepts and real-tune application.",
+    "modules": [
+        {
+            "title": "Jazz Fundamentals",
+            "theme": "jazz_basics",
+            "start_week": 1,
+            "end_week": 4,
+            "prerequisites": [
+                "Basic rhythm"
+            ],
+            "outcomes": [
+                "Shell Voicings",
+                "Guide Tones",
+                "Swing Feel",
+                "Basic Bebop Scales"
+            ],
+            "lessons": [
+                {
+                    "title": "Shell Voicings (A & B Forms)",
+                    "description": "Left hand voicings using Root, 3rd, and 7th.",
+                    "week_number": 1,
+                    "concepts": [
+                        "Shell Voicings",
+                        "Voice Leading",
+                        "Swing Feel"
+                    ],
+                    "theory_content": {
+                        "summary": "Shell voicings provide essential harmony, allowing right-hand freedom for improv.",
+                        "key_points": [
+                            "A Form: R-7-3; B Form: R-3-7",
+                            "Minimize movement between chords"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Shells around the Cycle",
+                            "description": "Play ii-V-I shells through all 12 keys.",
+                            "exercise_type": "voicing",
+                            "content": {
+                                "pattern": "ii-V-I Cycle",
+                                "voicing_type": "shell"
+                            },
+                            "midi_prompt": "MIDI for ii-V-I shells in cycle, 60 BPM swing",
+                            "difficulty": "beginner",
+                            "estimated_duration_minutes": 20
+                        },
+                        # New exercise
+                        {
+                            "title": "Swing Rhythm Drill",
+                            "description": "Play shells with triplet swing feel.",
+                            "exercise_type": "rhythm",
+                            "content": {
+                                "tempo": 80,
+                                "feel": "swing"
+                            },
+                            "midi_prompt": "Generate swing MIDI backing for shells",
+                            "difficulty": "beginner",
+                            "estimated_duration_minutes": 15
+                        }
+                    ]
+                },
+                {
+                    "title": "Guide Tone Lines",
+                    "description": "Connecting 3rds and 7ths to create smooth melodies.",
+                    "week_number": 2,
+                    "concepts": [
+                        "Guide Tones",
+                        "Thirds and Sevenths"
+                    ],
+                    "theory_content": {
+                        "summary": "Guide tones outline chord changes, essential for bebop lines.",
+                        "key_points": [
+                            "3rd and 7th resolve down by half-step in ii-V-I",
+                            "Use for comping and soloing"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Guide Tones on Blue Bossa",
+                            "description": "Play only 3rds and 7ths over Blue Bossa changes.",
+                            "exercise_type": "progression",
+                            "content": {
+                                "key": "Cm",
+                                "chords": [
+                                    "Cm7",
+                                    "Fm7",
+                                    "Dm7b5",
+                                    "G7alt"
+                                ]
+                            },
+                            "midi_prompt": "MIDI backing for Blue Bossa guide tones",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 15
+                        },
+                        # New exercise
+                        {
+                            "title": "Guide Tone Melodies",
+                            "description": "Create simple lines connecting guide tones.",
+                            "exercise_type": "improv",
+                            "content": {
+                                "progression": "ii-V-I in Bb"
+                            },
+                            "midi_prompt": "Generate MIDI for guide tone improv prompt",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 18
+                        }
+                    ]
+                },
+                # New lesson
+                {
+                    "title": "Bebop Scale Introduction",
+                    "description": "Adding chromatic notes to major scales for jazz lines.",
+                    "week_number": 3,
+                    "concepts": [
+                        "Bebop Dominant",
+                        "Chromatic Passing"
+                    ],
+                    "theory_content": {
+                        "summary": "Bebop scales ensure downbeats land on chord tones.",
+                        "key_points": [
+                            "Add b7 to Mixolydian for dominant"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "G Bebop Dominant Scale",
+                            "description": "Practice over G7.",
+                            "exercise_type": "scale",
+                            "content": {
+                                "notes": [
+                                    "G",
+                                    "A",
+                                    "B",
+                                    "C",
+                                    "D",
+                                    "E",
+                                    "F",
+                                    "Gb"
+                                ]
+                            },
+                            "midi_prompt": "MIDI for bebop scale ascending",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 15
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "title": "Beginning Improvisation",
+            "theme": "jazz_improv",
+            "start_week": 5,
+            "end_week": 8,
+            "prerequisites": [
+                "Shell voicings"
+            ],
+            "outcomes": [
+                "Arpeggio Soloing",
+                "Approach Notes",
+                "Enclosures",
+                "Rhythmic Variation"
+            ],
+            "lessons": [
+                {
+                    "title": "Arpeggio Soloing",
+                    "description": "Using chord tones (1-3-5-7) to outline changes.",
+                    "week_number": 5,
+                    "concepts": [
+                        "Chord Tones",
+                        "Arpeggios"
+                    ],
+                    "theory_content": {
+                        "summary": "Arpeggios provide safe notes for solos, building confidence.",
+                        "key_points": [
+                            "Vary direction and rhythm",
+                            "Extend to 9ths for color"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Arpeggios over 2-5-1",
+                            "description": "Ascending and descending arpeggios over major 2-5-1s.",
+                            "exercise_type": "scale",
+                            "content": {
+                                "pattern": "1-3-5-7 Up, 7-5-3-1 Down",
+                                "key": "Bb"
+                            },
+                            "midi_prompt": "MIDI arpeggios over 2-5-1 backing",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 20
+                        },
+                        # New exercise
+                        {
+                            "title": "Arpeggio Combinations",
+                            "description": "Mix arpeggios with guide tones.",
+                            "exercise_type": "improv",
+                            "content": {
+                                "progression": "2-5-1 in F"
+                            },
+                            "midi_prompt": "Backing MIDI for arpeggio improv",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 20
+                        }
+                    ]
+                },
+                {
+                    "title": "Approach Notes",
+                    "description": "Adding chromaticism to target notes.",
+                    "week_number": 6,
+                    "concepts": [
+                        "Chromatics",
+                        "Enclosures"
+                    ],
+                    "theory_content": {
+                        "summary": "Approach notes add tension before resolving to chord tones.",
+                        "key_points": [
+                            "Half-step below or above",
+                            "Enclose with two chromatics"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Half-step Approaches",
+                            "description": "Approach every 3rd of a chord from a half-step below.",
+                            "exercise_type": "lick",
+                            "content": {
+                                "pattern": "Chromatic Approach"
+                            },
+                            "midi_prompt": "MIDI examples of half-step approaches",
+                            "difficulty": "advanced",
+                            "estimated_duration_minutes": 15
+                        },
+                        # New exercise
+                        {
+                            "title": "Enclosure Licks",
+                            "description": "Enclose target notes with upper/lower neighbors.",
+                            "exercise_type": "lick",
+                            "content": {
+                                "pattern": "Enclosure on 5th"
+                            },
+                            "midi_prompt": "Generate enclosure MIDI licks",
+                            "difficulty": "advanced",
+                            "estimated_duration_minutes": 15
+                        }
+                    ]
+                },
+                # New lesson
+                {
+                    "title": "Rhythmic Improv Basics",
+                    "description": "Varying rhythms in solos for interest.",
+                    "week_number": 7,
+                    "concepts": [
+                        "Syncopation",
+                        "Triplets"
+                    ],
+                    "theory_content": {
+                        "summary": "Rhythm is as important as notes in jazz improv.",
+                        "key_points": [
+                            "Use off-beats",
+                            "Mix eighths and triplets"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Syncopated Arpeggios",
+                            "description": "Arpeggios with syncopated rhythm over blues.",
+                            "exercise_type": "rhythm",
+                            "content": {
+                                "progression": "Blues in F"
+                            },
+                            "midi_prompt": "MIDI backing for syncopated improv",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 20
+                        }
+                    ]
+                }
+            ]
+        },
+        # New module
+        {
+            "title": "Modal Jazz and Standards",
+            "description": "Exploring modes and applying to jazz tunes.",
+            "theme": "jazz_modal",
+            "start_week": 9,
+            "end_week": 12,
+            "prerequisites": [
+                "Improv basics"
+            ],
+            "outcomes": [
+                "Modes Mastery",
+                "Standard Soloing",
+                "Transcription"
+            ],
+            "lessons": [
+                {
+                    "title": "Introduction to Modes",
+                    "description": "Dorian, Mixolydian for modal tunes like So What.",
+                    "week_number": 9,
+                    "concepts": [
+                        "Modes",
+                        "Modal Interchange"
+                    ],
+                    "theory_content": {
+                        "summary": "Modes shift focus from functional harmony to scalar colors.",
+                        "key_points": [
+                            "Dorian for ii chords",
+                            "Mixolydian for V"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Dorian Mode Over Dm7",
+                            "description": "Improv using Dorian scale.",
+                            "exercise_type": "scale",
+                            "content": {
+                                "mode": "Dorian",
+                                "key": "D"
+                            },
+                            "midi_prompt": "MIDI backing for Dorian improv",
+                            "difficulty": "advanced",
+                            "estimated_duration_minutes": 20
+                        }
+                    ]
+                },
+                {
+                    "title": "Soloing on Standards",
+                    "description": "Apply techniques to All The Things You Are.",
+                    "week_number": 10,
+                    "concepts": [
+                        "Standard Form",
+                        "Motif Development"
+                    ],
+                    "exercises": [
+                        {
+                            "title": "All The Things Solo",
+                            "description": "Build a solo using arpeggios and approaches.",
+                            "exercise_type": "repertoire",
+                            "content": {
+                                "song": "All The Things You Are",
+                                "key": "Ab"
+                            },
+                            "midi_prompt": "Generate MIDI backing for standard solo",
+                            "difficulty": "advanced",
+                            "estimated_duration_minutes": 25
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+
+NEO_SOUL_MASTERY = {
+    "title": "Neo-Soul Mastery",
+    "description": "Unlock the smooth, laid-back sounds of R&B and Soul. Learn lush extended chords, cluster voicings, and the 'Dilla' groove. Expanded with production tips and genre fusion.",
+    "modules": [
+        {
+            "title": "Neo-Soul Harmony",
+            "theme": "neosoul_basics",
+            "start_week": 1,
+            "end_week": 4,
+            "prerequisites": [
+                "7th chords"
+            ],
+            "outcomes": [
+                "Minor 11th Chords",
+                "Tritone Subs",
+                "Cluster Voicings",
+                "Extended Tensions"
+            ],
+            "lessons": [
+                {
+                    "title": "The Minor 11th Chord",
+                    "description": "The quintessential Neo-Soul chord.",
+                    "week_number": 1,
+                    "concepts": [
+                        "Minor 9th",
+                        "Minor 11th",
+                        "Cluster Voicings"
+                    ],
+                    "theory_content": {
+                        "summary": "Minor 11ths create lush, ambiguous harmony, key to artists like D'Angelo.",
+                        "key_points": [
+                            "Stack 1-b3-5-b7-9-11",
+                            "Cluster for dense sound"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Eb Minor 11 Deep Dive",
+                            "description": "Voicing Eb-11 with clusters (Root-5-b7 in LH, 9-11-5 in RH).",
+                            "exercise_type": "voicing",
+                            "content": {
+                                "chord": "Ebm11",
+                                "notes": [
+                                    "Eb",
+                                    "Bb",
+                                    "Db",
+                                    "F",
+                                    "Ab",
+                                    "Bb"
+                                ]
+                            },
+                            "midi_prompt": "MIDI for Ebm11 cluster voicing",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 15
+                        },
+                        # New exercise
+                        {
+                            "title": "Minor 11 Cycle",
+                            "description": "Play min11 through cycle of 5ths.",
+                            "exercise_type": "progression",
+                            "content": {
+                                "pattern": "Cycle of 5ths min11"
+                            },
+                            "midi_prompt": "Generate MIDI cycle for min11",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 15
+                        }
+                    ]
+                },
+                {
+                    "title": "Tritone Substitution",
+                    "description": "Reharmonizing V chords for smooth chromatic bass movement.",
+                    "week_number": 2,
+                    "concepts": [
+                        "Tritone Sub",
+                        "Chromatic Bass"
+                    ],
+                    "theory_content": {
+                        "summary": "Sub V with chord a tritone away for color, common in neo-soul reharms.",
+                        "key_points": [
+                            "Shares tritone interval",
+                            "Creates descending bass lines"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Tritone Subs in 2-5-1",
+                            "description": "Replacing G7 with Db7 in a C major 2-5-1.",
+                            "exercise_type": "progression",
+                            "content": {
+                                "chords": [
+                                    "Dm9",
+                                    "Db9#11",
+                                    "Cmaj9"
+                                ],
+                                "roman_numerals": [
+                                    "ii9",
+                                    "subV7",
+                                    "Imaj9"
+                                ]
+                            },
+                            "midi_prompt": "MIDI for tritone sub 2-5-1",
+                            "difficulty": "advanced",
+                            "estimated_duration_minutes": 20
+                        },
+                        # New exercise
+                        {
+                            "title": "Bass Line with Subs",
+                            "description": "Create chromatic bass using subs.",
+                            "exercise_type": "bass",
+                            "content": {
+                                "progression": "2-5-1 with sub"
+                            },
+                            "midi_prompt": "MIDI emphasizing bass line",
+                            "difficulty": "advanced",
+                            "estimated_duration_minutes": 20
+                        }
+                    ]
+                },
+                # New lesson
+                {
+                    "title": "Extended Tensions",
+                    "description": "Adding 13ths and alterations for richer sound.",
+                    "week_number": 3,
+                    "concepts": [
+                        "13th Chords",
+                        "Alt Chords"
+                    ],
+                    "theory_content": {
+                        "summary": "Extensions like 13 add layers, evoking emotion in slow jams.",
+                        "key_points": [
+                            "Natural 13 on maj, b13 on dom"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "G13 Voicing",
+                            "description": "Play G13 with clusters.",
+                            "exercise_type": "voicing",
+                            "content": {
+                                "chord": "G13"
+                            },
+                            "midi_prompt": "MIDI for G13 extended",
+                            "difficulty": "advanced",
+                            "estimated_duration_minutes": 15
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "title": "Groove & Ornamentation",
+            "theme": "neosoul_groove",
+            "start_week": 5,
+            "end_week": 8,
+            "prerequisites": [
+                "Harmony basics"
+            ],
+            "outcomes": [
+                "Dilla Feel",
+                "Grace Notes",
+                "Slides",
+                "Syncopated Rhythms"
+            ],
+            "lessons": [
+                {
+                    "title": "The 'Dilla' Feel",
+                    "description": "Playing behind the beat for that drunken drum feel.",
+                    "week_number": 5,
+                    "concepts": [
+                        "Micro-timing",
+                        "Syncopation"
+                    ],
+                    "theory_content": {
+                        "summary": "J Dilla's groove involves delayed notes for relaxed vibe.",
+                        "key_points": [
+                            "Lag by 1/16th note",
+                            "Combine with hip-hop beats"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Laid Back Scales",
+                            "description": "Playing major scales with a heavy swing/lag.",
+                            "exercise_type": "rhythm",
+                            "content": {
+                                "scale": "C Major",
+                                "feel": "Dilla lag"
+                            },
+                            "midi_prompt": "MIDI scale with Dilla timing at 90 BPM",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 15
+                        },
+                        # New exercise
+                        {
+                            "title": "Dilla Groove over Loop",
+                            "description": "Apply lag to chords over a beat.",
+                            "exercise_type": "groove",
+                            "content": {
+                                "progression": "i-iv"
+                            },
+                            "midi_prompt": "Generate beat MIDI for Dilla practice",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 15
+                        }
+                    ]
+                },
+                {
+                    "title": "Grace Notes & Slides",
+                    "description": "Decorating simpler chords to make them soulful.",
+                    "week_number": 6,
+                    "concepts": [
+                        "Pentatonic Slides",
+                        "Crushed Notes"
+                    ],
+                    "theory_content": {
+                        "summary": "Ornaments add expressiveness, mimicking vocal styles.",
+                        "key_points": [
+                            "Slide from b3 to 3",
+                            "Crush notes for bluesy tension"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Pentatonic Grace Notes",
+                            "description": "Sliding from b3 to 3 over major chords.",
+                            "exercise_type": "lick",
+                            "content": {
+                                "pattern": "b3-3 slide"
+                            },
+                            "midi_prompt": "MIDI licks with grace notes",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 10
+                        },
+                        # New exercise
+                        {
+                            "title": "Crushed Chord Ornaments",
+                            "description": "Add crushed seconds to min7 chords.",
+                            "exercise_type": "voicing",
+                            "content": {
+                                "chord": "Dm7 with crush"
+                            },
+                            "midi_prompt": "MIDI for crushed ornaments",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 12
+                        }
+                    ]
+                },
+                # New lesson
+                {
+                    "title": "Syncopated Rhythms",
+                    "description": "Off-beat accents for dynamic grooves.",
+                    "week_number": 7,
+                    "concepts": [
+                        "Syncopation",
+                        "Ghost Notes"
+                    ],
+                    "theory_content": {
+                        "summary": "Syncopation creates pocket in neo-soul.",
+                        "key_points": [
+                            "Accent weak beats",
+                            "Use ghost notes lightly"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Syncopated Chord Hits",
+                            "description": "Play chords on & of 2 and 4.",
+                            "exercise_type": "rhythm",
+                            "content": {
+                                "tempo": 85
+                            },
+                            "midi_prompt": "MIDI syncopated pattern",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 15
+                        }
+                    ]
+                }
+            ]
+        },
+        # New module
+        {
+            "title": "Neo-Soul Production & Fusion",
+            "description": "Applying techniques to production and blending with other genres.",
+            "theme": "neosoul_production",
+            "start_week": 9,
+            "end_week": 12,
+            "prerequisites": [
+                "Groove mastery"
+            ],
+            "outcomes": [
+                "Beat Making",
+                "Fusion Licks",
+                "Live Performance"
+            ],
+            "lessons": [
+                {
+                    "title": "Neo-Soul in Production",
+                    "description": "Layering keys with beats and effects.",
+                    "week_number": 9,
+                    "concepts": [
+                        "Effects",
+                        "Layering"
+                    ],
+                    "theory_content": {
+                        "summary": "Production adds reverb, delay for atmospheric sound.",
+                        "key_points": [
+                            "Use lo-fi effects",
+                            "Layer with synth pads"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Produce a Loop",
+                            "description": "Create MIDI loop with min11 and Dilla groove.",
+                            "exercise_type": "production",
+                            "content": {
+                                "elements": "chords + beat"
+                            },
+                            "midi_prompt": "Generate full MIDI loop with effects sim",
+                            "difficulty": "advanced",
+                            "estimated_duration_minutes": 25
+                        }
+                    ]
+                },
+                {
+                    "title": "Fusion with Jazz/Gospel",
+                    "description": "Blend neo-soul with gospel shouts.",
+                    "week_number": 10,
+                    "concepts": [
+                        "Genre Fusion",
+                        "Reharm"
+                    ],
+                    "exercises": [
+                        {
+                            "title": "Neo-Gospel Progression",
+                            "description": "Add min11 to gospel 2-5-1.",
+                            "exercise_type": "progression",
+                            "content": {
+                                "key": "C"
+                            },
+                            "midi_prompt": "MIDI fusion progression",
+                            "difficulty": "advanced",
+                            "estimated_duration_minutes": 20
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+
+CONTEMPORARY_WORSHIP = {
+    "title": "Contemporary Worship Piano",
+    "description": "Modern techniques for P&W music. Focus on Sus chords, pads, textures, and the 1-5-6-4 progression. Expanded with spontaneous sections and band integration.",
+    "modules": [
+        {
+            "title": "Worship Essentials",
+            "theme": "worship_basics",
+            "start_week": 1,
+            "end_week": 4,
+            "prerequisites": [
+                "Basic chords"
+            ],
+            "outcomes": [
+                "Suspended Chords",
+                "Slash Chords",
+                "Pad Textures",
+                "Dynamics"
+            ],
+            "lessons": [
+                {
+                    "title": "Suspended Chords (Sus2 & Sus4)",
+                    "description": "Creating open, airy textures.",
+                    "week_number": 1,
+                    "concepts": [
+                        "Sus2",
+                        "Sus4",
+                        "Add2"
+                    ],
+                    "theory_content": {
+                        "summary": "Sus chords resolve tension, common in builds.",
+                        "key_points": [
+                            "Replace 3rd with 2 or 4",
+                            "Use for ambient sections"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Sus Chords in D Major",
+                            "description": "Alternating D and Dsus4, A and Asus4.",
+                            "exercise_type": "voicing",
+                            "content": {
+                                "key": "D",
+                                "chords": [
+                                    "Dsus4",
+                                    "D",
+                                    "Asus4",
+                                    "A"
+                                ]
+                            },
+                            "midi_prompt": "MIDI alternating sus in D",
+                            "difficulty": "beginner",
+                            "estimated_duration_minutes": 10
+                        },
+                        # New exercise
+                        {
+                            "title": "Sus Resolution Drill",
+                            "description": "Dsus4 to Dmaj, repeat.",
+                            "exercise_type": "progression",
+                            "content": {
+                                "chords": [
+                                    "Dsus4",
+                                    "D"
+                                ]
+                            },
+                            "midi_prompt": "MIDI sus resolution loop",
+                            "difficulty": "beginner",
+                            "estimated_duration_minutes": 10
+                        }
+                    ]
+                },
+                {
+                    "title": "Slash Chords",
+                    "description": "Creating movement over static bass lines.",
+                    "week_number": 2,
+                    "concepts": [
+                        "Slash Chords",
+                        "Inversions"
+                    ],
+                    "theory_content": {
+                        "summary": "Slash chords add bass movement, enhancing flow in worship songs.",
+                        "key_points": [
+                            "e.g., C/G = C over G bass",
+                            "For walking bass effects"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "1 over 5 Slash Chords",
+                            "description": "Playing C/G, F/C for smooth voice leading.",
+                            "exercise_type": "progression",
+                            "content": {
+                                "chords": [
+                                    "C/G",
+                                    "F/C"
+                                ]
+                            },
+                            "midi_prompt": "MIDI slash progression",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 15
+                        },
+                        # New exercise
+                        {
+                            "title": "Slash in 1-5-6-4",
+                            "description": "Add slashes to standard progression.",
+                            "exercise_type": "progression",
+                            "content": {
+                                "key": "G",
+                                "chords": [
+                                    "G",
+                                    "D/F#",
+                                    "Em",
+                                    "C"
+                                ]
+                            },
+                            "midi_prompt": "MIDI worship progression with slashes",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 15
+                        }
+                    ]
+                },
+                # New lesson
+                {
+                    "title": "Pad Textures",
+                    "description": "Sustained chords for atmosphere.",
+                    "week_number": 3,
+                    "concepts": [
+                        "Pads",
+                        "Sustain"
+                    ],
+                    "theory_content": {
+                        "summary": "Pads fill space in band settings, using whole notes.",
+                        "key_points": [
+                            "High register for airiness",
+                            "Blend with guitar"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Pad over 1-4",
+                            "description": "Hold pads over I-IV.",
+                            "exercise_type": "texture",
+                            "content": {
+                                "key": "E"
+                            },
+                            "midi_prompt": "MIDI pad loop",
+                            "difficulty": "beginner",
+                            "estimated_duration_minutes": 12
+                        }
+                    ]
+                }
+            ]
+        },
+        # New module
+        {
+            "title": "Advanced Worship Dynamics",
+            "description": "Building intensity and spontaneous play.",
+            "theme": "worship_advanced",
+            "start_week": 5,
+            "end_week": 8,
+            "prerequisites": [
+                "Essentials"
+            ],
+            "outcomes": [
+                "Dynamics Builds",
+                "Spontaneous Sections",
+                "Modulation"
+            ],
+            "lessons": [
+                {
+                    "title": "Dynamic Builds",
+                    "description": "From quiet to loud for emotional arcs.",
+                    "week_number": 5,
+                    "concepts": [
+                        "Crescendo",
+                        "Intensity"
+                    ],
+                    "theory_content": {
+                        "summary": "Dynamics guide worship flow, mirroring lyrics.",
+                        "key_points": [
+                            "Start soft with pads, add rhythm"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Build on 1-5-6-4",
+                            "description": "Increase volume and complexity.",
+                            "exercise_type": "dynamics",
+                            "content": {
+                                "progression": "1-5-6-4"
+                            },
+                            "midi_prompt": "MIDI dynamic build",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 20
+                        }
+                    ]
+                },
+                {
+                    "title": "Spontaneous Worship",
+                    "description": "Improv over loops for free sections.",
+                    "week_number": 6,
+                    "concepts": [
+                        "Improv",
+                        "Loops"
+                    ],
+                    "exercises": [
+                        {
+                            "title": "Improv over Pad Loop",
+                            "description": "Add melodies to sustained pads.",
+                            "exercise_type": "improv",
+                            "content": {
+                                "key": "A"
+                            },
+                            "midi_prompt": "Generate pad MIDI for improv",
+                            "difficulty": "advanced",
+                            "estimated_duration_minutes": 25
+                        }
+                    ]
+                }
+            ]
+        },
+        # Additional new module for extension
+        {
+            "title": "Worship Band Integration",
+            "description": "Playing with team, transposing, leading.",
+            "theme": "worship_band",
+            "start_week": 9,
+            "end_week": 12,
+            "outcomes": [
+                "Transposition",
+                "Team Cues",
+                "Full Arrangements"
+            ],
+            "lessons": [
+                {
+                    "title": "Transposition Skills",
+                    "description": "Using Nashville numbers to change keys.",
+                    "week_number": 9,
+                    "concepts": [
+                        "Nashville System",
+                        "Quick Transpose"
+                    ],
+                    "exercises": [
+                        {
+                            "title": "Transpose 1-5-6-4",
+                            "description": "From G to Eb.",
+                            "exercise_type": "transposition",
+                            "content": {
+                                "original_key": "G",
+                                "new_key": "Eb"
+                            },
+                            "midi_prompt": "MIDI in both keys",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 15
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+
+BLUES_MASTER_CLASS = {
+    "title": "Blues Master Class",
+    "description": "Master authentic blues piano from the ground up. Learn 12-bar blues, turnarounds, shuffle rhythms, and classic licks from the masters. Expanded with regional styles and improv.",
+    "modules": [
+        {
+            "title": "Blues Fundamentals",
+            "description": "The backbone of blues piano: 12-bar form and the blues scale.",
+            "theme": "blues_basics",
+            "start_week": 1,
+            "end_week": 4,
+            "prerequisites": [
+                "None"
+            ],
+            "outcomes": [
+                "12-Bar Blues Form",
+                "Blues Scale Mastery",
+                "Dominant 7th Voicings",
+                "Shuffle Rhythms"
+            ],
+            "lessons": [
+                {
+                    "title": "The 12-Bar Blues Form",
+                    "description": "Understanding the I-IV-V structure that defines the blues.",
+                    "week_number": 1,
+                    "concepts": [
+                        "12-Bar Form",
+                        "Dominant 7ths",
+                        "Shuffle Feel"
+                    ],
+                    "theory_content": {
+                        "summary": "12-bar is the core structure, using dominant chords for tension.",
+                        "key_points": [
+                            "Bars 1-4: I, 5-6: IV, 7-8: I, 9: V, 10: IV, 11-12: I-V turnaround"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Basic 12-Bar in C",
+                            "description": "Play the classic C7-F7-G7 progression with proper form.",
+                            "exercise_type": "progression",
+                            "content": {
+                                "chords": [
+                                    "C7",
+                                    "C7",
+                                    "C7",
+                                    "C7",
+                                    "F7",
+                                    "F7",
+                                    "C7",
+                                    "C7",
+                                    "G7",
+                                    "F7",
+                                    "C7",
+                                    "G7"
+                                ],
+                                "key": "C"
+                            },
+                            "midi_prompt": "MIDI 12-bar in C with shuffle",
+                            "difficulty": "beginner",
+                            "estimated_duration_minutes": 20
+                        },
+                        # New exercise
+                        {
+                            "title": "12-Bar Variations",
+                            "description": "Add quick IV in bar 2.",
+                            "exercise_type": "progression",
+                            "content": {
+                                "key": "C",
+                                "variation": "Quick IV"
+                            },
+                            "midi_prompt": "MIDI variation 12-bar",
+                            "difficulty": "beginner",
+                            "estimated_duration_minutes": 20
+                        }
+                    ]
+                },
+                {
+                    "title": "The Blues Scale",
+                    "description": "Adding the 'blue notes' that give the blues its soulful sound.",
+                    "week_number": 2,
+                    "concepts": [
+                        "Minor Pentatonic",
+                        "Blue Note (b5)",
+                        "Call and Response"
+                    ],
+                    "theory_content": {
+                        "summary": "Blues scale combines minor pentatonic with b5 for expressive bends.",
+                        "key_points": [
+                            "Use in right hand over left-hand comping",
+                            "Call-response mimics vocal blues"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "C Blues Scale Patterns",
+                            "description": "Practice the C blues scale in all octaves.",
+                            "exercise_type": "scale",
+                            "content": {
+                                "scale": "C Blues",
+                                "notes": [
+                                    "C",
+                                    "Eb",
+                                    "F",
+                                    "Gb",
+                                    "G",
+                                    "Bb",
+                                    "C"
+                                ]
+                            },
+                            "midi_prompt": "MIDI blues scale patterns",
+                            "difficulty": "beginner",
+                            "estimated_duration_minutes": 15
+                        },
+                        # New exercise
+                        {
+                            "title": "Blues Scale Riffs",
+                            "description": "Create simple riffs using scale.",
+                            "exercise_type": "lick",
+                            "content": {
+                                "key": "C"
+                            },
+                            "midi_prompt": "Generate MIDI riffs examples",
+                            "difficulty": "beginner",
+                            "estimated_duration_minutes": 15
+                        }
+                    ]
+                },
+                # New lesson
+                {
+                    "title": "Shuffle Rhythms",
+                    "description": "The swung feel essential to blues groove.",
+                    "week_number": 3,
+                    "concepts": [
+                        "Shuffle",
+                        "Triplet Feel"
+                    ],
+                    "theory_content": {
+                        "summary": "Shuffle swings eighth notes for driving rhythm.",
+                        "key_points": [
+                            "Long-short pattern",
+                            "Common in Chicago blues"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Shuffle Comping",
+                            "description": "Comping 7ths with shuffle.",
+                            "exercise_type": "rhythm",
+                            "content": {
+                                "key": "Bb"
+                            },
+                            "midi_prompt": "MIDI shuffle backing",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 18
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "title": "Blues Turnarounds & Licks",
+            "description": "Classic turnarounds and signature licks from blues legends.",
+            "theme": "blues_advanced",
+            "start_week": 5,
+            "end_week": 8,
+            "prerequisites": [
+                "Fundamentals"
+            ],
+            "outcomes": [
+                "Classic Turnarounds",
+                "Intro Licks",
+                "Ending Tags",
+                "Legend Licks"
+            ],
+            "lessons": [
+                {
+                    "title": "The Classic Turnaround",
+                    "description": "The I-VI-ii-V turnaround that sets up the next chorus.",
+                    "week_number": 5,
+                    "concepts": [
+                        "Turnarounds",
+                        "Chromatic Movement",
+                        "Walking Bass"
+                    ],
+                    "theory_content": {
+                        "summary": "Turnarounds resolve the form, often with chromatic lines.",
+                        "key_points": [
+                            "I-VI-ii-V cycle",
+                            "Add walking bass for momentum"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Standard Blues Turnaround in C",
+                            "description": "C7 - A7 - Dm7 - G7 with walking bass.",
+                            "exercise_type": "progression",
+                            "content": {
+                                "chords": [
+                                    "C7",
+                                    "A7",
+                                    "Dm7",
+                                    "G7"
+                                ],
+                                "key": "C"
+                            },
+                            "midi_prompt": "MIDI turnaround with bass",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 20
+                        },
+                        # New exercise
+                        {
+                            "title": "Chromatic Turnaround",
+                            "description": "Add chromatics to bass line.",
+                            "exercise_type": "bass",
+                            "content": {
+                                "key": "C"
+                            },
+                            "midi_prompt": "MIDI chromatic turnaround",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 20
+                        }
+                    ]
+                },
+                # New lesson
+                {
+                    "title": "Licks from Legends",
+                    "description": "Transcribe licks from Ray Charles, Otis Spann.",
+                    "week_number": 6,
+                    "concepts": [
+                        "Transcription",
+                        "Bends"
+                    ],
+                    "theory_content": {
+                        "summary": "Licks are short phrases, building blocks for solos.",
+                        "key_points": [
+                            "Bend blue notes",
+                            "Vary dynamics"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Otis Spann Lick",
+                            "description": "Classic boogie lick in A.",
+                            "exercise_type": "lick",
+                            "content": {
+                                "key": "A"
+                            },
+                            "midi_prompt": "MIDI Spann lick example",
+                            "difficulty": "advanced",
+                            "estimated_duration_minutes": 15
+                        }
+                    ]
+                }
+            ]
+        },
+        # New module
+        {
+            "title": "Advanced Blues Styles & Improv",
+            "description": "Regional variations and full solos.",
+            "theme": "blues_styles",
+            "start_week": 9,
+            "end_week": 12,
+            "outcomes": [
+                "Chicago Blues",
+                "Delta Blues",
+                "Full Solos",
+                "Fusion"
+            ],
+            "lessons": [
+                {
+                    "title": "Chicago Blues Style",
+                    "description": "Uptempo shuffles and horn-like lines.",
+                    "week_number": 9,
+                    "concepts": [
+                        "Chicago Groove",
+                        "Horn Riffs"
+                    ],
+                    "theory_content": {
+                        "summary": "Chicago adds urban energy with faster tempos.",
+                        "key_points": [
+                            "Heavy shuffle",
+                            "Incorporate major blues scale"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Chicago 12-Bar",
+                            "description": "Play with horn stabs.",
+                            "exercise_type": "progression",
+                            "content": {
+                                "key": "E"
+                            },
+                            "midi_prompt": "MIDI Chicago blues backing",
+                            "difficulty": "advanced",
+                            "estimated_duration_minutes": 25
+                        }
+                    ]
+                },
+                {
+                    "title": "Blues Improv Solos",
+                    "description": "Build 3-chorus solos over backing.",
+                    "week_number": 10,
+                    "concepts": [
+                        "Solo Structure",
+                        "Motifs"
+                    ],
+                    "exercises": [
+                        {
+                            "title": "3-Chorus Solo",
+                            "description": "Improv over F blues.",
+                            "exercise_type": "improv",
+                            "content": {
+                                "form": "12-bar x3"
+                            },
+                            "midi_prompt": "Generate backing MIDI for solo",
+                            "difficulty": "advanced",
+                            "estimated_duration_minutes": 30
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+
+BERKLEE_JAZZ_ESSENTIALS = {
+    "title": "Berklee Jazz Essentials",
+    "description": "A Berklee-inspired jazz curriculum covering shell voicings, guide tones, ii-V-I mastery, and beginning improvisation techniques. Expanded with rhythm section and bebop.",
+    "modules": [
+        {
+            "title": "Jazz Voicings Foundation",
+            "description": "Left-hand voicings that free your right hand for melodies.",
+            "theme": "jazz_voicings",
+            "start_week": 1,
+            "end_week": 4,
+            "prerequisites": [
+                "Basic theory"
+            ],
+            "outcomes": [
+                "Shell Voicings (A & B Forms)",
+                "Rootless Voicings",
+                "Voice Leading",
+                "Tensions Addition"
+            ],
+            "lessons": [
+                {
+                    "title": "Shell Voicings: Root-3rd-7th",
+                    "description": "The essential left-hand voicings used by jazz professionals.",
+                    "week_number": 1,
+                    "concepts": [
+                        "Shell Voicings",
+                        "A Form (R-3-7)",
+                        "B Form (R-7-3)"
+                    ],
+                    "theory_content": {
+                        "summary": "Berklee emphasizes shells for comping in ensembles.",
+                        "key_points": [
+                            "Choose form for smooth leading",
+                            "Practice with metronome"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "ii-V-I Shells Through All Keys",
+                            "description": "Play Dm7-G7-Cmaj7 shells around the cycle of 4ths.",
+                            "exercise_type": "voicing",
+                            "content": {
+                                "pattern": "ii-V-I Cycle",
+                                "voicing_type": "shell"
+                            },
+                            "midi_prompt": "MIDI shells cycle all keys",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 25
+                        },
+                        # New exercise
+                        {
+                            "title": "Shell Comping",
+                            "description": "Comp shells behind a melody line.",
+                            "exercise_type": "comping",
+                            "content": {
+                                "progression": "ii-V-I"
+                            },
+                            "midi_prompt": "MIDI melody for comping practice",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 25
+                        }
+                    ]
+                },
+                {
+                    "title": "Rootless Voicings",
+                    "description": "Drop the root for smoother, more sophisticated harmony.",
+                    "week_number": 2,
+                    "concepts": [
+                        "Type A Rootless",
+                        "Type B Rootless",
+                        "Tensions"
+                    ],
+                    "theory_content": {
+                        "summary": "Rootless allows bass player freedom, common in big bands.",
+                        "key_points": [
+                            "Type A: 3-7-9-13",
+                            "Type B: 7-3-6-9"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Rootless ii-V-I",
+                            "description": "Practice rootless voicings with the bassist playing roots.",
+                            "exercise_type": "voicing",
+                            "content": {
+                                "progression": "ii-V-I"
+                            },
+                            "midi_prompt": "MIDI rootless with bass",
+                            "difficulty": "advanced",
+                            "estimated_duration_minutes": 20
+                        },
+                        # New exercise
+                        {
+                            "title": "Add Tensions to Rootless",
+                            "description": "Include 9ths and 13ths.",
+                            "exercise_type": "voicing",
+                            "content": {
+                                "chords": "Dm9 G13 Cmaj9"
+                            },
+                            "midi_prompt": "MIDI tensed rootless",
+                            "difficulty": "advanced",
+                            "estimated_duration_minutes": 20
+                        }
+                    ]
+                },
+                # New lesson
+                {
+                    "title": "Voice Leading Principles",
+                    "description": "Smooth chord connections.",
+                    "week_number": 3,
+                    "concepts": [
+                        "Common Tones",
+                        "Half-Step Movement"
+                    ],
+                    "theory_content": {
+                        "summary": "Good leading minimizes hand movement.",
+                        "key_points": [
+                            "Keep common notes",
+                            "Resolve 7ths down"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Voice Led ii-V-I",
+                            "description": "Apply leading to cycle.",
+                            "exercise_type": "progression",
+                            "content": {
+                                "cycle": "4ths"
+                            },
+                            "midi_prompt": "MIDI voice led example",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 20
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "title": "Jazz Standards & Improvisation",
+            "description": "Apply your voicings to real jazz standards and begin soloing.",
+            "theme": "jazz_standards",
+            "start_week": 5,
+            "end_week": 10,
+            "prerequisites": [
+                "Voicings"
+            ],
+            "outcomes": [
+                "Standard Repertoire",
+                "Chord Tone Soloing",
+                "Approach Notes",
+                "Form Analysis"
+            ],
+            "lessons": [
+                {
+                    "title": "Your First Jazz Standard: Autumn Leaves",
+                    "description": "Learn the harmony and melody of this essential standard.",
+                    "week_number": 5,
+                    "concepts": [
+                        "ii-V-I Major",
+                        "ii-V-i Minor",
+                        "Form (AABA)"
+                    ],
+                    "theory_content": {
+                        "summary": "Standards like Autumn Leaves teach common changes.",
+                        "key_points": [
+                            "AABA form",
+                            "Minor key modulations"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Autumn Leaves Head",
+                            "description": "Play the melody with left-hand shell voicings.",
+                            "exercise_type": "repertoire",
+                            "content": {
+                                "song": "Autumn Leaves",
+                                "key": "Gm"
+                            },
+                            "midi_prompt": "MIDI head arrangement",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 30
+                        },
+                        # New exercise
+                        {
+                            "title": "Solo on Autumn Leaves",
+                            "description": "Improv using chord tones.",
+                            "exercise_type": "improv",
+                            "content": {
+                                "song": "Autumn Leaves"
+                            },
+                            "midi_prompt": "Backing MIDI for solo",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 30
+                        }
+                    ]
+                },
+                # New lesson
+                {
+                    "title": "Blue Bossa Analysis",
+                    "description": "Latin-jazz standard with bossa feel.",
+                    "week_number": 6,
+                    "concepts": [
+                        "Bossa Rhythm",
+                        "Alt Chords"
+                    ],
+                    "theory_content": {
+                        "summary": "Combines ii-V with Latin groove.",
+                        "key_points": [
+                            "Use altered dominants"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Blue Bossa Comp and Solo",
+                            "description": "Comp with rootless, solo with approaches.",
+                            "exercise_type": "repertoire",
+                            "content": {
+                                "key": "Cm"
+                            },
+                            "midi_prompt": "MIDI Blue Bossa full",
+                            "difficulty": "advanced",
+                            "estimated_duration_minutes": 25
+                        }
+                    ]
+                }
+            ]
+        },
+        # New module
+        {
+            "title": "Rhythm Changes & Bebop",
+            "description": "Advanced forms and fast improv.",
+            "theme": "jazz_bebop",
+            "start_week": 11,
+            "end_week": 16,
+            "outcomes": [
+                "Rhythm Changes",
+                "Bebop Lines",
+                "Transcription"
+            ],
+            "lessons": [
+                {
+                    "title": "Rhythm Changes",
+                    "description": "I Got Rhythm form, AABA with bridge.",
+                    "week_number": 11,
+                    "concepts": [
+                        "Rhythm Form",
+                        "Bridge Cycle"
+                    ],
+                    "theory_content": {
+                        "summary": "Based on Gershwin, used in many bebop tunes.",
+                        "key_points": [
+                            "Bridge: iii-VI-ii-V cycle"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Rhythm Changes in Bb",
+                            "description": "Play changes and head.",
+                            "exercise_type": "repertoire",
+                            "content": {
+                                "key": "Bb"
+                            },
+                            "midi_prompt": "MIDI rhythm changes",
+                            "difficulty": "advanced",
+                            "estimated_duration_minutes": 30
+                        }
+                    ]
+                },
+                {
+                    "title": "Bebop Lines",
+                    "description": "Fast eighth-note lines with chromatics.",
+                    "week_number": 12,
+                    "concepts": [
+                        "Bebop Vocabulary",
+                        "Enclosures"
+                    ],
+                    "exercises": [
+                        {
+                            "title": "Parker Lick Transcription",
+                            "description": "Learn a Charlie Parker lick.",
+                            "exercise_type": "transcription",
+                            "content": {
+                                "artist": "Charlie Parker"
+                            },
+                            "midi_prompt": "MIDI Parker lick slow/fast",
+                            "difficulty": "advanced",
+                            "estimated_duration_minutes": 25
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+
+CLASSICAL_ABRSM = {
+    "title": "Classical Piano: ABRSM Grades 1-3",
+    "description": "A structured classical piano curriculum inspired by ABRSM grading. Covers scales, arpeggios, sight-reading, and graded repertoire. Expanded with Grade 3 and aural skills.",
+    "modules": [
+        {
+            "title": "Grade 1: Foundations",
+            "description": "Building proper technique and musicality from the start.",
+            "theme": "classical_grade1",
+            "start_week": 1,
+            "end_week": 5,
+            "prerequisites": [
+                "None"
+            ],
+            "outcomes": [
+                "C & G Major Scales",
+                "Basic Arpeggios",
+                "Simple Repertoire",
+                "Hand Coordination"
+            ],
+            "lessons": [
+                {
+                    "title": "Scales: C & G Major",
+                    "description": "Two-octave scales with proper fingering.",
+                    "week_number": 1,
+                    "concepts": [
+                        "Scale Fingering",
+                        "Hand Position",
+                        "Thumb Under"
+                    ],
+                    "theory_content": {
+                        "summary": "Scales build finger strength and key awareness.",
+                        "key_points": [
+                            "Thumb under for smooth crossing",
+                            "Even tempo"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "C Major Scale (2 Octaves)",
+                            "description": "Hands separate, then together at 60 BPM.",
+                            "exercise_type": "scale",
+                            "content": {
+                                "scale": "C Major",
+                                "octaves": 2
+                            },
+                            "midi_prompt": "MIDI C major scale HS/HT",
+                            "difficulty": "beginner",
+                            "estimated_duration_minutes": 10
+                        },
+                        # New exercise
+                        {
+                            "title": "G Major Scale Practice",
+                            "description": "Focus on F# fingering.",
+                            "exercise_type": "scale",
+                            "content": {
+                                "scale": "G Major"
+                            },
+                            "midi_prompt": "MIDI G major",
+                            "difficulty": "beginner",
+                            "estimated_duration_minutes": 10
+                        }
+                    ]
+                },
+                {
+                    "title": "Arpeggios: C & G Major",
+                    "description": "Two-octave arpeggios with smooth thumb crossings.",
+                    "week_number": 2,
+                    "concepts": [
+                        "Arpeggio Fingering",
+                        "Wrist Rotation"
+                    ],
+                    "theory_content": {
+                        "summary": "Arpeggios teach chord breakdown and rotation.",
+                        "key_points": [
+                            "Wrist circles for ease",
+                            "Build speed gradually"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "C Major Arpeggio (2 Octaves)",
+                            "description": "C-E-G pattern, hands separate.",
+                            "exercise_type": "arpeggio",
+                            "content": {
+                                "notes": "C E G"
+                            },
+                            "midi_prompt": "MIDI arpeggio HS",
+                            "difficulty": "beginner",
+                            "estimated_duration_minutes": 10
+                        },
+                        # New exercise
+                        {
+                            "title": "Arpeggio with Dynamics",
+                            "description": "Add crescendo/diminuendo.",
+                            "exercise_type": "arpeggio",
+                            "content": {
+                                "scale": "G Major"
+                            },
+                            "midi_prompt": "MIDI dynamic arpeggio",
+                            "difficulty": "beginner",
+                            "estimated_duration_minutes": 12
+                        }
+                    ]
+                },
+                # New lesson
+                {
+                    "title": "Simple Repertoire",
+                    "description": "Play pieces like Minuet in G.",
+                    "week_number": 3,
+                    "concepts": [
+                        "Phrasing",
+                        "Articulation"
+                    ],
+                    "theory_content": {
+                        "summary": "Repertoire applies technique musically.",
+                        "key_points": [
+                            "Legato touch",
+                            "Observe dynamics"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Minuet in G",
+                            "description": "Learn melody and accompaniment.",
+                            "exercise_type": "repertoire",
+                            "content": {
+                                "piece": "Minuet in G"
+                            },
+                            "midi_prompt": "MIDI Minuet slow",
+                            "difficulty": "beginner",
+                            "estimated_duration_minutes": 20
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "title": "Grade 2: Expanding Technique",
+            "description": "More keys, faster tempos, and expressive playing.",
+            "theme": "classical_grade2",
+            "start_week": 6,
+            "end_week": 10,
+            "prerequisites": [
+                "Grade 1"
+            ],
+            "outcomes": [
+                "D, F, Bb Major Scales",
+                "Am, Dm Scales",
+                "Dynamics & Phrasing",
+                "Sight-Reading Basics"
+            ],
+            "lessons": [
+                {
+                    "title": "Minor Scales: A & D Natural Minor",
+                    "description": "Introduction to minor mode and its emotional quality.",
+                    "week_number": 6,
+                    "concepts": [
+                        "Natural Minor",
+                        "Relative Major/Minor"
+                    ],
+                    "theory_content": {
+                        "summary": "Minor scales add expressive depth.",
+                        "key_points": [
+                            "Relative to major",
+                            "Practice harmonic/minor variants later"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "A Natural Minor Scale",
+                            "description": "Two octaves, hands together at 72 BPM.",
+                            "exercise_type": "scale",
+                            "content": {
+                                "scale": "A Minor"
+                            },
+                            "midi_prompt": "MIDI A minor HT",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 10
+                        },
+                        # New exercise
+                        {
+                            "title": "D Minor Arpeggio",
+                            "description": "D F A pattern.",
+                            "exercise_type": "arpeggio",
+                            "content": {
+                                "notes": "D F A"
+                            },
+                            "midi_prompt": "MIDI D minor arpeggio",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 10
+                        }
+                    ]
+                },
+                # New lesson
+                {
+                    "title": "Sight-Reading Drills",
+                    "description": "Read simple pieces at first sight.",
+                    "week_number": 7,
+                    "concepts": [
+                        "Sight-Reading",
+                        "Key Signatures"
+                    ],
+                    "theory_content": {
+                        "summary": "Sight-reading builds independence.",
+                        "key_points": [
+                            "Scan for keys, time",
+                            "Play slowly first"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Grade 2 Sight-Read Piece",
+                            "description": "Short excerpt practice.",
+                            "exercise_type": "sight_reading",
+                            "content": {
+                                "level": "Grade 2"
+                            },
+                            "midi_prompt": "Generate MIDI for sight-read example",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 15
+                        }
+                    ]
+                }
+            ]
+        },
+        # New module
+        {
+            "title": "Grade 3: Intermediate Mastery",
+            "description": "Chromatic scales, more repertoire, aural tests.",
+            "theme": "classical_grade3",
+            "start_week": 11,
+            "end_week": 15,
+            "outcomes": [
+                "Chromatic Scales",
+                "Broken Chords",
+                "Aural Skills",
+                "Baroque Repertoire"
+            ],
+            "lessons": [
+                {
+                    "title": "Chromatic Scales",
+                    "description": "One octave chromatic for finger agility.",
+                    "week_number": 11,
+                    "concepts": [
+                        "Chromatics",
+                        "Fingering Patterns"
+                    ],
+                    "theory_content": {
+                        "summary": "Chromatics improve dexterity.",
+                        "key_points": [
+                            "Alternate fingers 1-2-3"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Chromatic Scale Starting on C",
+                            "description": "Hands separate, 80 BPM.",
+                            "exercise_type": "scale",
+                            "content": {
+                                "starting_note": "C"
+                            },
+                            "midi_prompt": "MIDI chromatic scale",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 15
+                        }
+                    ]
+                },
+                {
+                    "title": "Aural Skills",
+                    "description": "Identify intervals, clap rhythms.",
+                    "week_number": 12,
+                    "concepts": [
+                        "Intervals",
+                        "Rhythm Echo"
+                    ],
+                    "exercises": [
+                        {
+                            "title": "Interval Recognition",
+                            "description": "Hear and name major 3rd, perfect 5th.",
+                            "exercise_type": "aural",
+                            "content": {
+                                "intervals": [
+                                    "M3",
+                                    "P5"
+                                ]
+                            },
+                            "midi_prompt": "MIDI interval examples",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 20
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+
+LATIN_RHYTHMS = {
+    "title": "Latin Piano Rhythms",
+    "description": "Unlock the rhythmic world of Latin piano. Learn bossa nova, salsa montuno, Afro-Cuban patterns, and clave-based grooves. Expanded with mambo and fusion.",
+    "modules": [
+        {
+            "title": "Bossa Nova Essentials",
+            "description": "The smooth Brazilian groove that changed jazz.",
+            "theme": "latin_bossa",
+            "start_week": 1,
+            "end_week": 4,
+            "prerequisites": [
+                "Basic rhythm"
+            ],
+            "outcomes": [
+                "Bossa Nova Rhythm",
+                "Chord Voicings",
+                "Bass Patterns",
+                "Syncopation Drills"
+            ],
+            "lessons": [
+                {
+                    "title": "The Bossa Nova Groove",
+                    "description": "The iconic left-hand pattern behind Girl from Ipanema.",
+                    "week_number": 1,
+                    "concepts": [
+                        "Syncopation",
+                        "Bass + Chord Pattern",
+                        "Anticipations"
+                    ],
+                    "theory_content": {
+                        "summary": "Bossa combines samba with jazz harmony.",
+                        "key_points": [
+                            "Bass on 1, chord on &2",
+                            "Anticipate beats"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Classic Bossa Pattern in Dm",
+                            "description": "Root on beat 1, chord anticipating beat 2.",
+                            "exercise_type": "rhythm",
+                            "content": {
+                                "key": "Dm",
+                                "pattern": "Bossa Nova"
+                            },
+                            "midi_prompt": "MIDI bossa pattern loop",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 20
+                        },
+                        # New exercise
+                        {
+                            "title": "Bossa over 2-5-1",
+                            "description": "Apply pattern to progression.",
+                            "exercise_type": "progression",
+                            "content": {
+                                "chords": "Dm7 G7 Cmaj7"
+                            },
+                            "midi_prompt": "MIDI bossa progression",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 20
+                        }
+                    ]
+                },
+                # New lesson
+                {
+                    "title": "Bossa Voicings",
+                    "description": "Jazz-influenced chords for bossa.",
+                    "week_number": 2,
+                    "concepts": [
+                        "Maj9",
+                        "m9"
+                    ],
+                    "theory_content": {
+                        "summary": "Extended chords add sophistication.",
+                        "key_points": [
+                            "Use 9ths for color"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Bossa Chords in F",
+                            "description": "Fm9 Bb13 Ebmaj9",
+                            "exercise_type": "voicing",
+                            "content": {
+                                "key": "F"
+                            },
+                            "midi_prompt": "MIDI bossa voicings",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 15
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "title": "Salsa Montuno",
+            "description": "The driving piano pattern behind salsa music.",
+            "theme": "latin_salsa",
+            "start_week": 5,
+            "end_week": 8,
+            "prerequisites": [
+                "Bossa"
+            ],
+            "outcomes": [
+                "2-3 Clave",
+                "Montuno Patterns",
+                "Salsa Harmony",
+                "Tumbao Bass"
+            ],
+            "lessons": [
+                {
+                    "title": "Understanding Clave",
+                    "description": "The rhythmic key that unlocks all Afro-Cuban music.",
+                    "week_number": 5,
+                    "concepts": [
+                        "2-3 Clave",
+                        "3-2 Clave",
+                        "Clave Direction"
+                    ],
+                    "theory_content": {
+                        "summary": "Clave is the timeline for Latin rhythms.",
+                        "key_points": [
+                            "2-3: two hits then three",
+                            "Align patterns to clave"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Clapping Clave Patterns",
+                            "description": "Internalize the clave before playing.",
+                            "exercise_type": "rhythm",
+                            "content": {
+                                "pattern": "2-3 Clave"
+                            },
+                            "midi_prompt": "MIDI clave clap along",
+                            "difficulty": "beginner",
+                            "estimated_duration_minutes": 10
+                        },
+                        # New exercise
+                        {
+                            "title": "Piano over Clave",
+                            "description": "Play simple chords on clave.",
+                            "exercise_type": "rhythm",
+                            "content": {
+                                "chords": "Simple I-IV"
+                            },
+                            "midi_prompt": "MIDI clave with piano",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 15
+                        }
+                    ]
+                },
+                # New lesson
+                {
+                    "title": "Montuno Patterns",
+                    "description": "Repeating riffs in salsa.",
+                    "week_number": 6,
+                    "concepts": [
+                        "Montuno",
+                        "Call-Response"
+                    ],
+                    "theory_content": {
+                        "summary": "Montunos drive the energy in salsa.",
+                        "key_points": [
+                            "Syncopated octaves",
+                            "Vary with fills"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Basic Montuno in G",
+                            "description": "Octave pattern on G.",
+                            "exercise_type": "pattern",
+                            "content": {
+                                "key": "G"
+                            },
+                            "midi_prompt": "MIDI montuno loop",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 20
+                        }
+                    ]
+                }
+            ]
+        },
+        # New module
+        {
+            "title": "Afro-Cuban & Fusion",
+            "description": "Mambo, rumba, and Latin-jazz fusion.",
+            "theme": "latin_afrocuban",
+            "start_week": 9,
+            "end_week": 12,
+            "outcomes": [
+                "Tumbao",
+                "Mambo Patterns",
+                "Fusion Improv"
+            ],
+            "lessons": [
+                {
+                    "title": "Tumbao Bass Lines",
+                    "description": "Bass patterns for conga alignment.",
+                    "week_number": 9,
+                    "concepts": [
+                        "Tumbao",
+                        "Bass Syncopation"
+                    ],
+                    "theory_content": {
+                        "summary": "Tumbao anchors Afro-Cuban grooves.",
+                        "key_points": [
+                            "Accent &4",
+                            "Combine with montuno"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Tumbao in Am",
+                            "description": "Bass line practice.",
+                            "exercise_type": "bass",
+                            "content": {
+                                "key": "Am"
+                            },
+                            "midi_prompt": "MIDI tumbao",
+                            "difficulty": "advanced",
+                            "estimated_duration_minutes": 20
+                        }
+                    ]
+                },
+                {
+                    "title": "Latin-Jazz Fusion",
+                    "description": "Blend with jazz standards.",
+                    "week_number": 10,
+                    "concepts": [
+                        "Fusion",
+                        "Clave in Jazz"
+                    ],
+                    "exercises": [
+                        {
+                            "title": "Bossa-Blues Fusion",
+                            "description": "12-bar with bossa groove.",
+                            "exercise_type": "fusion",
+                            "content": {
+                                "form": "12-bar bossa"
+                            },
+                            "midi_prompt": "MIDI fusion backing",
+                            "difficulty": "advanced",
+                            "estimated_duration_minutes": 25
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+
+MODERN_RNB_PRODUCER = {
+    "title": "Modern R&B Producer Keys",
+    "description": "Keyboard techniques for R&B and hip-hop production. Lo-fi chords, trap soul progressions, and the sounds behind modern hits. Expanded with hip-hop beats and vocal harmony.",
+    "modules": [
+        {
+            "title": "Lo-Fi & Chill Chords",
+            "description": "The dreamy, nostalgic sounds of lo-fi hip-hop.",
+            "theme": "rnb_lofi",
+            "start_week": 1,
+            "end_week": 4,
+            "prerequisites": [
+                "Extended chords"
+            ],
+            "outcomes": [
+                "Major 7th Voicings",
+                "9th & 11th Extensions",
+                "Detuned Piano Sound",
+                "Sample Chops"
+            ],
+            "lessons": [
+                {
+                    "title": "Lo-Fi Chord Stacks",
+                    "description": "Creating lush, jazzy chords for beats.",
+                    "week_number": 1,
+                    "concepts": [
+                        "Maj7/9 Voicings",
+                        "Add9 Chords",
+                        "Cluster Voicings"
+                    ],
+                    "theory_content": {
+                        "summary": "Lo-fi uses warm, imperfect chords for vibe.",
+                        "key_points": [
+                            "Detune slightly",
+                            "Stack 7-9-11"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Lo-Fi ii-V-I",
+                            "description": "Dm9 - G13 - Cmaj9 with lo-fi voicings.",
+                            "exercise_type": "progression",
+                            "content": {
+                                "chords": [
+                                    "Dm9",
+                                    "G13",
+                                    "Cmaj9"
+                                ],
+                                "style": "lo-fi"
+                            },
+                            "midi_prompt": "MIDI lo-fi progression with detune",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 15
+                        },
+                        # New exercise
+                        {
+                            "title": "Chord Stacks with Effects",
+                            "description": "Add reverb sim in practice.",
+                            "exercise_type": "production",
+                            "content": {
+                                "effects": "reverb, tape warble"
+                            },
+                            "midi_prompt": "MIDI with lo-fi effects",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 15
+                        }
+                    ]
+                },
+                # New lesson
+                {
+                    "title": "Sample Chop Integration",
+                    "description": "Chop jazz samples into R&B chords.",
+                    "week_number": 2,
+                    "concepts": [
+                        "Sampling",
+                        "Chopping"
+                    ],
+                    "theory_content": {
+                        "summary": "Modern R&B often samples old records.",
+                        "key_points": [
+                            "Time-stretch for fit",
+                            "Layer with keys"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Chop a Maj7 Sample",
+                            "description": "Practice chopping in app.",
+                            "exercise_type": "production",
+                            "content": {
+                                "sample_type": "maj7 chord"
+                            },
+                            "midi_prompt": "Generate sample MIDI chop",
+                            "difficulty": "advanced",
+                            "estimated_duration_minutes": 20
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "title": "Trap Soul Progressions",
+            "description": "Dark, emotional progressions used in modern R&B.",
+            "theme": "rnb_trapsoul",
+            "start_week": 5,
+            "end_week": 8,
+            "prerequisites": [
+                "Lo-fi"
+            ],
+            "outcomes": [
+                "Minor Key Progressions",
+                "808 Bass Awareness",
+                "Melancholic Voicings",
+                "Hi-Hat Syncopation"
+            ],
+            "lessons": [
+                {
+                    "title": "The Trap Soul Sound",
+                    "description": "Bryson Tiller, 6LACK, and the melancholic minor vibe.",
+                    "week_number": 5,
+                    "concepts": [
+                        "i-VI-III-VII",
+                        "Minor 9ths",
+                        "Sparse Voicings"
+                    ],
+                    "theory_content": {
+                        "summary": "Trap soul blends R&B with trap beats.",
+                        "key_points": [
+                            "Sparse for space",
+                            "808 sub-bass"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Classic Trap Soul Progression",
+                            "description": "Am9 - Fmaj7 - Cmaj7 - G with 808 bass in mind.",
+                            "exercise_type": "progression",
+                            "content": {
+                                "chords": [
+                                    "Am9",
+                                    "Fmaj7",
+                                    "Cmaj7",
+                                    "G"
+                                ],
+                                "key": "Am"
+                            },
+                            "midi_prompt": "MIDI trap soul with 808",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 15
+                        },
+                        # New exercise
+                        {
+                            "title": "Sparse Voicing Drill",
+                            "description": "Play with minimal notes.",
+                            "exercise_type": "voicing",
+                            "content": {
+                                "style": "sparse"
+                            },
+                            "midi_prompt": "MIDI sparse trap",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 15
+                        }
+                    ]
+                },
+                # New lesson
+                {
+                    "title": "Hi-Hat and Rhythm Layers",
+                    "description": "Add trap rhythms to keys.",
+                    "week_number": 6,
+                    "concepts": [
+                        "Hi-Hats",
+                        "Triplets"
+                    ],
+                    "theory_content": {
+                        "summary": "Rhythms drive trap energy.",
+                        "key_points": [
+                            "Triplet hi-hats",
+                            "Sync with keys"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Trap Rhythm over Chords",
+                            "description": "Layer hi-hats on progression.",
+                            "exercise_type": "rhythm",
+                            "content": {
+                                "tempo": 140
+                            },
+                            "midi_prompt": "MIDI trap rhythm layer",
+                            "difficulty": "advanced",
+                            "estimated_duration_minutes": 20
+                        }
+                    ]
+                }
+            ]
+        },
+        # New module
+        {
+            "title": "Hip-Hop R&B Fusion",
+            "description": "Producing full tracks with vocals.",
+            "theme": "rnb_hiphop",
+            "start_week": 9,
+            "end_week": 12,
+            "outcomes": [
+                "Beat Production",
+                "Vocal Harmony Keys",
+                "Remix Techniques"
+            ],
+            "lessons": [
+                {
+                    "title": "Beat Making with Keys",
+                    "description": "Create beats around chord progressions.",
+                    "week_number": 9,
+                    "concepts": [
+                        "Beats",
+                        "Drum Programming"
+                    ],
+                    "theory_content": {
+                        "summary": "Keys anchor hip-hop beats.",
+                        "key_points": [
+                            "808 kicks on downbeats",
+                            "Melodic keys"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "R&B Beat Build",
+                            "description": "Add drums to lo-fi chords.",
+                            "exercise_type": "production",
+                            "content": {
+                                "elements": "chords + drums"
+                            },
+                            "midi_prompt": "MIDI full beat",
+                            "difficulty": "advanced",
+                            "estimated_duration_minutes": 25
+                        }
+                    ]
+                },
+                {
+                    "title": "Vocal Harmony Support",
+                    "description": "Keys under vocal lines.",
+                    "week_number": 10,
+                    "concepts": [
+                        "Harmony",
+                        "Ad-libs"
+                    ],
+                    "exercises": [
+                        {
+                            "title": "Harmony for Hook",
+                            "description": "Play under simulated vocals.",
+                            "exercise_type": "harmony",
+                            "content": {
+                                "key": "Em"
+                            },
+                            "midi_prompt": "MIDI vocal harmony keys",
+                            "difficulty": "advanced",
+                            "estimated_duration_minutes": 20
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+
+WORSHIP_BAND_READY = {
+    "title": "Worship Band Ready",
+    "description": "Practical keyboard skills for playing in a worship band. Nashville numbers, team dynamics, pad textures, and leading with confidence. Expanded with arrangement and tech setup.",
+    "modules": [
+        {
+            "title": "Worship Keys Fundamentals",
+            "description": "Essential skills for fitting into a worship band.",
+            "theme": "worship_fundamentals",
+            "start_week": 1,
+            "end_week": 4,
+            "prerequisites": [
+                "Basic worship chords"
+            ],
+            "outcomes": [
+                "Nashville Number System",
+                "Pad Playing",
+                "Team Dynamics",
+                "Chart Reading"
+            ],
+            "lessons": [
+                {
+                    "title": "The Nashville Number System",
+                    "description": "Transpose any song instantly using numbers.",
+                    "week_number": 1,
+                    "concepts": [
+                        "Number System",
+                        "Transposition",
+                        "Chord Charts"
+                    ],
+                    "theory_content": {
+                        "summary": "Numbers allow quick key changes for vocalists.",
+                        "key_points": [
+                            "1 = I, 5 = V",
+                            "Slash for inversions"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "1-5-6-4 in Every Key",
+                            "description": "The most common worship progression, all 12 keys.",
+                            "exercise_type": "progression",
+                            "content": {
+                                "roman_numerals": [
+                                    "I",
+                                    "V",
+                                    "vi",
+                                    "IV"
+                                ],
+                                "practice": "all_keys"
+                            },
+                            "midi_prompt": "MIDI 1-5-6-4 all keys",
+                            "difficulty": "beginner",
+                            "estimated_duration_minutes": 20
+                        },
+                        # New exercise
+                        {
+                            "title": "Transpose Chart",
+                            "description": "Transpose a simple chart from C to Eb.",
+                            "exercise_type": "transposition",
+                            "content": {
+                                "original_key": "C"
+                            },
+                            "midi_prompt": "MIDI transposed example",
+                            "difficulty": "beginner",
+                            "estimated_duration_minutes": 20
+                        }
+                    ]
+                },
+                {
+                    "title": "Playing Pads & Textures",
+                    "description": "Creating atmosphere without stepping on other instruments.",
+                    "week_number": 2,
+                    "concepts": [
+                        "Pad Sounds",
+                        "Sustained Chords",
+                        "Less is More"
+                    ],
+                    "theory_content": {
+                        "summary": "Pads provide foundation in full band.",
+                        "key_points": [
+                            "Use synth or piano sustain",
+                            "Avoid low register clash"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Whole Note Pad Exercise",
+                            "description": "Hold each chord for 4 bars, focusing on smooth transitions.",
+                            "exercise_type": "rhythm",
+                            "content": {
+                                "duration": "4 bars per chord"
+                            },
+                            "midi_prompt": "MIDI pad exercise",
+                            "difficulty": "beginner",
+                            "estimated_duration_minutes": 10
+                        },
+                        # New exercise
+                        {
+                            "title": "Pad with Band Sim",
+                            "description": "Play pads over drum/guitar MIDI.",
+                            "exercise_type": "texture",
+                            "content": {
+                                "band_elements": "drums, guitar"
+                            },
+                            "midi_prompt": "MIDI band sim for pads",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 15
+                        }
+                    ]
+                },
+                # New lesson
+                {
+                    "title": "Chart Reading",
+                    "description": "Interpret worship chord charts.",
+                    "week_number": 3,
+                    "concepts": [
+                        "Charts",
+                        "Repeats"
+                    ],
+                    "theory_content": {
+                        "summary": "Charts are shorthand for songs.",
+                        "key_points": [
+                            "DS al Coda",
+                            "Read rhythms implied"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Read a Standard Chart",
+                            "description": "Play Oceans chart.",
+                            "exercise_type": "repertoire",
+                            "content": {
+                                "song": "Oceans"
+                            },
+                            "midi_prompt": "MIDI chart example",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 20
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "title": "Leading & Dynamics",
+            "description": "Taking ownership of the keys role in worship.",
+            "theme": "worship_leading",
+            "start_week": 5,
+            "end_week": 8,
+            "prerequisites": [
+                "Fundamentals"
+            ],
+            "outcomes": [
+                "Building Dynamics",
+                "Intro/Outro Creation",
+                "Spontaneous Worship",
+                "Cues"
+            ],
+            "lessons": [
+                {
+                    "title": "Building Dynamics",
+                    "description": "Taking the congregation from quiet reflection to full praise.",
+                    "week_number": 5,
+                    "concepts": [
+                        "Crescendo",
+                        "Register Changes",
+                        "Rhythmic Intensity"
+                    ],
+                    "theory_content": {
+                        "summary": "Dynamics enhance worship experience.",
+                        "key_points": [
+                            "Shift registers",
+                            "Add layers gradually"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Dynamic Build Exercise",
+                            "description": "Start with pads, add rhythm, build to full chords.",
+                            "exercise_type": "dynamics",
+                            "content": {
+                                "levels": "soft to loud"
+                            },
+                            "midi_prompt": "MIDI build example",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 15
+                        },
+                        # New exercise
+                        {
+                            "title": "Build with Team",
+                            "description": "Simulate band build.",
+                            "exercise_type": "dynamics",
+                            "content": {
+                                "band": "simulated"
+                            },
+                            "midi_prompt": "MIDI team build",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 15
+                        }
+                    ]
+                },
+                # New lesson
+                {
+                    "title": "Intro/Outro Creation",
+                    "description": "Craft openings and closings.",
+                    "week_number": 6,
+                    "concepts": [
+                        "Intros",
+                        "Tags"
+                    ],
+                    "theory_content": {
+                        "summary": "Intros set tone, outros resolve.",
+                        "key_points": [
+                            "Use sus chords for intros",
+                            "Fade with pads"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Create Intro for 1-5-6-4",
+                            "description": "Sus build intro.",
+                            "exercise_type": "arrangement",
+                            "content": {
+                                "progression": "1-5-6-4"
+                            },
+                            "midi_prompt": "MIDI intro example",
+                            "difficulty": "intermediate",
+                            "estimated_duration_minutes": 20
+                        }
+                    ]
+                }
+            ]
+        },
+        # New module
+        {
+            "title": "Advanced Leadership & Tech",
+            "description": "Leading sets, using tech in worship.",
+            "theme": "worship_leadership",
+            "start_week": 9,
+            "end_week": 12,
+            "outcomes": [
+                "Set Building",
+                "Click Tracks",
+                "Multi-Keys Setup"
+            ],
+            "lessons": [
+                {
+                    "title": "Set Building",
+                    "description": "Arrange songs for flow.",
+                    "week_number": 9,
+                    "concepts": [
+                        "Flow",
+                        "Key Transitions"
+                    ],
+                    "theory_content": {
+                        "summary": "Sets maintain energy.",
+                        "key_points": [
+                            "Modulate between songs",
+                            "Theme consistency"
+                        ]
+                    },
+                    "exercises": [
+                        {
+                            "title": "Build a 3-Song Set",
+                            "description": "Choose and arrange.",
+                            "exercise_type": "set",
+                            "content": {
+                                "songs": 3
+                            },
+                            "midi_prompt": "MIDI set transitions",
+                            "difficulty": "advanced",
+                            "estimated_duration_minutes": 25
+                        }
+                    ]
+                },
+                {
+                    "title": "Using Click Tracks",
+                    "description": "Sync with band using clicks.",
+                    "week_number": 10,
+                    "concepts": [
+                        "Clicks",
+                        "In-Ears"
+                    ],
+                    "exercises": [
+                        {
+                            "title": "Play to Click",
+                            "description": "Practice with metronome click.",
+                            "exercise_type": "rhythm",
+                            "content": {
+                                "tempo": "varied"
+                            },
+                            "midi_prompt": "MIDI click track",
+                            "difficulty": "advanced",
+                            "estimated_duration_minutes": 20
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+### 
+
+## 

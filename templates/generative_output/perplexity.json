@@ -1,0 +1,1306 @@
+GENRE_CURRICULUMS = {
+    "classical": {
+        "id": "classical",
+        "title": "Classical Piano Foundations",
+        "description": "Technique, repertoire, and interpretation from Baroque to Romantic, with a focus on reading, touch, and musical form.",
+        "style_tags": [
+            "classical",
+            "reading",
+            "technique"
+        ],
+        "estimated_total_weeks": 24,
+        "modules": [
+            {
+                "id": "classical_technique_scales",
+                "title": "Technique & Scales",
+                "category_map": [
+                    "MELODIC & PHRASING VOCABULARY",
+                    "RHYTHMIC & TIME FEEL CONCEPTS"
+                ],
+                "start_week": 1,
+                "end_week": 6,
+                "outcomes": [
+                    "Play major and minor scales two octaves, hands together",
+                    "Develop basic legato, staccato and dynamic control"
+                ],
+                "lessons": [
+                    {
+                        "id": "classical_1_c_g_scales",
+                        "title": "C & G Major Scales",
+                        "description": "Two-octave scales with proper fingering and even tone.",
+                        "week_number": 1,
+                        "concepts": [
+                            "Scales & Modes",
+                            "Articulation & Inflection"
+                        ],
+                        "theory_links": [
+                            "Scale Fingering",
+                            "Hand Position"
+                        ],
+                        "exercises": [
+                            {
+                                "id": "ex_classical_c_major_scale",
+                                "title": "C Major 2-Octave Scale",
+                                "exercise_type": "scale",
+                                "difficulty": "beginner",
+                                "content": {
+                                    "scale": "C Major",
+                                    "octaves": 2,
+                                    "hands": "both",
+                                    "articulation": "legato",
+                                    "fingering_right": [
+                                        1,
+                                        2,
+                                        3,
+                                        1,
+                                        2,
+                                        3,
+                                        4,
+                                        5
+                                    ],
+                                    "fingering_left": [
+                                        5,
+                                        4,
+                                        3,
+                                        2,
+                                        1,
+                                        3,
+                                        2,
+                                        1
+                                    ],
+                                    "rhythm": "even_8ths"
+                                },
+                                "notation": {
+                                    "clef": "grand",
+                                    "time_signature": "4/4",
+                                    "beaming": "by_beat"
+                                },
+                                "playback": {
+                                    "tempo_bpm": 60,
+                                    "swing": False,
+                                    "loop": True
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "id": "classical_2_articulation_studies",
+                        "title": "Articulation & Simple Etudes",
+                        "description": "Short etudes focusing on legato vs staccato and dynamics.",
+                        "week_number": 2,
+                        "concepts": [
+                            "Articulation & Inflection",
+                            "Phrasing"
+                        ],
+                        "theory_links": [
+                            "Dynamics",
+                            "Phrasing"
+                        ],
+                        "exercises": [
+                            {
+                                "id": "ex_classical_etude_legato_staccato",
+                                "title": "Legato vs Staccato 8-Bar Study",
+                                "exercise_type": "repertoire",
+                                "difficulty": "beginner",
+                                "content": {
+                                    "key": "F Major",
+                                    "form": "8_bar_period",
+                                    "melodic_material": "scalar_and_arpeggiated",
+                                    "articulation_pattern": [
+                                        "legato_phrase",
+                                        "staccato_answer"
+                                    ]
+                                },
+                                "notation": {
+                                    "clef": "grand",
+                                    "time_signature": "4/4",
+                                    "phrasing_marks": True,
+                                    "dynamics": [
+                                        "p",
+                                        "mf"
+                                    ]
+                                },
+                                "playback": {
+                                    "tempo_bpm": 72,
+                                    "swing": False,
+                                    "loop": False
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "classical_repertoire_form",
+                "title": "Repertoire & Form",
+                "category_map": [
+                    "FORM & CONTEXTUAL AWARENESS",
+                    "REPERTOIRE & PRACTICAL APPLICATION"
+                ],
+                "start_week": 7,
+                "end_week": 24,
+                "outcomes": [
+                    "Play short classical pieces with correct form and phrasing",
+                    "Understand binary and ternary forms in real repertoire"
+                ],
+                "lessons": [
+                    {
+                        "id": "classical_3_minuet_binary",
+                        "title": "Simple Minuet in Binary Form",
+                        "description": "Baroque-style minuet with clear 2-part structure.",
+                        "week_number": 10,
+                        "concepts": [
+                            "Song Forms",
+                            "Dynamic & Textural Shaping"
+                        ],
+                        "theory_links": [
+                            "Binary Form",
+                            "Cadences"
+                        ],
+                        "exercises": [
+                            {
+                                "id": "ex_classical_minuet_g",
+                                "title": "Minuet in G-Style Piece",
+                                "exercise_type": "repertoire",
+                                "difficulty": "intermediate",
+                                "content": {
+                                    "key": "G Major",
+                                    "form": "binary",
+                                    "sections": [
+                                        "A",
+                                        "B"
+                                    ],
+                                    "phrases_per_section": 2
+                                },
+                                "notation": {
+                                    "clef": "grand",
+                                    "time_signature": "3/4",
+                                    "repeat_marks": True
+                                },
+                                "playback": {
+                                    "tempo_bpm": 96,
+                                    "swing": False,
+                                    "loop_sections": True
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "ragtime": {
+        "id": "ragtime",
+        "title": "Ragtime Piano Essentials",
+        "description": "Syncopated right-hand melodies over steady left-hand stride-style patterns in classic ragtime.",
+        "style_tags": [
+            "ragtime",
+            "syncopation",
+            "stride"
+        ],
+        "estimated_total_weeks": 16,
+        "modules": [
+            {
+                "id": "ragtime_rhythm_left_hand",
+                "title": "Left-Hand Oom-Pah & Time Feel",
+                "category_map": [
+                    "RHYTHMIC & TIME FEEL CONCEPTS",
+                    "FORM & CONTEXTUAL AWARENESS"
+                ],
+                "start_week": 1,
+                "end_week": 4,
+                "outcomes": [
+                    "Play steady oom-pah left hand in multiple keys",
+                    "Maintain strict time while adding syncopation in the right hand"
+                ],
+                "lessons": [
+                    {
+                        "id": "ragtime_1_left_hand_patterns",
+                        "title": "Basic Ragtime Left Hand",
+                        "description": "Alternating bass and chord patterns in 2/4 and 4/4.",
+                        "week_number": 1,
+                        "concepts": [
+                            "Time & Groove",
+                            "Comping Rhythm"
+                        ],
+                        "theory_links": [
+                            "OomPah Pattern"
+                        ],
+                        "exercises": [
+                            {
+                                "id": "ex_ragtime_left_c",
+                                "title": "Oom-Pah in C",
+                                "exercise_type": "rhythm",
+                                "difficulty": "beginner",
+                                "content": {
+                                    "key": "C Major",
+                                    "pattern": "bass_root_on_beat1_5th_on_beat3_chords_on_2_4",
+                                    "bars": 8
+                                },
+                                "notation": {
+                                    "clef": "bass",
+                                    "time_signature": "2/4",
+                                    "repeats": False
+                                },
+                                "playback": {
+                                    "tempo_bpm": 80,
+                                    "swing": False,
+                                    "loop": True
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "ragtime_syncopation_melody",
+                "title": "Right-Hand Syncopation & Phrasing",
+                "category_map": [
+                    "MELODIC & PHRASING VOCABULARY",
+                    "RHYTHMIC & TIME FEEL CONCEPTS"
+                ],
+                "start_week": 5,
+                "end_week": 10,
+                "outcomes": [
+                    "Play syncopated ragtime melodies against steady left hand",
+                    "Understand phrase grouping and accents in ragtime"
+                ],
+                "lessons": [
+                    {
+                        "id": "ragtime_2_syncopated_motif",
+                        "title": "Syncopated Motif Study",
+                        "description": "Short motif with off-beat accents over oom-pah.",
+                        "week_number": 6,
+                        "concepts": [
+                            "Rhythmic Vocabulary",
+                            "Phrasing Against the Time"
+                        ],
+                        "theory_links": [
+                            "Syncopation"
+                        ],
+                        "exercises": [
+                            {
+                                "id": "ex_ragtime_syncopation_8bars",
+                                "title": "8-Bar Syncopated Ragtime Fragment",
+                                "exercise_type": "repertoire",
+                                "difficulty": "intermediate",
+                                "content": {
+                                    "key": "F Major",
+                                    "melodic_style": "ragtime",
+                                    "phrase_length_bars": 4,
+                                    "right_hand_rhythms": [
+                                        "offbeat_8ths",
+                                        "syncopated_quarters"
+                                    ]
+                                },
+                                "notation": {
+                                    "clef": "grand",
+                                    "time_signature": "2/4",
+                                    "accent_marks": True
+                                },
+                                "playback": {
+                                    "tempo_bpm": 96,
+                                    "swing": False,
+                                    "separate_hands_mode": True
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "blues": {
+        "id": "blues",
+        "title": "Blues Piano Language",
+        "description": "12-bar form, blues scale vocabulary, turnarounds, and expressive phrasing.",
+        "style_tags": [
+            "blues",
+            "12_bar",
+            "improv"
+        ],
+        "estimated_total_weeks": 16,
+        "modules": [
+            {
+                "id": "blues_form_scale",
+                "title": "12-Bar Form & Blues Scale",
+                "category_map": [
+                    "MELODIC & PHRASING VOCABULARY",
+                    "FORM & CONTEXTUAL AWARENESS"
+                ],
+                "start_week": 1,
+                "end_week": 6,
+                "outcomes": [
+                    "Play 12-bar blues in at least two keys",
+                    "Use blues scale for simple licks"
+                ],
+                "lessons": [
+                    {
+                        "id": "blues_1_12bar_c",
+                        "title": "12-Bar Blues in C",
+                        "description": "Classic I–IV–V progression with basic voicings.",
+                        "week_number": 1,
+                        "concepts": [
+                            "Song Forms",
+                            "Functional Analysis"
+                        ],
+                        "theory_links": [
+                            "12-Bar Structure"
+                        ],
+                        "exercises": [
+                            {
+                                "id": "ex_blues_12bar_c",
+                                "title": "C 12-Bar Basic Pattern",
+                                "exercise_type": "progression",
+                                "difficulty": "beginner",
+                                "content": {
+                                    "key": "C",
+                                    "chords": [
+                                        "C7",
+                                        "C7",
+                                        "C7",
+                                        "C7",
+                                        "F7",
+                                        "F7",
+                                        "C7",
+                                        "C7",
+                                        "G7",
+                                        "F7",
+                                        "C7",
+                                        "G7"
+                                    ],
+                                    "left_hand": "quarter_note_comping",
+                                    "right_hand": "simple_triad_hits"
+                                },
+                                "notation": {
+                                    "clef": "grand",
+                                    "time_signature": "4/4"
+                                },
+                                "playback": {
+                                    "tempo_bpm": 110,
+                                    "swing": True,
+                                    "loop": True
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "id": "blues_2_scale_licks",
+                        "title": "Blues Scale & Simple Licks",
+                        "description": "C blues scale with call-and-response phrasing.",
+                        "week_number": 3,
+                        "concepts": [
+                            "Scales & Modes",
+                            "Phrasing"
+                        ],
+                        "theory_links": [
+                            "Blues Scale",
+                            "Call and Response"
+                        ],
+                        "exercises": [
+                            {
+                                "id": "ex_blues_scale_c",
+                                "title": "C Blues Scale Patterns",
+                                "exercise_type": "scale",
+                                "difficulty": "beginner",
+                                "content": {
+                                    "scale": "C Blues",
+                                    "patterns": [
+                                        "ascending_8ths",
+                                        "triplet_groups"
+                                    ],
+                                    "register": "C3_to_C5"
+                                },
+                                "notation": {
+                                    "clef": "treble",
+                                    "time_signature": "4/4"
+                                },
+                                "playback": {
+                                    "tempo_bpm": 80,
+                                    "swing": True,
+                                    "loop": True
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "blues_turnarounds_licks",
+                "title": "Turnarounds & Signature Licks",
+                "category_map": [
+                    "HARMONIC & THEORETICAL FRAMEWORK",
+                    "REPERTOIRE & PRACTICAL APPLICATION"
+                ],
+                "start_week": 7,
+                "end_week": 16,
+                "outcomes": [
+                    "Use common I–VI–ii–V turnarounds",
+                    "Integrate short licks into the form"
+                ],
+                "lessons": [
+                    {
+                        "id": "blues_3_turnaround_c",
+                        "title": "Classic I–VI–ii–V Turnaround",
+                        "description": "C7–A7–Dm7–G7 with simple right-hand fill.",
+                        "week_number": 8,
+                        "concepts": [
+                            "Turnarounds",
+                            "Chord Extensions & Alterations"
+                        ],
+                        "theory_links": [
+                            "Secondary Dominants"
+                        ],
+                        "exercises": [
+                            {
+                                "id": "ex_blues_turnaround_c",
+                                "title": "C Turnaround with Walkup",
+                                "exercise_type": "progression",
+                                "difficulty": "intermediate",
+                                "content": {
+                                    "key": "C",
+                                    "chords": [
+                                        "C7",
+                                        "A7",
+                                        "Dm7",
+                                        "G7"
+                                    ],
+                                    "bars": 4,
+                                    "right_hand_motif": "simple_blues_fill_last_two_beats"
+                                },
+                                "notation": {
+                                    "clef": "grand",
+                                    "time_signature": "4/4"
+                                },
+                                "playback": {
+                                    "tempo_bpm": 100,
+                                    "swing": True,
+                                    "loop": True
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "stride": {
+        "id": "stride",
+        "title": "Stride Piano Basics",
+        "description": "Wide left-hand leaps with right-hand melodies and embellishments in early jazz style.",
+        "style_tags": [
+            "stride",
+            "early_jazz",
+            "solo_piano"
+        ],
+        "estimated_total_weeks": 16,
+        "modules": [
+            {
+                "id": "stride_left_hand",
+                "title": "Left-Hand Leaps & Voicings",
+                "category_map": [
+                    "RHYTHMIC & TIME FEEL CONCEPTS",
+                    "HARMONIC & THEORETICAL FRAMEWORK"
+                ],
+                "start_week": 1,
+                "end_week": 6,
+                "outcomes": [
+                    "Execute octave+chord stride patterns in multiple keys",
+                    "Maintain steady time despite large leaps"
+                ],
+                "lessons": [
+                    {
+                        "id": "stride_1_basic_pattern",
+                        "title": "Basic Stride Pattern",
+                        "description": "Bass note on 1 & 3, chord on 2 & 4 in C.",
+                        "week_number": 1,
+                        "concepts": [
+                            "Time & Groove",
+                            "Comping Rhythm"
+                        ],
+                        "theory_links": [
+                            "Stride Pattern"
+                        ],
+                        "exercises": [
+                            {
+                                "id": "ex_stride_c_pattern",
+                                "title": "Stride in C Major (I & V7)",
+                                "exercise_type": "rhythm",
+                                "difficulty": "intermediate",
+                                "content": {
+                                    "key": "C",
+                                    "chord_progression": [
+                                        "C",
+                                        "G7"
+                                    ],
+                                    "pattern_bars": 8,
+                                    "bass_register": "C2",
+                                    "chord_register": "C3_C4"
+                                },
+                                "notation": {
+                                    "clef": "bass",
+                                    "time_signature": "4/4"
+                                },
+                                "playback": {
+                                    "tempo_bpm": 88,
+                                    "swing": True,
+                                    "loop": True
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "boogie_woogie": {
+        "id": "boogie_woogie",
+        "title": "Boogie Woogie Piano",
+        "description": "Driving left-hand bass patterns and right-hand riffs over 12-bar blues.",
+        "style_tags": [
+            "boogie_woogie",
+            "blues",
+            "shuffle"
+        ],
+        "estimated_total_weeks": 16,
+        "modules": [
+            {
+                "id": "boogie_left_hand_bass",
+                "title": "Left-Hand Boogie Bass",
+                "category_map": [
+                    "RHYTHMIC & TIME FEEL CONCEPTS",
+                    "MELODIC & PHRASING VOCABULARY"
+                ],
+                "start_week": 1,
+                "end_week": 6,
+                "outcomes": [
+                    "Play classic boogie patterns in C and F",
+                    "Maintain strong shuffle feel"
+                ],
+                "lessons": [
+                    {
+                        "id": "boogie_1_c_bass_pattern",
+                        "title": "C Boogie Bass Line",
+                        "description": "Classic 8-note repeating bass figure.",
+                        "week_number": 1,
+                        "concepts": [
+                            "Time & Groove",
+                            "Rhythmic Vocabulary"
+                        ],
+                        "theory_links": [
+                            "12-Bar Form"
+                        ],
+                        "exercises": [
+                            {
+                                "id": "ex_boogie_c_bass",
+                                "title": "C Boogie 8-Bar Loop",
+                                "exercise_type": "rhythm",
+                                "difficulty": "intermediate",
+                                "content": {
+                                    "key": "C",
+                                    "pattern": "C_E_G_A_Bb_A_G_E (8th_notes)",
+                                    "bars": 8
+                                },
+                                "notation": {
+                                    "clef": "bass",
+                                    "time_signature": "4/4"
+                                },
+                                "playback": {
+                                    "tempo_bpm": 120,
+                                    "swing": True,
+                                    "loop": True
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "jazz_swing": {
+        "id": "jazz_swing",
+        "title": "Jazz Swing Piano",
+        "description": "Comping, walking bass, and swing soloing ideas over standard forms.",
+        "style_tags": [
+            "jazz",
+            "swing",
+            "standards"
+        ],
+        "estimated_total_weeks": 24,
+        "modules": [
+            {
+                "id": "swing_comping",
+                "title": "Swing Comping & Time",
+                "category_map": [
+                    "RHYTHMIC & TIME FEEL CONCEPTS",
+                    "HARMONIC & THEORETICAL FRAMEWORK"
+                ],
+                "start_week": 1,
+                "end_week": 8,
+                "outcomes": [
+                    "Comp with swing feel over ii–V–I",
+                    "Use simple guide-tone lines in comping"
+                ],
+                "lessons": [
+                    {
+                        "id": "swing_1_251_comping",
+                        "title": "ii–V–I Swing Comping",
+                        "description": "Basic shell comping in 4/4 swing.",
+                        "week_number": 2,
+                        "concepts": [
+                            "Comping Rhythm",
+                            "Chord Extensions & Alterations"
+                        ],
+                        "theory_links": [
+                            "Guide Tones",
+                            "Chord Scale Theory"
+                        ],
+                        "exercises": [
+                            {
+                                "id": "ex_swing_comping_c",
+                                "title": "Comp ii–V–I in C",
+                                "exercise_type": "progression",
+                                "difficulty": "intermediate",
+                                "content": {
+                                    "key": "C",
+                                    "chords": [
+                                        "Dm7",
+                                        "G7",
+                                        "Cmaj7",
+                                        "Cmaj7"
+                                    ],
+                                    "comping_patterns": [
+                                        "&2_&4_hits",
+                                        "anticipations"
+                                    ],
+                                    "bars": 4
+                                },
+                                "notation": {
+                                    "clef": "grand",
+                                    "time_signature": "4/4",
+                                    "slash_notation": True
+                                },
+                                "playback": {
+                                    "tempo_bpm": 140,
+                                    "swing": True,
+                                    "loop": True
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "jazz_ballad": {
+        "id": "jazz_ballad",
+        "title": "Jazz Ballad Piano",
+        "description": "Lyrical voicings, rubato intros, and spacious ballad phrasing.",
+        "style_tags": [
+            "jazz",
+            "ballad",
+            "lyrical"
+        ],
+        "estimated_total_weeks": 16,
+        "modules": [
+            {
+                "id": "ballad_voicings_phrasing",
+                "title": "Ballad Voicings & Phrasing",
+                "category_map": [
+                    "MELODIC & PHRASING VOCABULARY",
+                    "FORM & CONTEXTUAL AWARENESS"
+                ],
+                "start_week": 1,
+                "end_week": 8,
+                "outcomes": [
+                    "Play lush extended voicings at slow tempos",
+                    "Shape melodic phrases with space and dynamics"
+                ],
+                "lessons": [
+                    {
+                        "id": "ballad_1_simple_standard",
+                        "title": "Simple Ballad 8-Bar",
+                        "description": "Short A section in ballad feel.",
+                        "week_number": 4,
+                        "concepts": [
+                            "Phrasing",
+                            "Dynamic & Textural Shaping"
+                        ],
+                        "theory_links": [
+                            "Guide Tone Lines"
+                        ],
+                        "exercises": [
+                            {
+                                "id": "ex_ballad_8bar_c",
+                                "title": "8-Bar Ballad in C",
+                                "exercise_type": "repertoire",
+                                "difficulty": "intermediate",
+                                "content": {
+                                    "key": "C",
+                                    "progression": [
+                                        "Cmaj7",
+                                        "Am7",
+                                        "Dm7",
+                                        "G7",
+                                        "Cmaj7",
+                                        "Fmaj7",
+                                        "Dm7",
+                                        "G7"
+                                    ],
+                                    "melodic_style": "lyrical_stepwise"
+                                },
+                                "notation": {
+                                    "clef": "grand",
+                                    "time_signature": "4/4"
+                                },
+                                "playback": {
+                                    "tempo_bpm": 60,
+                                    "swing": True,
+                                    "rubato_option": True
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "gospel": {
+        "id": "gospel",
+        "title": "Gospel Piano Language",
+        "description": "Church voicings, passing chords, shouts, and worship ballad vocabulary.",
+        "style_tags": [
+            "gospel",
+            "church",
+            "shout"
+        ],
+        "estimated_total_weeks": 24,
+        "modules": [
+            {
+                "id": "gospel_voicings_movements",
+                "title": "Voicings & Movements",
+                "category_map": [
+                    "HARMONIC & THEORETICAL FRAMEWORK",
+                    "REPERTOIRE & PRACTICAL APPLICATION"
+                ],
+                "start_week": 1,
+                "end_week": 12,
+                "outcomes": [
+                    "Play basic 2–5–1 and 7–3–6 movements",
+                    "Use preacher chords and passing diminished chords"
+                ],
+                "lessons": [
+                    {
+                        "id": "gospel_1_251_movement",
+                        "title": "Gospel 2–5–1",
+                        "description": "ii–V–I with 9ths, 13ths, and drops.",
+                        "week_number": 2,
+                        "concepts": [
+                            "Chord Extensions & Alterations",
+                            "Voice Leading"
+                        ],
+                        "theory_links": [
+                            "Functional Analysis",
+                            "Reharmonization"
+                        ],
+                        "exercises": [
+                            {
+                                "id": "ex_gospel_251_f",
+                                "title": "Gospel 2–5–1 in F",
+                                "exercise_type": "progression",
+                                "difficulty": "intermediate",
+                                "content": {
+                                    "key": "F",
+                                    "chords": [
+                                        "Gm9",
+                                        "C13",
+                                        "Fmaj9"
+                                    ],
+                                    "right_hand_style": "drop2_cluster",
+                                    "left_hand": "root_5th_or_octave"
+                                },
+                                "notation": {
+                                    "clef": "grand",
+                                    "time_signature": "4/4"
+                                },
+                                "playback": {
+                                    "tempo_bpm": 80,
+                                    "swing": True,
+                                    "loop": True
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "country": {
+        "id": "country",
+        "title": "Country Piano Styles",
+        "description": "Simple triad-based comping, pedal tones, and country-style licks.",
+        "style_tags": [
+            "country",
+            "roots",
+            "americana"
+        ],
+        "estimated_total_weeks": 12,
+        "modules": [
+            {
+                "id": "country_comping_licks",
+                "title": "Country Comping & Licks",
+                "category_map": [
+                    "RHYTHMIC & TIME FEEL CONCEPTS",
+                    "MELODIC & PHRASING VOCABULARY"
+                ],
+                "start_week": 1,
+                "end_week": 8,
+                "outcomes": [
+                    "Play basic I–IV–V progressions with pedal tones",
+                    "Use simple country bends and grace notes (keyboard emulation)"
+                ],
+                "lessons": [
+                    {
+                        "id": "country_1_iv_v_comping",
+                        "title": "I–IV–V Country Groove",
+                        "description": "Root–5 comping with simple fills.",
+                        "week_number": 2,
+                        "concepts": [
+                            "Time & Groove",
+                            "Stylistic Nuance"
+                        ],
+                        "theory_links": [
+                            "Functional Analysis"
+                        ],
+                        "exercises": [
+                            {
+                                "id": "ex_country_g_progression",
+                                "title": "G Country I–IV–V",
+                                "exercise_type": "progression",
+                                "difficulty": "beginner",
+                                "content": {
+                                    "key": "G",
+                                    "chords": [
+                                        "G",
+                                        "C",
+                                        "D",
+                                        "G"
+                                    ],
+                                    "right_hand": "triads_with_grace_note_slide_b3_to_3",
+                                    "left_hand": "root_5_octave"
+                                },
+                                "notation": {
+                                    "clef": "grand",
+                                    "time_signature": "4/4"
+                                },
+                                "playback": {
+                                    "tempo_bpm": 96,
+                                    "swing": False,
+                                    "loop": True
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "rock": {
+        "id": "rock",
+        "title": "Rock & Pop Piano",
+        "description": "Driving rhythmic patterns, power chords, and hook-based motifs.",
+        "style_tags": [
+            "rock",
+            "pop",
+            "hooks"
+        ],
+        "estimated_total_weeks": 16,
+        "modules": [
+            {
+                "id": "rock_grooves_hooks",
+                "title": "Grooves & Hooks",
+                "category_map": [
+                    "RHYTHMIC & TIME FEEL CONCEPTS",
+                    "MELODIC & PHRASING VOCABULARY"
+                ],
+                "start_week": 1,
+                "end_week": 8,
+                "outcomes": [
+                    "Play common pop-rock progressions with strong time",
+                    "Create simple rhythmic hooks"
+                ],
+                "lessons": [
+                    {
+                        "id": "rock_1_1564_hook",
+                        "title": "1–5–6–4 Rock Ballad Hook",
+                        "description": "C–G–Am–F pattern with rhythmic motif.",
+                        "week_number": 3,
+                        "concepts": [
+                            "Time & Groove",
+                            "Theme & Variation"
+                        ],
+                        "theory_links": [
+                            "Chord Scale Theory"
+                        ],
+                        "exercises": [
+                            {
+                                "id": "ex_rock_1564_c",
+                                "title": "C Rock Ballad Progression",
+                                "exercise_type": "progression",
+                                "difficulty": "beginner",
+                                "content": {
+                                    "key": "C",
+                                    "chords": [
+                                        "C",
+                                        "G",
+                                        "Am",
+                                        "F"
+                                    ],
+                                    "right_hand_riff": "8th_note_hook_on_top",
+                                    "left_hand": "root_5_octaves"
+                                },
+                                "notation": {
+                                    "clef": "grand",
+                                    "time_signature": "4/4"
+                                },
+                                "playback": {
+                                    "tempo_bpm": 80,
+                                    "swing": False,
+                                    "loop": True
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "bossa_nova": {
+        "id": "bossa_nova",
+        "title": "Bossa Nova Piano",
+        "description": "Brazilian groove with characteristic bass and chord anticipations.",
+        "style_tags": [
+            "bossa",
+            "latin",
+            "jazz"
+        ],
+        "estimated_total_weeks": 16,
+        "modules": [
+            {
+                "id": "bossa_basics",
+                "title": "Bossa Rhythm & Harmony",
+                "category_map": [
+                    "RHYTHMIC & TIME FEEL CONCEPTS",
+                    "HARMONIC & THEORETICAL FRAMEWORK"
+                ],
+                "start_week": 1,
+                "end_week": 8,
+                "outcomes": [
+                    "Play standard bossa bass-chord pattern",
+                    "Use simple ii–V–I in bossa feel"
+                ],
+                "lessons": [
+                    {
+                        "id": "bossa_1_pattern_dm",
+                        "title": "Basic Bossa Pattern in Dm",
+                        "description": "Left-hand bass, right-hand chord anticipations.",
+                        "week_number": 2,
+                        "concepts": [
+                            "Time & Groove",
+                            "Comping Rhythm"
+                        ],
+                        "theory_links": [
+                            "Chord Scale Theory"
+                        ],
+                        "exercises": [
+                            {
+                                "id": "ex_bossa_dm",
+                                "title": "Dm Bossa Groove",
+                                "exercise_type": "rhythm",
+                                "difficulty": "intermediate",
+                                "content": {
+                                    "key": "Dm",
+                                    "pattern": "bossa_standard",
+                                    "bars": 8
+                                },
+                                "notation": {
+                                    "clef": "grand",
+                                    "time_signature": "4/4"
+                                },
+                                "playback": {
+                                    "tempo_bpm": 120,
+                                    "swing": False,
+                                    "loop": True
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "rnb_neo_soul": {
+        "id": "rnb_neo_soul",
+        "title": "R&B & Neo-Soul Keys",
+        "description": "Minor 9/11 chords, pentatonic slides, and laid-back groove.",
+        "style_tags": [
+            "rnb",
+            "neo_soul",
+            "groove"
+        ],
+        "estimated_total_weeks": 20,
+        "modules": [
+            {
+                "id": "rnb_harmony_groove",
+                "title": "Harmony & Groove",
+                "category_map": [
+                    "HARMONIC & THEORETICAL FRAMEWORK",
+                    "RHYTHMIC & TIME FEEL CONCEPTS"
+                ],
+                "start_week": 1,
+                "end_week": 10,
+                "outcomes": [
+                    "Play extended minor chords in lo-fi/R&B context",
+                    "Use behind-the-beat phrasing"
+                ],
+                "lessons": [
+                    {
+                        "id": "rnb_1_minor11_groove",
+                        "title": "Minor 11th & Pentatonic Slides",
+                        "description": "Neo-soul voicings and grace-note slides.",
+                        "week_number": 4,
+                        "concepts": [
+                            "Chord Extensions & Alterations",
+                            "Articulation & Inflection"
+                        ],
+                        "theory_links": [
+                            "Chord Scale Theory"
+                        ],
+                        "exercises": [
+                            {
+                                "id": "ex_rnb_ebm11_groove",
+                                "title": "Ebm11 Groove Loop",
+                                "exercise_type": "progression",
+                                "difficulty": "intermediate",
+                                "content": {
+                                    "key": "Eb minor",
+                                    "chords": [
+                                        "Ebm11",
+                                        "Abm9"
+                                    ],
+                                    "right_hand": "cluster_voicings_with_b3_to_3_slides",
+                                    "left_hand": "root_5_or_808_outline"
+                                },
+                                "notation": {
+                                    "clef": "grand",
+                                    "time_signature": "4/4"
+                                },
+                                "playback": {
+                                    "tempo_bpm": 75,
+                                    "swing": False,
+                                    "timing_offset_ms": 40
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "funk_smooth_jazz": {
+        "id": "funk_smooth_jazz",
+        "title": "Funk & Smooth Jazz Keys",
+        "description": "Syncopated funk comping, 9/13 chords, and smooth jazz pentatonic/lydian licks.",
+        "style_tags": [
+            "funk",
+            "smooth_jazz",
+            "groove"
+        ],
+        "estimated_total_weeks": 20,
+        "modules": [
+            {
+                "id": "funk_comping_lines",
+                "title": "Funk Comping & Lines",
+                "category_map": [
+                    "RHYTHMIC & TIME FEEL CONCEPTS",
+                    "MELODIC & PHRASING VOCABULARY"
+                ],
+                "start_week": 1,
+                "end_week": 10,
+                "outcomes": [
+                    "Play syncopated funk comping patterns",
+                    "Use minor pentatonic and dorian for lines"
+                ],
+                "lessons": [
+                    {
+                        "id": "funk_1_clav_style_pattern",
+                        "title": "Clav-Inspired Funk Pattern",
+                        "description": "Short E7#9 groove with syncopation.",
+                        "week_number": 3,
+                        "concepts": [
+                            "Rhythmic Vocabulary",
+                            "Stylistic Nuance"
+                        ],
+                        "theory_links": [
+                            "Chord Scale Theory"
+                        ],
+                        "exercises": [
+                            {
+                                "id": "ex_funk_e7sharp9_groove",
+                                "title": "E7#9 Funk Groove",
+                                "exercise_type": "rhythm",
+                                "difficulty": "intermediate",
+                                "content": {
+                                    "key": "E",
+                                    "chord": "E7#9",
+                                    "right_hand_pattern": "16th_syncopation",
+                                    "left_hand": "short_stabs_on_beats"
+                                },
+                                "notation": {
+                                    "clef": "grand",
+                                    "time_signature": "4/4"
+                                },
+                                "playback": {
+                                    "tempo_bpm": 100,
+                                    "swing": False,
+                                    "loop": True
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "film_music": {
+        "id": "film_music",
+        "title": "Film & Cinematic Piano",
+        "description": "Modal harmony, ostinatos, and emotional theme development.",
+        "style_tags": [
+            "film",
+            "cinematic",
+            "orchestral"
+        ],
+        "estimated_total_weeks": 24,
+        "modules": [
+            {
+                "id": "film_themes_ostinatos",
+                "title": "Themes & Ostinatos",
+                "category_map": [
+                    "MELODIC & PHRASING VOCABULARY",
+                    "FORM & CONTEXTUAL AWARENESS"
+                ],
+                "start_week": 1,
+                "end_week": 12,
+                "outcomes": [
+                    "Compose short motifs and develop them",
+                    "Use simple left-hand ostinatos under themes"
+                ],
+                "lessons": [
+                    {
+                        "id": "film_1_d_minor_ostinato",
+                        "title": "D Minor Ostinato Theme",
+                        "description": "Simple repeating left hand with evolving melody.",
+                        "week_number": 4,
+                        "concepts": [
+                            "Theme & Variation",
+                            "Dynamic & Textural Shaping"
+                        ],
+                        "theory_links": [
+                            "Functional Analysis",
+                            "Modal Interchange"
+                        ],
+                        "exercises": [
+                            {
+                                "id": "ex_film_dm_ostinato",
+                                "title": "D Minor Cinematic Loop",
+                                "exercise_type": "repertoire",
+                                "difficulty": "intermediate",
+                                "content": {
+                                    "key": "D minor",
+                                    "left_hand_pattern": "D_A_F_E (8ths)",
+                                    "right_hand_melody": "4_bar_motif_with_variations"
+                                },
+                                "notation": {
+                                    "clef": "grand",
+                                    "time_signature": "4/4",
+                                    "crescendo_marks": True
+                                },
+                                "playback": {
+                                    "tempo_bpm": 72,
+                                    "swing": False,
+                                    "loop": True
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "contemporary_new_age": {
+        "id": "contemporary_new_age",
+        "title": "Contemporary & New Age Piano",
+        "description": "Open voicings, minimalist patterns, and ambient textures.",
+        "style_tags": [
+            "new_age",
+            "contemporary",
+            "ambient"
+        ],
+        "estimated_total_weeks": 20,
+        "modules": [
+            {
+                "id": "new_age_patterns_textures",
+                "title": "Patterns & Textures",
+                "category_map": [
+                    "MELODIC & PHRASING VOCABULARY",
+                    "FORM & CONTEXTUAL AWARENESS"
+                ],
+                "start_week": 1,
+                "end_week": 10,
+                "outcomes": [
+                    "Create simple repetitive patterns with evolving texture",
+                    "Use pedal and register for atmosphere"
+                ],
+                "lessons": [
+                    {
+                        "id": "newage_1_c_major_ambient",
+                        "title": "C Major Ambient Pattern",
+                        "description": "Arpeggiated pattern with slowly shifting top notes.",
+                        "week_number": 3,
+                        "concepts": [
+                            "Phrasing",
+                            "Dynamic & Textural Shaping"
+                        ],
+                        "theory_links": [
+                            "Chord Extensions"
+                        ],
+                        "exercises": [
+                            {
+                                "id": "ex_newage_c_arp_loop",
+                                "title": "Cmaj9 Arpeggio Loop",
+                                "exercise_type": "progression",
+                                "difficulty": "beginner",
+                                "content": {
+                                    "key": "C",
+                                    "chord": "Cmaj9",
+                                    "pattern": "broken_chord_16ths",
+                                    "pedal": "continuous"
+                                },
+                                "notation": {
+                                    "clef": "grand",
+                                    "time_signature": "4/4"
+                                },
+                                "playback": {
+                                    "tempo_bpm": 60,
+                                    "swing": False,
+                                    "loop": True
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}

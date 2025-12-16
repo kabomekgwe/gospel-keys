@@ -1,11 +1,62 @@
 """Pydantic schemas for Curriculum API
 
 Defines request/response models for curriculum-related endpoints.
+Enhanced with template-driven exercise library support.
 """
 
 from datetime import datetime
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
+from enum import Enum
 from pydantic import BaseModel, Field
+
+
+# ============================================================================
+# Enhanced Exercise Type Enums
+# ============================================================================
+
+class ExerciseTypeEnum(str, Enum):
+    """Comprehensive exercise types from templates"""
+    # Original types
+    SCALE = "scale"
+    PROGRESSION = "progression"
+    VOICING = "voicing"
+    RHYTHM = "rhythm"
+    LICK = "lick"
+    REPERTOIRE = "repertoire"
+    ARPEGGIO = "arpeggio"
+    DYNAMICS = "dynamics"
+
+    # Enhanced types from templates
+    AURAL = "aural"  # Ear training
+    TRANSCRIPTION = "transcription"
+    REHARMONIZATION = "reharmonization"
+    SIGHT_READING = "sight_reading"
+    IMPROVISATION = "improvisation"
+    COMPING = "comping"
+    WALKING_BASS = "walking_bass"
+    MELODY_HARMONIZATION = "melody_harmonization"
+    MODAL_EXPLORATION = "modal_exploration"
+    POLYRHYTHM = "polyrhythm"
+    PRODUCTION = "production"
+    DRILL = "drill"
+
+
+class DifficultyLevelEnum(str, Enum):
+    """Exercise difficulty levels"""
+    BEGINNER = "beginner"
+    INTERMEDIATE = "intermediate"
+    ADVANCED = "advanced"
+    MASTER = "master"
+
+
+class SkillLevelEnum(str, Enum):
+    """Overall skill level categories from templates"""
+    BEGINNER = "beginner"
+    INTERMEDIATE = "intermediate"
+    ADVANCED = "advanced"
+    MASTER = "master"
+    BEGINNER_TO_INTERMEDIATE = "beginner_to_intermediate"
+    INTERMEDIATE_TO_ADVANCED = "intermediate_to_advanced"
 
 
 # ============================================================================
@@ -203,11 +254,21 @@ class CurriculumGenerateRequest(BaseModel):
     """Request to generate a new curriculum"""
     title: Optional[str] = Field(default=None, description="Optional custom title")
     duration_weeks: int = Field(ge=4, le=52, default=12)
+    # Wizard data for personalization
+    genre: Optional[str] = Field(default=None, description="Primary genre: gospel, jazz, blues, etc.")
+    skill_level: Optional[str] = Field(default=None, pattern="^(beginner|intermediate|advanced)$")
+    goals: Optional[List[str]] = Field(default=None, description="Learning goals selected from wizard")
+    days_per_week: Optional[int] = Field(ge=1, le=7, default=None)
+    session_length: Optional[str] = Field(default=None, description="Practice session length: 15min, 30min, 60min")
 
 
 class CurriculumDefaultRequest(BaseModel):
     """Request to create a curriculum from a default template"""
-    template_key: str = Field(default="gospel_essentials", description="Key of the default template to use")
+
+class CurriculumFromTemplateRequest(BaseModel):
+    """Request to create a curriculum from a dynamic template file"""
+    template_id: str = Field(..., description="ID of the dynamic template (file path or internal ID)")
+
 
 
 class CurriculumResponse(BaseModel):
@@ -282,3 +343,193 @@ class AssessmentResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+# ============================================================================
+# Template-Driven Exercise Library Schemas
+# ============================================================================
+
+class MIDIHints(BaseModel):
+    """Hints for MIDI generation from templates"""
+    tempo_bpm: int = 60
+    swing: bool = False
+    articulation: str = "legato"
+    voicing_type: Optional[str] = None
+    time_signature: str = "4/4"
+
+
+class EnhancedExerciseContent(BaseModel):
+    """Extended exercise content supporting all template formats"""
+    # Common fields
+    key: Optional[str] = None
+    chords: Optional[List[str]] = None
+
+    # Scale exercises
+    scale: Optional[str] = None
+    pattern: Optional[str] = None
+    notes_per_step: Optional[int] = None
+    include_inversions: Optional[bool] = None
+    hands: Optional[str] = None
+    octaves: Optional[int] = None
+
+    # Progression exercises
+    roman_numerals: Optional[List[str]] = None
+    left_hand: Optional[Dict[str, Any]] = None
+    right_hand: Optional[Dict[str, Any]] = None
+
+    # Voicing exercises
+    chord: Optional[str] = None
+    voicing_type: Optional[str] = None
+    notes: Optional[List[str]] = None
+    inversions: Optional[List[str]] = None
+
+    # Pattern/lick exercises
+    pattern: Optional[str] = None
+    midi_notes: Optional[List[int]] = None
+
+    # Production exercises
+    effects: Optional[str] = None
+    style: Optional[str] = None
+
+    # MIDI generation hints
+    midi_hints: Optional[MIDIHints] = None
+
+    # Catch-all for template-specific fields
+    extra: Dict[str, Any] = Field(default_factory=dict)
+
+
+class TheoryContent(BaseModel):
+    """Theory explanation from templates"""
+    summary: str
+    key_points: List[str] = Field(default_factory=list)
+    recommended_keys: Optional[List[str]] = None
+
+
+class TemplateExercise(BaseModel):
+    """Exercise as defined in curriculum templates"""
+    id: Optional[str] = None
+    title: str
+    description: str
+    exercise_type: ExerciseTypeEnum
+    content: EnhancedExerciseContent
+    midi_prompt: Optional[str] = None
+    difficulty: DifficultyLevelEnum
+    estimated_duration_minutes: int = 10
+    tags: List[str] = Field(default_factory=list)
+
+    # Generated content (populated after MIDI generation)
+    midi_file_path: Optional[str] = None
+    audio_file_path: Optional[str] = None
+    generated_at: Optional[datetime] = None
+
+
+class TemplateLesson(BaseModel):
+    """Lesson structure from templates"""
+    id: Optional[str] = None
+    title: str
+    description: str
+    week_number: int
+    concepts: List[str] = Field(default_factory=list)
+    theory_content: Optional[TheoryContent] = None
+    exercises: List[TemplateExercise] = Field(default_factory=list)
+    prerequisites: List[str] = Field(default_factory=list)
+    learning_objectives: List[str] = Field(default_factory=list)
+
+
+class TemplateModule(BaseModel):
+    """Module structure from templates"""
+    id: Optional[str] = None
+    title: str
+    description: str
+    theme: Optional[str] = None
+    start_week: int
+    end_week: int
+    prerequisites: List[str] = Field(default_factory=list)
+    outcomes: List[str] = Field(default_factory=list)
+    lessons: List[TemplateLesson] = Field(default_factory=list)
+
+
+class TemplateCurriculum(BaseModel):
+    """Complete curriculum from template file"""
+    id: Optional[str] = None
+    title: str
+    description: str
+    style_tags: List[str] = Field(default_factory=list)
+    level: SkillLevelEnum
+    estimated_total_weeks: int
+    modules: List[TemplateModule] = Field(default_factory=list)
+
+    # Metadata
+    source_file: Optional[str] = None
+    created_at: Optional[datetime] = None
+    ai_provider: Optional[str] = None  # claude, gemini, deepseek, grok, etc.
+
+
+# ============================================================================
+# Template Parsing and Indexing Schemas
+# ============================================================================
+
+class TemplateMetadata(BaseModel):
+    """Metadata extracted from a template file"""
+    file_path: str
+    file_name: str
+    file_format: str  # json, markdown, python
+    ai_provider: str  # claude, gemini, deepseek, grok, perplexity, chatgpt
+    curriculum_count: int
+    total_modules: int
+    total_lessons: int
+    total_exercises: int
+    genres_covered: List[str]
+    skill_levels: List[SkillLevelEnum]
+    has_midi_prompts: bool
+    has_ear_training: bool
+    has_theory_content: bool
+    avg_weeks_per_curriculum: float
+
+
+class TemplateIndex(BaseModel):
+    """Index of all curriculum templates"""
+    templates: List[TemplateMetadata]
+    total_curriculums: int
+    total_exercises: int
+    genres_available: List[str]
+    providers: List[str]
+    indexed_at: datetime
+
+
+class GetExerciseRequest(BaseModel):
+    """Request for searching/filtering exercises"""
+    exercise_type: Optional[ExerciseTypeEnum] = None
+    difficulty: Optional[DifficultyLevelEnum] = None
+    tags: List[str] = Field(default_factory=list)
+    curriculum_id: Optional[str] = None
+    limit: int = Field(default=50, ge=1, le=200)
+
+
+class GetExerciseResponse(BaseModel):
+    """Response with exercise list and pagination"""
+    exercises: List[Dict[str, Any]]
+    total_count: int
+
+
+class GenerateExercisesFromTemplateRequest(BaseModel):
+    """Request to batch-generate exercises from template file"""
+    template_file: str
+    curriculum_id: Optional[str] = None  # Process specific curriculum only
+    module_id: Optional[str] = None
+    lesson_id: Optional[str] = None
+    force_regenerate: bool = False
+    generate_audio: bool = False  # Also generate WAV files
+
+
+class GenerateExercisesFromTemplateResponse(BaseModel):
+    """Response from batch exercise generation"""
+    success: bool
+    template_file: str
+    curriculums_processed: int
+    exercises_generated: int
+    midi_files_created: int
+    audio_files_created: int
+    errors: List[str] = Field(default_factory=list)
+    exercise_ids: List[str] = Field(default_factory=list)
+    generation_time_seconds: float

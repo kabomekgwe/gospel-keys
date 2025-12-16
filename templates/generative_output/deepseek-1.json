@@ -1,0 +1,2828 @@
+{
+    "app_name": "Musician's Toolkit",
+    "version": "1.0",
+    "core_features": {
+        "generation_engines": [
+            "progression_generator",
+            "lick_generator",
+            "scale_visualizer",
+            "exercise_generator",
+            "backing_track_generator",
+            "ear_training_generator"
+        ],
+        "interactive_features": [
+            "dynamic_sheet_music",
+            "real_time_playback",
+            "midi_export_import",
+            "interactive_visualization",
+            "practice_modules",
+            "theory_explanation"
+        ]
+    },
+    "template_system": {
+        "scale_template": {
+            "id": "scale_{key}_{type}",
+            "metadata": {
+                "title": "{key} {type} Scale",
+                "description": "Scale exercise with visualization and practice patterns",
+                "category": "melodic_vocabulary",
+                "subcategory": "scales_modes",
+                "difficulty": "beginner|intermediate|advanced",
+                "duration_minutes": 5,
+                "style_tags": [
+                    "all"
+                ],
+                "instrument_support": [
+                    "piano",
+                    "guitar",
+                    "bass"
+                ]
+            },
+            "theory": {
+                "intervallic_structure": "{intervals}",
+                "mode_of": "{parent_scale}",
+                "characteristic_notes": [
+                    "{note1}",
+                    "{note2}"
+                ],
+                "harmonic_applications": [
+                    "{chord1}",
+                    "{chord2}"
+                ],
+                "common_uses": [
+                    "{style1}",
+                    "{style2}"
+                ]
+            },
+            "visualization": {
+                "keyboard_highlight": {
+                    "notes": [
+                        "{note1}",
+                        "{note2}",
+                        "{note3}"
+                    ],
+                    "root_note": "{root}",
+                    "chord_tones": [
+                        "3rd",
+                        "5th",
+                        "7th"
+                    ],
+                    "tension_notes": [
+                        "9th",
+                        "11th",
+                        "13th"
+                    ],
+                    "avoid_notes": [
+                        "{note}"
+                    ]
+                },
+                "fretboard_mapping": {
+                    "positions": [
+                        {
+                            "position_number": 1,
+                            "fret_range": [
+                                0,
+                                12
+                            ],
+                            "box_pattern": [
+                                2,
+                                4,
+                                1,
+                                3,
+                                1,
+                                3,
+                                2
+                            ],
+                            "string_notes": [
+                                "E-{note1}",
+                                "B-{note2}",
+                                "G-{note3}",
+                                "D-{note4}",
+                                "A-{note5}",
+                                "E-{note6}"
+                            ]
+                        }
+                    ]
+                },
+                "staff_notation": {
+                    "clef": "treble|bass|both",
+                    "key_signature": "{key}",
+                    "time_signature": "4/4",
+                    "notes": [
+                        {
+                            "pitch": "{note1}",
+                            "duration": "quarter",
+                            "octave": 4,
+                            "accidental": "natural|sharp|flat"
+                        }
+                    ]
+                }
+            },
+            "practice_patterns": [
+                {
+                    "id": "pattern_1",
+                    "name": "Ascending 4 Octaves",
+                    "description": "Play scale ascending four octaves",
+                    "tempo_range": [
+                        60,
+                        160
+                    ],
+                    "rhythmic_variations": [
+                        {
+                            "name": "Quarter Notes",
+                            "note_values": [
+                                "quarter"
+                            ],
+                            "articulation": "legato"
+                        },
+                        {
+                            "name": "Eighth Notes",
+                            "note_values": [
+                                "eighth"
+                            ],
+                            "articulation": "staccato"
+                        },
+                        {
+                            "name": "Triplets",
+                            "note_values": [
+                                "eighth.triplet"
+                            ],
+                            "articulation": "legato"
+                        }
+                    ],
+                    "technical_focus": [
+                        "evenness",
+                        "finger_independence",
+                        "velocity"
+                    ],
+                    "midi_generation": {
+                        "pattern": "ascending_linear",
+                        "octaves": 4,
+                        "note_duration": "quarter",
+                        "velocity": 80
+                    }
+                },
+                {
+                    "id": "pattern_2",
+                    "name": "Third Intervals",
+                    "description": "Play scale in thirds",
+                    "interval_sequence": [
+                        "1-3",
+                        "2-4",
+                        "3-5",
+                        "4-6"
+                    ],
+                    "hands": "together|separate|contrary"
+                }
+            ],
+            "musical_applications": [
+                {
+                    "lick_id": "lick_{scale_type}_{style}",
+                    "description": "Common lick using this scale",
+                    "context_chord": "{chord}",
+                    "style": "{jazz|blues|rock}",
+                    "notes": [
+                        "{lick_notes}"
+                    ],
+                    "rhythm": [
+                        "{rhythmic_pattern}"
+                    ]
+                }
+            ],
+            "ear_training_exercises": [
+                {
+                    "exercise_type": "interval_recognition",
+                    "intervals_to_identify": [
+                        "{interval1}",
+                        "{interval2}"
+                    ],
+                    "number_of_examples": 10,
+                    "context": "scale_context"
+                }
+            ],
+            "generation_parameters": {
+                "key": "C|G|D|A|E|B|F#|Db|Ab|Eb|Bb|F",
+                "type": "major|natural_minor|harmonic_minor|melodic_minor|dorian|phrygian|lydian|mixolydian|aeolian|locrian|blues|pentatonic_major|pentatonic_minor|whole_tone|diminished|chromatic",
+                "octaves": 2,
+                "tempo": 120,
+                "articulation": "legato|staccato|marcato",
+                "hands": "right|left|both",
+                "direction": "ascending|descending|alternating"
+            }
+        },
+        "chord_progression_template": {
+            "id": "progression_{style}_{complexity}",
+            "metadata": {
+                "title": "{style} Chord Progression in {key}",
+                "description": "{description}",
+                "category": "harmonic_framework",
+                "subcategory": "progressions",
+                "difficulty": "beginner|intermediate|advanced",
+                "duration_minutes": 10,
+                "style_tags": [
+                    "{style}"
+                ],
+                "form": "12_bar|16_bar|32_bar_AABA|through_composed"
+            },
+            "theory": {
+                "key_center": "{key}",
+                "roman_numeral_analysis": [
+                    {
+                        "chord": "{chord}",
+                        "function": "tonic|subdominant|dominant|secondary_dominant",
+                        "duration_bars": 1,
+                        "beat_placement": [
+                            1,
+                            2,
+                            3,
+                            4
+                        ]
+                    }
+                ],
+                "voice_leading_analysis": {
+                    "smooth_voice_leading": true,
+                    "common_tones": [
+                        "{note}"
+                    ],
+                    "stepwise_motion": [
+                        "{voice}: {note1}->{note2}"
+                    ],
+                    "contrary_motion": [
+                        "{voice1} vs {voice2}"
+                    ]
+                },
+                "reharmonization_possibilities": [
+                    {
+                        "original": "{chord}",
+                        "substitutions": [
+                            "{sub1}",
+                            "{sub2}"
+                        ],
+                        "technique": "tritone_substitution|secondary_dominant|modal_interchange"
+                    }
+                ]
+            },
+            "progression_data": {
+                "bars": [
+                    {
+                        "bar_number": 1,
+                        "chords": [
+                            {
+                                "symbol": "Cmaj7",
+                                "function": "I",
+                                "duration_beats": 4,
+                                "voicing": {
+                                    "type": "shell|drop2|drop3|spread|cluster",
+                                    "notes": [
+                                        "C4",
+                                        "E4",
+                                        "G4",
+                                        "B4"
+                                    ],
+                                    "inversion": "root|first|second|third",
+                                    "hand_distribution": {
+                                        "left_hand": [
+                                            "C3",
+                                            "E3"
+                                        ],
+                                        "right_hand": [
+                                            "G4",
+                                            "B4"
+                                        ]
+                                    }
+                                },
+                                "extensions": [
+                                    "9",
+                                    "13"
+                                ],
+                                "alterations": [
+                                    "#11"
+                                ]
+                            }
+                        ],
+                        "bass_line": {
+                            "notes": [
+                                "C2",
+                                "C2",
+                                "C2",
+                                "C2"
+                            ],
+                            "rhythm": [
+                                "quarter",
+                                "quarter",
+                                "quarter",
+                                "quarter"
+                            ],
+                            "style": "walking|pedal|arpeggiated"
+                        }
+                    }
+                ],
+                "form_markers": {
+                    "section_A": [
+                        1,
+                        8
+                    ],
+                    "section_B": [
+                        9,
+                        16
+                    ],
+                    "bridge": [
+                        17,
+                        24
+                    ],
+                    "coda": [
+                        25,
+                        32
+                    ]
+                }
+            },
+            "playback_options": {
+                "instruments": {
+                    "piano": {
+                        "sound": "acoustic_piano|electric_piano|rhodes|wurlitzer",
+                        "voicing_style": "comping|block_chords|arpeggiated"
+                    },
+                    "bass": {
+                        "sound": "acoustic_bass|electric_bass|synth_bass",
+                        "style": "walking|pedal|funk"
+                    },
+                    "drums": {
+                        "sound": "acoustic_drums|electronic_drums",
+                        "style": "swing|straight_eighth|latin|shuffle"
+                    }
+                },
+                "tempo_range": [
+                    60,
+                    200
+                ],
+                "mix_adjustments": {
+                    "piano_volume": 0.8,
+                    "bass_volume": 0.7,
+                    "drums_volume": 0.6,
+                    "reverb_amount": 0.3
+                }
+            },
+            "practice_modules": [
+                {
+                    "module_type": "comping_patterns",
+                    "patterns": [
+                        {
+                            "name": "Basic Quarter Note Comping",
+                            "rhythm": [
+                                "quarter",
+                                "quarter",
+                                "quarter",
+                                "quarter"
+                            ],
+                            "hand": "left|right|both",
+                            "voicing_type": "shell"
+                        },
+                        {
+                            "name": "Charleston Rhythm",
+                            "rhythm": [
+                                "quarter",
+                                "dotted_eighth",
+                                "sixteenth",
+                                "quarter_rest",
+                                "quarter"
+                            ],
+                            "style": "swing"
+                        }
+                    ]
+                },
+                {
+                    "module_type": "soloing_guide",
+                    "scale_suggestions": [
+                        {
+                            "chord": "Dm7",
+                            "recommended_scales": [
+                                "D dorian",
+                                "D minor pentatonic",
+                                "D blues"
+                            ],
+                            "avoid_notes": [
+                                "C#"
+                            ],
+                            "target_notes": [
+                                "F",
+                                "C",
+                                "A"
+                            ]
+                        }
+                    ],
+                    "lick_library": [
+                        {
+                            "for_chord": "G7",
+                            "licks": [
+                                "{lick_id_1}",
+                                "{lick_id_2}"
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "generation_parameters": {
+                "style": "jazz|blues|rock|pop|funk|latin|classical|gospel|neo_soul",
+                "key": "C|G|D|A|E|B|F#|Db|Ab|Eb|Bb|F",
+                "complexity": "beginner|intermediate|advanced",
+                "tempo": 120,
+                "length_bars": 4,
+                "instrumentation": "piano_trio|full_band|solo_piano"
+            }
+        },
+        "lick_template": {
+            "id": "lick_{style}_{chord}_{difficulty}",
+            "metadata": {
+                "title": "{style} Lick over {chord}",
+                "description": "{description}",
+                "category": "melodic_vocabulary",
+                "subcategory": "licks_phrases",
+                "difficulty": "beginner|intermediate|advanced",
+                "duration_minutes": 5,
+                "style_tags": [
+                    "{style}"
+                ],
+                "origin": "transcription|original|common_practice"
+            },
+            "musical_data": {
+                "notes": [
+                    {
+                        "pitch": "{note}",
+                        "duration": "eighth",
+                        "octave": 4,
+                        "accidental": "natural",
+                        "articulation": "legato|staccato|accent",
+                        "ornamentation": "none|slide|bend|vibrato|grace_note"
+                    }
+                ],
+                "rhythm": {
+                    "time_signature": "4/4",
+                    "subdivision": "eighth|sixteenth|triplet",
+                    "syncopation_level": "low|medium|high",
+                    "swing_factor": 0.0
+                },
+                "harmony": {
+                    "target_chord": "{chord}",
+                    "chord_tones": [
+                        "{note1}",
+                        "{note2}"
+                    ],
+                    "tension_notes": [
+                        "{note3}",
+                        "{note4}"
+                    ],
+                    "approach_notes": [
+                        "chromatic",
+                        "diatonic"
+                    ],
+                    "enclosure_patterns": [
+                        "above-below",
+                        "below-above"
+                    ]
+                }
+            },
+            "visualization": {
+                "staff_notation": {
+                    "clef": "treble",
+                    "key_signature": "{key}",
+                    "notes": "{notes_array}"
+                },
+                "tablature": {
+                    "instrument": "guitar|bass",
+                    "tuning": [
+                        "E2",
+                        "A2",
+                        "D3",
+                        "G3",
+                        "B3",
+                        "E4"
+                    ],
+                    "positions": [
+                        {
+                            "string": 6,
+                            "fret": 5,
+                            "finger": 1,
+                            "duration": "eighth"
+                        }
+                    ]
+                },
+                "keyboard_diagram": {
+                    "keys": [
+                        "C4",
+                        "E4",
+                        "G4"
+                    ],
+                    "fingers": [
+                        1,
+                        3,
+                        5
+                    ],
+                    "hand": "right|left"
+                }
+            },
+            "practice_options": {
+                "tempo_range": [
+                    60,
+                    200
+                ],
+                "transposition_keys": [
+                    "all",
+                    "cycle_of_fourths"
+                ],
+                "variations": [
+                    {
+                        "name": "Rhythmic Variation",
+                        "modification": "change_rhythm_to_triplets"
+                    },
+                    {
+                        "name": "Interval Expansion",
+                        "modification": "play_in_octaves"
+                    }
+                ],
+                "context_exercises": [
+                    {
+                        "type": "call_and_response",
+                        "call_lick": "{lick_id}",
+                        "response_length_bars": 2
+                    },
+                    {
+                        "type": "sequence_through_changes",
+                        "progression_id": "{progression_id}",
+                        "apply_to_all_chords": true
+                    }
+                ]
+            },
+            "theory_analysis": {
+                "scale_origin": "{scale}",
+                "motif_development": {
+                    "original_motif": "{notes}",
+                    "variations": [
+                        "sequence",
+                        "inversion",
+                        "retrograde"
+                    ]
+                },
+                "style_characteristics": [
+                    "{characteristic1}",
+                    "{characteristic2}"
+                ],
+                "artist_references": [
+                    "{artist1}",
+                    "{artist2}"
+                ]
+            },
+            "generation_parameters": {
+                "style": "bebop|blues|rock|country|jazz|funk|latin",
+                "chord_type": "maj7|dom7|min7|min7b5|dim7",
+                "key": "C|G|D|A|E|B|F#|Db|Ab|Eb|Bb|F",
+                "length_bars": 1,
+                "complexity": "beginner|intermediate|advanced"
+            }
+        },
+        "rhythm_template": {
+            "id": "rhythm_{style}_{complexity}",
+            "metadata": {
+                "title": "{style} Rhythm Exercise",
+                "description": "{description}",
+                "category": "rhythmic_concepts",
+                "subcategory": "time_feel|comping_rhythms|phrasing",
+                "difficulty": "beginner|intermediate|advanced",
+                "duration_minutes": 8,
+                "style_tags": [
+                    "{style}"
+                ],
+                "instrument": "all|drums|piano|guitar|bass"
+            },
+            "rhythm_data": {
+                "time_signature": "4/4|3/4|6/8|5/4|7/8",
+                "tempo_range": [
+                    60,
+                    180
+                ],
+                "subdivision": "quarter|eighth|sixteenth|triplet|quintuplet",
+                "pattern": [
+                    {
+                        "value": "note|rest",
+                        "duration": "quarter",
+                        "accent": "none|normal|strong",
+                        "articulation": "normal|staccato|tenuto"
+                    }
+                ],
+                "phrasing": {
+                    "downbeats": [
+                        1,
+                        3
+                    ],
+                    "upbeats": [
+                        "and of 2",
+                        "and of 4"
+                    ],
+                    "syncopation_points": [
+                        "and of 1",
+                        "and of 3"
+                    ],
+                    "polyrhythm_overlay": "3:2|4:3"
+                }
+            },
+            "interactive_elements": {
+                "metronome": {
+                    "sounds": [
+                        "click",
+                        "wood_block",
+                        "cowbell"
+                    ],
+                    "accent_pattern": [
+                        1,
+                        0,
+                        0,
+                        0
+                    ],
+                    "subdivision_clicks": false
+                },
+                "visual_feedback": {
+                    "beat_highlights": [
+                        {
+                            "beat": 1,
+                            "color": "red"
+                        },
+                        {
+                            "beat": 2,
+                            "color": "blue"
+                        },
+                        {
+                            "beat": 3,
+                            "color": "green"
+                        },
+                        {
+                            "beat": 4,
+                            "color": "yellow"
+                        }
+                    ],
+                    "subdivision_grid": true
+                }
+            },
+            "practice_modules": [
+                {
+                    "name": "Isolation Practice",
+                    "description": "Practice each hand separately",
+                    "left_hand_pattern": "{pattern}",
+                    "right_hand_pattern": "{pattern}",
+                    "coordination_difficulty": "easy|medium|hard"
+                },
+                {
+                    "name": "Tempo Pyramid",
+                    "description": "Increase then decrease tempo",
+                    "tempo_steps": [
+                        60,
+                        80,
+                        100,
+                        120,
+                        100,
+                        80,
+                        60
+                    ],
+                    "duration_per_step": 30
+                }
+            ],
+            "applications": [
+                {
+                    "context": "jazz_comping",
+                    "typical_use": "piano/guitar accompaniment",
+                    "variations": [
+                        "basic",
+                        "syncopated",
+                        "with_chromatic_approach"
+                    ]
+                },
+                {
+                    "context": "drum_groove",
+                    "typical_use": "basic rock beat",
+                    "variations": [
+                        "simple",
+                        "with_fills",
+                        "ghost_notes"
+                    ]
+                }
+            ],
+            "generation_parameters": {
+                "style": "swing|straight|latin|funk|shuffle",
+                "complexity": "beginner|intermediate|advanced",
+                "length_bars": 4,
+                "time_signature": "4/4|3/4|6/8",
+                "instrument": "piano|guitar|drums|bass|all"
+            }
+        },
+        "ear_training_template": {
+            "id": "ear_{category}_{difficulty}",
+            "metadata": {
+                "title": "{category} Ear Training",
+                "description": "{description}",
+                "category": "ear_skills",
+                "subcategory": "interval_recognition|chord_quality|progression_recognition",
+                "difficulty": "beginner|intermediate|advanced",
+                "duration_minutes": 15,
+                "style_tags": [
+                    "all"
+                ]
+            },
+            "exercise_data": {
+                "type": "multiple_choice|free_response|comparison",
+                "question_count": 10,
+                "time_per_question": 10,
+                "feedback_type": "immediate|delayed",
+                "scoring": {
+                    "points_per_correct": 10,
+                    "passing_score": 70,
+                    "streak_bonus": true
+                }
+            },
+            "content": {
+                "intervals": {
+                    "intervals_to_test": [
+                        "P1",
+                        "m2",
+                        "M2",
+                        "m3",
+                        "M3",
+                        "P4",
+                        "TT",
+                        "P5",
+                        "m6",
+                        "M6",
+                        "m7",
+                        "M7",
+                        "P8"
+                    ],
+                    "direction": "ascending|descending|harmonic",
+                    "context": "melodic|harmonic|both",
+                    "instrument_sound": "piano|guitar|sine_wave"
+                },
+                "chords": {
+                    "qualities": [
+                        "maj",
+                        "min",
+                        "dim",
+                        "aug",
+                        "maj7",
+                        "min7",
+                        "dom7",
+                        "min7b5",
+                        "dim7"
+                    ],
+                    "inversions": [
+                        "root",
+                        "first",
+                        "second",
+                        "third"
+                    ],
+                    "voicing": "close|open",
+                    "instrument": "piano|guitar"
+                },
+                "progressions": {
+                    "length": 2,
+                    "complexity": "diatonic|chromatic|modal",
+                    "cadence_types": [
+                        "authentic",
+                        "plagal",
+                        "deceptive",
+                        "half"
+                    ]
+                }
+            },
+            "interactive_features": {
+                "playback_controls": {
+                    "repeat_count": 3,
+                    "slow_down": true,
+                    "isolate_notes": true
+                },
+                "visual_aids": {
+                    "keyboard_highlight": true,
+                    "staff_notation": true,
+                    "harmonic_series": false
+                },
+                "hints": {
+                    "available_after": 10,
+                    "types": [
+                        "play_again",
+                        "show_keyboard",
+                        "give_options"
+                    ]
+                }
+            },
+            "progression_tracking": {
+                "adaptive_difficulty": true,
+                "spaced_repetition": true,
+                "weakness_detection": true,
+                "personalized_review": true
+            },
+            "generation_parameters": {
+                "category": "intervals|chords|progressions|melodic_dictation",
+                "difficulty": "beginner|intermediate|advanced",
+                "instrument": "piano|guitar|both",
+                "context": "jazz|classical|pop|all"
+            }
+        }
+    },
+    "integration_system": {
+        "practice_session_template": {
+            "id": "session_{date}_{focus}",
+            "metadata": {
+                "title": "{focus} Practice Session",
+                "description": "Structured practice session focusing on {focus}",
+                "duration_minutes": 60,
+                "energy_level": "low|medium|high",
+                "focus_areas": [
+                    "{area1}",
+                    "{area2}"
+                ]
+            },
+            "structure": {
+                "warmup": {
+                    "duration": 10,
+                    "exercises": [
+                        {
+                            "type": "scale",
+                            "scale_id": "scale_C_major",
+                            "tempo": 80,
+                            "duration": 3
+                        },
+                        {
+                            "type": "arpeggio",
+                            "arpeggio_id": "arpeggio_C_maj7",
+                            "tempo": 60,
+                            "duration": 2
+                        }
+                    ]
+                },
+                "technical_work": {
+                    "duration": 20,
+                    "focus": "{technical_focus}",
+                    "exercises": [
+                        {
+                            "type": "lick",
+                            "lick_id": "{lick_id}",
+                            "tempo_range": [
+                                80,
+                                120
+                            ],
+                            "transpositions": [
+                                "C",
+                                "F",
+                                "Bb"
+                            ]
+                        }
+                    ]
+                },
+                "repertoire": {
+                    "duration": 20,
+                    "piece_id": "{piece_id}",
+                    "sections": [
+                        "A",
+                        "B"
+                    ],
+                    "tempo": 100,
+                    "focus": "phrasing|dynamics|accuracy"
+                },
+                "improvisation": {
+                    "duration": 10,
+                    "progression_id": "{progression_id}",
+                    "constraints": [
+                        "use_only_chord_tones",
+                        "limit_to_one_octave"
+                    ]
+                }
+            },
+            "tracking": {
+                "start_time": "timestamp",
+                "end_time": "timestamp",
+                "focus_rating": 1,
+                "difficulty_rating": 1,
+                "accomplishments": [
+                    "completed_all_exercises",
+                    "reached_target_tempo"
+                ],
+                "notes": "text"
+            }
+        },
+        "playback_engine_config": {
+            "sound_fonts": {
+                "piano": {
+                    "acoustic_grand": "Steinway_D_274.sf2",
+                    "electric_piano": "Rhodes_Mark_I.sf2",
+                    "wurlitzer": "Wurlitzer_200A.sf2",
+                    "clavinet": "Hohner_Clavinet_D6.sf2"
+                },
+                "guitar": {
+                    "acoustic_nylon": "Nylon_Guitar.sf2",
+                    "acoustic_steel": "Steel_String_Guitar.sf2",
+                    "electric_clean": "Strat_Clean.sf2",
+                    "electric_distorted": "Les_Paul_Distorted.sf2"
+                },
+                "bass": {
+                    "acoustic": "Upright_Bass.sf2",
+                    "electric_finger": "Fender_P_Bass.sf2",
+                    "electric_pick": "Jazz_Bass_Pick.sf2",
+                    "synth": "Moog_Synth_Bass.sf2"
+                },
+                "drums": {
+                    "acoustic_kit": "Standard_Drum_Kit.sf2",
+                    "electronic_kit": "TR_808.sf2",
+                    "jazz_brushes": "Jazz_Brush_Kit.sf2"
+                }
+            },
+            "playback_options": {
+                "tempo": {
+                    "default": 120,
+                    "range": [
+                        20,
+                        300
+                    ],
+                    "tap_tempo": true
+                },
+                "volume": {
+                    "master": 0.8,
+                    "instruments": {
+                        "piano": 0.7,
+                        "bass": 0.6,
+                        "drums": 0.5
+                    }
+                },
+                "effects": {
+                    "reverb": {
+                        "type": "hall|room|plate",
+                        "amount": 0.3
+                    },
+                    "compression": {
+                        "ratio": 2,
+                        "threshold": -20
+                    }
+                }
+            },
+            "midi_handling": {
+                "export_formats": [
+                    "midi_0",
+                    "midi_1",
+                    "musicxml"
+                ],
+                "import_formats": [
+                    "midi",
+                    "musicxml",
+                    "abc"
+                ],
+                "real_time_midi_input": true,
+                "midi_through": true
+            }
+        },
+        "visualization_config": {
+            "sheet_music_renderer": {
+                "library": "vexflow|opensheetmusicdisplay",
+                "options": {
+                    "responsive": true,
+                    "zoomable": true,
+                    "interactive_notes": true,
+                    "color_coding": {
+                        "chord_tones": "#4CAF50",
+                        "tension_notes": "#FF9800",
+                        "avoid_notes": "#F44336"
+                    }
+                }
+            },
+            "fretboard_renderer": {
+                "instrument": "guitar|bass|ukulele",
+                "tuning": [
+                    "E2",
+                    "A2",
+                    "D3",
+                    "G3",
+                    "B3",
+                    "E4"
+                ],
+                "frets": 24,
+                "options": {
+                    "show_notes": true,
+                    "show_intervals": true,
+                    "show_fingerings": true,
+                    "color_by_function": true
+                }
+            },
+            "keyboard_renderer": {
+                "octaves": 7,
+                "starting_octave": 1,
+                "options": {
+                    "highlight_scales": true,
+                    "show_note_names": true,
+                    "color_by_chord": true
+                }
+            }
+        }
+    },
+    "user_management": {
+        "profile_template": {
+            "user_id": "uuid",
+            "profile": {
+                "name": "string",
+                "level": "beginner|intermediate|advanced|pro",
+                "primary_instrument": "piano|guitar|bass|drums|voice",
+                "secondary_instruments": [
+                    "instrument"
+                ],
+                "styles_of_interest": [
+                    "jazz",
+                    "blues",
+                    "rock"
+                ],
+                "goals": [
+                    "improve_improvisation",
+                    "learn_jazz_standards",
+                    "develop_ear"
+                ],
+                "practice_time_per_week": 5,
+                "learning_style": "visual|auditory|kinesthetic|analytical"
+            },
+            "progress": {
+                "total_practice_time": 1200,
+                "current_streak": 7,
+                "completed_exercises": 45,
+                "skill_levels": {
+                    "scales": 75,
+                    "chords": 60,
+                    "improvisation": 40,
+                    "ear_training": 85
+                }
+            },
+            "preferences": {
+                "default_tempo": 120,
+                "default_key": "C",
+                "sound_preferences": "acoustic_piano|electric_piano",
+                "visual_theme": "dark|light"
+            }
+        }
+    }
+}
+
+
+{
+    "interactive_modules": {
+        "play_along_lab": {
+            "id": "lab_{progression_id}",
+            "metadata": {
+                "title": "Play-Along Lab: {progression_name}",
+                "description": "Interactive practice environment with backing track",
+                "progression_id": "{progression_id}",
+                "duration_minutes": 20,
+                "difficulty": "intermediate"
+            },
+            "configuration": {
+                "backing_track": {
+                    "instruments": [
+                        "piano_comping",
+                        "bass",
+                        "drums"
+                    ],
+                    "tempo": 120,
+                    "loop_bars": [
+                        1,
+                        32
+                    ],
+                    "count_in": 4
+                },
+                "visual_feedback": {
+                    "chord_display": "current|next",
+                    "scale_highlight": true,
+                    "chord_tones_highlight": true,
+                    "form_markers": true
+                },
+                "recording": {
+                    "enabled": true,
+                    "format": "wav|mp3",
+                    "auto_save": true
+                }
+            },
+            "practice_modes": [
+                {
+                    "mode": "chord_tone_targeting",
+                    "description": "Practice landing on chord tones",
+                    "settings": {
+                        "target_notes": [
+                            "3rd",
+                            "7th"
+                        ],
+                        "beats_to_target": [
+                            1,
+                            3
+                        ],
+                        "feedback": "visual|audio"
+                    }
+                },
+                {
+                    "mode": "scale_navigation",
+                    "description": "Practice navigating appropriate scales",
+                    "settings": {
+                        "highlighted_scale": "auto|manual",
+                        "show_avoid_notes": true
+                    }
+                },
+                {
+                    "mode": "call_and_response",
+                    "description": "Echo phrases then create responses",
+                    "settings": {
+                        "call_length_bars": 2,
+                        "response_length_bars": 2,
+                        "difficulty": "easy|medium|hard"
+                    }
+                },
+                {
+                    "mode": "transcription_assist",
+                    "description": "Slow down and loop sections",
+                    "settings": {
+                        "slow_down_percentage": 50,
+                        "loop_start_bar": 1,
+                        "loop_end_bar": 4,
+                        "auto_transcribe": false
+                    }
+                }
+            ],
+            "performance_metrics": {
+                "accuracy": {
+                    "note_accuracy_percentage": 95,
+                    "rhythmic_accuracy_percentage": 90,
+                    "timing_deviation_ms": 50
+                },
+                "musicality": {
+                    "dynamic_range_db": 20,
+                    "phrasing_coherence": 0.8,
+                    "tension_release_balance": 0.7
+                },
+                "improvisation": {
+                    "note_variety_index": 0.6,
+                    "motif_development_score": 0.75,
+                    "harmonic_awareness_score": 0.8
+                }
+            }
+        },
+        "reharmonization_workshop": {
+            "id": "reharm_{original_progression_id}",
+            "metadata": {
+                "title": "Reharmonization Workshop",
+                "description": "Experiment with chord substitutions",
+                "original_progression": "I-V-vi-IV",
+                "key": "C"
+            },
+            "interactive_elements": {
+                "chord_palette": {
+                    "diatonic_chords": [
+                        "I",
+                        "ii",
+                        "iii",
+                        "IV",
+                        "V",
+                        "vi",
+                        "vii°"
+                    ],
+                    "secondary_dominants": [
+                        "V7/ii",
+                        "V7/iii",
+                        "V7/IV",
+                        "V7/V",
+                        "V7/vi"
+                    ],
+                    "tritone_substitutions": [
+                        "bII7"
+                    ],
+                    "modal_interchange": [
+                        "bIII",
+                        "bVI",
+                        "bVII"
+                    ],
+                    "extensions": [
+                        "add9",
+                        "sus4",
+                        "6/9"
+                    ]
+                },
+                "drag_and_drop": {
+                    "enabled": true,
+                    "snap_to_grid": true,
+                    "undo_redo": true
+                },
+                "a_b_comparison": {
+                    "original_vs_reharm": true,
+                    "play_simultaneously": false
+                }
+            },
+            "technique_guides": [
+                {
+                    "technique": "tritone_substitution",
+                    "description": "Replace dominant chord with another dominant a tritone away",
+                    "example": "G7 → Db7",
+                    "audio_example": true
+                },
+                {
+                    "technique": "secondary_dominant",
+                    "description": "Add temporary V chord before target chord",
+                    "example": "Before Dm7, add A7",
+                    "audio_example": true
+                },
+                {
+                    "technique": "modal_interchange",
+                    "description": "Borrow chords from parallel minor",
+                    "example": "In C major, use Eb, Ab, Bb",
+                    "audio_example": true
+                }
+            ],
+            "saved_variations": [
+                {
+                    "variation_name": "Jazz Ballad Version",
+                    "chord_changes": [
+                        "Cmaj9",
+                        "E7#9",
+                        "Am9",
+                        "Dm9",
+                        "G13",
+                        "Cmaj9"
+                    ],
+                    "creator": "user_id",
+                    "rating": 4.5
+                }
+            ]
+        },
+        "ear_training_studio": {
+            "id": "ear_{module_type}",
+            "metadata": {
+                "title": "Ear Training Studio",
+                "description": "Comprehensive ear training environment",
+                "module_type": "interval|chord|progression|melodic_dictation"
+            },
+            "drill_configuration": {
+                "interval_drills": {
+                    "intervals": [
+                        "m2",
+                        "M2",
+                        "m3",
+                        "M3",
+                        "P4",
+                        "TT",
+                        "P5",
+                        "m6",
+                        "M6",
+                        "m7",
+                        "M7",
+                        "P8"
+                    ],
+                    "direction": "ascending|descending|harmonic",
+                    "instrument": "piano|guitar",
+                    "context": "isolated|melodic|harmonic"
+                },
+                "chord_drills": {
+                    "qualities": [
+                        "maj",
+                        "min",
+                        "dim",
+                        "aug",
+                        "maj7",
+                        "min7",
+                        "dom7",
+                        "m7b5",
+                        "dim7"
+                    ],
+                    "inversions": [
+                        "root",
+                        "first",
+                        "second",
+                        "third"
+                    ],
+                    "voicing": "close|open",
+                    "instrument": "piano|guitar"
+                },
+                "progression_drills": {
+                    "length": 2,
+                    "cadence_types": [
+                        "authentic",
+                        "plagal",
+                        "deceptive"
+                    ],
+                    "complexity": "diatonic|chromatic"
+                },
+                "melodic_dictation": {
+                    "length_bars": 4,
+                    "range": "octave",
+                    "rhythmic_complexity": "simple|moderate|complex"
+                }
+            },
+            "adaptive_learning": {
+                "difficulty_adjustment": {
+                    "based_on_performance": true,
+                    "adjustment_rate": "gradual|aggressive",
+                    "mastery_threshold": 90
+                },
+                "spaced_repetition": {
+                    "enabled": true,
+                    "algorithm": "SM-2",
+                    "review_schedule": "optimized"
+                },
+                "weakness_focus": {
+                    "identify_weak_areas": true,
+                    "generate_targeted_exercises": true
+                }
+            },
+            "progress_tracking": {
+                "daily_stats": {
+                    "drills_completed": 15,
+                    "accuracy_percentage": 85,
+                    "time_spent_minutes": 20
+                },
+                "long_term_progress": {
+                    "interval_recognition": 75,
+                    "chord_quality": 60,
+                    "progression_recognition": 45,
+                    "melodic_dictation": 30
+                },
+                "achievements": [
+                    {
+                        "name": "Perfect Pitch Prodigy",
+                        "description": "Score 100% on interval recognition 10 days in a row",
+                        "unlocked": false
+                    }
+                ]
+            }
+        }
+    }
+}
+
+{
+    "api_endpoints": {
+        "generate_scale": {
+            "endpoint": "/api/generate/scale",
+            "method": "POST",
+            "parameters": {
+                "key": "C",
+                "type": "major",
+                "octaves": 2,
+                "direction": "ascending",
+                "rhythmic_pattern": "quarter_notes",
+                "articulation": "legato",
+                "visualization_type": "keyboard|fretboard|staff"
+            },
+            "response": {
+                "success": true,
+                "scale_id": "scale_C_major_ascending",
+                "visualization_data": {
+                    "keyboard": {
+                        "highlighted_notes": [
+                            "C4",
+                            "D4",
+                            "E4",
+                            "F4",
+                            "G4",
+                            "A4",
+                            "B4",
+                            "C5"
+                        ],
+                        "fingering_suggestions": [
+                            1,
+                            2,
+                            3,
+                            1,
+                            2,
+                            3,
+                            4,
+                            5
+                        ]
+                    },
+                    "fretboard": {
+                        "positions": [
+                            {
+                                "position": 1,
+                                "notes": [
+                                    {
+                                        "string": 6,
+                                        "fret": 8,
+                                        "note": "C"
+                                    },
+                                    {
+                                        "string": 5,
+                                        "fret": 10,
+                                        "note": "E"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "staff_notation": {
+                        "clef": "treble",
+                        "notes": [
+                            {
+                                "pitch": "C",
+                                "octave": 4,
+                                "duration": "quarter"
+                            },
+                            {
+                                "pitch": "D",
+                                "octave": 4,
+                                "duration": "quarter"
+                            }
+                        ]
+                    }
+                },
+                "midi_data": {
+                    "format": "base64",
+                    "tempo": 120,
+                    "notes": [
+                        {
+                            "note": 60,
+                            "duration": 480,
+                            "velocity": 80
+                        },
+                        {
+                            "note": 62,
+                            "duration": 480,
+                            "velocity": 80
+                        }
+                    ]
+                },
+                "audio_playback_url": "/api/playback/scale_C_major",
+                "theory_explanation": {
+                    "intervallic_structure": "W-W-H-W-W-W-H",
+                    "chords_derived": [
+                        "Cmaj7",
+                        "Dm7",
+                        "Em7",
+                        "Fmaj7",
+                        "G7",
+                        "Am7",
+                        "Bm7b5"
+                    ],
+                    "common_uses": [
+                        "tonic function",
+                        "melodic development"
+                    ]
+                }
+            }
+        },
+        "generate_progression": {
+            "endpoint": "/api/generate/progression",
+            "method": "POST",
+            "parameters": {
+                "style": "jazz",
+                "key": "C",
+                "complexity": "intermediate",
+                "length_bars": 8,
+                "instrumentation": "piano_trio",
+                "include_backing_track": true
+            },
+            "response": {
+                "success": true,
+                "progression_id": "progression_jazz_C_ii_V_I",
+                "chord_sequence": [
+                    {
+                        "bar": 1,
+                        "beat": 1,
+                        "chord": "Dm7",
+                        "function": "ii",
+                        "duration_beats": 4,
+                        "voicing_suggestions": {
+                            "piano": [
+                                "D3",
+                                "F3",
+                                "C4",
+                                "E4"
+                            ],
+                            "guitar": [
+                                "x-5-7-5-6-5"
+                            ]
+                        }
+                    }
+                ],
+                "backing_track": {
+                    "audio_url": "/api/playback/backing/jazz_C_ii_V_I",
+                    "midi_url": "/api/download/midi/jazz_C_ii_V_I",
+                    "mixer_control": {
+                        "piano_volume": 0.8,
+                        "bass_volume": 0.7,
+                        "drums_volume": 0.6
+                    }
+                },
+                "analysis": {
+                    "roman_numeral_analysis": "ii7 - V7 - Imaj7",
+                    "voice_leading": "Smooth voice leading between guide tones",
+                    "reharmonization_suggestions": [
+                        "tritone_substitution",
+                        "secondary_dominant"
+                    ]
+                },
+                "practice_suggestions": [
+                    {
+                        "focus": "guide_tone_lines",
+                        "exercise": "Play only 3rds and 7ths of each chord",
+                        "difficulty": "beginner"
+                    },
+                    {
+                        "focus": "improvisation",
+                        "exercise": "Use D dorian over Dm7, G mixolydian over G7",
+                        "difficulty": "intermediate"
+                    }
+                ]
+            }
+        },
+        "generate_lick": {
+            "endpoint": "/api/generate/lick",
+            "method": "POST",
+            "parameters": {
+                "style": "blues",
+                "chord": "A7",
+                "key": "A",
+                "difficulty": "intermediate",
+                "instrument": "guitar",
+                "include_variations": true
+            },
+            "response": {
+                "success": true,
+                "lick_id": "lick_blues_A7_intermediate",
+                "notes": [
+                    {
+                        "pitch": "A",
+                        "octave": 4,
+                        "duration": "eighth",
+                        "articulation": "slide_from_below"
+                    }
+                ],
+                "visualizations": {
+                    "guitar_tab": "e|-----------------|\nB|-----------------|\nG|-----------------|\nD|--7-9-7---------|\nA|--------9-7-9-7-|\nE|-----------------|",
+                    "keyboard_diagram": {
+                        "notes": [
+                            "A4",
+                            "C#5",
+                            "E5",
+                            "G5"
+                        ],
+                        "fingering": [
+                            1,
+                            2,
+                            3,
+                            4
+                        ]
+                    },
+                    "staff_notation": {
+                        "clef": "treble",
+                        "key_signature": "A",
+                        "notes": "JSON array of note objects"
+                    }
+                },
+                "midi_data": {
+                    "notes": [
+                        69,
+                        73,
+                        76,
+                        79
+                    ],
+                    "durations": [
+                        240,
+                        240,
+                        240,
+                        240
+                    ],
+                    "articulations": [
+                        64,
+                        64,
+                        64,
+                        64
+                    ]
+                },
+                "theory_analysis": {
+                    "scale_origin": "A blues scale",
+                    "chord_tones_used": [
+                        "root",
+                        "3rd",
+                        "5th",
+                        "b7th"
+                    ],
+                    "approach_notes": "chromatic from below",
+                    "rhythmic_character": "syncopated"
+                },
+                "practice_variations": [
+                    {
+                        "variation": "rhythmic",
+                        "description": "Play as triplets",
+                        "midi_url": "/api/playback/variation/lick_blues_A7_triplets"
+                    },
+                    {
+                        "variation": "transposed",
+                        "description": "Transpose to E7",
+                        "midi_url": "/api/playback/variation/lick_blues_E7"
+                    }
+                ]
+            }
+        },
+        "generate_practice_session": {
+            "endpoint": "/api/generate/session",
+            "method": "POST",
+            "parameters": {
+                "user_id": "user_123",
+                "duration_minutes": 60,
+                "focus_areas": [
+                    "scales",
+                    "chords",
+                    "improvisation"
+                ],
+                "energy_level": "medium",
+                "instrument": "piano"
+            },
+            "response": {
+                "success": true,
+                "session_id": "session_2024_03_15_user_123",
+                "structure": {
+                    "warmup": {
+                        "duration": 10,
+                        "exercises": [
+                            {
+                                "type": "scale",
+                                "scale_id": "scale_C_major",
+                                "tempo": 80,
+                                "repetitions": 4
+                            }
+                        ]
+                    },
+                    "technical_work": {
+                        "duration": 20,
+                        "exercises": [
+                            {
+                                "type": "arpeggio",
+                                "arpeggio_id": "arpeggio_C_maj7",
+                                "tempo": 100,
+                                "inversions": [
+                                    "root",
+                                    "first",
+                                    "second"
+                                ]
+                            }
+                        ]
+                    },
+                    "repertoire": {
+                        "duration": 20,
+                        "piece_id": "autumn_leaves",
+                        "sections": [
+                            "head",
+                            "solo section"
+                        ]
+                    },
+                    "improvisation": {
+                        "duration": 10,
+                        "progression_id": "blues_C",
+                        "constraints": [
+                            "use_only_pentatonic",
+                            "focus_on_phrasing"
+                        ]
+                    }
+                },
+                "resources": {
+                    "scale_pdfs": [
+                        "/api/download/pdf/scale_C_major"
+                    ],
+                    "backing_tracks": [
+                        "/api/playback/blues_C"
+                    ],
+                    "sheet_music": [
+                        "/api/download/musicxml/autumn_leaves"
+                    ]
+                },
+                "goals": [
+                    "Increase scale tempo to 120 BPM",
+                    "Memorize autumn leaves melody",
+                    "Improvise one chorus using only chord tones"
+                ]
+            }
+        }
+    },
+    "interactive_features": {
+        "real_time_feedback": {
+            "note_accuracy": {
+                "detection_method": "midi_input|audio_analysis",
+                "tolerance_cents": 20,
+                "show_visual_feedback": true
+            },
+            "rhythm_timing": {
+                "detection_method": "onset_detection",
+                "tolerance_ms": 50,
+                "show_metronome_comparison": true
+            },
+            "expression_analysis": {
+                "dynamic_range": true,
+                "articulation_consistency": true,
+                "phrasing_analysis": true
+            }
+        },
+        "collaborative_features": {
+            "shared_sessions": {
+                "allow_multiple_users": true,
+                "roles": [
+                    "leader",
+                    "participant",
+                    "observer"
+                ],
+                "sync_method": "websockets|webrtc"
+            },
+            "community_library": {
+                "user_submitted_exercises": true,
+                "rating_system": true,
+                "search_by_tag": true
+            },
+            "live_masterclasses": {
+                "schedule_sessions": true,
+                "record_and_archive": true,
+                "q_a_features": true
+            }
+        }
+    }
+}
+
+
+{
+    "complete_workflow_example": {
+        "scenario": "User wants to practice jazz improvisation over ii-V-I progression",
+        "step_1": {
+            "action": "Generate progression",
+            "request": {
+                "endpoint": "/api/generate/progression",
+                "parameters": {
+                    "style": "jazz",
+                    "key": "C",
+                    "complexity": "intermediate",
+                    "length_bars": 8,
+                    "instrumentation": "piano_trio"
+                }
+            },
+            "response": {
+                "progression_id": "progression_jazz_C_8bars",
+                "chords": [
+                    "Dm7",
+                    "G7",
+                    "Cmaj7"
+                ],
+                "backing_track_url": "/api/playback/backing/jazz_C_ii_V_I",
+                "sheet_music_url": "/api/visualize/progression/jazz_C_ii_V_I"
+            }
+        },
+        "step_2": {
+            "action": "Open play-along lab",
+            "request": {
+                "endpoint": "/api/interactive/lab",
+                "parameters": {
+                    "progression_id": "progression_jazz_C_8bars",
+                    "practice_mode": "chord_tone_targeting"
+                }
+            },
+            "response": {
+                "lab_session_id": "lab_session_123",
+                "interactive_elements": {
+                    "chord_display": "current and upcoming chords",
+                    "scale_highlight": "D dorian, G mixolydian, C ionian",
+                    "chord_tone_targets": [
+                        "3rd",
+                        "7th"
+                    ],
+                    "recording_enabled": true
+                }
+            }
+        },
+        "step_3": {
+            "action": "Get lick suggestions",
+            "request": {
+                "endpoint": "/api/generate/licks",
+                "parameters": {
+                    "for_chord": "G7",
+                    "style": "bebop",
+                    "difficulty": "intermediate"
+                }
+            },
+            "response": {
+                "licks": [
+                    {
+                        "lick_id": "bebop_lick_G7_1",
+                        "notes": [
+                            "G",
+                            "B",
+                            "D",
+                            "F",
+                            "A",
+                            "G",
+                            "F",
+                            "E"
+                        ],
+                        "tab": "guitar tab representation",
+                        "midi": "base64 encoded midi",
+                        "theory_analysis": "Uses G mixolydian with chromatic approach to 3rd"
+                    }
+                ]
+            }
+        },
+        "step_4": {
+            "action": "Record improvisation",
+            "description": "User records 2 choruses of improvisation",
+            "recording_data": {
+                "format": "midi",
+                "duration": "64 bars",
+                "tempo": 120
+            }
+        },
+        "step_5": {
+            "action": "Analyze performance",
+            "request": {
+                "endpoint": "/api/analyze/performance",
+                "parameters": {
+                    "recording_id": "recording_123",
+                    "analysis_types": [
+                        "note_accuracy",
+                        "rhythmic_precision",
+                        "harmonic_awareness"
+                    ]
+                }
+            },
+            "response": {
+                "analysis_results": {
+                    "note_accuracy_percentage": 92,
+                    "rhythmic_accuracy_percentage": 88,
+                    "harmonic_awareness_score": 75,
+                    "phrasing_score": 80,
+                    "suggested_improvements": [
+                        "Work on landing on chord tones on strong beats",
+                        "Increase dynamic contrast between phrases",
+                        "Develop more motivic variation"
+                    ]
+                }
+            }
+        },
+        "step_6": {
+            "action": "Generate targeted exercises",
+            "request": {
+                "endpoint": "/api/generate/targeted_exercises",
+                "parameters": {
+                    "weaknesses_identified": [
+                        "chord_tone_targeting",
+                        "motivic_development"
+                    ],
+                    "duration_minutes": 20
+                }
+            },
+            "response": {
+                "exercises": [
+                    {
+                        "type": "chord_tone_exercise",
+                        "description": "Practice landing on 3rds and 7ths",
+                        "midi_url": "/api/playback/exercise/chord_tones_ii_V_I"
+                    },
+                    {
+                        "type": "motif_development_exercise",
+                        "description": "Take a simple motif and develop it through sequence",
+                        "midi_url": "/api/playback/exercise/motif_development"
+                    }
+                ]
+            }
+        },
+        "step_7": {
+            "action": "Save progress",
+            "request": {
+                "endpoint": "/api/user/save_progress",
+                "parameters": {
+                    "user_id": "user_123",
+                    "session_data": {
+                        "duration_minutes": 45,
+                        "exercises_completed": [
+                            "progression_practice",
+                            "lick_learning",
+                            "improvisation"
+                        ],
+                        "tempo_achieved": 140,
+                        "recordings": [
+                            "recording_123"
+                        ]
+                    }
+                }
+            },
+            "response": {
+                "success": true,
+                "updated_profile": {
+                    "total_practice_time": 1245,
+                    "current_streak": 8,
+                    "skill_progression": {
+                        "improvisation": "+5%",
+                        "harmonic_awareness": "+3%"
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+{
+    "composition_mastery": {
+        "creative_process": {
+            "ideation_techniques": {
+                "melodic_inspiration": {
+                    "from_nature": [
+                        "bird_songs",
+                        "water_patterns",
+                        "wind_melodies"
+                    ],
+                    "from_emotion": [
+                        "mapping_feelings_to_intervals",
+                        "emotional_arcs"
+                    ],
+                    "from_text": [
+                        "poetry_settings",
+                        "prose_interpretation"
+                    ]
+                },
+                "harmonic_exploration": {
+                    "chord_progression_generators": [
+                        "common_progressions",
+                        "random_walk",
+                        "theory_constrained"
+                    ],
+                    "reharmonization_games": [
+                        "chord_substitution",
+                        "modal_interchange",
+                        "chromatic_approach"
+                    ]
+                },
+                "rhythmic_innovation": {
+                    "found_objects": [
+                        "using_everyday_sounds",
+                        "body_percussion_patterns"
+                    ],
+                    "cultural_rhythms": [
+                        "afro_cuban",
+                        "indian_tala",
+                        "bulgarian_rhythms"
+                    ],
+                    "mathematical_patterns": [
+                        "fibonacci_sequences",
+                        "prime_number_groupings"
+                    ]
+                }
+            },
+            "development_strategies": {
+                "motivic_development": {
+                    "fragmentation": [
+                        "breaking_into_smaller_units"
+                    ],
+                    "augmentation": [
+                        "rhythmic_expansion"
+                    ],
+                    "diminution": [
+                        "rhythmic_contraction"
+                    ],
+                    "inversion": [
+                        "mirror_image"
+                    ],
+                    "retrograde": [
+                        "backwards"
+                    ]
+                },
+                "formal_development": {
+                    "contrasting_sections": [
+                        "AB",
+                        "ABA",
+                        "rondo"
+                    ],
+                    "through_composition": [
+                        "continuous_development"
+                    ],
+                    "theme_and_variations": [
+                        "ornamental",
+                        "character",
+                        "structural"
+                    ]
+                }
+            }
+        },
+        "songwriting_framework": {
+            "lyric_crafting": {
+                "structure": [
+                    "verse",
+                    "chorus",
+                    "bridge",
+                    "pre_chorus"
+                ],
+                "rhyming_schemes": [
+                    "AABB",
+                    "ABAB",
+                    "free_verse"
+                ],
+                "metrical_patterns": [
+                    "iambic",
+                    "trochaic",
+                    "anapestic"
+                ],
+                "emotional_arc": [
+                    "setup",
+                    "conflict",
+                    "resolution"
+                ]
+            },
+            "melodic_hooks": {
+                "characteristics": [
+                    "memorable",
+                    "repetitive",
+                    "singable"
+                ],
+                "types": [
+                    "melodic_hook",
+                    "rhythmic_hook",
+                    "harmonic_hook"
+                ],
+                "placement": [
+                    "chorus_beginning",
+                    "post_chorus",
+                    "intro"
+                ]
+            },
+            "arrangement_techniques": {
+                "textural_development": [
+                    "thin_to_thick",
+                    "verse_chorus_contrast"
+                ],
+                "instrumentation_strategies": [
+                    "register_exploitation",
+                    "timbral_contrast"
+                ],
+                "dynamic_shaping": [
+                    "builds",
+                    "drops",
+                    "breakdowns"
+                ]
+            }
+        },
+        "genres_styles": {
+            "pop_songwriting": {
+                "structures": [
+                    "verse_prechorus_chorus",
+                    "ABABCB"
+                ],
+                "harmonic_tendencies": [
+                    "four_chord_loops",
+                    "modal_mixture"
+                ],
+                "production_considerations": [
+                    "DAW_centric",
+                    "sound_selection"
+                ]
+            },
+            "jazz_composition": {
+                "forms": [
+                    "AABA",
+                    "ABAC",
+                    "through_composed"
+                ],
+                "harmonic_complexity": [
+                    "reharmonization",
+                    "substitution_chains"
+                ],
+                "improvisational_space": [
+                    "solo_sections",
+                    "vamp_areas"
+                ]
+            },
+            "film_scoring": {
+                "leitmotif_technique": [
+                    "character_themes",
+                    "location_themes"
+                ],
+                "emotional_synchronization": [
+                    "mickey_mousing",
+                    "underscoring"
+                ],
+                "orchestration_skills": [
+                    "orchestral_colors",
+                    "textural_layers"
+                ]
+            }
+        }
+    },
+    "arranging_orchestration": {
+        "instrument_knowledge": {
+            "ranges_capabilities": {
+                "strings": [
+                    "violin",
+                    "viola",
+                    "cello",
+                    "bass"
+                ],
+                "woodwinds": [
+                    "flute",
+                    "oboe",
+                    "clarinet",
+                    "bassoon"
+                ],
+                "brass": [
+                    "trumpet",
+                    "trombone",
+                    "french_horn",
+                    "tuba"
+                ],
+                "percussion": [
+                    "timpani",
+                    "mallet",
+                    "drum_kit",
+                    "auxiliary"
+                ]
+            },
+            "extended_techniques": {
+                "strings": [
+                    "harmonics",
+                    "col_legno",
+                    "sul_ponticello"
+                ],
+                "woodwinds": [
+                    "multiphonics",
+                    "flutter_tongue",
+                    "key_clicks"
+                ],
+                "brass": [
+                    "growl",
+                    "flutter_tongue",
+                    "half_valve"
+                ]
+            }
+        },
+        "textural_techniques": {
+            "melody_accompaniment": {
+                "homophonic_texture": [
+                    "melody_with_chords"
+                ],
+                "melody_countermelody": [
+                    "primary_and_secondary_lines"
+                ],
+                "polyphonic_texture": [
+                    "multiple_independent_lines"
+                ]
+            },
+            "timbral_mixing": {
+                "blending": [
+                    "similar_timbres_for_unity"
+                ],
+                "contrasting": [
+                    "dissimilar_timbres_for_definition"
+                ],
+                "layering": [
+                    "building_complex_sounds"
+                ]
+            }
+        },
+        "score_preparation": {
+            "notation_standards": {
+                "instrument_transpositions": [
+                    "concert_pitch_vs_transposed"
+                ],
+                "score_order": [
+                    "woodwinds_top",
+                    "brass_middle",
+                    "percussion_bottom"
+                ],
+                "extended_technique_notation": [
+                    "special_symbols",
+                    "explanatory_text"
+                ]
+            },
+            "part_extraction": {
+                "automation_tools": [
+                    "software_features"
+                ],
+                "manual_checking": [
+                    "proofreading_for_errors"
+                ],
+                "player_considerations": [
+                    "page_turns",
+                    "rest_duration"
+                ]
+            }
+        }
+    }
+}
+
+{
+    "music_history_system": {
+        "chronological_eras": {
+            "medieval_era": {
+                "time_period": "500-1400",
+                "characteristics": [
+                    "monophony",
+                    "modal_system",
+                    "church_domination"
+                ],
+                "key_composers": [
+                    "Hildegard_von_Bingen",
+                    "Guillaume_de_Machaut"
+                ],
+                "forms_genres": [
+                    "chant",
+                    "organum",
+                    "motet"
+                ],
+                "historical_context": [
+                    "church_power",
+                    "feudal_system",
+                    "manuscript_culture"
+                ]
+            },
+            "renaissance_era": {
+                "time_period": "1400-1600",
+                "characteristics": [
+                    "polyphony",
+                    "word_painting",
+                    "humanism"
+                ],
+                "key_composers": [
+                    "Josquin_des_Prez",
+                    "Palestrina",
+                    "Thomas_Tallis"
+                ],
+                "forms_genres": [
+                    "mass",
+                    "madrigal",
+                    "chanson"
+                ],
+                "historical_context": [
+                    "printing_press",
+                    "reformation",
+                    "exploration"
+                ]
+            },
+            "baroque_era": {
+                "time_period": "1600-1750",
+                "characteristics": [
+                    "basso_continuo",
+                    "ornamentation",
+                    "affections"
+                ],
+                "key_composers": [
+                    "Bach",
+                    "Handel",
+                    "Vivaldi",
+                    "Purcell"
+                ],
+                "forms_genres": [
+                    "fugue",
+                    "concerto_grosso",
+                    "opera",
+                    "oratorio"
+                ],
+                "historical_context": [
+                    "absolutism",
+                    "scientific_revolution",
+                    "colonialism"
+                ]
+            },
+            "classical_era": {
+                "time_period": "1750-1820",
+                "characteristics": [
+                    "balanced_phrases",
+                    "homophony",
+                    "clarity"
+                ],
+                "key_composers": [
+                    "Haydn",
+                    "Mozart",
+                    "Beethoven",
+                    "Schubert"
+                ],
+                "forms_genres": [
+                    "sonata",
+                    "symphony",
+                    "string_quartet",
+                    "opera_buffa"
+                ],
+                "historical_context": [
+                    "enlightenment",
+                    "french_revolution",
+                    "rise_of_middle_class"
+                ]
+            },
+            "romantic_era": {
+                "time_period": "1820-1900",
+                "characteristics": [
+                    "expression",
+                    "rubato",
+                    "program_music"
+                ],
+                "key_composers": [
+                    "Chopin",
+                    "Liszt",
+                    "Brahms",
+                    "Tchaikovsky",
+                    "Wagner"
+                ],
+                "forms_genres": [
+                    "symphonic_poem",
+                    "art_song",
+                    "character_piece",
+                    "grand_opera"
+                ],
+                "historical_context": [
+                    "industrial_revolution",
+                    "nationalism",
+                    "individualism"
+                ]
+            },
+            "modern_era": {
+                "time_period": "1900-present",
+                "characteristics": [
+                    "atonality",
+                    "rhythmic_complexity",
+                    "experimentation"
+                ],
+                "key_composers": [
+                    "Stravinsky",
+                    "Schoenberg",
+                    "Bartok",
+                    "Cage",
+                    "Reich"
+                ],
+                "forms_genres": [
+                    "serialism",
+                    "minimalism",
+                    "aleatoric_music",
+                    "electronic"
+                ],
+                "historical_context": [
+                    "world_wars",
+                    "technology_advancement",
+                    "globalization"
+                ]
+            }
+        },
+        "listening_development": {
+            "active_listening_techniques": {
+                "structural_listening": [
+                    "identifying_form",
+                    "hearing_development"
+                ],
+                "analytical_listening": [
+                    "harmonic_progression",
+                    "textural_changes"
+                ],
+                "expressive_listening": [
+                    "emotional_content",
+                    "stylistic_nuances"
+                ]
+            },
+            "comparative_listening": {
+                "different_performances": [
+                    "comparing_interpretations"
+                ],
+                "different_arrangements": [
+                    "orchestral_vs_chamber"
+                ],
+                "historical_recordings": [
+                    "performance_practice_evolution"
+                ]
+            }
+        },
+        "contextual_studies": {
+            "music_philosophy": {
+                "aesthetic_theories": [
+                    "formalism",
+                    "expressionism",
+                    "referentialism"
+                ],
+                "philosophical_questions": [
+                    "what_is_music",
+                    "music_and_emotion",
+                    "music_and_cognition"
+                ]
+            },
+            "sociocultural_context": {
+                "music_and_power": [
+                    "patronage_systems",
+                    "political_propaganda"
+                ],
+                "music_and_identity": [
+                    "national_music",
+                    "ethnic_traditions",
+                    "gender_roles"
+                ]
+            },
+            "cross_arts_connections": {
+                "music_and_visual_arts": [
+                    "impressionism",
+                    "abstract_expressionism"
+                ],
+                "music_and_literature": [
+                    "program_music",
+                    "art_song"
+                ],
+                "music_and_dance": [
+                    "ballet",
+                    "folk_dance"
+                ]
+            }
+        }
+    },
+    "world_music_studies": {
+        "regional_traditions": {
+            "african_music": {
+                "characteristics": [
+                    "polyrhythms",
+                    "call_response",
+                    "oral_tradition"
+                ],
+                "instruments": [
+                    "djembe",
+                    "kora",
+                    "mbira",
+                    "talking_drum"
+                ],
+                "contexts": [
+                    "ritual",
+                    "storytelling",
+                    "social_events"
+                ]
+            },
+            "indian_classical": {
+                "systems": [
+                    "raga",
+                    "tala",
+                    "improvisation"
+                ],
+                "instruments": [
+                    "sitar",
+                    "tabla",
+                    "tanpura",
+                    "bansuri"
+                ],
+                "traditions": [
+                    "hindustani",
+                    "carnatic"
+                ]
+            },
+            "indigenous_music": {
+                "characteristics": [
+                    "spiritual_connection",
+                    "nature_based",
+                    "community_focused"
+                ],
+                "instruments": [
+                    "native_american_flute",
+                    "didgeridoo",
+                    "shamanic_drum"
+                ],
+                "contexts": [
+                    "healing_ceremonies",
+                    "seasonal_rituals",
+                    "oral_histories"
+                ]
+            }
+        },
+        "fusion_studies": {
+            "historical_fusions": {
+                "jazz_fusion": [
+                    "jazz_rock",
+                    "latin_jazz",
+                    "jazz_hiphop"
+                ],
+                "world_fusion": [
+                    "afro_cuban_jazz",
+                    "balkan_brass",
+                    "celtic_rock"
+                ]
+            },
+            "contemporary_fusions": {
+                "electronic_world": [
+                    "ethno_techno",
+                    "global_bass"
+                ],
+                "pop_fusions": [
+                    "k_pop_western",
+                    "reggaeton_crossovers"
+                ]
+            }
+        }
+    }
+}
+
+
+{
+    "comprehensive_assessment_system": {
+        "skill_mapping": {
+            "technical_skills": {
+                "instrument_technique": {
+                    "finger_dexterity": [
+                        "scale_velocity",
+                        "arpeggio_fluency",
+                        "passage_work"
+                    ],
+                    "coordination": [
+                        "hand_independence",
+                        "pedal_technique",
+                        "multi_tasking"
+                    ],
+                    "tone_production": [
+                        "dynamic_control",
+                        "articulation_variety",
+                        "timbre_control"
+                    ]
+                },
+                "reading_skills": {
+                    "sight_reading": [
+                        "first_attempt_accuracy",
+                        "rhythmic_precision",
+                        "expression_accuracy"
+                    ],
+                    "score_study": [
+                        "analysis_depth",
+                        "interpretation_decisions",
+                        "performance_preparation"
+                    ]
+                }
+            },
+            "musical_skills": {
+                "ear_training": {
+                    "interval_recognition": [
+                        "melodic",
+                        "harmonic",
+                        "contextual"
+                    ],
+                    "harmonic_perception": [
+                        "chord_quality",
+                        "progression_recognition",
+                        "voicing_analysis"
+                    ],
+                    "rhythmic_dictation": [
+                        "simple_meters",
+                        "complex_rhythms",
+                        "polyrhythms"
+                    ]
+                },
+                "improvisation": {
+                    "melodic_invention": [
+                        "motivic_development",
+                        "thematic_coherence",
+                        "emotional_expression"
+                    ],
+                    "harmonic_navigation": [
+                        "chord_tone_targeting",
+                        "tension_release",
+                        "reharmonization"
+                    ],
+                    "rhythmic_creativity": [
+                        "phrasing",
+                        "syncopation",
+                        "groove_development"
+                    ]
+                }
+            },
+            "creative_skills": {
+                "composition": {
+                    "formal_structure": [
+                        "coherent_development",
+                        "contrasting_sections",
+                        "effective_endings"
+                    ],
+                    "harmonic_invention": [
+                        "original_progressions",
+                        "effective_voice_leading",
+                        "textural_variety"
+                    ],
+                    "melodic_creativity": [
+                        "memorable_themes",
+                        "appropriate_range",
+                        "emotional_impact"
+                    ]
+                },
+                "arrangement": {
+                    "instrumentation": [
+                        "appropriate_scoring",
+                        "timbral_balance",
+                        "technical_feasibility"
+                    ],
+                    "textural_development": [
+                        "layering_effectiveness",
+                        "dynamic_contrast",
+                        "climax_building"
+                    ]
+                }
+            }
+        },
+        "assessment_methods": {
+            "performance_assessment": {
+                "live_performance": {
+                    "technical_evaluation": [
+                        "accuracy",
+                        "fluency",
+                        "control"
+                    ],
+                    "musical_evaluation": [
+                        "phrasing",
+                        "dynamics",
+                        "style_authenticity"
+                    ],
+                    "communication_evaluation": [
+                        "stage_presence",
+                        "audience_connection",
+                        "emotional_impact"
+                    ]
+                },
+                "recorded_performance": {
+                    "audio_analysis": [
+                        "technical_accuracy",
+                        "production_quality",
+                        "musicality"
+                    ],
+                    "video_analysis": [
+                        "physical_technique",
+                        "stage_presence",
+                        "communication"
+                    ]
+                }
+            },
+            "portfolio_assessment": {
+                "creative_portfolio": {
+                    "composition_collection": [
+                        "variety_of_styles",
+                        "technical_complexity",
+                        "emotional_range"
+                    ],
+                    "arrangement_portfolio": [
+                        "instrumentation_variety",
+                        "creative_solutions",
+                        "fidelity_to_original"
+                    ]
+                },
+                "research_portfolio": {
+                    "analytical_papers": [
+                        "depth_of_analysis",
+                        "clarity_of_expression",
+                        "original_insights"
+                    ],
+                    "performance_practice_research": [
+                        "historical_accuracy",
+                        "interpretive_decisions",
+                        "supporting_evidence"
+                    ]
+                }
+            },
+            "examination_assessment": {
+                "written_examinations": {
+                    "theory_tests": [
+                        "harmonic_analysis",
+                        "form_analysis",
+                        "composition_techniques"
+                    ],
+                    "history_examinations": [
+                        "period_characteristics",
+                        "composer_styles",
+                        "historical_context"
+                    ],
+                    "aural_tests": [
+                        "dictation",
+                        "error_detection",
+                        "style_recognition"
+                    ]
+                },
+                "practical_examinations": {
+                    "viva_voce": [
+                        "defense_of_interpretation",
+                        "analysis_explanation",
+                        "historical_justification"
+                    ],
+                    "teaching_demonstration": [
+                        "pedagogical_approach",
+                        "student_engagement",
+                        "concept_clarity"
+                    ]
+                }
+            }
+        },
+        "progression_tracking": {
+            "individual_progress": {
+                "skill_growth_tracking": {
+                    "baseline_assessment": [
+                        "initial_levels",
+                        "strengths_weaknesses",
+                        "learning_style"
+                    ],
+                    "regular_checkpoints": [
+                        "monthly_reviews",
+                        "quarterly_assessments",
+                        "annual_evaluations"
+                    ],
+                    "long_term_trends": [
+                        "skill_acquisition_rate",
+                        "plateau_identification",
+                        "breakthrough_points"
+                    ]
+                },
+                "goal_achievement": {
+                    "short_term_goals": [
+                        "weekly_targets",
+                        "monthly_objectives",
+                        "technique_milestones"
+                    ],
+                    "long_term_goals": [
+                        "repertoire_mastery",
+                        "performance_readiness",
+                        "career_preparation"
+                    ]
+                }
+            },
+            "cohort_comparison": {
+                "peer_benchmarking": {
+                    "skill_level_comparison": [
+                        "relative_strengths",
+                        "average_progression",
+                        "exceptional_achievement"
+                    ],
+                    "collaborative_opportunities": [
+                        "ensemble_placement",
+                        "duet_partners",
+                        "composition_collaborations"
+                    ]
+                },
+                "normative_data": {
+                    "typical_progression": [
+                        "average_time_to_mastery",
+                        "common_challenges",
+                        "successful_strategies"
+                    ],
+                    "exceptional_paths": [
+                        "accelerated_learning",
+                        "unique_talents",
+                        "specialized_focus"
+                    ]
+                }
+            }
+        },
+        "certification_levels": {
+            "beginner_certification": {
+                "requirements": [
+                    "basic_technique",
+                    "simple_repertoire",
+                    "foundational_theory"
+                ],
+                "assessment_methods": [
+                    "performance_exam",
+                    "written_test",
+                    "ear_training_test"
+                ],
+                "certification_value": [
+                    "foundation_acknowledgment",
+                    "progress_motivation",
+                    "next_level_qualification"
+                ]
+            },
+            "intermediate_certification": {
+                "requirements": [
+                    "developing_technique",
+                    "standard_repertoire",
+                    "intermediate_theory"
+                ],
+                "assessment_methods": [
+                    "recital_performance",
+                    "composition_portfolio",
+                    "comprehensive_exam"
+                ],
+                "certification_value": [
+                    "skill_validation",
+                    "teaching_qualification",
+                    "performance_opportunities"
+                ]
+            },
+            "advanced_certification": {
+                "requirements": [
+                    "advanced_technique",
+                    "substantial_repertoire",
+                    "comprehensive_theory"
+                ],
+                "assessment_methods": [
+                    "full_recital",
+                    "original_composition",
+                    "research_paper",
+                    "teaching_demonstration"
+                ],
+                "certification_value": [
+                    "professional_credential",
+                    "higher_education_credit",
+                    "career_advancement"
+                ]
+            },
+            "master_certification": {
+                "requirements": [
+                    "virtuoso_technique",
+                    "extensive_repertoire",
+                    "original_research"
+                ],
+                "assessment_methods": [
+                    "master_recital",
+                    "major_composition",
+                    "significant_research",
+                    "pedagogical_contribution"
+                ],
+                "certification_value": [
+                    "expert_recognition",
+                    "teaching_authority",
+                    "artistic_leadership"
+                ]
+            }
+        }
+    }
+}
