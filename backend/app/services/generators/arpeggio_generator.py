@@ -48,15 +48,21 @@ CHORD_FORMULAS = {
     "sus2": [0, 2, 7],
     "sus4": [0, 5, 7],
     "7sus4": [0, 5, 7, 10],
+    "7sus2": [0, 2, 7, 10],
+    "sus2sus4": [0, 2, 5, 7],  # Suspended 2 and 4
 
     # === Add Chords ===
     "add9": [0, 4, 7, 14],
     "madd9": [0, 3, 7, 14],
     "add11": [0, 4, 7, 17],
+    "madd11": [0, 3, 7, 17],
+    "add2": [0, 2, 4, 7],
 
     # === 6th Chords ===
     "maj6": [0, 4, 7, 9],
     "min6": [0, 3, 7, 9],
+    "6/9": [0, 4, 7, 9, 14],  # Major 6/9
+    "m6/9": [0, 3, 7, 9, 14],  # Minor 6/9
 
     # === 7th Chords ===
     "maj7": [0, 4, 7, 11],
@@ -64,7 +70,9 @@ CHORD_FORMULAS = {
     "dom7": [0, 4, 7, 10],
     "half_dim7": [0, 3, 6, 10],
     "dim7": [0, 3, 6, 9],
-    "minmaj7": [0, 3, 7, 11],  # Minor with major 7th
+    "minmaj7": [0, 3, 7, 11],
+    "augmaj7": [0, 4, 8, 11],
+    "aug7": [0, 4, 8, 10],
 
     # === Extended Chords ===
     "maj9": [0, 4, 7, 11, 14],
@@ -72,7 +80,9 @@ CHORD_FORMULAS = {
     "dom9": [0, 4, 7, 10, 14],
     "maj11": [0, 4, 7, 11, 14, 17],
     "min11": [0, 3, 7, 10, 14, 17],
+    "dom11": [0, 4, 7, 10, 14, 17],
     "maj13": [0, 4, 7, 11, 14, 17, 21],
+    "min13": [0, 3, 7, 10, 14, 17, 21],
     "dom13": [0, 4, 7, 10, 14, 17, 21],
 
     # === Altered Dominants ===
@@ -82,10 +92,26 @@ CHORD_FORMULAS = {
     "dom7sharp9": [0, 4, 7, 10, 15],
     "dom7sharp11": [0, 4, 7, 10, 18],
     "dom7b5b9": [0, 4, 6, 10, 13],
+    "dom7b5sharp9": [0, 4, 6, 10, 15],
+    "dom7b9b13": [0, 4, 7, 10, 13, 20],
+    "dom7alt": [0, 4, 6, 10, 13, 15],  # Altered dom7
+
+    # === Quartal/Cluster Voicings ===
+    "quartal": [0, 5, 10],
+    "quartal4": [0, 5, 10, 15],
+    "so_what": [0, 5, 10, 15, 19],  # Famous jazz voicing
+    "cluster_major": [0, 2, 4],
+    "cluster_minor": [0, 2, 3],
 
     # === Power/Simple ===
     "power": [0, 7],
     "power5": [0, 7, 12],
+    "poweradd9": [0, 7, 14],
+
+    # === Gospel/Neo-Soul Voicings ===
+    "maj7add13": [0, 4, 7, 11, 21],
+    "min7add11": [0, 3, 7, 10, 17],
+    "dom9sus4": [0, 5, 7, 10, 14],
 }
 
 

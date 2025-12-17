@@ -81,6 +81,10 @@ PROGRESSIONS = {
         ["I", "I", "IV", "V"],
         ["vi", "IV", "I", "V"],     # Sad pop
         ["I", "vi", "I", "V"],
+        ["I", "V", "IV", "I"],      # Rock ballad
+        ["I", "IV", "I", "IV"],     # Simple alternation
+        ["I", "vi", "IV", "V"],     # Common pop
+        ["IV", "I", "IV", "V"],     # Plagal feel
     ],
     "intermediate": [
         ["ii", "V", "I", "I"],      # ii-V-I
@@ -94,6 +98,11 @@ PROGRESSIONS = {
         ["I", "iii", "IV", "V"],
         ["vi", "V", "IV", "I"],     # Reverse axis
         ["I", "IV", "I", "ii", "V"],
+        ["ii", "V", "I", "IV"],     # Extended turnaround
+        ["I", "V", "vi", "IV", "I"],  # Extended pop
+        ["vi", "ii", "V", "I"],     # Minor start turnaround
+        ["I", "iii", "vi", "IV"],   # Sensitive
+        ["IV", "I", "V", "vi"],     # Hymnal feel
     ],
     "advanced": [
         ["iii", "vi", "ii", "V", "I"],        # Circle of fifths
@@ -106,6 +115,10 @@ PROGRESSIONS = {
         ["I", "vi", "ii", "V", "iii", "vi", "ii", "V", "I"],  # Long turnaround
         ["vi", "ii", "V", "I", "IV", "vii", "iii"],         # Modal shift
         ["I", "iii", "vi", "ii", "V", "I"],                 # Smooth jazz
+        ["ii", "V", "iii", "vi"],             # Short jazz
+        ["I", "IV", "vii", "iii", "vi"],      # Partial diatonic
+        ["vi", "IV", "ii", "V", "I"],         # Pop ballad end
+        ["iii", "vi", "IV", "V", "I"],        # Extended pop resolution
     ]
 }
 
@@ -225,27 +238,70 @@ def generate_progression_exercise(
 
     # Apply tempo randomization
     if randomize:
-        tempo_variance = random.uniform(-0.1, 0.1)
+        tempo_variance = random.uniform(-0.15, 0.15)
         tempo = int(base_tempo * (1 + tempo_variance))
     else:
         tempo = base_tempo
 
+    # Define rhythm patterns for variety
+    RHYTHM_PATTERNS = {
+        "whole": [4.0],                         # Whole note
+        "half": [2.0, 2.0],                     # Half notes
+        "quarter": [1.0, 1.0, 1.0, 1.0],        # Quarter notes
+        "dotted_half_quarter": [3.0, 1.0],      # Syncopated
+        "half_quarters": [2.0, 1.0, 1.0],       # Half + quarters
+        "quarter_half": [1.0, 1.0, 2.0],        # Quarters + half
+    }
+    
+    # Select rhythm pattern based on difficulty
+    if effective_difficulty == "beginner":
+        available_rhythms = ["whole", "half"]
+    elif effective_difficulty == "intermediate":
+        available_rhythms = ["whole", "half", "quarter", "dotted_half_quarter"]
+    else:
+        available_rhythms = list(RHYTHM_PATTERNS.keys())
+    
     # Generate chord voicings
     chord_names = []
     all_midi_notes = []
     note_names = []
     rhythm = []
     
-    for numeral in numerals:
+    for idx, numeral in enumerate(numerals):
         chord_name, midi_notes = roman_to_chord_notes(numeral, key, octave)
+        
+        # --- RANDOM INVERSION ---
+        if randomize and len(midi_notes) >= 3:
+            # Apply random inversion (0=root, 1=1st, 2=2nd)
+            if effective_difficulty == "beginner":
+                inversion = 0  # Root position only
+            elif effective_difficulty == "intermediate":
+                inversion = random.choice([0, 0, 1])  # Bias toward root
+            else:
+                inversion = random.choice([0, 1, 2])  # All inversions
+            
+            # Apply inversion by moving bottom notes up an octave
+            for _ in range(inversion):
+                if len(midi_notes) > 0:
+                    midi_notes = midi_notes[1:] + [midi_notes[0] + 12]
+        
         chord_names.append(chord_name)
         
         # Add chord notes (as a block - all notes at once)
         all_midi_notes.extend(midi_notes)
         note_names.extend([f"{SEMITONE_TO_NOTE[n % 12]}{n // 12 - 1}" for n in midi_notes])
         
-        # Rhythm: Each chord lasts 4 beats (whole note for each chord tone)
-        rhythm.extend([4.0 / len(midi_notes)] * len(midi_notes))
+        # --- RANDOM RHYTHM PATTERN ---
+        if randomize:
+            rhythm_name = random.choice(available_rhythms)
+            chord_rhythm = RHYTHM_PATTERNS[rhythm_name]
+        else:
+            chord_rhythm = [4.0]  # Whole note
+        
+        # Distribute rhythm across chord tones
+        notes_per_beat = len(midi_notes)
+        for beat_value in chord_rhythm:
+            rhythm.extend([beat_value / notes_per_beat] * notes_per_beat)
 
     # Calculate duration
     duration_beats = len(numerals) * 4.0  # 4 beats per chord

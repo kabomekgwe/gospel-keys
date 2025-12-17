@@ -54,33 +54,65 @@ SCALE_PATTERNS = {
     "locrian": [0, 1, 3, 5, 6, 8, 10, 12],
     
     # === Pentatonic Scales ===
-    "pentatonic_major": [0, 2, 4, 7, 9, 12],  # 5 notes
-    "pentatonic_minor": [0, 3, 5, 7, 10, 12],  # 5 notes
+    "pentatonic_major": [0, 2, 4, 7, 9, 12],
+    "pentatonic_minor": [0, 3, 5, 7, 10, 12],
+    "pentatonic_neutral": [0, 2, 5, 7, 10, 12],  # Egyptian scale
     
     # === Blues Scales ===
-    "blues": [0, 3, 5, 6, 7, 10, 12],  # Minor pentatonic + blue note
-    "blues_major": [0, 2, 3, 4, 7, 9, 12],  # Major pentatonic + blue notes
+    "blues": [0, 3, 5, 6, 7, 10, 12],
+    "blues_major": [0, 2, 3, 4, 7, 9, 12],
+    "blues_hexatonic": [0, 3, 4, 7, 9, 10, 12],
     
     # === Symmetric Scales ===
-    "whole_tone": [0, 2, 4, 6, 8, 10, 12],  # All whole steps
-    "chromatic": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],  # All half steps
-    "diminished": [0, 2, 3, 5, 6, 8, 9, 11, 12],  # Whole-half
-    "diminished_half_whole": [0, 1, 3, 4, 6, 7, 9, 10, 12],  # Half-whole
+    "whole_tone": [0, 2, 4, 6, 8, 10, 12],
+    "chromatic": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+    "diminished": [0, 2, 3, 5, 6, 8, 9, 11, 12],
+    "diminished_half_whole": [0, 1, 3, 4, 6, 7, 9, 10, 12],
+    "augmented": [0, 3, 4, 7, 8, 11, 12],  # Hexatonic
     
     # === Jazz Scales ===
-    "bebop_major": [0, 2, 4, 5, 7, 8, 9, 11, 12],  # Major + passing tone
-    "bebop_dominant": [0, 2, 4, 5, 7, 9, 10, 11, 12],  # Mixolydian + passing
-    "bebop_dorian": [0, 2, 3, 4, 5, 7, 9, 10, 12],  # Dorian + passing
-    "altered": [0, 1, 3, 4, 6, 8, 10, 12],  # Super Locrian
+    "bebop_major": [0, 2, 4, 5, 7, 8, 9, 11, 12],
+    "bebop_dominant": [0, 2, 4, 5, 7, 9, 10, 11, 12],
+    "bebop_dorian": [0, 2, 3, 4, 5, 7, 9, 10, 12],
+    "bebop_minor": [0, 2, 3, 5, 7, 8, 9, 10, 12],
+    "altered": [0, 1, 3, 4, 6, 8, 10, 12],
+    "lydian_dominant": [0, 2, 4, 6, 7, 9, 10, 12],
+    "lydian_augmented": [0, 2, 4, 6, 8, 9, 11, 12],
     
-    # === World Scales ===
-    "hungarian_minor": [0, 2, 3, 6, 7, 8, 11, 12],  # Gypsy minor
-    "spanish_phrygian": [0, 1, 4, 5, 7, 8, 10, 12],  # Phrygian dominant
-    "arabic": [0, 1, 4, 5, 7, 8, 11, 12],  # Double harmonic
-    "japanese": [0, 1, 5, 7, 8, 12],  # In-sen scale
+    # === World Scales - European ===
+    "hungarian_minor": [0, 2, 3, 6, 7, 8, 11, 12],
+    "hungarian_major": [0, 3, 4, 6, 7, 9, 10, 12],
+    "spanish_phrygian": [0, 1, 4, 5, 7, 8, 10, 12],
+    "spanish_8tone": [0, 1, 3, 4, 5, 6, 8, 10, 12],
+    "romanian": [0, 2, 3, 6, 7, 9, 10, 12],
+    "ukrainian_dorian": [0, 2, 3, 6, 7, 9, 10, 12],
+    
+    # === World Scales - Middle Eastern ===
+    "arabic": [0, 1, 4, 5, 7, 8, 11, 12],
+    "persian": [0, 1, 4, 5, 6, 8, 11, 12],
+    "byzantine": [0, 1, 4, 5, 7, 8, 11, 12],
+    "hijaz": [0, 1, 4, 5, 7, 8, 10, 12],
+    
+    # === World Scales - Asian ===
+    "japanese": [0, 1, 5, 7, 8, 12],  # In-sen
+    "hirajoshi": [0, 2, 3, 7, 8, 12],  # Japanese
+    "chinese": [0, 4, 6, 7, 11, 12],  # Chinese 5-note
+    "balinese": [0, 1, 3, 7, 8, 12],
+    "javanese": [0, 1, 3, 5, 7, 9, 10, 12],
+    
+    # === World Scales - Indian ===
+    "raga_bhairav": [0, 1, 4, 5, 7, 8, 11, 12],
+    "raga_kafi": [0, 2, 3, 5, 7, 9, 10, 12],
+    "raga_todi": [0, 1, 3, 6, 7, 8, 11, 12],
     
     # === Gospel/Church Scales ===
-    "gospel": [0, 2, 3, 4, 7, 9, 12],  # Major with bluesy minor 3rd
+    "gospel": [0, 2, 3, 4, 7, 9, 12],
+    
+    # === Modern/Synthetic ===
+    "prometheus": [0, 2, 4, 6, 9, 10, 12],
+    "enigmatic": [0, 1, 4, 6, 8, 10, 11, 12],
+    "neapolitan_major": [0, 1, 3, 5, 7, 9, 11, 12],
+    "neapolitan_minor": [0, 1, 3, 5, 7, 8, 11, 12],
 }
 
 
