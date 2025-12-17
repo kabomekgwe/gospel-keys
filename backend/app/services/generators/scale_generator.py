@@ -382,7 +382,7 @@ def generate_scale_exercise(
         base_starting_octave = 3
         available_patterns = ["ascending", "descending", "ascending_descending", "thirds", "fourths"]
 
-    # --- ENHANCED RANDOMIZATION ---
+    # --- ENHANCED RANDOMIZATION (DRAMATIC) ---
     if randomize:
         # Randomize scale type if not specified
         if scale_type is None:
@@ -394,24 +394,29 @@ def generate_scale_exercise(
         else:
             octaves = min(octaves, max_octaves)
         
-        # Randomize starting octave with more variance
-        octave_offset = random.choice([-1, 0, 1])
-        starting_octave = max(2, min(5, base_starting_octave + octave_offset))
+        # Randomize starting octave with MORE variance (was ±1, now ±2)
+        octave_offset = random.choice([-2, -1, 0, 1, 2])
+        starting_octave = max(2, min(6, base_starting_octave + octave_offset))
         
-        # Randomize tempo within ±15% (increased from ±10%)
-        tempo_variance = random.uniform(-0.15, 0.15)
+        # Randomize tempo within ±30% (increased from ±15%) - VERY AUDIBLE
+        tempo_variance = random.uniform(-0.30, 0.30)
         tempo = int(base_tempo * (1 + tempo_variance))
+        tempo = max(40, min(160, tempo))  # Clamp to reasonable range
         
         # Randomize practice pattern if not explicitly specified
         if practice_pattern is None:
             practice_pattern = random.choice(available_patterns)
         
-        # Add rhythm variation factor (affects note durations slightly)
-        rhythm_variation = random.uniform(0.9, 1.1)
+        # Add rhythm variation factor (affects note durations) - DRAMATIC
+        rhythm_variation = random.uniform(0.7, 1.3)  # Was 0.9-1.1
+        
+        # Random articulation style (staccato vs legato)
+        articulation = random.choice(["legato", "staccato", "normal"])
     else:
         tempo = base_tempo
         starting_octave = base_starting_octave
         rhythm_variation = 1.0
+        articulation = "normal"
         if scale_type is None:
             scale_type = "major"
         if octaves is None:

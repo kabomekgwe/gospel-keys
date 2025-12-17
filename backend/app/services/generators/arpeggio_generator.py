@@ -414,7 +414,7 @@ def generate_arpeggio_exercise(
         available_patterns = ["ascending", "descending", "ascending_descending", "alternating", "alberti", "broken"]
         available_inversions = [0, 1, 2]
 
-    # --- ENHANCED RANDOMIZATION ---
+    # --- ENHANCED RANDOMIZATION (DRAMATIC) ---
     if randomize:
         # Randomize chord type if not specified
         if chord_type is None:
@@ -426,13 +426,14 @@ def generate_arpeggio_exercise(
         else:
             octaves = min(octaves, max_octaves)
         
-        # Randomize starting octave with more variance
-        octave_offset = random.choice([-1, 0, 1])
-        starting_octave = max(2, min(5, base_starting_octave + octave_offset))
+        # Randomize starting octave with MORE variance (was ±1, now ±2)
+        octave_offset = random.choice([-2, -1, 0, 1, 2])
+        starting_octave = max(2, min(6, base_starting_octave + octave_offset))
         
-        # Randomize tempo within ±15%
-        tempo_variance = random.uniform(-0.15, 0.15)
+        # Randomize tempo within ±30% (increased from ±15%) - VERY AUDIBLE
+        tempo_variance = random.uniform(-0.30, 0.30)
         tempo = int(base_tempo * (1 + tempo_variance))
+        tempo = max(40, min(160, tempo))  # Clamp to reasonable range
         
         # Randomize pattern if not specified
         if pattern is None:
@@ -441,9 +442,13 @@ def generate_arpeggio_exercise(
         # Randomize inversion if not specified
         if inversion is None:
             inversion = random.choice(available_inversions)
+        
+        # Rhythm variation for more audible differences
+        rhythm_variation = random.uniform(0.7, 1.3)
     else:
         tempo = base_tempo
         starting_octave = base_starting_octave
+        rhythm_variation = 1.0
         if chord_type is None:
             chord_type = "major"
         if octaves is None:

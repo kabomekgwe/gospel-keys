@@ -254,7 +254,7 @@ class HybridMusicGenerator:
         piano_track.append(mido.Message('program_change', program=0, time=0)) # Acoustic Grand
 
         # Combine chords and melody into a single performance
-        self._add_piano_performance(piano_track, chords, melody, ticks_per_beat, request)
+        self._add_piano_performance(piano_track, chord_progression, melody, ticks_per_beat, request)
         # Save MIDI file - in generations/{genre}/ folder with timestamp
         import datetime
         genre_dir = self.output_base / request.genre.value

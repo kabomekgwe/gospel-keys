@@ -236,10 +236,11 @@ def generate_progression_exercise(
     else:
         numerals = PROGRESSIONS[effective_difficulty][0]
 
-    # Apply tempo randomization
+    # Apply DRAMATIC tempo randomization (±30% - very audible)
     if randomize:
-        tempo_variance = random.uniform(-0.15, 0.15)
+        tempo_variance = random.uniform(-0.30, 0.30)
         tempo = int(base_tempo * (1 + tempo_variance))
+        tempo = max(40, min(160, tempo))  # Clamp to reasonable range
     else:
         tempo = base_tempo
 
