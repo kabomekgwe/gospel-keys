@@ -56,13 +56,14 @@ class HybridMusicGenerator:
         self.midi_service = midi_service
         self.llm = multi_model_service
 
-        # Output directories
-        self.output_dir = Path("backend/output/hybrid_generation")
-        self.midi_dir = self.output_dir / "midi"
-        self.audio_dir = self.output_dir / "audio"
-
-        # Create directories
-        self.midi_dir.mkdir(parents=True, exist_ok=True)
+        # Output directories - ABSOLUTE PATH to project root/generations
+        # Get project root (parent of backend folder)
+        project_root = Path(__file__).parent.parent.parent.parent  # backend/app/services -> project root
+        self.output_base = project_root / "generations"
+        self.audio_dir = self.output_base / "audio"
+        
+        # Create base directories
+        self.output_base.mkdir(parents=True, exist_ok=True)
         self.audio_dir.mkdir(parents=True, exist_ok=True)
 
     async def generate(
@@ -82,31 +83,18 @@ class HybridMusicGenerator:
         logger.info(f"🎵 Starting hybrid music generation: {request.genre.value} in {request.key.value}")
 
         try:
-            # Step 1 & 2: Generate/Load Chords and Melody
-            # Step 1 & 2: Generate/Load Chords and Melody
-            if not request.template_data and request.genre == MusicGenre.JAZZ:
-                logger.info("ℹ️ No template provided. Auto-loading 'World Class' Jazz Template (grok-1.json)")
-                try:
-                    import json
-                    template_path = Path("templates/generative_output/grok-1.json")
-                    if template_path.exists():
-                        with open(template_path, 'r') as f:
-                            full_json = json.load(f)
-                            # Extract Jazz musicSheetTemplate
-                            genres = full_json.get("genres", [])
-                            found = False
-                            for g in genres:
-                                if g.get("genre") == "Jazz":
-                                    request.template_data = g.get("musicSheetTemplate")
-                                    found = True
-                                    break
-                            
-                            if not found:
-                                # Fallback: try root or simple structure
-                                request.template_data = full_json.get("musicSheetTemplate", full_json)
-                                
-                except Exception as e:
-                    logger.warning(f"⚠️ Failed to auto-load default template: {e}")
+            # Step 1 & 2: Generate/Load Chords - use LLM for ALL genres
+            if not request.template_data:
+                logger.info(f"🎹 Generating dynamic {request.genre.value} progression with LLM")
+                # Generate a dynamic template with LLM-based chord progressions
+                request.template_data = self._generate_dynamic_progression_template(
+                    genre=request.genre,
+                    num_bars=request.num_bars,
+                    key=request.key,
+                    complexity=request.complexity,
+                    style=request.style,
+                    prompt=request.prompt  # User custom prompt
+                )
 
             if request.template_data:
                 logger.info("📄 Using provided template data (World Class Mode)")
@@ -115,9 +103,15 @@ class HybridMusicGenerator:
                     request.genre,
                     request.key,
                     request.num_bars,
-                    request.variations
+                    request.variations,
+                    request.complexity
                 )
-                logger.info(f"✓ Loaded {len(chord_progression.chords)} chords and {len(melody.notes)} melody notes from template (extended to {request.num_bars} bars)")
+                # JAZZ: Force chords-only (no melody) for realistic comping
+                if request.genre == MusicGenre.JAZZ:
+                    melody = None
+                    logger.info(f"✓ Loaded {len(chord_progression.chords)} chords from template (CHORDS ONLY - no melody)")
+                else:
+                    logger.info(f"✓ Loaded {len(chord_progression.chords)} chords and {len(melody.notes) if melody else 0} melody notes from template")
             else:
                 # Step 1: Generate chord progression
                 logger.info("📝 Step 1: Generating chord progression...")
@@ -258,11 +252,13 @@ class HybridMusicGenerator:
 
         # Combine chords and melody into a single performance
         self._add_piano_performance(piano_track, chord_progression, melody, ticks_per_beat, request.genre)
-
-        # Save MIDI file
-        timestamp = int(time.time())
-        filename = f"{request.genre.value}_{request.key.value}_{timestamp}.mid"
-        midi_path = self.midi_dir / filename
+        # Save MIDI file - in generations/{genre}/ folder with timestamp
+        import datetime
+        genre_dir = self.output_base / request.genre.value
+        genre_dir.mkdir(parents=True, exist_ok=True)
+        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"{request.key.value}_{timestamp}.mid"
+        midi_path = genre_dir / filename
 
         midi_file.save(midi_path)
         return midi_path
@@ -282,27 +278,51 @@ class HybridMusicGenerator:
         # Collect all note events (on/off) with absolute times in ticks
         events = []
         
-        # --- 1. Process Chords (Comping / Harmony) ---
+        # --- 1. Process Chords with RHYTHMIC COMPING ---
         beats_per_bar = 4
-        beats_per_chord = 2 # Assuming 2 chords per bar roughly, or use chord duration if available
-        # In our simple model, we assume equal duration chords filling bars.
-        # Total bars = chords.num_bars
-        # Total beats = total_bars * 4
-        # Chords list length.
         total_beats = chords.num_bars * beats_per_bar
-        chord_duration_beats = total_beats / len(chords.voicings) if chords.voicings else 2.0
+        chord_duration_beats = total_beats / len(chords.voicings) if chords.voicings else 4.0
+        
+        # Jazz comping rhythm patterns (in beats within a bar)
+        # Each pattern is a list of (beat_offset, duration, velocity_factor)
+        # These create syncopated, interesting rhythms like a real pianist
+        comping_patterns = [
+            # Charleston rhythm: hit on 1, hit on 2-and
+            [(0.0, 0.5, 1.0), (1.5, 0.5, 0.8)],
+            # Syncopated: 1, 2-and, 4
+            [(0.0, 0.4, 1.0), (1.5, 0.4, 0.85), (3.0, 0.5, 0.9)],
+            # Freddie Green style: 2-and, 4
+            [(1.5, 0.5, 0.9), (3.5, 0.5, 0.85)],
+            # Anticipation: 4-and of previous into 1
+            [(0.0, 0.7, 1.0), (2.5, 0.4, 0.8), (3.5, 0.5, 0.9)],
+            # Full bebop: 1, 2-and, 3, 4-and
+            [(0.0, 0.3, 1.0), (1.5, 0.3, 0.8), (2.0, 0.3, 0.85), (3.5, 0.4, 0.9)],
+            # Simple: 1 and 3
+            [(0.0, 0.5, 1.0), (2.0, 0.5, 0.9)],
+            # Sparse: just on 1-and
+            [(0.5, 0.5, 0.95)],
+            # Dense bebop
+            [(0.0, 0.25, 1.0), (1.0, 0.25, 0.75), (1.5, 0.25, 0.85), (2.5, 0.25, 0.8), (3.0, 0.25, 0.9)],
+        ]
         
         current_beat = 0.0
+        pattern_idx = 0
         
-        for voicing in chords.voicings:
+        for voicing_idx, voicing in enumerate(chords.voicings):
+            # Select a rhythm pattern - vary by bar for interest
+            pattern = comping_patterns[pattern_idx % len(comping_patterns)]
+            pattern_idx += 1
+            
+            # Sometimes switch patterns more randomly for variety
+            if random.random() > 0.7:
+                pattern = random.choice(comping_patterns)
+            
             # Analyze Voicing for Hand Split
-            # Sort notes
             sorted_notes = sorted(voicing.notes)
             bass_note = sorted_notes[0]
             rest_notes = sorted_notes[1:]
             
             # Left Hand: Bass + Lower Shells
-            # Keep LH below C4 (60) usually
             lh_notes = [bass_note]
             rh_comp_notes = []
             
@@ -312,35 +332,47 @@ class HybridMusicGenerator:
                 else:
                     rh_comp_notes.append(n)
             
-            # Create Note Events
-            start_tick = int(current_beat * ticks_per_beat)
-            end_tick = int((current_beat + chord_duration_beats) * ticks_per_beat)
-             # Slightly shorter for articulation (95%)
-            release_tick = start_tick + int((end_tick - start_tick) * 0.95)
+            # Bass note: play on beat 1 and sometimes beat 3 (walking bass style)
+            bar_start_tick = int(current_beat * ticks_per_beat)
             
-            # LH Events (Bass - Stronger, Shells - Softer)
-            # Humanize Bass: Vel +/- 5, Timing +/- 10 ticks
+            # Bass on beat 1
             bass_vel = (85 if genre == MusicGenre.JAZZ else 80) + random.randint(-5, 5)
             bass_offset = random.randint(0, 10)
+            bass_duration = int(ticks_per_beat * 0.9)  # Slightly detached
             
-            events.append({"type": "note_on", "note": bass_note, "vel": min(127, max(1, bass_vel)), "time": start_tick + bass_offset})
-            events.append({"type": "note_off", "note": bass_note, "vel": 0, "time": release_tick})
+            events.append({"type": "note_on", "note": bass_note, "vel": min(127, max(1, bass_vel)), "time": bar_start_tick + bass_offset})
+            events.append({"type": "note_off", "note": bass_note, "vel": 0, "time": bar_start_tick + bass_duration})
             
-            for n in lh_notes[1:]:
-                # Humanize Shells
-                shell_vel = 65 + random.randint(-8, 8)
-                shell_offset = random.randint(5, 20) # Strum effect
-                events.append({"type": "note_on", "note": n, "vel": min(127, max(1, shell_vel)), "time": start_tick + shell_offset}) 
-                events.append({"type": "note_off", "note": n, "vel": 0, "time": release_tick})
-
-            # RH Comping Events (Softer, maybe rhythmic?)
-            # Humanize Comping
-            for n in rh_comp_notes:
-                comp_vel = 55 + random.randint(-8, 8)
-                comp_offset = random.randint(10, 30) # More delay for comping
-                events.append({"type": "note_on", "note": n, "vel": min(127, max(1, comp_vel)), "time": start_tick + comp_offset})
-                events.append({"type": "note_off", "note": n, "vel": 0, "time": release_tick})
+            # Sometimes add bass on beat 3 for walking feel
+            if random.random() > 0.5 and chord_duration_beats >= 4:
+                beat3_tick = bar_start_tick + int(2 * ticks_per_beat)
+                # Use a passing tone (chromatic approach) sometimes
+                passing_note = bass_note + random.choice([0, -1, 1, -2, 2])
+                events.append({"type": "note_on", "note": passing_note, "vel": min(127, max(1, bass_vel - 10)), "time": beat3_tick})
+                events.append({"type": "note_off", "note": passing_note, "vel": 0, "time": beat3_tick + bass_duration})
+            
+            # Left hand shells: play on the rhythmic pattern
+            for beat_offset, duration, vel_factor in pattern:
+                hit_tick = bar_start_tick + int(beat_offset * ticks_per_beat)
+                release_tick = hit_tick + int(duration * ticks_per_beat)
                 
+                for n in lh_notes[1:]:  # Skip bass (already handled)
+                    shell_vel = int(65 * vel_factor) + random.randint(-8, 8)
+                    shell_offset = random.randint(5, 20)  # Strum effect
+                    events.append({"type": "note_on", "note": n, "vel": min(127, max(1, shell_vel)), "time": hit_tick + shell_offset})
+                    events.append({"type": "note_off", "note": n, "vel": 0, "time": release_tick})
+            
+            # Right hand comping: also follows rhythm pattern with slight delay
+            for beat_offset, duration, vel_factor in pattern:
+                hit_tick = bar_start_tick + int(beat_offset * ticks_per_beat)
+                release_tick = hit_tick + int(duration * ticks_per_beat)
+                
+                for n in rh_comp_notes:
+                    comp_vel = int(55 * vel_factor) + random.randint(-8, 8)
+                    comp_offset = random.randint(15, 35)  # More delay for comping (behind beat)
+                    events.append({"type": "note_on", "note": n, "vel": min(127, max(1, comp_vel)), "time": hit_tick + comp_offset})
+                    events.append({"type": "note_off", "note": n, "vel": 0, "time": release_tick})
+                    
             current_beat += chord_duration_beats
 
         # --- 2. Process Melody (Lead) ---
@@ -360,9 +392,12 @@ class HybridMusicGenerator:
                 events.append({"type": "note_on", "note": note.pitch, "vel": min(127, max(1, human_vel)), "time": max(0, start_tick + human_offset)})
                 events.append({"type": "note_off", "note": note.pitch, "vel": 0, "time": end_tick})
 
-        # --- 3. Sort and Write Events ---
-        # Sort by time, then note_off before note_on if same time (to prevent hanging? actually on before off usually)
-        # Standard: Sort by time.
+        # --- 3. Apply Swing Feel (Jazz) ---
+        if genre == MusicGenre.JAZZ:
+            events = self._apply_swing_feel(events, ticks_per_beat, swing_amount=0.58)
+        
+        # --- 4. Sort and Write Events ---
+        # Sort by time, then note_off before note_on if same time
         events.sort(key=lambda x: x["time"])
         
         # Convert absolute time to delta time
@@ -463,13 +498,291 @@ Keep analysis concise (3-4 sentences)."""
             logger.error(f"Theory analysis failed: {e}")
             return f"Analysis failed: {str(e)}"
 
+    def _generate_dynamic_progression_template(
+        self,
+        genre: MusicGenre,
+        num_bars: int,
+        key: MusicKey,
+        complexity: int,
+        style: str,
+        prompt: str = ""
+    ) -> Dict[str, Any]:
+        """
+        Use LOCAL LLM to generate a unique chord progression for ANY genre.
+        
+        The AI reasons about genre, key, complexity, style, and user prompt 
+        to create a realistic, song-like chord progression.
+        """
+        import json
+        import random
+        import time as time_module
+        
+        # Genre-specific instructions
+        genre_instructions = {
+            "jazz": "Use ii-V-I, turnarounds, tritone subs. Think Autumn Leaves, Take The A Train.",
+            "gospel": "Use rich extensions (9, 11, 13), walk-ups, passing diminished chords, shout music patterns. Think Kirk Franklin, Fred Hammond.",
+            "blues": "Use 12-bar blues form, dominant 7ths, shuffle feel. Think BB King, Ray Charles.",
+            "neo_soul": "Use minor 9th/11th chords, cluster voicings, behind-the-beat feel. Think D'Angelo, Erykah Badu.",
+            "rnb": "Use smooth progressions, add9 chords, lo-fi voicings. Think Bryson Tiller, SZA.",
+            "classical": "Use traditional harmony, I-IV-V-I, proper voice leading.",
+            "pop": "Use I-V-vi-IV and variations, simple but effective.",
+            "funk": "Use dominant 7ths, 9ths, syncopated rhythm. Think Herbie Hancock, Parliament.",
+        }
+        
+        genre_key = genre.value.lower()
+        genre_guide = genre_instructions.get(genre_key, "Create an authentic progression for this style.")
+        
+        # Add unique seed to ensure different progressions each time
+        unique_seed = f"{int(time_module.time() * 1000)}_{random.randint(1000, 9999)}"
+        
+        # Build context prompt for the LLM
+        user_input = prompt if prompt else f"Create an authentic {style or genre.value} chord progression"
+        
+        llm_prompt = f"""You are an expert {genre.value} keyboardist and composer. Generate a chord progression for a REAL song.
+
+UNIQUE REQUEST ID: {unique_seed} (generate a DIFFERENT progression than previous requests)
+
+USER REQUEST: {user_input}
+
+PARAMETERS:
+- Genre: {genre.value}
+- Key: {key.value}
+- Number of bars: {num_bars}
+- Complexity: {complexity}/10 (higher = more extensions, substitutions)
+- Style: {style or genre.value}
+
+GENRE-SPECIFIC GUIDANCE:
+{genre_guide}
+
+RULES:
+1. Create a progression that sounds like a REAL {genre.value} song
+2. Complexity {complexity} means: {"basic triads and 7ths" if complexity <= 3 else "some extensions (9, 11)" if complexity <= 6 else "rich extensions, alterations, substitutions"}
+3. Make it interesting and musical - varied but coherent
+4. Consider the full {num_bars}-bar form structure
+
+OUTPUT FORMAT (JSON array of chord symbols, one per bar):
+["Cmaj7", "Am7", "Dm9", "G7", "Em7", "A7#9", "Dm7", "G13"]
+
+IMPORTANT: 
+- Output ONLY the JSON array, no explanation
+- Exactly {num_bars} chords (one per bar)
+- Use proper chord symbols
+
+Generate now:"""
+
+        # Use local LLM with high temperature for unique outputs each time
+        chords_list = []
+        
+        try:
+            if self.llm and self.llm.is_available():
+                logger.info("🤖 Using local LLM to generate chord progression...")
+                
+                # Force local model even for high complexity, use HIGH temperature
+                response = self.llm.generate(
+                    prompt=llm_prompt,
+                    complexity=min(complexity, 7),  # Cap for model routing
+                    max_tokens=256,
+                    temperature=1.0,  # HIGH temperature for unique outputs
+                    force_local=True,  # Always use local model
+                )
+                
+                # Parse the JSON response
+                response = response.strip()
+                if '[' in response and ']' in response:
+                    start = response.index('[')
+                    end = response.rindex(']') + 1
+                    json_str = response[start:end]
+                    chords_list = json.loads(json_str)
+                    logger.info(f"✅ LLM generated: {chords_list}")
+                else:
+                    logger.warning(f"⚠️ No JSON array in response: {response[:100]}")
+            else:
+                logger.warning("⚠️ LLM not available")
+                    
+        except Exception as e:
+            logger.error(f"❌ LLM generation failed: {e}")
+        
+        # Verify we have valid chords, regenerate if needed
+        if not chords_list or len(chords_list) != num_bars:
+            logger.warning(f"⚠️ Invalid LLM output, got {len(chords_list) if chords_list else 0} chords, need {num_bars}")
+            # One more attempt with simplified prompt
+            try:
+                simple_prompt = f"Generate exactly {num_bars} {genre.value} chords in key of {key.value}. Output ONLY a JSON array like [\"Cmaj7\",\"Am7\",...]"
+                response = self.llm.generate(
+                    prompt=simple_prompt,
+                    complexity=5,
+                    max_tokens=256,
+                    temperature=1.0,
+                    force_local=True,
+                )
+                if '[' in response and ']' in response:
+                    start = response.index('[')
+                    end = response.rindex(']') + 1
+                    chords_list = json.loads(response[start:end])
+                    logger.info(f"✅ Retry succeeded: {chords_list}")
+            except Exception as e:
+                logger.error(f"❌ Retry also failed: {e}")
+        
+        # REQUIRED: Fallback if LLM failed to produce valid output
+        if not chords_list or len(chords_list) != num_bars:
+            logger.warning(f"🔄 LLM output invalid, using algorithmic generation as fallback")
+            chords_list = self._generate_realistic_progression(
+                genre, num_bars, key, complexity, style
+            )
+            logger.info(f"✅ Fallback generated: {chords_list}")
+        
+        # Convert chord list to template format (chords only, no melody)
+        measures = []
+        for i, chord in enumerate(chords_list):
+            measures.append({
+                "measureNumber": i + 1,
+                "chords": [{
+                    "symbol": chord,
+                    "duration": "whole",
+                    "position": "beat1"
+                }],
+                "melody": [],  # No melody - chords only
+                "dynamics": "mf"
+            })
+        
+        return {
+            "title": f"AI Generated {genre.value.title()} in {key.value}",
+            "composer": "Local LLM",
+            "key": key.value,
+            "timeSignature": "4/4",
+            "tempo": 120,
+            "measures": measures
+        }
+    
+    def _generate_realistic_progression(
+        self,
+        genre: MusicGenre,
+        num_bars: int,
+        key: MusicKey,
+        complexity: int,
+        style: str
+    ) -> List[str]:
+        """
+        Fallback: Generate a realistic chord progression algorithmically.
+        Uses genre-specific song-form patterns.
+        """
+        import random
+        
+        # Note mapping
+        notes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
+        flat_to_sharp = {"Db": "C#", "Eb": "D#", "Gb": "F#", "Ab": "G#", "Bb": "A#"}
+        
+        key_str = key.value.replace('m', '')
+        key_root = flat_to_sharp.get(key_str, key_str)
+        root_idx = notes.index(key_root) if key_root in notes else 0
+        
+        def note(semitones: int) -> str:
+            return notes[(root_idx + semitones) % 12]
+        
+        # Genre-specific patterns (8 bars each)
+        genre_key = genre.value.lower()
+        
+        if genre_key == "gospel":
+            # Gospel patterns - shout music, walk-ups, rich extensions
+            patterns = [
+                # Traditional gospel turnaround
+                [f"{note(0)}maj9", f"{note(0)}maj7/3", f"{note(5)}9", f"{note(5)}7",
+                 f"{note(0)}/5", f"{note(7)}13", f"{note(0)}maj9", f"{note(7)}7#9"],
+                # Contemporary gospel (Kirk Franklin style)
+                [f"{note(0)}maj9", f"{note(9)}m11", f"{note(2)}m9", f"{note(7)}13",
+                 f"{note(4)}m9", f"{note(9)}7#9", f"{note(2)}m9", f"{note(7)}7alt"],
+                # Shout music pattern
+                [f"{note(0)}7", f"{note(0)}7", f"{note(5)}9", f"{note(0)}7",
+                 f"{note(0)}7/3", f"{note(1)}dim7", f"{note(2)}m7", f"{note(7)}7#9"],
+            ]
+        elif genre_key == "blues":
+            patterns = [
+                # 12-bar blues (8 bars shown)
+                [f"{note(0)}7", f"{note(5)}7", f"{note(0)}7", f"{note(0)}7",
+                 f"{note(5)}7", f"{note(5)}7", f"{note(0)}7", f"{note(9)}7"],
+            ]
+        elif genre_key == "neo_soul":
+            patterns = [
+                # D'Angelo style
+                [f"{note(0)}m9", f"{note(5)}9", f"{note(3)}maj9", f"{note(8)}m11",
+                 f"{note(0)}m9", f"{note(10)}7", f"{note(3)}maj9", f"{note(7)}7#9"],
+                # Erykah Badu style
+                [f"{note(9)}m11", f"{note(2)}9", f"{note(7)}m9", f"{note(0)}maj9",
+                 f"{note(5)}m9", f"{note(10)}13", f"{note(3)}maj9", f"{note(8)}m11"],
+            ]
+        elif genre_key == "rnb":
+            patterns = [
+                # Lo-fi R&B
+                [f"{note(0)}add9", f"{note(9)}m7", f"{note(5)}maj7", f"{note(7)}sus4",
+                 f"{note(0)}add9", f"{note(4)}m7", f"{note(5)}maj7", f"{note(7)}7"],
+                # Modern R&B 
+                [f"{note(0)}maj7", f"{note(9)}m9", f"{note(2)}m7", f"{note(7)}sus4",
+                 f"{note(4)}m7", f"{note(9)}7", f"{note(2)}m7", f"{note(7)}7"],
+            ]
+        elif genre_key == "funk":
+            patterns = [
+                # Classic funk
+                [f"{note(0)}9", f"{note(0)}9", f"{note(5)}9", f"{note(0)}9",
+                 f"{note(7)}9", f"{note(5)}9", f"{note(0)}9", f"{note(0)}9"],
+            ]
+        else:  # jazz or default
+            patterns = [
+                # Autumn Leaves style
+                [f"{note(0)}m7", f"{note(5)}7", f"{note(10)}maj7", f"{note(3)}maj7",
+                 f"{note(8)}m7b5", f"{note(1)}7", f"{note(0)}m7", f"{note(7)}7"],
+                # Take The A Train style
+                [f"{note(0)}maj7", f"{note(2)}7#11", f"{note(2)}m7", f"{note(7)}7",
+                 f"{note(0)}maj7", f"{note(4)}m7", f"{note(9)}7", f"{note(7)}7"],
+                # Rhythm changes
+                [f"{note(0)}maj7", f"{note(9)}m7", f"{note(2)}m7", f"{note(7)}7",
+                 f"{note(4)}m7", f"{note(9)}7", f"{note(2)}m7", f"{note(7)}7"],
+            ]
+        
+        # Build progression by combining patterns
+        result = []
+        while len(result) < num_bars:
+            pattern = random.choice(patterns)
+            result.extend(pattern)
+        
+        # Trim to exact length
+        result = result[:num_bars]
+        
+        # Apply complexity-based modifications
+        if complexity >= 7:
+            for i in range(len(result)):
+                chord = result[i]
+                if chord.endswith('7') and not any(x in chord for x in ['maj7', 'm7', 'dim7', '7#', '7b', '7alt', '9', '11', '13']):
+                    alts = ['7alt', '7#9', '7b9', '13']
+                    if random.random() > 0.5:
+                        base = chord.replace('7', '')
+                        result[i] = base + random.choice(alts)
+                elif 'm7' in chord and 'maj' not in chord and 'b5' not in chord and '9' not in chord:
+                    if random.random() > 0.5:
+                        result[i] = chord.replace('m7', 'm9')
+                elif 'maj7' in chord and '9' not in chord:
+                    if random.random() > 0.5:
+                        result[i] = chord.replace('maj7', 'maj9')
+        
+        elif complexity <= 3:
+            for i in range(len(result)):
+                chord = result[i]
+                # Simplify extensions
+                for ext in ['9', '11', '13', '#9', 'b9', '#11', 'alt', 'add']:
+                    chord = chord.replace(ext, '')
+                while '77' in chord:
+                    chord = chord.replace('77', '7')
+                result[i] = chord if chord else notes[root_idx] + "maj7"
+        
+        return result
+
     def _parse_template(
         self,
         template_data: Dict[str, Any],
         genre: MusicGenre,
         key: MusicKey,
         target_bars: int = 8,
-        variations: Optional[List[VariationType]] = None
+        variations: Optional[List[VariationType]] = None,
+        complexity: int = 5
     ) -> tuple[ChordProgression, MelodySequence]:
         """Parse full music template into ChordProgression and MelodySequence"""
         import copy
@@ -541,6 +854,7 @@ Keep analysis concise (3-4 sentences)."""
 
         total_bars = len(measures)
         current_beat_global = 0.0
+        bar_index = 0
         
         for measure in measures:
             # Assumes sequential measures
@@ -562,10 +876,10 @@ Keep analysis concise (3-4 sentences)."""
                 root_val = note_name_map.get(root_str, 0)
                 root_midi = (4 * 12) + root_val 
                 
-                # Generate voicing using chord service logic (reusing existing logic for now)
-                # We need a list of notes. 
-                # Accessing private method for now, or duplicate logic
-                notes = self.chord_service._get_chord_notes(symbol, root_midi, genre)
+                # Generate voicing using chord service logic with complexity awareness
+                notes = self.chord_service._get_chord_notes(
+                    symbol, root_midi, genre, complexity, bar_index
+                )
                 bass_note = notes[0] - 12 if notes else root_midi - 12
                 
                 voicing = ChordVoicing(
@@ -578,6 +892,8 @@ Keep analysis concise (3-4 sentences)."""
                 
                 chords_list.append(symbol)
                 voicings_list.append(voicing)
+            
+            bar_index += 1
             
             # --- Parse Melody ---
             m_melody = measure.get('melody', [])
@@ -726,6 +1042,47 @@ Keep analysis concise (3-4 sentences)."""
         elif variation_type == 'density' or variation_type == 'arrangement':
              if len(melody) > 2:
                  melody.pop(random.randint(0, len(melody)-1))
+
+    def _apply_swing_feel(
+        self,
+        events: List[Dict[str, Any]],
+        ticks_per_beat: int,
+        swing_amount: float = 0.58
+    ) -> List[Dict[str, Any]]:
+        """
+        Apply swing feel to MIDI events.
+        
+        Swing works by delaying notes that fall on the "and" of each beat
+        (the upbeats/offbeats between main beats).
+        
+        Args:
+            events: List of MIDI events with 'time' in absolute ticks
+            ticks_per_beat: MIDI ticks per quarter note
+            swing_amount: 0.5 = straight, 0.67 = triplet swing, 0.58 = subtle swing
+            
+        Returns:
+            Modified events with swing timing applied
+        """
+        half_beat = ticks_per_beat // 2  # Position of straight eighth note
+        
+        for event in events:
+            tick = event['time']
+            beat_position = tick % ticks_per_beat
+            
+            # Check if note is on the upbeat (2nd eighth of each beat)
+            # Allow some tolerance for humanization offsets
+            tolerance = ticks_per_beat // 8
+            
+            if abs(beat_position - half_beat) < tolerance:
+                # Calculate swing offset
+                # swing_amount of 0.58 means the upbeat is 58% through the beat
+                # instead of 50%
+                swing_target = int(ticks_per_beat * swing_amount)
+                offset = swing_target - half_beat
+                
+                event['time'] = tick + offset
+        
+        return events
 
 
 # Global singleton instance

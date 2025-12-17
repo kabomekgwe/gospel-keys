@@ -248,11 +248,13 @@ class ChordService:
         self,
         chord_symbol: str,
         root_midi: int,
-        genre: MusicGenre
+        genre: MusicGenre,
+        complexity: int = 5,
+        bar_index: int = 0
     ) -> List[int]:
-        """Get MIDI notes for a chord voicing"""
+        """Get MIDI notes for a chord voicing with complexity awareness"""
         if genre == MusicGenre.JAZZ:
-            return self._get_jazz_voicing(chord_symbol, root_midi)
+            return self._get_jazz_voicing(chord_symbol, root_midi, complexity, bar_index)
             
         # Standard Triad Logic (Default)
         notes = [root_midi]  # Root
@@ -291,15 +293,25 @@ class ChordService:
 
         return sorted(notes)
 
-    def _get_jazz_voicing(self, chord_symbol: str, root_midi: int) -> List[int]:
+    def _get_jazz_voicing(
+        self, 
+        chord_symbol: str, 
+        root_midi: int,
+        complexity: int = 5,
+        bar_index: int = 0
+    ) -> List[int]:
         """
-        Generate sophisticated Jazz voicings (Shells + Extensions).
-        Strategy:
-        - Root is usually played by bass (simulated here as lowest note)
-        - Piano LH: Shell (3rd + 7th)
-        - Piano RH: Extensions (9th, 11th, 13th)
+        Generate sophisticated Jazz voicings based on complexity and bar index.
+        
+        Complexity levels (Bill Evans inspired):
+        - 1-3: Shell voicings (3rd + 7th only)
+        - 4-6: Rootless A/B voicings (alternating per bar)
+        - 7-10: Drop 2 / Quartal / Polychord voicings
+        
+        Bar index variation:
+        - Alternates between voicing types to prevent static/robotic sound
         """
-        notes = [root_midi - 12] # Bass note (octave down)
+        import random
         
         # Determine chord quality
         is_minor = 'm' in chord_symbol and 'maj' not in chord_symbol.lower()
@@ -308,54 +320,128 @@ class ChordService:
         is_dim = 'dim' in chord_symbol
         is_m7b5 = 'm7b5' in chord_symbol
         
-        # Shells (3rd and 7th) in middle register (around C4=60)
-        # We start with basic intervals relative to root
-        third_interval = 4 # Major 3rd
-        seventh_interval = 10 # Minor 7th
+        # Calculate intervals
+        third = 3 if (is_minor or is_dim or is_m7b5) else 4
+        seventh = 11 if is_maj else (9 if is_dim else 10)
+        ninth = 14  # Natural 9
+        thirteenth = 21  # Natural 13 (9 + 12)
         
-        if is_minor or is_dim or is_m7b5:
-            third_interval = 3
+        # Handle alterations
+        if 'b9' in chord_symbol: ninth = 13
+        elif '#9' in chord_symbol: ninth = 15
+        if 'b13' in chord_symbol: thirteenth = 20
+        elif '#11' in chord_symbol: thirteenth = 18  # #11 instead of 13
         
-        if is_maj:
-            seventh_interval = 11
-        elif is_dim:
-            seventh_interval = 9 # Diminished 7th
+        notes = []
         
-        # Add Shells (moved to center register)
-        # We simply add them relative to root for now, verify range later?
-        # Actually simplest is to build the stack and then voicing analysis will invert/spread if needed.
-        # But for "World Class" we want open voicings.
+        # === COMPLEXITY-BASED VOICING SELECTION ===
         
-        notes.append(root_midi + third_interval)
-        notes.append(root_midi + seventh_interval)
-        
-        # Extensions (9, 11, 13) for "Color"
-        # 9th (Root + 14)
-        if not is_dim: # Dim usually doesn't take 9 unless dim7(9)
-            # Flatten 9 for Phrygian/Minor? Usually natural 9 for m7, maj7, dom7.
-            # b9 for dom7b9.
-            if 'b9' in chord_symbol:
-                notes.append(root_midi + 13)
-            elif '#9' in chord_symbol:
-                notes.append(root_midi + 15)
+        if complexity <= 3:
+            # SHELL VOICINGS: Simple, sparse
+            # Just 3rd and 7th (no root - bass covers it)
+            notes = [
+                root_midi + third,
+                root_midi + seventh
+            ]
+            # Add root in bass for solo piano context
+            notes.insert(0, root_midi - 12)
+            
+        elif complexity <= 6:
+            # ROOTLESS VOICINGS (Bill Evans Style)
+            # Alternate between A and B forms based on bar index
+            use_a_form = (bar_index % 2 == 0)
+            
+            if use_a_form:
+                # A Form: 3rd on bottom (3-5-7-9)
+                notes = [
+                    root_midi + third,
+                    root_midi + 7,  # 5th (optional, for fullness)
+                    root_midi + seventh,
+                    root_midi + ninth
+                ]
             else:
-                notes.append(root_midi + 14)
+                # B Form: 7th on bottom (7-9-3-13)
+                notes = [
+                    root_midi + seventh - 12,  # 7th dropped octave
+                    root_midi + ninth - 12,    # 9th in lower register
+                    root_midi + third,
+                    root_midi + thirteenth - 12 if is_dom else root_midi + 7
+                ]
                 
-        # 13th (Root + 21) or #11?
-        if is_dom or is_maj:
-             # Add 13th (Major 6th + Octave) = 9 + 12 = 21? No. 
-             # 6th is 9 semitones from root? No. 
-             # M6 is 9 semitones. (C to A).
-             # 13th is same pitch class as 6.
-             notes.append(root_midi + 21) 
-             
-        # Altered Dominants (simplified)
-        if 'alt' in chord_symbol:
-             # #9, b13
-             notes.append(root_midi + 15) # #9
-             notes.append(root_midi + 20) # b13
-             
-        return sorted(list(set(notes))) # Remove logic duplications if any
+            # Bass note for context
+            notes.insert(0, root_midi - 12)
+            
+        else:
+            # HIGH COMPLEXITY: Drop 2, Quartal, Extensions
+            voicing_type = bar_index % 4
+            
+            if voicing_type == 0:
+                # Drop 2 Voicing: Take close position, drop 2nd note from top
+                close_pos = [third, 7, seventh, ninth + 12]  # Close position
+                # Drop 2nd from top (the seventh) down an octave
+                notes = [
+                    root_midi - 12,  # Bass
+                    root_midi + close_pos[0],
+                    root_midi + close_pos[1],
+                    root_midi + close_pos[2] - 12 if close_pos[2] > 7 else root_midi + close_pos[2],
+                    root_midi + close_pos[3]
+                ]
+                
+            elif voicing_type == 1:
+                # Quartal Voicing: Stacked 4ths
+                notes = [
+                    root_midi - 12,  # Bass
+                    root_midi + 5,   # 4th
+                    root_midi + 10,  # b7 (2 4ths up)
+                    root_midi + 15,  # 9th (another 4th)
+                    root_midi + 20   # Another 4th
+                ]
+                
+            elif voicing_type == 2:
+                # Upper Structure Triad (UST)
+                # maj triad a major 9th above root for dom7
+                if is_dom:
+                    ust_root = root_midi + 14  # 9th
+                    notes = [
+                        root_midi - 12,  # Bass
+                        root_midi + third,
+                        root_midi + seventh,
+                        ust_root,        # Root of UST
+                        ust_root + 4,    # 3rd of UST (= #11)
+                        ust_root + 7     # 5th of UST (= 13)
+                    ]
+                else:
+                    # Fallback to rootless
+                    notes = [
+                        root_midi - 12,
+                        root_midi + third,
+                        root_midi + seventh,
+                        root_midi + ninth
+                    ]
+                    
+            else:
+                # Full extension stack with random variation
+                base_notes = [
+                    root_midi - 12,  # Bass
+                    root_midi + third,
+                    root_midi + seventh,
+                    root_midi + ninth,
+                ]
+                # Add 13th sometimes
+                if random.random() > 0.5 and (is_dom or is_maj):
+                    base_notes.append(root_midi + thirteenth)
+                # Sometimes add #11 instead of 5th
+                if random.random() > 0.6 and is_dom:
+                    base_notes.append(root_midi + 18)  # #11
+                notes = base_notes
+        
+        # Ensure notes are within playable range and deduplicated
+        notes = sorted(list(set(notes)))
+        
+        # Keep voicings in reasonable piano range (C2=36 to C7=96)
+        notes = [n for n in notes if 36 <= n <= 96]
+        
+        return notes
 
     def _transpose(self, note: str, semitones: int) -> str:
         """Transpose a note by semitones"""

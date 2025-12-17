@@ -141,6 +141,10 @@ class MusicGenerationRequest(BaseModel):
         default=None, 
         description="List of variations to apply to repeated bars"
     )
+    prompt: Optional[str] = Field(
+        default="",
+        description="Optional: Custom instructions for the AI (e.g., 'create a gospel shout progression')"
+    )
 
     # Generation options
     include_melody: bool = Field(True, description="Generate melody")

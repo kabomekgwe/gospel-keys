@@ -39,6 +39,7 @@ except ImportError:
 # Try to import MLX
 try:
     from mlx_lm import load, generate
+    from mlx_lm.sample_utils import make_sampler  # For temperature-controlled sampling
     MLX_AVAILABLE = True
     logger.info("✅ MLX framework loaded (M4 Neural Engine enabled)")
 except ImportError:
@@ -268,7 +269,10 @@ class MultiModelLLMService:
             # Cap max_tokens to model's limit
             max_tokens = min(max_tokens, config["max_tokens"])
 
-            logger.info(f"🤖 Generating with {tier.value} model (complexity {complexity})")
+            logger.info(f"🤖 Generating with {tier.value} model (complexity {complexity}, temp={temperature})")
+
+            # Create sampler with temperature for randomness
+            sampler = make_sampler(temp=temperature)
 
             # Generate using MLX (runs on M4 Neural Engine)
             response = generate(
@@ -276,6 +280,7 @@ class MultiModelLLMService:
                 tokenizer=tokenizer,
                 prompt=formatted_prompt,
                 max_tokens=max_tokens,
+                sampler=sampler,  # Use sampler for temperature-controlled randomness
                 verbose=False,
             )
 
