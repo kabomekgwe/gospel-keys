@@ -45,17 +45,32 @@ class RnBGeneratorService(
             output_subdir="rnb_generated"
         )
 
-    def _get_style_context(self) -> str:
+    def _get_style_context(self, complexity: int = 5, style: str = "") -> str:
         """
         Get R&B-specific style context for AI prompts.
 
         Returns R&B harmony and rhythm characteristics.
         """
-        return """Requirements for authentic R&B music:
+        if complexity <= 4:
+            harmony_text = "- Use standard extension chords: maj7, maj9, 9th"
+        elif complexity <= 7:
+            harmony_text = "- Use rich extensions (11th, 13th) and sus chords"
+        else:
+            harmony_text = "- Use advanced neo-soul harmony: chromatic movement, altered dominants, dim7 passing chords"
+
+        style_n = ""
+        st = style.lower()
+        if "90s" in st:
+            style_n = "- 90s New Jack Swing feel"
+        elif "trap" in st:
+            style_n = "- Trap-soul influence"
+        elif "ballad" in st:
+            style_n = "- Slow jam ballad feel"
+
+        return f"""Requirements for authentic R&B music:
 
         Harmony:
-        - Use extended chords: maj7, maj9, 9th, 11th, 13th
-        - Neo-soul harmony: chromatic movement, altered dominants
+        {harmony_text}
         - Contemporary progressions: I-vi-IV-V with extensions
         - Add sus2/sus4 for smooth transitions
         - Use add9 chords for lush voicings (e.g., Cadd9)
@@ -69,14 +84,7 @@ class RnBGeneratorService(
         - Anticipations and delayed resolutions
         - Subtle swing/shuffle feel (not straight)
         - Space and breathing room in arrangement
-
-        Style:
-        - Smooth, soulful groove at 80-95 BPM
-        - Lush harmonic bed for vocals
-        - Contemporary neo-soul influences
-        - Emphasis on emotional expression
-        - Rich chord voicings with extensions
-        - Blend of classic soul and modern production
+        {style_n}
         """
 
     def _get_default_progression(self, key: str) -> List[str]:

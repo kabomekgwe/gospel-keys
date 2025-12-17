@@ -221,22 +221,67 @@ def generate_with_markov(
 # ============================================================================
 
 FALLBACK_PATTERNS = {
-    "bebop": {
-        "intervals": [0, 2, 4, 5, 7, 9, 11, 12],  # Major scale with passing tones
-        "characteristics": ["scalar", "ascending", "bebop"],
-    },
-    "gospel": {
-        "intervals": [0, 3, 4, 7, 10, 12],  # Minor 7th arpeggio
-        "characteristics": ["arpeggio", "chord_tones", "gospel"],
-    },
-    "blues": {
-        "intervals": [0, 3, 5, 6, 7, 10],  # Blues scale
-        "characteristics": ["blues_scale", "pentatonic", "blues"],
-    },
-    "classical": {
-        "intervals": [0, 2, 4, 5, 7, 9, 11, 12],  # Major scale
-        "characteristics": ["scalar", "classical"],
-    }
+    "bebop": [
+        {"intervals": [0, 2, 4, 5, 7, 9, 11, 12], "characteristics": ["scalar", "ascending", "bebop"]},
+        {"intervals": [12, 11, 9, 7, 5, 4, 2, 0], "characteristics": ["scalar", "descending", "bebop"]},
+        {"intervals": [0, 1, 2, 4, 5, 7, 9, 11], "characteristics": ["chromatic", "bebop"]},
+        {"intervals": [0, 4, 7, 11, 12, 11, 7, 4], "characteristics": ["arpeggio", "bebop"]},
+        {"intervals": [0, 2, 3, 4, 5, 7, 9, 11], "characteristics": ["chromatic_approach", "bebop"]},
+    ],
+    "gospel": [
+        {"intervals": [0, 3, 4, 7, 10, 12], "characteristics": ["arpeggio", "chord_tones", "gospel"]},
+        {"intervals": [0, 4, 7, 12, 10, 7, 4, 0], "characteristics": ["arpeggio", "turnaround", "gospel"]},
+        {"intervals": [0, 3, 4, 7, 9, 12], "characteristics": ["pentatonic", "gospel"]},
+        {"intervals": [0, 2, 4, 7, 9, 11, 12], "characteristics": ["major_scale", "gospel"]},
+        {"intervals": [0, 3, 5, 7, 10, 12, 10, 7], "characteristics": ["blues_feel", "gospel"]},
+    ],
+    "blues": [
+        {"intervals": [0, 3, 5, 6, 7, 10], "characteristics": ["blues_scale", "pentatonic", "blues"]},
+        {"intervals": [0, 3, 5, 7, 10, 12, 10, 7], "characteristics": ["ascending_descending", "blues"]},
+        {"intervals": [0, 3, 4, 5, 7, 10], "characteristics": ["blue_note", "blues"]},
+        {"intervals": [12, 10, 7, 5, 3, 0], "characteristics": ["descending", "blues"]},
+        {"intervals": [0, 3, 5, 6, 7, 10, 12], "characteristics": ["full_scale", "blues"]},
+        {"intervals": [0, 1, 3, 5, 6, 7, 10], "characteristics": ["chromatic_blues", "blues"]},
+    ],
+    "classical": [
+        {"intervals": [0, 2, 4, 5, 7, 9, 11, 12], "characteristics": ["scalar", "major", "classical"]},
+        {"intervals": [0, 2, 3, 5, 7, 8, 10, 12], "characteristics": ["minor", "classical"]},
+        {"intervals": [0, 4, 7, 12, 7, 4, 0], "characteristics": ["arpeggio", "classical"]},
+        {"intervals": [12, 11, 9, 7, 5, 4, 2, 0], "characteristics": ["descending", "classical"]},
+        {"intervals": [0, 2, 4, 7, 4, 2, 0], "characteristics": ["broken_chord", "classical"]},
+    ],
+    "jazz": [
+        {"intervals": [0, 2, 4, 5, 7, 9, 10, 12], "characteristics": ["mixolydian", "jazz"]},
+        {"intervals": [0, 2, 3, 5, 7, 9, 10, 12], "characteristics": ["dorian", "jazz"]},
+        {"intervals": [0, 4, 7, 10, 14, 10, 7, 4], "characteristics": ["dom7_arpeggio", "jazz"]},
+        {"intervals": [0, 1, 3, 5, 7, 8, 10, 12], "characteristics": ["altered", "jazz"]},
+        {"intervals": [0, 2, 4, 6, 8, 10, 12], "characteristics": ["whole_tone", "jazz"]},
+    ],
+    "neosoul": [
+        {"intervals": [0, 2, 3, 5, 7, 9, 10], "characteristics": ["dorian", "neo-soul"]},
+        {"intervals": [0, 4, 7, 11, 14], "characteristics": ["maj9_arpeggio", "neo-soul"]},
+        {"intervals": [0, 3, 5, 7, 10, 12, 10, 7], "characteristics": ["minor_pentatonic", "neo-soul"]},
+        {"intervals": [0, 2, 4, 7, 9, 12], "characteristics": ["major_pentatonic", "neo-soul"]},
+        {"intervals": [0, 4, 7, 10, 14, 17], "characteristics": ["extended", "neo-soul"]},
+    ],
+    "rnb": [
+        {"intervals": [0, 3, 5, 7, 10, 12], "characteristics": ["minor_pentatonic", "rnb"]},
+        {"intervals": [0, 2, 4, 7, 9, 11, 12], "characteristics": ["major_scale", "rnb"]},
+        {"intervals": [0, 3, 5, 6, 7, 10, 12], "characteristics": ["blues_feel", "rnb"]},
+        {"intervals": [0, 4, 7, 11, 14, 11, 7, 4], "characteristics": ["maj7_arpeggio", "rnb"]},
+    ],
+    "latin": [
+        {"intervals": [0, 2, 3, 5, 7, 9, 10, 12], "characteristics": ["dorian", "latin"]},
+        {"intervals": [0, 1, 4, 5, 7, 8, 10, 12], "characteristics": ["phrygian_dominant", "latin"]},
+        {"intervals": [0, 2, 4, 6, 7, 9, 11, 12], "characteristics": ["lydian", "latin"]},
+        {"intervals": [0, 3, 5, 7, 10, 12, 15], "characteristics": ["minor_arpeggio", "latin"]},
+    ],
+    "reggae": [
+        {"intervals": [0, 2, 4, 5, 7, 9, 11, 12], "characteristics": ["major", "reggae"]},
+        {"intervals": [0, 3, 5, 7, 10, 12], "characteristics": ["minor_pentatonic", "reggae"]},
+        {"intervals": [0, 2, 4, 7, 9], "characteristics": ["major_pentatonic", "reggae"]},
+        {"intervals": [0, 4, 7, 12, 7, 4, 0], "characteristics": ["arpeggio", "reggae"]},
+    ],
 }
 
 
@@ -245,12 +290,38 @@ def generate_fallback_pattern(
     root: str,
     difficulty: str
 ) -> Dict[str, Any]:
-    """Generate fallback pattern if Phase 7 unavailable"""
-    pattern_data = FALLBACK_PATTERNS.get(style, FALLBACK_PATTERNS["classical"])
+    """Generate fallback pattern if Phase 7 unavailable. Includes randomization."""
+    # Get patterns for style, default to classical
+    style_patterns = FALLBACK_PATTERNS.get(style, FALLBACK_PATTERNS["classical"])
+    
+    # Randomly select a pattern for variety
+    pattern_data = random.choice(style_patterns)
 
     intervals = pattern_data["intervals"]
-    notes, midi_notes = intervals_to_notes(root, intervals)
-    rhythm = [0.5] * len(intervals)
+    
+    # Add some randomization based on difficulty
+    if difficulty == "beginner":
+        # Limit to first 4-6 notes for beginners
+        max_notes = random.randint(4, 6)
+        intervals = intervals[:max_notes]
+    elif difficulty == "advanced":
+        # Possibly extend pattern or add variation
+        if random.random() > 0.5 and len(intervals) > 4:
+            # Add return notes
+            intervals = intervals + intervals[-2:-5:-1]
+    
+    # Random starting octave
+    starting_octave = random.choice([3, 4, 4, 4, 5])  # Bias toward 4
+    
+    notes, midi_notes = intervals_to_notes(root, intervals, starting_octave)
+    
+    # Varied rhythm based on difficulty
+    if difficulty == "beginner":
+        rhythm = [1.0] * len(intervals)  # Quarter notes
+    elif difficulty == "intermediate":
+        rhythm = [random.choice([0.5, 0.5, 1.0]) for _ in intervals]
+    else:
+        rhythm = [random.choice([0.25, 0.5, 0.5, 0.75, 1.0]) for _ in intervals]
 
     return {
         "intervals": intervals,
@@ -305,11 +376,18 @@ def generate_pattern_exercise(
     generation_method = context.get("generation_method", "auto")
     temperature = context.get("temperature", 1.0)
 
-    # Adjust based on difficulty
-    if difficulty == "beginner":
+    # Adjust based on difficulty and complexity
+    if complexity <= 3:
+        effective_difficulty = "beginner"
+    elif complexity <= 6:
+        effective_difficulty = "intermediate"
+    else:
+        effective_difficulty = "advanced"
+
+    if effective_difficulty == "beginner":
         tempo = 80
         starting_octave = 4
-    elif difficulty == "intermediate":
+    elif effective_difficulty == "intermediate":
         tempo = 100
         starting_octave = 4
     else:  # advanced

@@ -58,14 +58,31 @@ class GospelGeneratorService(
     # ABSTRACT METHOD IMPLEMENTATIONS - Gospel-specific behavior
     # =====================================================================
 
-    def _get_style_context(self) -> str:
+    def _get_style_context(self, complexity: int = 5, style: str = "") -> str:
         """Get gospel-specific style context for AI prompts."""
-        context = """Requirements:
-- Use extended gospel harmony (9ths, 11ths, 13ths)
+        
+        # Determine harmonic complexity
+        if complexity <= 3:
+            harmony = "Use simple triads and basic 7th chords. Clear, traditional sound."
+        elif complexity <= 6:
+            harmony = "Use extended gospel harmony (9ths, 11ths, 13ths). Authentic voicing."
+        else:
+            harmony = "Use advanced reharmonization, tritone substitutions, altered dominants, and rich polychords."
+
+        # Determine style nuances
+        style_reqs = ""
+        if "shout" in style.lower():
+            style_reqs = "- Include fast tempo shout music patterns and driving bass"
+        elif "worship" in style.lower():
+            style_reqs = "- Focus on atmospheric, sustained chords and smooth voice leading"
+        
+        context = f"""Requirements:
+- {harmony}
 - Include chromatic passing chords
 - Authentic gospel voice leading
 - Rich harmonic movement
-- Consider gospel traditions: call-and-response, modulation, runs"""
+- Consider gospel traditions: call-and-response, modulation, runs
+{style_reqs}"""
 
         # Try to get additional context from knowledge base
         kb_context = self._get_gospel_style_context()

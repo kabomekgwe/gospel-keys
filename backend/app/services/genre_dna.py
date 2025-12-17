@@ -435,6 +435,121 @@ GENRE_DNA: dict[str, dict[str, Any]] = {
             "presto": (168, 200),
         },
     },
+
+    # =========================================================================
+    # LATIN
+    # =========================================================================
+    "latin": {
+        "name": "Latin / Salsa Piano",
+        "description": "Rhythmic, syncopated style built around the clave, featuring montuno patterns",
+        
+        "harmonic_movements": [
+            {
+                "name": "Classic Montuno",
+                "pattern": "ii → V7 → I → V7",
+                "description": "Standard 2-bar montuno loop",
+                "example_key_C": "Dm → G7 → C → G7"
+            },
+            {
+                "name": "Minor Montuno",
+                "pattern": "im → V7(♭9)",
+                "description": "Tense minor key vamp",
+                "example_key_C": "Cm → G7(b9)"
+            },
+            {
+                "name": "Andalusian Cadence",
+                "pattern": "im → ♭VII → ♭VI → V7",
+                "description": "Flamenco-influenced descending bass",
+                "example_key_C": "Cm → Bb → Ab → G7"
+            },
+        ],
+        
+        "voicing_principles": [
+            "Octave melody in right hand (or 6ths)",
+            "Arpeggiated triads/7ths in rhythm",
+            "Anticipated chord changes (on beat 4+)",
+            "Cluster voicings for percussive hits",
+        ],
+        
+        "rhythm_patterns": [
+            "Montuno (syncopated ostinato)",
+            "Tumbao accompaniment",
+            "3-2 or 2-3 Clave alignment",
+            "Cascara influence",
+        ],
+        
+        "reference_artists": [
+            {"name": "Eddie Palmieri", "known_for": "Aggressive, dissonant, jazz-influenced salsa"},
+            {"name": "Chucho Valdés", "known_for": "Afro-Cuban jazz virtuosity"},
+            {"name": "Rubén González", "known_for": "Classic Buena Vista style, elegant simplicity"},
+        ],
+        
+        "avoid": [
+            "Playing on beat 1 (unless intended)",
+            "Ignoring the clave direction",
+            "Over-pedaling (should be percussive)",
+        ],
+        
+        "tempo_ranges": {
+            "bolero": (90, 110),
+            "cha_cha": (110, 130),
+            "salsa": (160, 220),
+        },
+    },
+
+    # =========================================================================
+    # REGGAE
+    # =========================================================================
+    "reggae": {
+        "name": "Reggae Piano/Organ",
+        "description": "Rhythmic, chopping style emphasizing the off-beat with bubble shuffle",
+        
+        "harmonic_movements": [
+            {
+                "name": "I-IV-V Chop",
+                "pattern": "I → IV → V",
+                "description": "Simple triads, emphasis on rhythm",
+                "example_key_C": "C → F → G"
+            },
+            {
+                "name": "Minor Vamp",
+                "pattern": "im → iv",
+                "description": "Roots reggae minor mood",
+                "example_key_C": "Am → Dm"
+            },
+        ],
+        
+        "voicing_principles": [
+            "Short, staccato triads (chops)",
+            "High organ shuffle (bubble)",
+            "Drop the 3rd in heavy dub chords",
+            "Use inversion close to the previous chord",
+        ],
+        
+        "rhythm_patterns": [
+            "The Skank (Bang) on beats 2 and 4",
+            "The Bubble (16th note shuffle on organ)",
+            "One Drop feel (space on beat 1)",
+        ],
+        
+        "reference_artists": [
+            {"name": "Jackie Mittoo", "known_for": "Studio One legendary organ/piano vibe"},
+            {"name": "Bob Marley (Wailers)", "known_for": "The definitive roots reggae pocket"},
+            {"name": "Augustus Pablo", "known_for": "Melodica/keyboard dub style"},
+        ],
+        
+        "avoid": [
+            "Sustaining chords (unless pads)",
+            "Playing on beat 1 and 3 (leave for bass/kick)",
+            "Complex jazz extensions (keep it roots)",
+        ],
+        
+        "tempo_ranges": {
+            "roots": (70, 85),
+            "dancehall": (90, 110),
+            "ska": (120, 150),
+        },
+    },
 }
 
 

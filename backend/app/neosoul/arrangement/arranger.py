@@ -63,29 +63,31 @@ class NeosoulArranger(BaseArranger):
 
     # Implement abstract methods from BaseArranger
 
-    def _generate_left_pattern(self, pattern_name: str, context: ChordContext) -> HandPattern:
+    def _generate_left_pattern(self, pattern_name: str, context: ChordContext, complexity: int = 5) -> HandPattern:
         """Generate neo-soul left hand pattern.
 
         Args:
             pattern_name: Name of neo-soul pattern
             context: Chord context
+            complexity: Complexity level (1-10)
 
         Returns:
             HandPattern with generated notes
         """
-        return generate_neosoul_left_hand_pattern(pattern_name, context)
+        return generate_neosoul_left_hand_pattern(pattern_name, context, complexity=complexity)
 
-    def _generate_right_pattern(self, pattern_name: str, context: ChordContext) -> HandPattern:
+    def _generate_right_pattern(self, pattern_name: str, context: ChordContext, complexity: int = 5) -> HandPattern:
         """Generate neo-soul right hand pattern.
 
         Args:
             pattern_name: Name of neo-soul pattern
             context: Chord context
+            complexity: Complexity level (1-10)
 
         Returns:
             HandPattern with generated notes
         """
-        return generate_neosoul_right_hand_pattern(pattern_name, context)
+        return generate_neosoul_right_hand_pattern(pattern_name, context, complexity=complexity)
 
     def _apply_rhythm_transformations(self, notes: List[Note], rhythm_patterns: List[str]) -> List[Note]:
         """Apply neo-soul rhythm transformations.

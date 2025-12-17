@@ -44,17 +44,35 @@ class ClassicalGeneratorService(
             output_subdir="classical_generated"
         )
 
-    def _get_style_context(self) -> str:
+    def _get_style_context(self, complexity: int = 5, style: str = "") -> str:
         """Get classical-specific style context for AI prompts."""
-        return """Requirements:
-- Traditional classical harmony (triads, 7ths, diminished 7ths)
+        
+        # Harmonic Complexity
+        if complexity <= 4:
+            harmony = "Use functional harmony (I-IV-V) and homophonic texture (melody + accompaniment)."
+        elif complexity <= 7:
+            harmony = "Use fully realized 4-part harmony, applied dominants, and modulation to related keys."
+        else:
+            harmony = "Use advanced chromaticism, remote modulations, and contrapuntal texture (fugue/canon)."
+
+        # Style Nuances
+        style_n = ""
+        st = style.lower()
+        if "baroque" in st or "bach" in st:
+            style_n = "- Baroque style: imitation, ornamentation, terraced dynamics"
+        elif "romantic" in st or "chopin" in st:
+            style_n = "- Romantic style: rubato, wide spacing, dramatic dynamic contrast"
+        elif "impressionist" in st or "debussy" in st:
+            style_n = "- Impressionist style: parallel motion, extended chords, blurring tonality"
+
+        return f"""Requirements:
+- {harmony}
 - Proper voice leading rules (avoid parallel 5ths/8ves)
-- Functional harmony (I-IV-V-I, ii-V-I)
 - Cadences: authentic, plagal, deceptive, half
 - Counterpoint and polyphonic texture
-- Period-appropriate style (Baroque, Classical, Romantic)
+- Period-appropriate style
 - Alberti bass, arpeggios, or contrapuntal left hand
-- Influences: Bach, Mozart, Beethoven, Chopin, Debussy"""
+{style_n}"""
 
     def _get_default_progression(self, key: str) -> List[str]:
         """Get fallback classical progression (I-IV-V-I)."""

@@ -6,6 +6,7 @@ Supports various exercise types with intelligent voicing and arrangement.
 
 import json
 import logging
+import random
 from pathlib import Path
 from typing import Dict, List, Optional
 from datetime import datetime
@@ -21,15 +22,40 @@ logger = logging.getLogger(__name__)
 
 
 class MIDIGenerationService:
-    """Service for generating MIDI files from curriculum exercises"""
+    """Service for generating MIDI files from curriculum exercises
+    
+    All MIDI generation is DYNAMIC - even with identical input parameters,
+    output will vary due to humanization (velocity, timing, duration).
+    """
 
     def __init__(self):
         self.output_dir = Path(settings.OUTPUTS_DIR) / "exercises" / "midi"
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
-        # MIDI settings
+        # MIDI settings (base values - will be humanized)
         self.default_velocity = 80
         self.piano_program = 0  # Acoustic Grand Piano
+        
+        # Humanization parameters
+        self.velocity_variance = 8      # ±8 from base velocity
+        self.timing_variance_ms = 15    # ±15ms timing offset
+        self.duration_variance = 0.05   # ±5% duration variation
+    
+    def _humanize_velocity(self, base_velocity: int = None) -> int:
+        """Add human-like velocity variation"""
+        base = base_velocity or self.default_velocity
+        humanized = base + random.randint(-self.velocity_variance, self.velocity_variance)
+        return max(1, min(127, humanized))  # Clamp to valid MIDI range
+    
+    def _humanize_timing(self, base_time: float) -> float:
+        """Add subtle timing variation (in seconds)"""
+        offset = random.uniform(-self.timing_variance_ms, self.timing_variance_ms) / 1000.0
+        return max(0.0, base_time + offset)
+    
+    def _humanize_duration(self, base_duration: float) -> float:
+        """Add duration variation"""
+        variance = random.uniform(-self.duration_variance, self.duration_variance)
+        return base_duration * (1.0 + variance)
 
         # Note mappings
         self.note_to_midi = {
@@ -132,13 +158,21 @@ class MIDIGenerationService:
                 # Get MIDI note numbers for the chord
                 midi_notes = [n.degree for n in musicpy_chord.notes]
 
-                # Add notes to MIDI
-                for midi_note in midi_notes:
+                # Add notes to MIDI with humanization for dynamic output
+                for i, midi_note in enumerate(midi_notes):
+                    # Humanize each note slightly differently
+                    humanized_start = self._humanize_timing(current_time)
+                    humanized_duration = self._humanize_duration(chord_duration)
+                    humanized_velocity = self._humanize_velocity()
+                    
+                    # Slight stagger for chord notes (more realistic)
+                    stagger = i * random.uniform(0.005, 0.015)
+                    
                     note = pretty_midi.Note(
-                        velocity=self.default_velocity,
+                        velocity=humanized_velocity,
                         pitch=midi_note,
-                        start=current_time,
-                        end=current_time + chord_duration
+                        start=humanized_start + stagger,
+                        end=humanized_start + humanized_duration
                     )
                     piano.notes.append(note)
 
@@ -212,10 +246,10 @@ class MIDIGenerationService:
 
             for pitch in pitches:
                 note = pretty_midi.Note(
-                    velocity=self.default_velocity,
+                    velocity=self._humanize_velocity(),
                     pitch=pitch,
-                    start=current_time,
-                    end=current_time + note_duration
+                    start=self._humanize_timing(current_time),
+                    end=self._humanize_timing(current_time) + self._humanize_duration(note_duration)
                 )
                 piano.notes.append(note)
                 current_time += note_duration
@@ -280,12 +314,14 @@ class MIDIGenerationService:
         beat_duration = 60.0 / bpm
         chord_duration = beat_duration * 4
 
-        for midi_note in midi_notes:
+        for i, midi_note in enumerate(midi_notes):
+            # Add human-like stagger to chord notes
+            stagger = i * random.uniform(0.005, 0.015)
             note = pretty_midi.Note(
-                velocity=self.default_velocity,
+                velocity=self._humanize_velocity(),
                 pitch=midi_note,
-                start=0.0,
-                end=chord_duration
+                start=stagger,
+                end=self._humanize_duration(chord_duration)
             )
             piano.notes.append(note)
 
@@ -328,10 +364,10 @@ class MIDIGenerationService:
             midi_note = self._note_name_to_midi(note_name)
 
             note = pretty_midi.Note(
-                velocity=self.default_velocity,
+                velocity=self._humanize_velocity(),
                 pitch=midi_note,
-                start=current_time,
-                end=current_time + duration
+                start=self._humanize_timing(current_time),
+                end=self._humanize_timing(current_time) + self._humanize_duration(duration)
             )
             piano.notes.append(note)
             current_time += duration

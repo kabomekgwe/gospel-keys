@@ -159,8 +159,8 @@ class ArrangementHumanizer:
         beat_in_bar = int(time) % 4
         fractional_beat = time - int(time)
         
-        # Base random variation
-        base_offset = random.uniform(-0.02, 0.02) * amount
+        # Base random variation (Gaussian for natural feel)
+        base_offset = random.gauss(0, 0.015) * amount
         
         # Genre-specific timing adjustments
         if beat_in_bar in self.profile["push_beats"]:
@@ -189,7 +189,7 @@ class ArrangementHumanizer:
         for a more natural feel.
         """
         # Small random variation
-        variance = random.uniform(-0.05, 0.08) * amount
+        variance = random.gauss(0, 0.03) * amount
         
         # Tendency: short notes get shorter, long notes get longer
         if duration < 0.5:
@@ -225,7 +225,8 @@ class ArrangementHumanizer:
         
         # Random variation
         variance = self.profile["velocity_variance"]
-        random_variation = int(random.uniform(-variance, variance) * amount)
+        # Gaussian distribution for more natural center-weighted variation
+        random_variation = int(random.gauss(0, variance / 2.0) * amount)
         
         # Phrase dynamics (build toward middle, resolve at end)
         phrase_adjustment = 0

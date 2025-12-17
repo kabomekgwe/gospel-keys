@@ -67,7 +67,7 @@ def get_root_midi(root: str, octave: int = 5) -> int:
 
 # Pattern Generators
 
-def extended_chord_voicing_pattern(context: ChordContext) -> HandPattern:
+def extended_chord_voicing_pattern(context: ChordContext, complexity: int = 5) -> HandPattern:
     """Generate extended chord voicing pattern.
 
     Rich extended voicings: add9, maj7#11, m11, 13th chords.
@@ -78,6 +78,7 @@ def extended_chord_voicing_pattern(context: ChordContext) -> HandPattern:
 
     Args:
         context: Chord context
+        complexity: Complexity level (1-10)
 
     Returns:
         HandPattern with extended voicing notes
@@ -95,28 +96,72 @@ def extended_chord_voicing_pattern(context: ChordContext) -> HandPattern:
 
     notes = []
 
-    # Beat 1-3: Sustained voicing
-    for pitch in voicing:
-        notes.append(Note(
-            pitch=pitch,
-            time=0.0,
-            duration=3.0,
-            velocity=75,
-            hand="right"
-        ))
-
-    # Beat 4: Move to different inversion or add color tone
-    shifted_voicing = [root_midi + interval + 2 for interval in intervals[:2]]
-    shifted_voicing.append(root_midi + intervals[2])
-
-    for pitch in shifted_voicing:
-        notes.append(Note(
-            pitch=pitch,
-            time=3.0,
-            duration=1.0,
-            velocity=70,
-            hand="right"
-        ))
+    if complexity < 4:
+        # Low complexity: Pure sustained voicing (no movement)
+        for pitch in voicing:
+            notes.append(Note(
+                pitch=pitch,
+                time=0.0,
+                duration=4.0,
+                velocity=75,
+                hand="right"
+            ))
+    elif complexity < 7:
+        # Mid complexity: Shift on Beat 4 (Standard)
+        # Beat 1-3
+        for pitch in voicing:
+            notes.append(Note(
+                pitch=pitch,
+                time=0.0,
+                duration=3.0,
+                velocity=75,
+                hand="right"
+            ))
+        
+        # Beat 4: Shifted voicing
+        shifted_voicing = [root_midi + interval + 2 for interval in intervals[:2]]
+        shifted_voicing.append(root_midi + intervals[2])
+        for pitch in shifted_voicing:
+            notes.append(Note(
+                pitch=pitch,
+                time=3.0,
+                duration=1.0,
+                velocity=70,
+                hand="right"
+            ))
+    else:
+        # High complexity: Shift on Beat 3 and 4 (More movement)
+        # Beat 1-2
+        for pitch in voicing:
+            notes.append(Note(
+                pitch=pitch,
+                time=0.0,
+                duration=2.0,
+                velocity=75,
+                hand="right"
+            ))
+        
+        # Beat 3: Slightly altered (sus2 feel if possible)
+        for pitch in [v + 2 for v in voicing]:
+            notes.append(Note(
+                pitch=pitch,
+                time=2.0,
+                duration=1.0,
+                velocity=72,
+                hand="right"
+            ))
+            
+        # Beat 4: Resolution or tension
+        shifted_voicing = [root_midi + interval + 2 for interval in intervals[:2]]
+        shifted_voicing.append(root_midi + intervals[2])
+        for pitch in shifted_voicing:
+            notes.append(Note(
+                pitch=pitch,
+                time=3.0,
+                duration=1.0,
+                velocity=70,
+                hand="right"
+            ))
 
     return HandPattern(
         name="Extended Chord Voicing",
@@ -384,12 +429,13 @@ NEOSOUL_RIGHT_HAND_PATTERNS = {
 }
 
 
-def generate_neosoul_right_hand_pattern(pattern_name: str, context: ChordContext) -> HandPattern:
+def generate_neosoul_right_hand_pattern(pattern_name: str, context: ChordContext, complexity: int = 5) -> HandPattern:
     """Generate a neo-soul right hand pattern by name.
 
     Args:
         pattern_name: Name of pattern to generate
         context: Chord context
+        complexity: Complexity level (1-10)
 
     Returns:
         HandPattern with generated notes
@@ -404,7 +450,10 @@ def generate_neosoul_right_hand_pattern(pattern_name: str, context: ChordContext
         )
 
     generator = NEOSOUL_RIGHT_HAND_PATTERNS[pattern_name]
-    return generator(context)
+    try:
+        return generator(context, complexity=complexity)
+    except TypeError:
+        return generator(context)
 
 
 __all__ = [

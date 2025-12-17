@@ -2,8 +2,11 @@
 
 AI-powered MIDI generation for exercise types without dedicated generators.
 Interprets midi_prompt and uses AI to generate appropriate MIDI content.
+
+All MIDI generation is DYNAMIC - even placeholder content varies.
 """
 
+import random
 from pathlib import Path
 from typing import Optional
 from midiutil import MIDIFile
@@ -12,11 +15,19 @@ from app.schemas.curriculum import TemplateExercise
 
 
 class GenericMIDIGenerator:
-    """Generate MIDI files using AI interpretation of midi_prompts"""
+    """Generate MIDI files using AI interpretation of midi_prompts
+    
+    All output includes humanization for natural-sounding playback.
+    """
 
     def __init__(self):
         self.default_tempo = 60
-        self.default_velocity = 100
+        self.base_velocity = 100
+        self.velocity_variance = 8
+    
+    def _humanize_velocity(self, base: int = None) -> int:
+        v = (base or self.base_velocity) + random.randint(-self.velocity_variance, self.velocity_variance)
+        return max(1, min(127, v))
 
     async def generate(
         self,
@@ -61,14 +72,14 @@ class GenericMIDIGenerator:
         midi_file.addTempo(track, time, tempo)
         midi_file.addTrackName(track, time, exercise.title)
 
-        # Placeholder: Single note
+        # Placeholder: Single note with humanization
         midi_file.addNote(
             track=track,
             channel=channel,
             pitch=60,  # Middle C
-            time=0,
-            duration=4.0,
-            volume=self.default_velocity
+            time=random.uniform(0, 0.02),  # Slight timing variation
+            duration=4.0 * random.uniform(0.95, 1.05),
+            volume=self._humanize_velocity()
         )
 
         # Write MIDI file

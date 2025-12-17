@@ -79,6 +79,8 @@ class MusicTheoryGenerator:
         genre: MusicGenre,
         num_notes: int = 16,
         approach: str = "chord_tones",
+        complexity: int = 5,
+        style: str = "traditional"
     ) -> MelodySequence:
         """
         Generate a melody that fits the chord progression.
@@ -89,9 +91,8 @@ class MusicTheoryGenerator:
             genre: Musical genre
             num_notes: Number of melody notes to generate
             approach: Melodic approach (chord_tones, passing_tones, extensions)
-
-        Returns:
-            MelodySequence with generated notes
+            complexity: Melodic complexity (1-10)
+            style: Style variation
         """
         if not self.llm or not self.llm.is_available():
             # Fallback to algorithmic generation
@@ -102,7 +103,7 @@ class MusicTheoryGenerator:
         try:
             # Use Qwen 2.5-14B for intelligent melody generation
             prompt = self._create_melody_prompt(
-                chord_progression, key, genre, num_notes, approach
+                chord_progression, key, genre, num_notes, approach, complexity, style
             )
 
             # Complexity 6: Medium task (uses Qwen 2.5-14B)
@@ -227,18 +228,22 @@ class MusicTheoryGenerator:
         genre: MusicGenre,
         num_notes: int,
         approach: str,
+        complexity: int,
+        style: str
     ) -> str:
         """Create prompt for melody generation"""
         chords_str = " - ".join(chord_progression)
 
         prompt = f"""Generate a {genre.value} melody in the key of {key.value}.
+Style: {style}
+Complexity: {complexity}/10
 
 Chord progression: {chords_str}
 
 Requirements:
 - Generate {num_notes} melody notes
 - Use {approach} approach
-- Follow {genre.value} style conventions
+- Follow {style} style conventions for {genre.value}
 - Create a natural, singable melody
 
 Respond with JSON in this format:

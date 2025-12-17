@@ -48,7 +48,8 @@ class BaseArranger(ABC):
         key: str,
         bpm: int,
         application: str,
-        time_signature: Tuple[int, int] = (4, 4)
+        time_signature: Tuple[int, int] = (4, 4),
+        complexity: int = 5
     ) -> Arrangement:
         """Generate complete two-hand piano arrangement.
 
@@ -61,6 +62,7 @@ class BaseArranger(ABC):
             bpm: Tempo in beats per minute
             application: Application variant (genre-specific, e.g., "worship", "ballad")
             time_signature: Time signature tuple (default 4/4)
+            complexity: Complexity level (1-10) for note density and pattern selection
 
         Returns:
             Complete Arrangement with left and right hand notes
@@ -94,8 +96,8 @@ class BaseArranger(ABC):
             right_pattern_name = self._select_right_pattern(context, config, i)
 
             # Generate patterns (calls genre-specific pattern generators)
-            left_pattern = self._generate_left_pattern(left_pattern_name, context)
-            right_pattern = self._generate_right_pattern(right_pattern_name, context)
+            left_pattern = self._generate_left_pattern(left_pattern_name, context, complexity)
+            right_pattern = self._generate_right_pattern(right_pattern_name, context, complexity)
 
             # Track current voicing for next chord (use unique pitches for voice leading)
             if left_pattern.notes:
@@ -312,7 +314,7 @@ class BaseArranger(ABC):
         pass
 
     @abstractmethod
-    def _generate_left_pattern(self, pattern_name: str, context: ChordContext):
+    def _generate_left_pattern(self, pattern_name: str, context: ChordContext, complexity: int = 5):
         """Generate left hand pattern.
 
         Genre-specific - calls genre's pattern generation function.
@@ -320,6 +322,7 @@ class BaseArranger(ABC):
         Args:
             pattern_name: Name of pattern to generate
             context: Chord context
+            complexity: Complexity level (1-10)
 
         Returns:
             HandPattern with generated notes
@@ -327,7 +330,7 @@ class BaseArranger(ABC):
         pass
 
     @abstractmethod
-    def _generate_right_pattern(self, pattern_name: str, context: ChordContext):
+    def _generate_right_pattern(self, pattern_name: str, context: ChordContext, complexity: int = 5):
         """Generate right hand pattern.
 
         Genre-specific - calls genre's pattern generation function.
@@ -335,6 +338,7 @@ class BaseArranger(ABC):
         Args:
             pattern_name: Name of pattern to generate
             context: Chord context
+            complexity: Complexity level (1-10)
 
         Returns:
             HandPattern with generated notes

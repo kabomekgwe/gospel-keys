@@ -50,15 +50,34 @@ class JazzGeneratorService(
     # ABSTRACT METHOD IMPLEMENTATIONS - Jazz-specific behavior
     # =====================================================================
 
-    def _get_style_context(self) -> str:
+    def _get_style_context(self, complexity: int = 5, style: str = "") -> str:
         """Get jazz-specific style context for AI prompts."""
-        return """Requirements:
-- Use jazz harmony with ii-V-I progressions
+        
+        # Harmonic Complexity
+        if complexity <= 3:
+            harmony = "Use basic ii-V-I progressions with 7th chords. Avoid excessive extensions."
+        elif complexity <= 6:
+            harmony = "Use standard jazz harmony (9ths, 11ths, 13ths) and rootless voicings."
+        else:
+            harmony = "Use advanced modern jazz harmony, altered dominants, tritone subs, and quartal voicings."
+
+        # Style Nuances
+        style_reqs = ""
+        st = style.lower()
+        if "bebop" in st:
+            style_reqs = "- Fast harmonic rhythm, use chromatic approach chords"
+        elif "modal" in st:
+            style_reqs = "- Use modal interchange and static harmony (e.g., So What chords)"
+        elif "ballad" in st:
+            style_reqs = "- Lush, dense voicings with slow harmonic rhythm"
+            
+        return f"""Requirements:
+- {harmony}
 - Rootless voicings (drop-2, drop-3)
-- Extensions: 9ths, 11ths, 13ths, altered dominants
 - Walking bass patterns in left hand
 - Syncopated comping rhythms
-- Consider bebop, modal jazz, and swing traditions"""
+- Consider bebop, modal jazz, and swing traditions
+{style_reqs}"""
 
     def _get_default_progression(self, key: str) -> List[str]:
         """Get fallback jazz chord progression (ii-V-I in C)."""

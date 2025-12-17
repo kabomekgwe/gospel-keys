@@ -8,6 +8,7 @@ Implements authentic reggae bass patterns:
 
 from typing import List
 from app.gospel import Note, ChordContext, HandPattern
+from app.gospel.patterns.left_hand import get_chord_tones
 
 
 # Available patterns
@@ -45,19 +46,26 @@ def _dub_bass(context: ChordContext) -> HandPattern:
 
     Classic reggae bass emphasizing low-end.
     """
-    root = context.root_note
+    chord_tones = get_chord_tones(context.chord, octave=3)
+    root = chord_tones[0]
     notes: List[Note] = []
 
     # Beats 1 and 3 - heavy roots
     for beat in [0.0, 2.0]:
         notes.append(Note(
             pitch=root - 12,  # Octave lower for heavy bass
-            time=context.bar_start + beat,
+            time=float(beat),
             duration=0.5,
-            velocity=100  # Heavy
+            velocity=100,  # Heavy
+            hand="left"
         ))
 
-    return HandPattern(notes=notes, pattern_name="dub_bass")
+    return HandPattern(
+        name="dub_bass",
+        notes=notes,
+        difficulty="beginner",
+        tempo_range=(60, 90)
+    )
 
 
 def _walking_bass_reggae(context: ChordContext) -> HandPattern:
@@ -65,43 +73,53 @@ def _walking_bass_reggae(context: ChordContext) -> HandPattern:
 
     Creates movement while maintaining reggae groove.
     """
-    root = context.root_note
+    chord_tones = get_chord_tones(context.chord, octave=3)
+    root = chord_tones[0]
     fifth = root + 7
     notes: List[Note] = []
 
     # Beat 1: Root
     notes.append(Note(
         pitch=root - 12,
-        time=context.bar_start,
+        time=0.0,
         duration=0.5,
-        velocity=90
+        velocity=90,
+        hand="left"
     ))
 
     # Beat 2: Fifth
     notes.append(Note(
         pitch=fifth - 12,
-        time=context.bar_start + 1.0,
+        time=1.0,
         duration=0.5,
-        velocity=70
+        velocity=70,
+        hand="left"
     ))
 
     # Beat 3: Root
     notes.append(Note(
         pitch=root - 12,
-        time=context.bar_start + 2.0,
+        time=2.0,
         duration=0.5,
-        velocity=85
+        velocity=85,
+        hand="left"
     ))
 
     # Beat 4: Chromatic approach (leading to next chord)
     notes.append(Note(
         pitch=(root - 12) + 1,  # Half step below next root
-        time=context.bar_start + 3.0,
+        time=3.0,
         duration=0.5,
-        velocity=65
+        velocity=65,
+        hand="left"
     ))
 
-    return HandPattern(notes=notes, pattern_name="walking_bass_reggae")
+    return HandPattern(
+        name="walking_bass_reggae",
+        notes=notes,
+        difficulty="intermediate",
+        tempo_range=(70, 100)
+    )
 
 
 def _offbeat_bass(context: ChordContext) -> HandPattern:
@@ -109,19 +127,26 @@ def _offbeat_bass(context: ChordContext) -> HandPattern:
 
     Syncopated roots on offbeats (2 and 4).
     """
-    root = context.root_note
+    chord_tones = get_chord_tones(context.chord, octave=3)
+    root = chord_tones[0]
     notes: List[Note] = []
 
     # Beats 2 and 4 (offbeats)
     for beat in [1.0, 3.0]:
         notes.append(Note(
             pitch=root - 12,
-            time=context.bar_start + beat,
+            time=float(beat),
             duration=0.25,
-            velocity=85
+            velocity=85,
+            hand="left"
         ))
 
-    return HandPattern(notes=notes, pattern_name="offbeat_bass")
+    return HandPattern(
+        name="offbeat_bass",
+        notes=notes,
+        difficulty="intermediate",
+        tempo_range=(80, 120)
+    )
 
 
 def _roots_and_fifths(context: ChordContext) -> HandPattern:
@@ -129,24 +154,32 @@ def _roots_and_fifths(context: ChordContext) -> HandPattern:
 
     Alternates between root and fifth notes.
     """
-    root = context.root_note
+    chord_tones = get_chord_tones(context.chord, octave=3)
+    root = chord_tones[0]
     fifth = root + 7
     notes: List[Note] = []
 
     # Beat 1: Root
     notes.append(Note(
         pitch=root - 12,
-        time=context.bar_start,
+        time=0.0,
         duration=0.5,
-        velocity=95
+        velocity=95,
+        hand="left"
     ))
 
     # Beat 3: Fifth
     notes.append(Note(
         pitch=fifth - 12,
-        time=context.bar_start + 2.0,
+        time=2.0,
         duration=0.5,
-        velocity=80
+        velocity=80,
+        hand="left"
     ))
 
-    return HandPattern(notes=notes, pattern_name="roots_and_fifths")
+    return HandPattern(
+        name="roots_and_fifths",
+        notes=notes,
+        difficulty="beginner",
+        tempo_range=(60, 120)
+    )

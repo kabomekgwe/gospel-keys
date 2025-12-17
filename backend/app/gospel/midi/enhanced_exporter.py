@@ -68,7 +68,8 @@ def export_enhanced_midi(
         program=program,
         ticks_per_beat=ticks_per_beat,
         humanize=humanize,
-        include_pedal=include_pedal
+        include_pedal=include_pedal,
+        beats_per_bar=arrangement.time_signature[0]
     )
     mid.tracks.append(left_track)
 
@@ -80,7 +81,8 @@ def export_enhanced_midi(
         program=program,
         ticks_per_beat=ticks_per_beat,
         humanize=humanize,
-        include_pedal=include_pedal
+        include_pedal=include_pedal,
+        beats_per_bar=arrangement.time_signature[0]
     )
     mid.tracks.append(right_track)
 
@@ -98,7 +100,8 @@ def _create_hand_track(
     program: int,
     ticks_per_beat: int,
     humanize: bool,
-    include_pedal: bool
+    include_pedal: bool,
+    beats_per_bar: int = 4
 ) -> MidiTrack:
     """Create MIDI track for one hand.
 
@@ -110,6 +113,7 @@ def _create_hand_track(
         ticks_per_beat: MIDI ticks per beat
         humanize: Add humanization
         include_pedal: Add sustain pedal
+        beats_per_bar: Number of beats per bar (for pedal cycling)
 
     Returns:
         MidiTrack object
@@ -132,6 +136,47 @@ def _create_hand_track(
     # Convert notes to MIDI messages
     midi_events = []
 
+    # Find the duration of the track
+    last_note_end_time = max(n.time + n.duration for n in sorted_notes)
+    
+    # Add sustain pedal events (smart cycling per bar)
+    if include_pedal:
+        # Calculate bar length in ticks
+        bar_duration_ticks = int(beats_per_bar * ticks_per_beat)
+        total_bars = int(last_note_end_time / beats_per_bar) + 1
+        
+        for bar in range(total_bars):
+            bar_start_ticks = bar * bar_duration_ticks
+            
+            # Pedal OFF (lift) just before the bar line (unless it's the very start)
+            if bar > 0:
+                midi_events.append({
+                    'type': 'control_change',
+                    'time': max(0, bar_start_ticks - 10), # Lift slightly before
+                    'control': 64,
+                    'value': 0,
+                    'channel': channel
+                })
+            
+            # Pedal ON (press) at the bar line
+            midi_events.append({
+                'type': 'control_change',
+                'time': bar_start_ticks,
+                'control': 64,
+                'value': 127,
+                'channel': channel
+            })
+            
+        # Final Pedal OFF at end of track
+        final_end_ticks = int(last_note_end_time * ticks_per_beat)
+        midi_events.append({
+            'type': 'control_change',
+            'time': final_end_ticks + 20,
+            'control': 64,
+            'value': 0,
+            'channel': channel
+        })
+
     for note in sorted_notes:
         # Convert beat time to MIDI ticks
         note_start_ticks = int(note.time * ticks_per_beat)
@@ -139,13 +184,13 @@ def _create_hand_track(
 
         # Humanization: slight random variations
         if humanize:
-            # Timing jitter: +/-10 ticks (about +/-20ms at 480 ticks/beat, 120 BPM)
-            timing_jitter = random.randint(-10, 10)
+            # Timing jitter: +/-10 ticks (Gaussian roughly +/- 10)
+            timing_jitter = int(random.gauss(0, 5))
             note_start_ticks = max(0, note_start_ticks + timing_jitter)  # Ensure non-negative
             note_end_ticks = max(note_start_ticks + 1, note_end_ticks)  # Ensure end > start
 
-            # Velocity variation: +/-3
-            velocity_jitter = random.randint(-3, 3)
+            # Velocity variation: +/-3 (Gaussian)
+            velocity_jitter = int(random.gauss(0, 2))
             velocity = max(1, min(127, note.velocity + velocity_jitter))
         else:
             velocity = note.velocity
@@ -168,33 +213,17 @@ def _create_hand_track(
             'channel': channel
         })
 
-    # Add sustain pedal events
-    if include_pedal and sorted_notes:
-        # Add pedal down at start
-        midi_events.append({
-            'type': 'control_change',
-            'time': 0,
-            'control': 64,  # Sustain pedal CC
-            'value': 127,  # Pedal down
-            'channel': channel
-        })
-
-        # Add pedal up at end
-        last_note_end = max(int((n.time + n.duration) * ticks_per_beat) for n in sorted_notes)
-        midi_events.append({
-            'type': 'control_change',
-            'time': last_note_end,
-            'control': 64,
-            'value': 0,  # Pedal up
-            'channel': channel
-        })
-
     # Sort events by time
     midi_events.sort(key=lambda e: e['time'])
 
     # Convert to delta times and add to track
     current_time = 0
     for event in midi_events:
+        # Ensure delta time is non-negative
+        if event['time'] < current_time:
+             # If humanization pushes events out of order slightly, correct it
+             event['time'] = current_time
+             
         delta_time = event['time'] - current_time
         current_time = event['time']
 

@@ -37,15 +37,34 @@ class BluesGeneratorService(
             output_subdir="blues_generated"
         )
 
-    def _get_style_context(self) -> str:
+    def _get_style_context(self, complexity: int = 5, style: str = "") -> str:
         """Get blues-specific style context for AI prompts."""
-        return """Requirements:
-- 12-bar blues form (I-I-I-I-IV-IV-I-I-V-IV-I-I/V)
+        
+        # Determine harmonic complexity
+        if complexity <= 3:
+            harmony = "Use standard 12-bar blues form with dominant 7th chords (I7, IV7, V7)."
+        elif complexity <= 6:
+            harmony = "Use blues with quick changes, ii-V turnarounds, and 9th/13th extensions."
+        else:
+            harmony = "Use Jazz-Blues style (Bird Blues) with tritone substitutions, altered dominants, and chromatic voice leading."
+
+        # Determine style nuances
+        style_reqs = ""
+        st = style.lower()
+        if "delta" in st:
+            style_reqs = "- Use steady, driving rhythm and call-and-response"
+        elif "jazz" in st:
+            style_reqs = "- Incorporate walking bass lines/shell voicings"
+        elif "slow" in st:
+            style_reqs = "- 12/8 slow blues feel"
+            
+        return f"""Requirements:
+- {harmony}
 - Blues scale with blue notes (♭3, ♭5, ♭7)
-- Dominant 7th chords (I7, IV7, V7)
 - Shuffle/swing rhythm (triplet feel)
 - Call-and-response patterns
-- Blues riffs and licks"""
+- Blues riffs and licks
+{style_reqs}"""
 
     def _get_default_progression(self, key: str) -> List[str]:
         """Get fallback blues progression (12-bar blues)."""

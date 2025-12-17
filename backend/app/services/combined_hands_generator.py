@@ -42,6 +42,7 @@ class HandsPracticeConfig:
     style: Style = "neosoul"
     active_hand: Hand = "both"
     bars_per_chord: int = 1
+    complexity: int = 5
 
 
 class CombinedHandsGenerator:
@@ -118,7 +119,8 @@ class CombinedHandsGenerator:
                     context, 
                     config.left_pattern, 
                     config.style, 
-                    "left"
+                    "left",
+                    config.complexity
                 )
                 
                 for note in left_pattern.notes:
@@ -138,7 +140,8 @@ class CombinedHandsGenerator:
                     context,
                     config.right_pattern,
                     config.style,
-                    "right"
+                    "right",
+                    config.complexity
                 )
                 
                 for note in right_pattern.notes:
@@ -167,24 +170,25 @@ class CombinedHandsGenerator:
         pattern_name: str,
         style: Style,
         hand: str,
+        complexity: int = 5,
     ) -> HandPattern:
         """Generate a specific hand pattern."""
         try:
             if style == "neosoul":
                 if hand == "left":
-                    return generate_neosoul_left_hand_pattern(pattern_name, context)
+                    return generate_neosoul_left_hand_pattern(pattern_name, context, complexity=complexity)
                 else:
-                    return generate_neosoul_right_hand_pattern(pattern_name, context)
+                    return generate_neosoul_right_hand_pattern(pattern_name, context, complexity=complexity)
             else:
                 # Fallback to neosoul patterns for other styles
                 # (Gospel and Jazz patterns can be added similarly)
                 if hand == "left":
                     return generate_neosoul_left_hand_pattern(
-                        "syncopated_groove", context
+                        "syncopated_groove", context, complexity=complexity
                     )
                 else:
                     return generate_neosoul_right_hand_pattern(
-                        "extended_chord_voicing", context
+                        "extended_chord_voicing", context, complexity=complexity
                     )
         except Exception as e:
             logger.warning(f"Pattern generation failed: {e}, using fallback")

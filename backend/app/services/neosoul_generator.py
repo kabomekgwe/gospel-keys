@@ -44,17 +44,34 @@ class NeosoulGeneratorService(
             output_subdir="neosoul_generated"
         )
 
-    def _get_style_context(self) -> str:
+    def _get_style_context(self, complexity: int = 5, style: str = "") -> str:
         """Get neo-soul-specific style context for AI prompts."""
-        return """Requirements:
-- Rich, colorful harmony with 9ths, 11ths, 13ths
+        
+        # Harmonic Complexity
+        if complexity <= 4:
+            harmony = "Use lush maj9 and m9 chords. diatonic progressions."
+        elif complexity <= 7:
+            harmony = "Use extended harmony (11ths, 13ths), secondary dominants, and chromatic passing chords."
+        else:
+            harmony = "Use advanced non-functional harmony, altered chords (7#9, 7b13), polychords, and quartal voicings."
+
+        # Style Nuances
+        style_reqs = ""
+        st = style.lower()
+        if "dilla" in st or "swing" in st:
+            style_reqs = "- Use 'drunk' swing feel (unquantized/laid back)"
+        elif "gospel" in st:
+            style_reqs = "- Incorporate gospel passing chords and plagal cadences"
+            
+        return f"""Requirements:
+- {harmony}
 - Modal interchange and borrowed chords
 - Jazzy, syncopated rhythms
 - R&B/soul influenced voicings
-- Lush chord progressions
 - Contemporary urban feel
 - Smooth voice leading
-- Influences: D'Angelo, Erykah Badu, Robert Glasper"""
+- Influences: D'Angelo, Erykah Badu, Robert Glasper
+{style_reqs}"""
 
     def _get_default_progression(self, key: str) -> List[str]:
         """Get fallback neo-soul progression."""

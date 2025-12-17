@@ -5,6 +5,7 @@ pattern generation and chord voicing computation.
 """
 
 import logging
+import random
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, List, Literal, Optional
@@ -204,12 +205,13 @@ class GPUMIDIGenerator:
         # Convert to Python list
         pitches = base_pitches.tolist()
         
+        # Add humanization for dynamic output
         return [
             GeneratedNote(
                 pitch=int(p),
-                start_time=0.0,
-                duration=2.0,
-                velocity=75 if i == 0 else 70,
+                start_time=random.uniform(-0.01, 0.01),  # Micro-timing variation
+                duration=2.0 * random.uniform(0.95, 1.05),  # Duration variation
+                velocity=max(1, min(127, (75 if i == 0 else 70) + random.randint(-8, 8))),
             )
             for i, p in enumerate(pitches)
         ]
@@ -237,12 +239,13 @@ class GPUMIDIGenerator:
             keep_indices = [0, 1, len(intervals) - 1]
             base_pitches = base_pitches[keep_indices]
         
+        # Add humanization for dynamic output
         return [
             GeneratedNote(
                 pitch=int(p),
-                start_time=0.0,
-                duration=2.0,
-                velocity=75 if i == 0 else 70,
+                start_time=random.uniform(-0.01, 0.01),  # Micro-timing variation
+                duration=2.0 * random.uniform(0.95, 1.05),  # Duration variation
+                velocity=max(1, min(127, (75 if i == 0 else 70) + random.randint(-8, 8))),
             )
             for i, p in enumerate(base_pitches)
         ]
@@ -268,9 +271,9 @@ class GPUMIDIGenerator:
         
         return GeneratedNote(
             pitch=pitch,
-            start_time=0.0,
-            duration=2.0,
-            velocity=65,
+            start_time=random.uniform(-0.01, 0.01),  # Micro-timing
+            duration=2.0 * random.uniform(0.95, 1.05),  # Duration variation
+            velocity=max(1, min(127, 65 + random.randint(-8, 8))),  # Velocity variation
         )
     
     def generate_progression_midi(

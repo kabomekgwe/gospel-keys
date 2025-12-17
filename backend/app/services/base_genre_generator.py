@@ -136,9 +136,13 @@ class BaseGenreGenerator(ABC):
     # =====================================================================
 
     @abstractmethod
-    def _get_style_context(self) -> str:
+    def _get_style_context(self, complexity: int = 5, style: str = "") -> str:
         """
         Get genre-specific style context for AI prompts.
+
+        Args:
+            complexity: Harmony complexity (1-10)
+            style: Specific style nuance
 
         Returns:
             String describing genre conventions, harmony, and style
@@ -196,7 +200,9 @@ class BaseGenreGenerator(ABC):
                     request.description,
                     request.key,
                     request.tempo,
-                    request.num_bars
+                    request.num_bars,
+                    getattr(request, 'complexity', 5),
+                    getattr(request, 'style', '')
                 )
             else:
                 print(f"📝 Using fallback progression for {self.genre_name}...")
@@ -248,7 +254,9 @@ class BaseGenreGenerator(ABC):
         description: str,
         key: Optional[str],
         tempo: Optional[int],
-        num_bars: int
+        num_bars: int,
+        complexity: int = 5,
+        style: str = ""
     ) -> Tuple[List[str], str, int, List]:
         """
         Generate chord progression using Gemini AI.
@@ -258,17 +266,21 @@ class BaseGenreGenerator(ABC):
             key: Explicit key override (optional)
             tempo: Explicit tempo override (optional)
             num_bars: Number of bars to generate
+            complexity: Complexity level (1-10)
+            style: Specific style nuance
 
         Returns:
             Tuple of (chords, key, tempo, analysis)
         """
         # Build genre-specific prompt
-        style_context = self._get_style_context()
+        style_context = self._get_style_context(complexity, style)
 
         prompt = f"""You are an expert {self.genre_name} pianist and music theorist.
 
-Generate a {num_bars}-bar {self.genre_name} piano chord progression based on this description:
-"{description}"
+Generate a {num_bars}-bar {self.genre_name} piano chord progression.
+Description: "{description}"
+Style: {style if style else "Standard " + self.genre_name}
+Complexity: {complexity}/10
 
 {"Key: " + key if key else "Choose an appropriate key"}
 {"Tempo: " + str(tempo) + " BPM" if tempo else "Choose an appropriate tempo"}
@@ -404,6 +416,9 @@ Generate {num_bars} chords total. Each chord should have symbol, function, notes
         # Add optional parameters if present in request
         if hasattr(request, 'application'):
             arrange_params['application'] = request.application.value
+
+        if hasattr(request, 'complexity'):
+            arrange_params['complexity'] = request.complexity
 
         if hasattr(request, 'ai_percentage'):
             # For hybrid arrangers that support AI blending

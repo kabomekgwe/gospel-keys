@@ -48,27 +48,33 @@ class ReggaeArranger(BaseArranger):
                 "right_patterns": ["skank", "bubble_rhythm"],
                 "rhythm": ["one_drop", "laid_back"],
                 "tempo_range": (70, 80),
+                "tempo_range": (70, 80),
                 "velocity_range": (70, 100),
+                "improvisation_probability": 0.1,
             },
             "dancehall": {
                 "left_patterns": ["offbeat_bass", "roots_and_fifths"],
                 "right_patterns": ["double_skank", "skank"],
                 "rhythm": ["offbeat_emphasis"],
                 "tempo_range": (90, 110),
+                "tempo_range": (90, 110),
                 "velocity_range": (80, 110),
+                "improvisation_probability": 0.2,
             },
             "dub": {
                 "left_patterns": ["dub_bass"],
                 "right_patterns": ["sustained_chords", "bubble_rhythm"],
                 "rhythm": ["one_drop", "laid_back"],
                 "tempo_range": (60, 75),
+                "tempo_range": (60, 75),
                 "velocity_range": (60, 90),
+                "improvisation_probability": 0.3,
             },
         }
 
     # Implement abstract methods from BaseArranger
 
-    def _generate_left_pattern(self, pattern_name: str, context: ChordContext) -> HandPattern:
+    def _generate_left_pattern(self, pattern_name: str, context: ChordContext, complexity: int = 5) -> HandPattern:
         """Generate reggae left hand pattern.
 
         Args:
@@ -80,7 +86,7 @@ class ReggaeArranger(BaseArranger):
         """
         return generate_reggae_left_hand_pattern(pattern_name, context)
 
-    def _generate_right_pattern(self, pattern_name: str, context: ChordContext) -> HandPattern:
+    def _generate_right_pattern(self, pattern_name: str, context: ChordContext, complexity: int = 5) -> HandPattern:
         """Generate reggae right hand pattern.
 
         Args:
@@ -183,7 +189,8 @@ class ReggaeArranger(BaseArranger):
                 pitch=note.pitch,
                 time=note.time,
                 duration=note.duration,
-                velocity=velocity
+                velocity=velocity,
+                hand=note.hand
             ))
 
         return adjusted

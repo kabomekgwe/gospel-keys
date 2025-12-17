@@ -13,7 +13,7 @@ from typing import List, Optional, Dict, Any
 from sqlalchemy import select, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.database.models import UserExerciseProgress, ExerciseLibrary
+from app.database.models import UserExerciseProgress, ExerciseLibrary, CurriculumLibrary
 from app.schemas.curriculum import ExerciseTypeEnum, DifficultyLevelEnum
 
 
@@ -262,8 +262,39 @@ class ExerciseRecommendationService:
         Returns:
             Genre-specific recommendations
         """
-        # TODO: Implement genre-filtered recommendations
-        return []
+        stmt = (
+            select(ExerciseLibrary)
+            .join(CurriculumLibrary, ExerciseLibrary.curriculum_id == CurriculumLibrary.id)
+            .outerjoin(
+                UserExerciseProgress,
+                and_(
+                    UserExerciseProgress.exercise_id == ExerciseLibrary.id,
+                    UserExerciseProgress.user_id == user_id
+                )
+            )
+            .where(
+                and_(
+                    CurriculumLibrary.genre.ilike(f"%{genre}%"),
+                    UserExerciseProgress.user_id.is_(None) # Not practiced yet
+                )
+            )
+            .limit(limit)
+        )
+
+        result = await self.db.execute(stmt)
+        exercises = result.scalars().all()
+
+        return [
+            {
+                "exercise_id": ex.id,
+                "exercise_type": ex.exercise_type,
+                "difficulty": ex.difficulty,
+                "reason": f"Popular in {genre}",
+                "priority": "medium",
+                "genre": genre
+            }
+            for ex in exercises
+        ]
 
     async def recommend_for_weak_areas(
         self,
@@ -316,11 +347,65 @@ class ExerciseRecommendationService:
         Returns:
             Exercises at next difficulty level
         """
-        # TODO: Implement
+        difficulty_levels = {
+            "beginner": 1,
+            "intermediate": 2,
+            "advanced": 3,
+            "expert": 4
+        }
+        
         # 1. Determine user's current level for this exercise type
+        stmt = (
+            select(UserExerciseProgress, ExerciseLibrary)
+            .join(ExerciseLibrary, UserExerciseProgress.exercise_id == ExerciseLibrary.id)
+            .where(
+                and_(
+                    UserExerciseProgress.user_id == user_id,
+                    ExerciseLibrary.exercise_type == exercise_type,
+                    UserExerciseProgress.is_mastered == True
+                )
+            )
+        )
+        result = await self.db.execute(stmt)
+        mastered = result.all()
+        
+        current_max_level = 0
+        for progress, exercise in mastered:
+            level = difficulty_levels.get(exercise.difficulty.lower(), 1)
+            current_max_level = max(current_max_level, level)
+            
+        next_level = current_max_level + 1
+        
         # 2. Find exercises at next difficulty level
-        # 3. Return exercises user hasn't mastered
-        return []
+        target_difficulties = [k for k, v in difficulty_levels.items() if v == next_level]
+        
+        if not target_difficulties:
+            target_difficulties = ["advanced"] # Fallback
+            
+        stmt = (
+            select(ExerciseLibrary)
+            .where(
+                and_(
+                    ExerciseLibrary.exercise_type == exercise_type,
+                    ExerciseLibrary.difficulty.in_(target_difficulties)
+                )
+            )
+            .limit(limit)
+        )
+        
+        ex_result = await self.db.execute(stmt)
+        exercises = ex_result.scalars().all()
+        
+        return [
+            {
+                "exercise_id": ex.id,
+                "exercise_type": ex.exercise_type,
+                "difficulty": ex.difficulty,
+                "reason": "Next difficulty level challenge",
+                "priority": "high"
+            }
+            for ex in exercises
+        ]
 
     async def get_complementary_exercises(
         self,
@@ -338,11 +423,40 @@ class ExerciseRecommendationService:
         Returns:
             Complementary exercises
         """
-        # TODO: Implement
-        # 1. Get exercise details (type, difficulty, tags)
+        # 1. Get exercise details
+        stmt = select(ExerciseLibrary).where(ExerciseLibrary.id == exercise_id)
+        result = await self.db.execute(stmt)
+        ref_exercise = result.scalar_one_or_none()
+        
+        if not ref_exercise:
+            return []
+            
         # 2. Find related exercises (same key, similar concepts)
-        # 3. Suggest exercises that build on the same skills
-        return []
+        stmt = (
+            select(ExerciseLibrary)
+            .where(
+                and_(
+                    ExerciseLibrary.id != exercise_id,
+                    ExerciseLibrary.key == ref_exercise.key,
+                    ExerciseLibrary.difficulty == ref_exercise.difficulty
+                )
+            )
+            .limit(limit)
+        )
+        
+        rel_result = await self.db.execute(stmt)
+        related = rel_result.scalars().all()
+        
+        return [
+            {
+                "exercise_id": ex.id,
+                "exercise_type": ex.exercise_type,
+                "difficulty": ex.difficulty,
+                "reason": f"Complementary practice in {ref_exercise.key}",
+                "priority": "medium"
+            }
+            for ex in related
+        ]
 
     async def get_recommendation_stats(
         self,

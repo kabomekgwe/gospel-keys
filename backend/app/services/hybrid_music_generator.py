@@ -203,6 +203,7 @@ class HybridMusicGenerator:
             num_bars=request.num_bars,
             style=request.style,
             custom_progression=request.chord_progression,
+            complexity=request.complexity,  # CRITICAL: Pass complexity down!
         )
 
     async def _generate_melody(
@@ -220,6 +221,8 @@ class HybridMusicGenerator:
             genre=request.genre,
             num_notes=num_notes,
             approach="chord_tones",  # Default to chord tones
+            complexity=request.complexity,
+            style=request.style
         )
 
     async def _create_midi(
@@ -251,7 +254,7 @@ class HybridMusicGenerator:
         piano_track.append(mido.Message('program_change', program=0, time=0)) # Acoustic Grand
 
         # Combine chords and melody into a single performance
-        self._add_piano_performance(piano_track, chord_progression, melody, ticks_per_beat, request.genre)
+        self._add_piano_performance(piano_track, chords, melody, ticks_per_beat, request)
         # Save MIDI file - in generations/{genre}/ folder with timestamp
         import datetime
         genre_dir = self.output_base / request.genre.value
@@ -269,150 +272,164 @@ class HybridMusicGenerator:
         chords: ChordProgression,
         melody: Optional[MelodySequence],
         ticks_per_beat: int,
-        genre: MusicGenre
+        request: MusicGenerationRequest
     ):
         """
         Merge chords and melody into a realistic single-track performance.
-        Simulates Left Hand (Bass/Shells) and Right Hand (Melody/Extensions).
+        Dynamically adapts to style, complexity, and time signature.
         """
-        # Collect all note events (on/off) with absolute times in ticks
         events = []
         
-        # --- 1. Process Chords with RHYTHMIC COMPING ---
-        beats_per_bar = 4
-        total_beats = chords.num_bars * beats_per_bar
-        chord_duration_beats = total_beats / len(chords.voicings) if chords.voicings else 4.0
+        # Parse time signature
+        ts_num, ts_den = map(int, request.time_signature.split('/'))
+        beats_per_bar = ts_num
+        # Adjust beats if denominator is 8 (compound meter like 6/8 count as 2 beats of dotted quarter?)
+        # For simplicity, we treat 6/8 as 6 beats if we stick to quarter note ticks. 
+        # But standard MIDI is usually quarter note based. 
+        # If 6/8, typically 2 beats per bar. Let's stick to simple beat counting for now.
         
-        # Jazz comping rhythm patterns (in beats within a bar)
-        # Each pattern is a list of (beat_offset, duration, velocity_factor)
-        # These create syncopated, interesting rhythms like a real pianist
-        comping_patterns = [
-            # Charleston rhythm: hit on 1, hit on 2-and
-            [(0.0, 0.5, 1.0), (1.5, 0.5, 0.8)],
-            # Syncopated: 1, 2-and, 4
-            [(0.0, 0.4, 1.0), (1.5, 0.4, 0.85), (3.0, 0.5, 0.9)],
-            # Freddie Green style: 2-and, 4
-            [(1.5, 0.5, 0.9), (3.5, 0.5, 0.85)],
-            # Anticipation: 4-and of previous into 1
-            [(0.0, 0.7, 1.0), (2.5, 0.4, 0.8), (3.5, 0.5, 0.9)],
-            # Full bebop: 1, 2-and, 3, 4-and
-            [(0.0, 0.3, 1.0), (1.5, 0.3, 0.8), (2.0, 0.3, 0.85), (3.5, 0.4, 0.9)],
-            # Simple: 1 and 3
-            [(0.0, 0.5, 1.0), (2.0, 0.5, 0.9)],
-            # Sparse: just on 1-and
-            [(0.5, 0.5, 0.95)],
-            # Dense bebop
-            [(0.0, 0.25, 1.0), (1.0, 0.25, 0.75), (1.5, 0.25, 0.85), (2.5, 0.25, 0.8), (3.0, 0.25, 0.9)],
-        ]
+        total_beats = chords.num_bars * beats_per_bar
+        chord_duration_beats = total_beats / len(chords.voicings) if chords.voicings else float(beats_per_bar)
+        
+        # --- DYNAMIC RHYTHM SELECTION ---
+        style_key = request.style.lower() if request.style else request.genre.value.lower()
+        complexity = request.complexity
+        
+        # Library of patterns (beat_offset, duration, velocity_factor)
+        patterns_library = {
+            "swing": [
+                [(0.0, 0.5, 1.0), (1.5, 0.5, 0.85)], # Charleston
+                [(0.0, 0.3, 1.0), (1.5, 0.3, 0.8), (2.0, 0.3, 0.85), (3.5, 0.4, 0.9)], # Bebop
+                [(1.5, 0.5, 0.9), (3.5, 0.5, 0.85)], # Red Garland / Freddie Green
+            ],
+            "latin": [
+                [(0.0, 0.5, 1.0), (1.5, 0.5, 0.9), (3.0, 0.5, 1.0), (4.5, 0.5, 0.9)], # Bossa (if 4/4)
+                [(0.0, 0.4, 1.0), (1.5, 0.4, 0.8), (2.5, 0.4, 0.9)], # Clave-ish
+            ],
+            "gospel": [
+                [(0.0, 2.0, 1.0), (2.0, 1.0, 0.9), (3.0, 1.0, 0.95)], # Driving 4/4
+                [(0.0, 0.5, 1.0), (1.0, 0.5, 0.9), (2.0, 0.5, 1.0)], # 3/4 or 6/8 feel
+            ],
+            "ballad": [
+                [(0.0, 4.0, 1.0)], # Whole notes
+                [(0.0, 2.0, 1.0), (2.0, 2.0, 0.9)], # Half notes
+            ],
+            "funk": [
+                [(0.0, 0.25, 1.0), (0.75, 0.25, 0.9), (2.0, 0.25, 1.0)], # 16th syncopation
+            ]
+        }
+        
+        # Select patterns based on style
+        selected_patterns = patterns_library.get("swing") # Default
+        if "latin" in style_key or "bossa" in style_key: selected_patterns = patterns_library["latin"]
+        elif "gospel" in style_key: selected_patterns = patterns_library["gospel"]
+        elif "ballad" in style_key: selected_patterns = patterns_library["ballad"]
+        elif "funk" in style_key: selected_patterns = patterns_library["funk"]
         
         current_beat = 0.0
         pattern_idx = 0
         
-        for voicing_idx, voicing in enumerate(chords.voicings):
-            # Select a rhythm pattern - vary by bar for interest
-            pattern = comping_patterns[pattern_idx % len(comping_patterns)]
+        for voicing in chords.voicings:
+            # Pick pattern
+            pattern = selected_patterns[pattern_idx % len(selected_patterns)]
             pattern_idx += 1
-            
-            # Sometimes switch patterns more randomly for variety
-            if random.random() > 0.7:
-                pattern = random.choice(comping_patterns)
-            
-            # Analyze Voicing for Hand Split
+            if random.random() > 0.7: pattern = random.choice(selected_patterns)
+
+            # Analyze Voicing
             sorted_notes = sorted(voicing.notes)
             bass_note = sorted_notes[0]
             rest_notes = sorted_notes[1:]
             
-            # Left Hand: Bass + Lower Shells
+            # Split Hands
             lh_notes = [bass_note]
             rh_comp_notes = []
-            
+            split_point = 60 # Middle C
             for n in rest_notes:
-                if n < 60:
-                    lh_notes.append(n)
-                else:
-                    rh_comp_notes.append(n)
+                if n < split_point: lh_notes.append(n)
+                else: rh_comp_notes.append(n)
             
-            # Bass note: play on beat 1 and sometimes beat 3 (walking bass style)
             bar_start_tick = int(current_beat * ticks_per_beat)
             
-            # Bass on beat 1
-            bass_vel = (85 if genre == MusicGenre.JAZZ else 80) + random.randint(-5, 5)
-            bass_offset = random.randint(0, 10)
-            bass_duration = int(ticks_per_beat * 0.9)  # Slightly detached
+            # --- DYNAMIC BASS GENERATION ---
+            bass_vel = (85 if request.genre == MusicGenre.JAZZ else 80) + random.randint(-5, 5)
+            # Bass activity increases with complexity
+            bass_activity_check = 0.5 + (complexity * 0.05) 
             
-            events.append({"type": "note_on", "note": bass_note, "vel": min(127, max(1, bass_vel)), "time": bar_start_tick + bass_offset})
-            events.append({"type": "note_off", "note": bass_note, "vel": 0, "time": bar_start_tick + bass_duration})
+            # Beat 1 Bass (Always)
+            events.append({"type": "note_on", "note": bass_note, "vel": bass_vel, "time": bar_start_tick})
+            events.append({"type": "note_off", "note": bass_note, "vel": 0, "time": bar_start_tick + int(ticks_per_beat * 0.8)})
             
-            # Sometimes add bass on beat 3 for walking feel
-            if random.random() > 0.5 and chord_duration_beats >= 4:
-                beat3_tick = bar_start_tick + int(2 * ticks_per_beat)
-                # Use a passing tone (chromatic approach) sometimes
-                passing_note = bass_note + random.choice([0, -1, 1, -2, 2])
-                events.append({"type": "note_on", "note": passing_note, "vel": min(127, max(1, bass_vel - 10)), "time": beat3_tick})
-                events.append({"type": "note_off", "note": passing_note, "vel": 0, "time": beat3_tick + bass_duration})
-            
-            # Left hand shells: play on the rhythmic pattern
+            # Complex Bass lines (Walking, etc)
+            if request.genre == MusicGenre.JAZZ and complexity > 5:
+                # Walking bass simulation (simplified)
+                # Walk on beats 2, 3, 4
+                curr_bass = bass_note
+                for b in range(1, beats_per_bar):
+                    if random.random() < bass_activity_check:
+                        # Pick target for next chord? No, just diatonic/chromatic walk
+                        target = curr_bass + random.choice([-2, -1, 1, 2, 5, -5])
+                        tick = bar_start_tick + int(b * ticks_per_beat)
+                        events.append({"type": "note_on", "note": target, "vel": bass_vel-5, "time": tick})
+                        events.append({"type": "note_off", "note": target, "vel": 0, "time": tick + int(ticks_per_beat * 0.9)})
+                        curr_bass = target
+            elif request.genre == MusicGenre.GOSPEL and complexity > 4:
+                # Gospel walkups
+                if random.random() < 0.3:
+                    # quick walkup on last beat
+                    last_beat_tick = bar_start_tick + int((beats_per_bar - 1) * ticks_per_beat)
+                    events.append({"type": "note_on", "note": bass_note + 2, "vel": bass_vel, "time": last_beat_tick})
+                    events.append({"type": "note_off", "note": bass_note + 2, "vel": 0, "time": last_beat_tick + int(ticks_per_beat * 0.5)})
+
+            # --- COMPING (Left & Right Hand) ---
+            # Apply rhythm pattern
             for beat_offset, duration, vel_factor in pattern:
+                # Scale pattern to time signature if needed (simplified)
+                if beat_offset >= beats_per_bar: continue 
+                
                 hit_tick = bar_start_tick + int(beat_offset * ticks_per_beat)
                 release_tick = hit_tick + int(duration * ticks_per_beat)
                 
-                for n in lh_notes[1:]:  # Skip bass (already handled)
-                    shell_vel = int(65 * vel_factor) + random.randint(-8, 8)
-                    shell_offset = random.randint(5, 20)  # Strum effect
-                    events.append({"type": "note_on", "note": n, "vel": min(127, max(1, shell_vel)), "time": hit_tick + shell_offset})
+                # LH Shells
+                for n in lh_notes[1:]:
+                    vel = int(60 * vel_factor) + random.randint(-5, 5)
+                    events.append({"type": "note_on", "note": n, "vel": vel, "time": hit_tick + random.randint(0, 15)})
                     events.append({"type": "note_off", "note": n, "vel": 0, "time": release_tick})
-            
-            # Right hand comping: also follows rhythm pattern with slight delay
-            for beat_offset, duration, vel_factor in pattern:
-                hit_tick = bar_start_tick + int(beat_offset * ticks_per_beat)
-                release_tick = hit_tick + int(duration * ticks_per_beat)
                 
+                # RH Comping (Slightly delayed for "laid back" if Neo-Soul)
+                layout_delay = 20 if "soul" in style_key else 0
                 for n in rh_comp_notes:
-                    comp_vel = int(55 * vel_factor) + random.randint(-8, 8)
-                    comp_offset = random.randint(15, 35)  # More delay for comping (behind beat)
-                    events.append({"type": "note_on", "note": n, "vel": min(127, max(1, comp_vel)), "time": hit_tick + comp_offset})
+                    vel = int(55 * vel_factor) + random.randint(-5, 5)
+                    events.append({"type": "note_on", "note": n, "vel": vel, "time": hit_tick + layout_delay + random.randint(0, 20)})
                     events.append({"type": "note_off", "note": n, "vel": 0, "time": release_tick})
-                    
+
             current_beat += chord_duration_beats
 
-        # --- 2. Process Melody (Lead) ---
+        # --- PROCESS MELODY ---
         if melody:
             for note in melody.notes:
                 start_tick = int(note.start_time * ticks_per_beat)
-                duration_ticks = int(note.duration * ticks_per_beat)
-                end_tick = start_tick + duration_ticks
-                
-                # Melody usually louder
-                base_vel = note.velocity if note.velocity else 95
-                human_vel = base_vel + random.randint(-5, 5)
-                
-                # Micro-timing for melody (lay back or push)
-                human_offset = random.randint(-5, 10) 
-                
-                events.append({"type": "note_on", "note": note.pitch, "vel": min(127, max(1, human_vel)), "time": max(0, start_tick + human_offset)})
+                end_tick = start_tick + int(note.duration * ticks_per_beat)
+                vel = note.velocity + random.randint(-5, 5)
+                # Humanize start time
+                human_start = max(0, start_tick + random.randint(-10, 10))
+                events.append({"type": "note_on", "note": note.pitch, "vel": min(127, max(1, vel)), "time": human_start})
                 events.append({"type": "note_off", "note": note.pitch, "vel": 0, "time": end_tick})
 
-        # --- 3. Apply Swing Feel (Jazz) ---
-        if genre == MusicGenre.JAZZ:
-            events = self._apply_swing_feel(events, ticks_per_beat, swing_amount=0.58)
+        # --- DYNAMIC SWING FEEL ---
+        swing_ratio = 0.5  # Straight
+        if "swing" in style_key or request.genre == MusicGenre.JAZZ: swing_ratio = 0.60
+        elif "shuffle" in style_key: swing_ratio = 0.67
+        elif "soul" in style_key: swing_ratio = 0.55 # Dilla feel
         
-        # --- 4. Sort and Write Events ---
-        # Sort by time, then note_off before note_on if same time
+        if swing_ratio > 0.5:
+            events = self._apply_swing_feel(events, ticks_per_beat, swing_amount=swing_ratio)
+
+        # Sort and Write
         events.sort(key=lambda x: x["time"])
-        
-        # Convert absolute time to delta time
         last_time = 0
         for event in events:
-            delta = event["time"] - last_time
-            # Ensure non-negative (should be if sorted)
-            if delta < 0: delta = 0
-            
-            track.append(mido.Message(
-                event["type"],
-                note=event["note"],
-                velocity=event["vel"],
-                time=delta
-            ))
+            delta = max(0, event["time"] - last_time)
+            track.append(mido.Message(event["type"], note=event["note"], velocity=event["vel"], time=delta))
             last_time = event["time"]
 
     def _tokenize_midi(self, midi_file: Path) -> list[int]:

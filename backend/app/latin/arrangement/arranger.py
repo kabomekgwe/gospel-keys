@@ -13,6 +13,8 @@ from app.core.arrangers.base_arranger import BaseArranger
 from app.gospel import Note, ChordContext, HandPattern
 
 
+from app.gospel.patterns.left_hand import get_chord_tones
+
 class LatinArranger(BaseArranger):
     """Latin/Salsa arranger with montuno and tumbao patterns."""
 
@@ -25,27 +27,34 @@ class LatinArranger(BaseArranger):
                 "right_patterns": ["montuno", "guajeo"],
                 "rhythm": ["clave"],
                 "tempo_range": (90, 100),
+                "tempo_range": (90, 100),
                 "velocity_range": (75, 105),
+                "improvisation_probability": 0.3,
             },
             "ballad": {
                 "left_patterns": ["sustained_bass", "walking"],
                 "right_patterns": ["sustained_chords", "arpeggios"],
                 "rhythm": ["straight"],
                 "tempo_range": (60, 80),
+                "tempo_range": (60, 80),
                 "velocity_range": (60, 90),
+                "improvisation_probability": 0.1,
             },
             "uptempo": {
                 "left_patterns": ["fast_tumbao", "montuno_bass"],
                 "right_patterns": ["montuno", "fast_guajeo"],
                 "rhythm": ["clave_fast"],
                 "tempo_range": (110, 140),
+                "tempo_range": (110, 140),
                 "velocity_range": (85, 115),
+                "improvisation_probability": 0.4,
             },
         }
 
-    def _generate_left_pattern(self, pattern_name: str, context: ChordContext) -> HandPattern:
+    def _generate_left_pattern(self, pattern_name: str, context: ChordContext, complexity: int = 5) -> HandPattern:
         """Generate Latin left hand bass pattern."""
-        root = context.root_note
+        chord_tones = get_chord_tones(context.chord, octave=3)
+        root = chord_tones[0]
         fifth = root + 7
         notes: List[Note] = []
 
@@ -53,43 +62,91 @@ class LatinArranger(BaseArranger):
             # Tumbao: Root, Fifth, Root+octave pattern
             positions = [0.0, 1.5, 2.5, 3.5] if "fast" in pattern_name else [0.0, 2.0, 3.0]
             pitches = [root - 12, fifth - 12, root]
+            
+            # High complexity: add extra rhythmic hit
+            if complexity >= 7:
+                 positions.append(1.5) # Extra anticipation
+                 pitches = [root - 12, fifth - 12, root, fifth - 12]
 
             for i, pos in enumerate(positions):
                 pitch = pitches[i % len(pitches)]
                 notes.append(Note(
                     pitch=pitch,
-                    time=context.bar_start + pos,
+                    time=float(pos),
                     duration=0.4,
-                    velocity=90 if i == 0 else 75
+                    velocity=90 if i == 0 else 75,
+                    hand="left"
                 ))
         else:
             # Simple roots
-            notes.append(Note(pitch=root - 12, time=context.bar_start, duration=2.0, velocity=80))
+            notes.append(Note(pitch=root - 12, time=0.0, duration=2.0, velocity=80, hand="left"))
+            
+            # Complexity: add movement
+            if complexity >= 4:
+                notes.append(Note(pitch=fifth - 12, time=2.0, duration=2.0, velocity=75, hand="left"))
 
-        return HandPattern(notes=notes, pattern_name=pattern_name)
+        return HandPattern(
+            name=pattern_name,
+            notes=notes,
+            difficulty="intermediate",
+            tempo_range=(80, 140)
+        )
 
-    def _generate_right_pattern(self, pattern_name: str, context: ChordContext) -> HandPattern:
+    def _generate_right_pattern(self, pattern_name: str, context: ChordContext, complexity: int = 5) -> HandPattern:
         """Generate Latin right hand montuno pattern."""
         notes: List[Note] = []
-        chord_notes = context.chord_notes[:4]
+        chord_notes = get_chord_tones(context.chord, octave=4, previous_voicing=context.previous_voicing)
 
         if "montuno" in pattern_name or "guajeo" in pattern_name:
             # Syncopated montuno pattern
             positions = [0.5, 1.5, 2.0, 3.5]  # Anticipations
+            
+            # Adjust density based on complexity
+            if complexity < 4:
+                positions = [0.5, 2.0] # Simpler
+            elif complexity >= 7:
+                positions.append(2.5) # More busy
+            
             for pos in positions:
-                for pitch in chord_notes:
+                for pitch in chord_notes[:4]:
                     notes.append(Note(
                         pitch=pitch + 12,
-                        time=context.bar_start + pos,
+                        time=float(pos),
                         duration=0.2,
-                        velocity=70
+                        velocity=70,
+                        hand="right"
                     ))
         else:
             # Sustained chords
-            for pitch in chord_notes:
-                notes.append(Note(pitch=pitch + 12, time=context.bar_start, duration=4.0, velocity=65))
+            if complexity < 5:
+                for pitch in chord_notes:
+                    notes.append(Note(pitch=pitch + 12, time=0.0, duration=4.0, velocity=65, hand="right"))
+            else:
+                # Broken chords / rhythmic sustain
+                for i, pitch in enumerate(chord_notes):
+                    notes.append(Note(
+                        pitch=pitch + 12, 
+                        time=0.0, 
+                        duration=4.0, 
+                        velocity=65, 
+                        hand="right"
+                    ))
+                    # Add rhythmic comping if high complexity
+                    if complexity >= 6:
+                        notes.append(Note(
+                            pitch=pitch + 12,
+                            time=2.0,
+                            duration=2.0,
+                            velocity=60,
+                            hand="right"
+                        ))
 
-        return HandPattern(notes=notes, pattern_name=pattern_name)
+        return HandPattern(
+            name=pattern_name,
+            notes=notes,
+            difficulty="intermediate",
+            tempo_range=(80, 140)
+        )
 
     def _apply_rhythm_pattern(self, notes: List[Note], rhythm_name: str) -> List[Note]:
         """Apply clave rhythm feel."""
@@ -117,7 +174,8 @@ class LatinArranger(BaseArranger):
             pitch=n.pitch,
             time=n.time,
             duration=n.duration,
-            velocity=max(min_vel, min(max_vel, n.velocity))
+            velocity=max(min_vel, min(max_vel, n.velocity)),
+            hand=n.hand
         ) for n in notes]
 
     def _add_improvisation(self, context: ChordContext, config: dict, position: int) -> List[Note]:

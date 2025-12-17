@@ -15,8 +15,8 @@ from app.services.base_genre_generator import BaseGenreGenerator
 class TestGenreGenerator(BaseGenreGenerator):
     """Concrete test implementation of BaseGenreGenerator."""
 
-    def _get_style_context(self) -> str:
-        return "Test genre style context"
+    def _get_style_context(self, complexity: int = 5, style: str = "") -> str:
+        return f"Test genre style context (complexity={complexity}, style={style})"
 
     def _get_default_progression(self, key: str):
         return [f"{key}maj7", f"{key}7"]
@@ -142,6 +142,9 @@ class TestGenerationPipeline:
         request.key = None
         request.tempo = None
         request.num_bars = 4
+        request.complexity = 5
+        request.style = "test"
+        request.ai_percentage = 0.0
 
         response = await generator.generate_arrangement(request)
 
@@ -158,7 +161,7 @@ class TestGenerationPipeline:
         generator.gemini_model = Mock()
         mock_response = Mock()
         mock_response.text = '{"key": "C", "tempo": 120, "chords": []}'
-        generator.gemini_model.generate_content = AsyncMock(return_value=mock_response)
+        generator.gemini_model.generate_content = Mock(return_value=mock_response)
 
         mock_parse_json.return_value = {
             "key": "C",
@@ -176,6 +179,9 @@ class TestGenerationPipeline:
         request.key = None
         request.tempo = None
         request.num_bars = 4
+        request.complexity = 5
+        request.style = "test"
+        request.ai_percentage = 0.0
 
         response = await generator.generate_arrangement(request)
 
@@ -193,6 +199,9 @@ class TestGenerationPipeline:
         request.description = "Test"
         request.key = "C"
         request.tempo = 120
+        request.complexity = 5
+        request.style = "test"
+        request.ai_percentage = 0.0
 
         response = await generator.generate_arrangement(request)
 
@@ -231,7 +240,7 @@ class TestProgressionGeneration:
         """Should generate progression using Gemini."""
         mock_response = Mock()
         mock_response.text = '{"key": "D", "tempo": 100, "chords": []}'
-        generator_with_gemini.gemini_model.generate_content = AsyncMock(return_value=mock_response)
+        generator_with_gemini.gemini_model.generate_content = Mock(return_value=mock_response)
 
         mock_parse_json.return_value = {
             "key": "D",
@@ -258,7 +267,7 @@ class TestProgressionGeneration:
         """Should include genre-specific context in prompt."""
         mock_response = Mock()
         mock_response.text = '{"key": "C", "tempo": 120, "chords": []}'
-        generator_with_gemini.gemini_model.generate_content = AsyncMock(return_value=mock_response)
+        generator_with_gemini.gemini_model.generate_content = Mock(return_value=mock_response)
 
         with patch('app.services.base_genre_generator.parse_json_from_response') as mock_parse:
             mock_parse.return_value = {"key": "C", "tempo": 120, "chords": []}
@@ -395,6 +404,9 @@ class TestResponseBuilding:
 
         request = Mock()
         request.include_progression = True
+        request.complexity = 5
+        request.style = "test"
+        request.ai_percentage = 0.0
 
         response = generator._build_success_response(
             midi_path=Path("/tmp/test.mid"),
@@ -445,7 +457,10 @@ class TestGenerationMethod:
         generator.gemini_model = Mock()
 
         request = Mock()
+        request = Mock()
         request.include_progression = True
+        request.complexity = 5
+        request.style = "test"
         request.ai_percentage = 0.0
 
         method = generator._determine_generation_method(request)
@@ -456,7 +471,10 @@ class TestGenerationMethod:
         generator.gemini_model = None
 
         request = Mock()
+        request = Mock()
         request.include_progression = False
+        request.complexity = 5
+        request.style = "test"
         request.ai_percentage = 0.0
 
         method = generator._determine_generation_method(request)
@@ -511,6 +529,9 @@ class TestBaseGeneratorIntegration:
         request.num_bars = 4
         request.application = Mock()
         request.application.value = "standard"
+        request.complexity = 5
+        request.style = "test"
+        request.ai_percentage = 0.0
 
         # Generate
         response = await generator.generate_arrangement(request)

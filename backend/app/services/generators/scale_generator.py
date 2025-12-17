@@ -22,6 +22,7 @@ Practice Patterns:
 from typing import List, Tuple, Dict, Any
 import sys
 import os
+import random
 
 # Add parent directory to path for Exercise import
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
@@ -34,15 +35,52 @@ from app.services.exercise_generator_engine import Exercise
 # ============================================================================
 
 SCALE_PATTERNS = {
+    # === Major Scales ===
     "major": [0, 2, 4, 5, 7, 9, 11, 12],
+    "ionian": [0, 2, 4, 5, 7, 9, 11, 12],  # Same as major
+    
+    # === Minor Scales ===
     "natural_minor": [0, 2, 3, 5, 7, 8, 10, 12],
+    "aeolian": [0, 2, 3, 5, 7, 8, 10, 12],  # Same as natural minor
     "harmonic_minor": [0, 2, 3, 5, 7, 8, 11, 12],
     "melodic_minor": [0, 2, 3, 5, 7, 9, 11, 12],
     "melodic_minor_descending": [0, 2, 3, 5, 7, 8, 10, 12],  # Classical form
+    
+    # === Modes ===
     "dorian": [0, 2, 3, 5, 7, 9, 10, 12],
     "phrygian": [0, 1, 3, 5, 7, 8, 10, 12],
     "lydian": [0, 2, 4, 6, 7, 9, 11, 12],
     "mixolydian": [0, 2, 4, 5, 7, 9, 10, 12],
+    "locrian": [0, 1, 3, 5, 6, 8, 10, 12],
+    
+    # === Pentatonic Scales ===
+    "pentatonic_major": [0, 2, 4, 7, 9, 12],  # 5 notes
+    "pentatonic_minor": [0, 3, 5, 7, 10, 12],  # 5 notes
+    
+    # === Blues Scales ===
+    "blues": [0, 3, 5, 6, 7, 10, 12],  # Minor pentatonic + blue note
+    "blues_major": [0, 2, 3, 4, 7, 9, 12],  # Major pentatonic + blue notes
+    
+    # === Symmetric Scales ===
+    "whole_tone": [0, 2, 4, 6, 8, 10, 12],  # All whole steps
+    "chromatic": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],  # All half steps
+    "diminished": [0, 2, 3, 5, 6, 8, 9, 11, 12],  # Whole-half
+    "diminished_half_whole": [0, 1, 3, 4, 6, 7, 9, 10, 12],  # Half-whole
+    
+    # === Jazz Scales ===
+    "bebop_major": [0, 2, 4, 5, 7, 8, 9, 11, 12],  # Major + passing tone
+    "bebop_dominant": [0, 2, 4, 5, 7, 9, 10, 11, 12],  # Mixolydian + passing
+    "bebop_dorian": [0, 2, 3, 4, 5, 7, 9, 10, 12],  # Dorian + passing
+    "altered": [0, 1, 3, 4, 6, 8, 10, 12],  # Super Locrian
+    
+    # === World Scales ===
+    "hungarian_minor": [0, 2, 3, 6, 7, 8, 11, 12],  # Gypsy minor
+    "spanish_phrygian": [0, 1, 4, 5, 7, 8, 10, 12],  # Phrygian dominant
+    "arabic": [0, 1, 4, 5, 7, 8, 11, 12],  # Double harmonic
+    "japanese": [0, 1, 5, 7, 8, 12],  # In-sen scale
+    
+    # === Gospel/Church Scales ===
+    "gospel": [0, 2, 3, 4, 7, 9, 12],  # Major with bluesy minor 3rd
 }
 
 
@@ -275,23 +313,79 @@ def generate_scale_exercise(
     """
     # Extract context
     key = context.get("key", "C")
-    scale_type = context.get("scale_type", "major")
-    octaves = context.get("octaves", 1)
-    practice_pattern = context.get("practice_pattern", "ascending")
+    scale_type = context.get("scale_type")  # Now optional - will be randomized
+    octaves = context.get("octaves")  # Now optional - will be randomized
+    practice_pattern = context.get("practice_pattern")  # Now optional
+    randomize = context.get("randomize", True)  # Enable randomization by default
 
-    # Adjust based on difficulty
-    if difficulty == "beginner":
-        octaves = min(octaves, 1)  # Max 1 octave
-        tempo = 60  # Slow tempo
-        starting_octave = 4  # Middle C
-    elif difficulty == "intermediate":
-        octaves = min(octaves, 2)  # Max 2 octaves
-        tempo = 80
-        starting_octave = 4
+    # Available scale types by difficulty - EXPANDED for more variety
+    SCALE_TYPES_BY_DIFFICULTY = {
+        "beginner": ["major", "natural_minor", "pentatonic_major", "pentatonic_minor"],
+        "intermediate": ["major", "natural_minor", "harmonic_minor", "dorian", "mixolydian", "pentatonic_major", "pentatonic_minor", "blues"],
+        "advanced": ["major", "natural_minor", "harmonic_minor", "melodic_minor", "dorian", "phrygian", "lydian", "mixolydian", "locrian", "whole_tone", "blues"]
+    }
+
+    # Adjust based on difficulty and complexity
+    if complexity <= 3:
+        effective_difficulty = "beginner"
+    elif complexity <= 6:
+        effective_difficulty = "intermediate"
+    else:
+        effective_difficulty = "advanced"
+        
+    # Apply settings based on effective difficulty
+    if effective_difficulty == "beginner":
+        max_octaves = 1
+        base_tempo = 60
+        base_starting_octave = 4
+        available_patterns = ["ascending", "descending"]
+    elif effective_difficulty == "intermediate":
+        max_octaves = 2
+        base_tempo = 80
+        base_starting_octave = 4
+        available_patterns = ["ascending", "descending", "ascending_descending"]
     else:  # advanced
-        octaves = min(octaves, 3)  # Up to 3 octaves
-        tempo = 100
-        starting_octave = 3  # Start lower for range
+        max_octaves = 3
+        base_tempo = 100
+        base_starting_octave = 3
+        available_patterns = ["ascending", "descending", "ascending_descending", "thirds", "fourths"]
+
+    # --- ENHANCED RANDOMIZATION ---
+    if randomize:
+        # Randomize scale type if not specified
+        if scale_type is None:
+            scale_type = random.choice(SCALE_TYPES_BY_DIFFICULTY[effective_difficulty])
+        
+        # Randomize octave count if not specified
+        if octaves is None:
+            octaves = random.randint(1, max_octaves)
+        else:
+            octaves = min(octaves, max_octaves)
+        
+        # Randomize starting octave with more variance
+        octave_offset = random.choice([-1, 0, 1])
+        starting_octave = max(2, min(5, base_starting_octave + octave_offset))
+        
+        # Randomize tempo within ±15% (increased from ±10%)
+        tempo_variance = random.uniform(-0.15, 0.15)
+        tempo = int(base_tempo * (1 + tempo_variance))
+        
+        # Randomize practice pattern if not explicitly specified
+        if practice_pattern is None:
+            practice_pattern = random.choice(available_patterns)
+        
+        # Add rhythm variation factor (affects note durations slightly)
+        rhythm_variation = random.uniform(0.9, 1.1)
+    else:
+        tempo = base_tempo
+        starting_octave = base_starting_octave
+        rhythm_variation = 1.0
+        if scale_type is None:
+            scale_type = "major"
+        if octaves is None:
+            octaves = 1
+        if practice_pattern is None:
+            practice_pattern = "ascending"
 
     # Generate scale notes
     notes, midi_notes = generate_scale_notes(

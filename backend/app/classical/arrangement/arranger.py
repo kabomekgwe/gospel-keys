@@ -65,7 +65,7 @@ class ClassicalArranger(BaseArranger):
                 "strict_voice_leading": True,  # Mozart-style elegance
             },
             "romantic": {
-                "left_patterns": ["broken_chord_classical", "arpeggios_broken", "pedal_tone"],
+                "left_patterns": ["broken_chord_classical", "pedal_tone"],
                 "right_patterns": ["melody_with_accompaniment", "arpeggios_broken", "scale_runs"],
                 "rhythm": [],
                 "improvisation_probability": 0.4,  # Expressive ornamentation
@@ -77,7 +77,7 @@ class ClassicalArranger(BaseArranger):
 
     # Implement abstract methods from BaseArranger
 
-    def _generate_left_pattern(self, pattern_name: str, context: ChordContext) -> HandPattern:
+    def _generate_left_pattern(self, pattern_name: str, context: ChordContext, complexity: int = 5) -> HandPattern:
         """Generate classical left hand pattern.
 
         Args:
@@ -89,7 +89,7 @@ class ClassicalArranger(BaseArranger):
         """
         return generate_classical_left_hand_pattern(pattern_name, context)
 
-    def _generate_right_pattern(self, pattern_name: str, context: ChordContext) -> HandPattern:
+    def _generate_right_pattern(self, pattern_name: str, context: ChordContext, complexity: int = 5) -> HandPattern:
         """Generate classical right hand pattern.
 
         Args:
@@ -252,7 +252,8 @@ class ClassicalArranger(BaseArranger):
         key: str,
         bpm: int,
         application: str,
-        time_signature: tuple = (4, 4)
+        time_signature: tuple = (4, 4),
+        complexity: int = 5
     ):
         """Override arrange_progression to add classical voice leading.
 
@@ -264,12 +265,13 @@ class ClassicalArranger(BaseArranger):
             bpm: Tempo in BPM
             application: Period style (baroque, classical, romantic)
             time_signature: Time signature tuple
+            complexity: Complexity level (1-10)
 
         Returns:
             Arrangement with classical voice leading applied
         """
         # Call base implementation
-        arrangement = super().arrange_progression(chords, key, bpm, application, time_signature)
+        arrangement = super().arrange_progression(chords, key, bpm, application, time_signature, complexity)
 
         # Apply classical voice leading rules
         config = self.application_configs.get(application, self.application_configs["classical"])

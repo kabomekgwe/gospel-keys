@@ -86,6 +86,7 @@ class ChordService:
         num_bars: int = 8,
         style: str = "traditional",
         custom_progression: Optional[List[str]] = None,
+        complexity: int = 5,
     ) -> ChordProgression:
         """
         Generate a complete chord progression with voicings.
@@ -96,6 +97,7 @@ class ChordService:
             num_bars: Number of bars
             style: Style variation within genre
             custom_progression: Optional custom chord progression
+            complexity: Harmonic complexity (1-10) affects voicing richness
 
         Returns:
             ChordProgression with full voicings and metadata
@@ -108,8 +110,8 @@ class ChordService:
             roman_numerals = self._get_template_progression(genre, style, num_bars)
             chord_symbols = self._roman_to_chords(roman_numerals, key)
 
-        # Generate voicings for each chord
-        voicings = self._generate_voicings(chord_symbols, key, genre)
+        # Generate voicings for each chord with complexity-aware variation
+        voicings = self._generate_voicings(chord_symbols, key, genre, complexity)
 
         return ChordProgression(
             chords=chord_symbols,
@@ -213,24 +215,49 @@ class ChordService:
         self,
         chord_symbols: List[str],
         key: MusicKey,
-        genre: MusicGenre
+        genre: MusicGenre,
+        complexity: int = 5
     ) -> List[ChordVoicing]:
-        """Generate specific voicings for chords"""
+        """Generate specific voicings for chords with dynamic variation.
+        
+        Each chord gets a unique voicing based on:
+        - Bar index (for voicing alternation)
+        - Complexity level
+        - Random octave/inversion selection
+        """
+        import random
         voicings = []
 
-        for chord_symbol in chord_symbols:
+        for bar_index, chord_symbol in enumerate(chord_symbols):
             root_note = self._parse_root(chord_symbol)
             root_midi = NOTE_TO_MIDI.get(root_note, 60)
+            
+            # Random octave offset for variety (-1, 0, or +1 octave)
+            octave_offset = random.choice([-12, 0, 0, 0])  # Bias toward normal register
+            adjusted_root = root_midi + octave_offset
 
-            # Generate voicing based on chord type and genre
-            notes = self._get_chord_notes(chord_symbol, root_midi, genre)
-            bass_note = min(notes) if notes else root_midi
+            # Generate voicing based on chord type, genre, and bar index
+            notes = self._get_chord_notes(
+                chord_symbol, 
+                adjusted_root, 
+                genre,
+                complexity=complexity,
+                bar_index=bar_index  # Now passed for voicing variation!
+            )
+            
+            # Random inversion selection (0, 1, or 2)
+            inversion = random.choices([0, 1, 2], weights=[0.5, 0.3, 0.2])[0]
+            if inversion > 0 and len(notes) >= inversion:
+                # Rotate notes to create inversion
+                notes = notes[inversion:] + [n + 12 for n in notes[:inversion]]
+            
+            bass_note = min(notes) if notes else adjusted_root
 
             voicing = ChordVoicing(
                 chord_symbol=chord_symbol,
-                root=root_midi,
-                notes=notes,
-                inversion=0,
+                root=adjusted_root,
+                notes=sorted(notes),  # Keep sorted for consistency
+                inversion=inversion,
                 bass_note=bass_note,
             )
             voicings.append(voicing)
@@ -252,11 +279,22 @@ class ChordService:
         complexity: int = 5,
         bar_index: int = 0
     ) -> List[int]:
-        """Get MIDI notes for a chord voicing with complexity awareness"""
-        if genre == MusicGenre.JAZZ:
+        """Get MIDI notes for a chord voicing with complexity awareness
+        
+        Jazz and Gospel use sophisticated voicings with bar-based alternation.
+        Other genres use simpler but still varied voicings.
+        """
+        import random
+        
+        # Jazz and Gospel both use sophisticated extended harmony
+        if genre in (MusicGenre.JAZZ, MusicGenre.GOSPEL):
             return self._get_jazz_voicing(chord_symbol, root_midi, complexity, bar_index)
+        
+        # Neo-Soul also uses extended harmony
+        if genre == MusicGenre.NEO_SOUL:
+            return self._get_jazz_voicing(chord_symbol, root_midi, min(complexity, 6), bar_index)
             
-        # Standard Triad Logic (Default)
+        # Standard Triad Logic with randomization for other genres
         notes = [root_midi]  # Root
 
         # Add thirds and fifths (basic triad)
@@ -286,10 +324,14 @@ class ChordService:
                  notes.append(root_midi + 10) # Minor 7th
             else:
                 notes.append(root_midi + 10)  # Dominant 7th
-
-        # Gospel-specific voicings: add 9ths
-        if genre == MusicGenre.GOSPEL:
-            notes.append(root_midi + 14)  # Add 9th (octave + 2)
+        
+        # Randomly add extensions for higher complexity
+        if complexity >= 5 and random.random() > 0.5:
+            notes.append(root_midi + 14)  # Add 9th
+        if complexity >= 7 and random.random() > 0.6:
+            notes.append(root_midi + 17)  # Add 11th
+        if complexity >= 9 and random.random() > 0.7:
+            notes.append(root_midi + 21)  # Add 13th
 
         return sorted(notes)
 

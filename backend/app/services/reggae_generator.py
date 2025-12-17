@@ -45,16 +45,32 @@ class ReggaeGeneratorService(
             output_subdir="reggae_generated"
         )
 
-    def _get_style_context(self) -> str:
+    def _get_style_context(self, complexity: int = 5, style: str = "") -> str:
         """
         Get reggae-specific style context for AI prompts.
 
         Returns reggae harmony and rhythm characteristics.
         """
-        return """Requirements for authentic reggae music:
+        if complexity <= 4:
+            harmony_text = "- Use simple major triads and minimal progressions."
+        elif complexity <= 7:
+            harmony_text = "- Use added 7ths and sus chords for color."
+        else:
+            harmony_text = "- Use Dub-style minor 9ths, bi-tonal chords, and complex voice leading."
+
+        style_n = ""
+        st = style.lower()
+        if "dub" in st:
+            style_n = "- Dub style: heavy bass, sparse chords, echo effects"
+        elif "rocksteady" in st:
+            style_n = "- Rocksteady: smoother, melodic bass lines"
+        elif "dancehall" in st:
+            style_n = "- Dancehall: digital, sparse, rhythmic"
+
+        return f"""Requirements for authentic reggae music:
 
         Harmony:
-        - Use major triads and sus2/sus4 chords for characteristic reggae sound
+        {harmony_text}
         - I-IV-V progressions are common (e.g., C-F-G in C major)
         - Minor chord progressions: i-VI-III-VII (e.g., Am-F-C-G)
         - Add occasional diminished passing chords
@@ -70,9 +86,7 @@ class ReggaeGeneratorService(
         Style:
         - Laid-back groove at 70-80 BPM
         - Heavy low-end bass presence
-        - Spacious arrangement with breathing room
-        - Repetitive, hypnotic chord patterns
-        - Authentic Jamaican reggae feel
+        {style_n}
         """
 
     def _get_default_progression(self, key: str) -> List[str]:

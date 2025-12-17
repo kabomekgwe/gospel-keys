@@ -48,7 +48,8 @@ def _apply_one_drop(notes: List[Note]) -> List[Note]:
                 pitch=note.pitch,
                 time=note.time,
                 duration=note.duration,
-                velocity=min(127, int(note.velocity * 1.2))  # 20% louder
+                velocity=min(127, int(note.velocity * 1.2)),  # 20% louder
+                hand=note.hand
             ))
         else:
             transformed.append(note)
@@ -69,7 +70,8 @@ def _apply_laid_back(notes: List[Note]) -> List[Note]:
             pitch=note.pitch,
             time=note.time + delay_amount,
             duration=note.duration,
-            velocity=note.velocity
+            velocity=note.velocity,
+            hand=note.hand
         ))
 
     return transformed
@@ -92,7 +94,8 @@ def _apply_offbeat_emphasis(notes: List[Note]) -> List[Note]:
                 pitch=note.pitch,
                 time=note.time,
                 duration=note.duration,
-                velocity=min(127, int(note.velocity * 1.15))  # 15% louder
+                velocity=min(127, int(note.velocity * 1.15)),  # 15% louder
+                hand=note.hand
             ))
         else:
             transformed.append(note)

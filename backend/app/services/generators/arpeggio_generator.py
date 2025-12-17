@@ -26,6 +26,7 @@ Patterns:
 from typing import List, Tuple, Dict, Any
 import sys
 import os
+import random
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
@@ -37,30 +38,54 @@ from app.services.exercise_generator_engine import Exercise
 # ============================================================================
 
 CHORD_FORMULAS = {
-    # Triads
+    # === Triads ===
     "major": [0, 4, 7],
     "minor": [0, 3, 7],
     "diminished": [0, 3, 6],
     "augmented": [0, 4, 8],
 
-    # 7th Chords
+    # === Suspended Chords ===
+    "sus2": [0, 2, 7],
+    "sus4": [0, 5, 7],
+    "7sus4": [0, 5, 7, 10],
+
+    # === Add Chords ===
+    "add9": [0, 4, 7, 14],
+    "madd9": [0, 3, 7, 14],
+    "add11": [0, 4, 7, 17],
+
+    # === 6th Chords ===
+    "maj6": [0, 4, 7, 9],
+    "min6": [0, 3, 7, 9],
+
+    # === 7th Chords ===
     "maj7": [0, 4, 7, 11],
     "min7": [0, 3, 7, 10],
     "dom7": [0, 4, 7, 10],
     "half_dim7": [0, 3, 6, 10],
     "dim7": [0, 3, 6, 9],
+    "minmaj7": [0, 3, 7, 11],  # Minor with major 7th
 
-    # Extended Chords
+    # === Extended Chords ===
     "maj9": [0, 4, 7, 11, 14],
     "min9": [0, 3, 7, 10, 14],
     "dom9": [0, 4, 7, 10, 14],
     "maj11": [0, 4, 7, 11, 14, 17],
+    "min11": [0, 3, 7, 10, 14, 17],
     "maj13": [0, 4, 7, 11, 14, 17, 21],
+    "dom13": [0, 4, 7, 10, 14, 17, 21],
 
-    # Altered
+    # === Altered Dominants ===
+    "dom7b5": [0, 4, 6, 10],
+    "dom7sharp5": [0, 4, 8, 10],
     "dom7b9": [0, 4, 7, 10, 13],
     "dom7sharp9": [0, 4, 7, 10, 15],
     "dom7sharp11": [0, 4, 7, 10, 18],
+    "dom7b5b9": [0, 4, 6, 10, 13],
+
+    # === Power/Simple ===
+    "power": [0, 7],
+    "power5": [0, 7, 12],
 }
 
 
@@ -322,26 +347,85 @@ def generate_arpeggio_exercise(
     # Extract context
     root = context.get("key", "C")
     style = context.get("style", "classical")
-    chord_type = context.get("chord_type") or get_chord_type_for_difficulty(difficulty, style)
-    octaves = context.get("octaves", 1)
-    pattern = context.get("pattern", "ascending")
-    inversion = context.get("inversion", 0)
+    chord_type = context.get("chord_type")  # Now optional - will be randomized
+    octaves = context.get("octaves")  # Now optional - will be randomized  
+    pattern = context.get("pattern")  # Now optional - will be randomized
+    inversion = context.get("inversion")  # Now optional - will be randomized
+    randomize = context.get("randomize", True)  # Enable randomization by default
 
-    # Adjust based on difficulty
-    if difficulty == "beginner":
-        octaves = min(octaves, 1)
-        tempo = 60
-        starting_octave = 4
-        if not context.get("chord_type"):
-            chord_type = "major"  # Force major for beginners
-    elif difficulty == "intermediate":
-        octaves = min(octaves, 2)
-        tempo = 80
-        starting_octave = 4
+    # Available chord types by difficulty - EXPANDED for more variety
+    CHORD_TYPES_BY_DIFFICULTY = {
+        "beginner": ["major", "minor", "sus2", "sus4", "power"],
+        "intermediate": ["major", "minor", "maj7", "min7", "dom7", "sus2", "sus4", "add9", "maj6", "min6"],
+        "advanced": ["major", "minor", "maj7", "min7", "dom7", "half_dim7", "dim7", "maj9", "min9", "dom9", 
+                     "augmented", "diminished", "minmaj7", "7sus4", "dom7b5", "dom7sharp5", "dom13"]
+    }
+
+    # Adjust based on difficulty and complexity
+    if complexity <= 3:
+        effective_difficulty = "beginner"
+    elif complexity <= 6:
+        effective_difficulty = "intermediate"
+    else:
+        effective_difficulty = "advanced"
+
+    if effective_difficulty == "beginner":
+        max_octaves = 1
+        base_tempo = 60
+        base_starting_octave = 4
+        available_patterns = ["ascending", "descending"]
+        available_inversions = [0]  # Root position only
+    elif effective_difficulty == "intermediate":
+        max_octaves = 2
+        base_tempo = 80
+        base_starting_octave = 4
+        available_patterns = ["ascending", "descending", "ascending_descending", "alternating"]
+        available_inversions = [0, 1]
     else:  # advanced
-        octaves = min(octaves, 3)
-        tempo = 100
-        starting_octave = 3
+        max_octaves = 3
+        base_tempo = 100
+        base_starting_octave = 3
+        available_patterns = ["ascending", "descending", "ascending_descending", "alternating", "alberti", "broken"]
+        available_inversions = [0, 1, 2]
+
+    # --- ENHANCED RANDOMIZATION ---
+    if randomize:
+        # Randomize chord type if not specified
+        if chord_type is None:
+            chord_type = random.choice(CHORD_TYPES_BY_DIFFICULTY[effective_difficulty])
+        
+        # Randomize octave count if not specified
+        if octaves is None:
+            octaves = random.randint(1, max_octaves)
+        else:
+            octaves = min(octaves, max_octaves)
+        
+        # Randomize starting octave with more variance
+        octave_offset = random.choice([-1, 0, 1])
+        starting_octave = max(2, min(5, base_starting_octave + octave_offset))
+        
+        # Randomize tempo within ±15%
+        tempo_variance = random.uniform(-0.15, 0.15)
+        tempo = int(base_tempo * (1 + tempo_variance))
+        
+        # Randomize pattern if not specified
+        if pattern is None:
+            pattern = random.choice(available_patterns)
+        
+        # Randomize inversion if not specified
+        if inversion is None:
+            inversion = random.choice(available_inversions)
+    else:
+        tempo = base_tempo
+        starting_octave = base_starting_octave
+        if chord_type is None:
+            chord_type = "major"
+        if octaves is None:
+            octaves = 1
+        if pattern is None:
+            pattern = "ascending"
+        if inversion is None:
+            inversion = 0
 
     # Generate arpeggio notes
     notes, midi_notes = generate_arpeggio_notes(

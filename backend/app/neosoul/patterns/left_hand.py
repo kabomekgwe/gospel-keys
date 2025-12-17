@@ -85,7 +85,7 @@ def get_extended_voicing(chord: str, octave: int = 3) -> List[int]:
 
 # Pattern Generators
 
-def broken_chord_arpeggio_pattern(context: ChordContext) -> HandPattern:
+def broken_chord_arpeggio_pattern(context: ChordContext, complexity: int = 5) -> HandPattern:
     """Generate broken chord arpeggio pattern with extended harmonies.
 
     Neo-soul arpeggios emphasize 9ths, 11ths, and 13ths.
@@ -96,6 +96,7 @@ def broken_chord_arpeggio_pattern(context: ChordContext) -> HandPattern:
 
     Args:
         context: Chord context
+        complexity: Complexity level (1-10)
 
     Returns:
         HandPattern with arpeggio notes
@@ -103,11 +104,25 @@ def broken_chord_arpeggio_pattern(context: ChordContext) -> HandPattern:
     root, quality = parse_chord_symbol(context.chord)
     root_midi = get_root_note_midi(root, octave=2)  # Low octave for bass
 
-    # Get extended voicing
-    if quality in NEOSOUL_CHORD_INTERVALS:
-        intervals = NEOSOUL_CHORD_INTERVALS[quality]
+    # Get extended voicing based on complexity
+    if complexity < 4:
+        # Simple extended (up to 7th or 9th)
+        intervals = [0, 7, 10 if "m" in quality or "7" in quality else 11]
+    elif complexity < 7:
+        if quality in NEOSOUL_CHORD_INTERVALS:
+            intervals = NEOSOUL_CHORD_INTERVALS[quality]
+        else:
+            intervals = [0, 7, 11, 14]  # Default extended (9th)
     else:
-        intervals = [0, 7, 11, 14]  # Default extended
+        # High complexity: add 11th/13th extensions
+        if quality in NEOSOUL_CHORD_INTERVALS:
+            intervals = list(NEOSOUL_CHORD_INTERVALS[quality])
+            if "maj" in quality:
+                intervals.append(18)  # #11
+            elif "m" in quality:
+                intervals.append(17)  # 11
+        else:
+            intervals = [0, 7, 11, 14, 18]
 
     # Create arpeggio pattern (16th notes)
     notes = []
@@ -440,12 +455,13 @@ NEOSOUL_LEFT_HAND_PATTERNS = {
 }
 
 
-def generate_neosoul_left_hand_pattern(pattern_name: str, context: ChordContext) -> HandPattern:
+def generate_neosoul_left_hand_pattern(pattern_name: str, context: ChordContext, complexity: int = 5) -> HandPattern:
     """Generate a neo-soul left hand pattern by name.
 
     Args:
         pattern_name: Name of pattern to generate
         context: Chord context
+        complexity: Complexity level (1-10)
 
     Returns:
         HandPattern with generated notes
@@ -460,7 +476,12 @@ def generate_neosoul_left_hand_pattern(pattern_name: str, context: ChordContext)
         )
 
     generator = NEOSOUL_LEFT_HAND_PATTERNS[pattern_name]
-    return generator(context)
+    # Check if generator accepts complexity (inspect signature or just try/except)
+    # Safer to update all generators to accept **kwargs or similar, but for now strict update
+    try:
+        return generator(context, complexity=complexity)
+    except TypeError:
+        return generator(context)
 
 
 __all__ = [

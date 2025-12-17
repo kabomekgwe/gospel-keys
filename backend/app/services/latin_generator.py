@@ -45,18 +45,33 @@ class LatinGeneratorService(
             output_subdir="latin_generated"
         )
 
-    def _get_style_context(self) -> str:
+    def _get_style_context(self, complexity: int = 5, style: str = "") -> str:
         """
         Get Latin/Salsa-specific style context for AI prompts.
 
         Returns Latin harmony and rhythm characteristics.
         """
-        return """Requirements for authentic Latin/Salsa music:
+        if complexity <= 4:
+            harmony_text = "- Use simple montunos and I-IV-V and ii-V-I progressions."
+        elif complexity <= 7:
+            harmony_text = "- Use extended harmony (9ths, 13ths) and chromatic approach chords."
+        else:
+            harmony_text = "- Use advanced Timba harmony, tritone substitutions, and polytonal structures."
+
+        style_n = ""
+        st = style.lower()
+        if "bossa" in st:
+            style_n = "- Bossa Nova feel (smoother, jazzier)"
+        elif "timba" in st:
+            style_n = "- Aggressive Timba feel with rapid chord changes"
+        elif "bolero" in st:
+            style_n = "- Slow Bolero feel"
+
+        return f"""Requirements for authentic Latin/Salsa music:
 
         Harmony:
-        - Use ii-V-I progressions common in Cuban music
+        {harmony_text}
         - Minor chord progressions: i-iv-V7 (e.g., Am-Dm-E7)
-        - Dominant 7th chords with tensions (9ths, 13ths)
         - Montuno patterns: repetitive 2-bar syncopated figures
         - Guajeo voicings: characteristic Cuban piano patterns
         - Modal harmony (Dorian, Mixolydian for improvisation)
@@ -71,9 +86,7 @@ class LatinGeneratorService(
         Style:
         - Danceable groove at 90-100 BPM
         - High energy with driving rhythm section
-        - Syncopated chord comping (piano montuno)
-        - Call-and-response patterns
-        - Authentic Cuban salsa feel
+        {style_n}
         """
 
     def _get_default_progression(self, key: str) -> List[str]:

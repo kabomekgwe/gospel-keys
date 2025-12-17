@@ -119,7 +119,7 @@ def export_to_midi(
     return midi_path, midi_base64
 
 
-def get_notes_preview(arrangement: Arrangement, bars: int = 4) -> List[MIDINoteInfo]:
+def get_notes_preview(arrangement: Arrangement, bars: int = 4) -> List[Dict]:
     """
     Extract preview notes from first N bars of arrangement.
 
@@ -128,7 +128,7 @@ def get_notes_preview(arrangement: Arrangement, bars: int = 4) -> List[MIDINoteI
         bars: Number of bars to include (default 4)
 
     Returns:
-        List of up to 100 MIDINoteInfo objects from first N bars
+        List of up to 100 note dictionaries from first N bars
     """
     beats_per_bar = arrangement.time_signature[0]
     max_time = bars * beats_per_bar
@@ -137,15 +137,15 @@ def get_notes_preview(arrangement: Arrangement, bars: int = 4) -> List[MIDINoteI
     all_notes = arrangement.get_all_notes()
     preview_notes = [n for n in all_notes if n.time < max_time]
 
-    # Convert to MIDINoteInfo and limit to 100 notes
+    # Convert to Dict and limit to 100 notes
     return [
-        MIDINoteInfo(
-            pitch=note.pitch,
-            time=note.time,
-            duration=note.duration,
-            velocity=note.velocity,
-            hand=note.hand
-        )
+        {
+            "pitch": note.pitch,
+            "time": note.time,
+            "duration": note.duration,
+            "velocity": note.velocity,
+            "hand": note.hand
+        }
         for note in preview_notes[:100]
     ]
 

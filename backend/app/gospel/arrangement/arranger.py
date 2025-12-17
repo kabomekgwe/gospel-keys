@@ -70,7 +70,7 @@ class GospelArranger(BaseArranger):
 
     # Gospel-specific pattern generation (implements abstract methods)
 
-    def _generate_left_pattern(self, pattern_name: str, context: ChordContext) -> HandPattern:
+    def _generate_left_pattern(self, pattern_name: str, context: ChordContext, complexity: int = 5) -> HandPattern:
         """Generate gospel left hand pattern.
 
         Args:
@@ -82,7 +82,7 @@ class GospelArranger(BaseArranger):
         """
         return generate_left_hand_pattern(pattern_name, context)
 
-    def _generate_right_pattern(self, pattern_name: str, context: ChordContext) -> HandPattern:
+    def _generate_right_pattern(self, pattern_name: str, context: ChordContext, complexity: int = 5) -> HandPattern:
         """Generate gospel right hand pattern.
 
         Args:
